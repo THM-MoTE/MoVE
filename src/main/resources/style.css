@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'FontAwesome';
+    src: url('fontawesome-webfont.ttf');
+}
+
+.toolbar-button {
+    -fx-font-family: 'FontAwesome';
+    -fx-font-size: 10pt;
+}
