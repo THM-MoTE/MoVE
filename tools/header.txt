@@ -1,1 +1,1 @@
-Coppyright (C) 2016 N. Justus <nicola.justus@mni.thm.de>
+Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>

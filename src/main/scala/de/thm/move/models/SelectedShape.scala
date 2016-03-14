@@ -1,4 +1,4 @@
-package de.thm.move.controllers.models
+package de.thm.move.models
 
 object SelectedShape extends Enumeration {
   type SelectedShape = Value

@@ -11,9 +11,9 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import collection.JavaConversions._
 
-import de.thm.move.controllers.models.SelectedShape
-import de.thm.move.controllers.models.SelectedShape.SelectedShape
-import de.thm.move.controllers.models.SelectedShape.SelectedShape
+import de.thm.move.models.SelectedShape
+import de.thm.move.models.SelectedShape.SelectedShape
+import de.thm.move.models.SelectedShape.SelectedShape
 import implicits.FxHandlerImplicits._
 
 class MoveCtrl extends Initializable {
