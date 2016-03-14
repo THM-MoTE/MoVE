@@ -23,7 +23,10 @@ class MoveCtrl extends Initializable {
   @FXML
   private var btnGroup: ToggleGroup = _
   @FXML
-  private var colorPicker: ColorPicker = _
+  private var fillColorPicker: ColorPicker = _
+  @FXML
+  private var strokeColorPicker: ColorPicker = _
+
 
   private val shapeBtnsToSelectedShapes = Map(
       "rectangle_btn" -> SelectedShape.Rectangle,
@@ -32,7 +35,8 @@ class MoveCtrl extends Initializable {
     )
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    colorPicker.setValue(Color.BLACK)
+    //fillColorPicker.setValue(Color.BLACK)
+    strokeColorPicker.setValue(Color.BLACK)
 
      var startX = -1.0
      var startY = -1.0
@@ -88,13 +92,13 @@ class MoveCtrl extends Initializable {
     println("line clicked")
   }
 
-  private def getForegroundColor: Color = colorPicker.getValue
+  private def getStrokeColor: Color = strokeColorPicker.getValue
+  private def getFillColor: Color = fillColorPicker.getValue
 
   private def drawColored[A](fn: GraphicsContext => A): A = {
     val context = mainCanvas.getGraphicsContext2D
-    val color = getForegroundColor
-    context.setFill(color)
-    context.setStroke(color)
+    context.setFill(getFillColor)
+    context.setStroke(getStrokeColor)
     fn(context)
   }
 
