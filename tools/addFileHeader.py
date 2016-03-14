@@ -1,6 +1,6 @@
 HEADER_FILE="header.txt" #where is the header?
 INCLUDE=["../src"] #to which files/directorys should be added?
-EXCLUDE=["resources"] #which files/directorys should be ignored?
+EXCLUDE=["resources", "views"] #which files/directorys should be ignored?
 UPDATE_HEADER=True #remove old header?
 
 #which comment characters should be used?
