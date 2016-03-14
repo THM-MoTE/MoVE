@@ -111,8 +111,11 @@ class MoveCtrl extends Initializable {
         case SelectedShape.Rectangle =>
           val width = endX - startX
           val height = endY - startY
-          canvas.strokeRect(startX, startY, width, height)
+          canvas.fillRect(startX, startY, width, height)
         case SelectedShape.Circle =>
+          val width = endX - startX
+          val height = endY - startY
+          canvas.fillOval(startX, startY, width, height)
         case SelectedShape.Line => canvas.strokeLine(startX, startY, endX, endY)
       }
 
