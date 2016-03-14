@@ -23,12 +23,25 @@ class MoveCtrl extends Initializable {
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     colorPicker.setValue(Color.BLACK)
 
-    val drawHandler = { mouseEvent:MouseEvent =>
+     var startX = -1.0
+     var startY = -1.0
 
+
+    val drawHandler = { mouseEvent:MouseEvent =>
+      if (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED) {
+        startX = mouseEvent.getX()
+        startY = mouseEvent.getY()
+      } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
+        val endX = mouseEvent.getX()
+        val endY = mouseEvent.getY()
+        drawColored { canvas =>
+          canvas.strokeLine(startX, startY, endX, endY)
+        }
+      }
     }
 
     mainCanvas.setOnMousePressed(drawHandler)
-    mainCanvas.setOnMousePressed(drawHandler)
+    mainCanvas.setOnMouseReleased(drawHandler)
 
   }
 
