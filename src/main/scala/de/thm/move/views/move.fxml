@@ -6,37 +6,51 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.MoveCtrl">
-   <top>
-      <MenuBar BorderPane.alignment="CENTER">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
    <center>
-      <Canvas height="200.0" width="200.0" BorderPane.alignment="CENTER" />
+      <Canvas fx:id="mainCanvas" height="300.0" width="350.0" BorderPane.alignment="CENTER" />
    </center>
    <left>
-      <ToolBar orientation="VERTICAL" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <ToolBar orientation="VERTICAL" prefHeight="371.0" prefWidth="140.0" BorderPane.alignment="CENTER">
         <items>
-            <Button mnemonicParsing="false" text="arrow" />
-          <Button mnemonicParsing="false" onAction="#onCircleClicked" text="circle" />
-            <Button mnemonicParsing="false" onAction="#onRectangleClicked" text="rectangle" />
+            <ToggleButton mnemonicParsing="false" onAction="#onPointerClicked" styleClass="toolbar-button" text="%fa.mouse-pointer">
+               <toggleGroup>
+                  <ToggleGroup fx:id="btnGroup" />
+               </toggleGroup>
+            </ToggleButton>
+            <ToggleButton mnemonicParsing="false" onAction="#onLineClicked" styleClass="toolbar-button" text="line" toggleGroup="$btnGroup" />
+            <ToggleButton mnemonicParsing="false" onAction="#onRectangleClicked" styleClass="toolbar-button" text="%fa.square-o" toggleGroup="$btnGroup" />
+            <ToggleButton mnemonicParsing="false" onAction="#onCircleClicked" styleClass="toolbar-button" text="%fa.circle-o" toggleGroup="$btnGroup" />
         </items>
       </ToolBar>
    </left>
+   <top>
+      <VBox prefHeight="74.0" prefWidth="600.0">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+               <items>
+                  <ColorPicker fx:id="colorPicker" />
+               </items>
+            </ToolBar>
+         </children>
+      </VBox>
+   </top>
 </BorderPane>
