@@ -47,6 +47,7 @@
             </MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
                <items>
+                  <ChoiceBox fx:id="borderThicknessChooser" prefWidth="150.0" />
                   <Label styleClass="toolbar-button" text="%fa.square" />
                   <ColorPicker fx:id="fillColorPicker" />
                   <Label styleClass="toolbar-button" text="%fa.square-o" />

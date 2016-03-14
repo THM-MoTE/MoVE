@@ -2,12 +2,14 @@ package de.thm.move.controllers
 
 import java.net.URL
 import java.util.ResourceBundle
+import javafx.collections.FXCollections
 import javafx.event.ActionEvent
 import javafx.fxml.{Initializable, FXML}
 import javafx.scene.canvas.{GraphicsContext, Canvas}
-import javafx.scene.control.{ToggleButton, ColorPicker, ToggleGroup, Button}
+import javafx.scene.control._
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
+import collection.JavaConversions._
 
 import de.thm.move.controllers.models.SelectedShape
 import de.thm.move.controllers.models.SelectedShape.SelectedShape
@@ -27,6 +29,8 @@ class MoveCtrl extends Initializable {
   @FXML
   private var strokeColorPicker: ColorPicker = _
 
+  @FXML
+  private var borderThicknessChooser: ChoiceBox[Int] = _
 
   private val shapeBtnsToSelectedShapes = Map(
       "rectangle_btn" -> SelectedShape.Rectangle,
@@ -35,8 +39,12 @@ class MoveCtrl extends Initializable {
     )
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    //fillColorPicker.setValue(Color.BLACK)
-    strokeColorPicker.setValue(Color.BLACK)
+    fillColorPicker.setValue(Color.BLACK)
+    strokeColorPicker.setValue(Color.WHITE)
+
+    val sizesList:java.util.List[Int] = (8 until 72 by 2).toList
+    borderThicknessChooser.setItems(FXCollections.observableArrayList(sizesList))
+    borderThicknessChooser.getSelectionModel.selectFirst()
 
      var startX = -1.0
      var startY = -1.0
@@ -94,6 +102,7 @@ class MoveCtrl extends Initializable {
 
   private def getStrokeColor: Color = strokeColorPicker.getValue
   private def getFillColor: Color = fillColorPicker.getValue
+  private def selectedThickness: Int = borderThicknessChooser.getSelectionModel.getSelectedItem
 
   private def drawColored[A](fn: GraphicsContext => A): A = {
     val context = mainCanvas.getGraphicsContext2D
