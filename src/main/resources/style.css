@@ -7,3 +7,7 @@
     -fx-font-family: 'FontAwesome';
     -fx-font-size: 10pt;
 }
+
+.draw-canvas {
+    -fx-background-color: white;
+}

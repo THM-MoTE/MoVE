@@ -7,19 +7,19 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.MoveCtrl">
    <center>
-      <Canvas fx:id="mainCanvas" height="300.0" width="350.0" BorderPane.alignment="CENTER" />
+      <Canvas fx:id="mainCanvas" height="300.0" styleClass="draw-canvas" width="350.0" BorderPane.alignment="CENTER" />
    </center>
    <left>
       <ToolBar orientation="VERTICAL" prefHeight="371.0" prefWidth="140.0" BorderPane.alignment="CENTER">
         <items>
-            <ToggleButton mnemonicParsing="false" onAction="#onPointerClicked" styleClass="toolbar-button" text="%fa.mouse-pointer">
+            <ToggleButton fx:id="line_pointer" mnemonicParsing="false" onAction="#onPointerClicked" styleClass="toolbar-button" text="%fa.mouse-pointer">
                <toggleGroup>
                   <ToggleGroup fx:id="btnGroup" />
                </toggleGroup>
             </ToggleButton>
-            <ToggleButton mnemonicParsing="false" onAction="#onLineClicked" styleClass="toolbar-button" text="line" toggleGroup="$btnGroup" />
-            <ToggleButton mnemonicParsing="false" onAction="#onRectangleClicked" styleClass="toolbar-button" text="%fa.square-o" toggleGroup="$btnGroup" />
-            <ToggleButton mnemonicParsing="false" onAction="#onCircleClicked" styleClass="toolbar-button" text="%fa.circle-o" toggleGroup="$btnGroup" />
+            <ToggleButton fx:id="line_btn" mnemonicParsing="false" onAction="#onLineClicked" styleClass="toolbar-button" text="line" toggleGroup="$btnGroup" />
+            <ToggleButton fx:id="rectangle_btn" mnemonicParsing="false" onAction="#onRectangleClicked" styleClass="toolbar-button" text="%fa.square-o" toggleGroup="$btnGroup" />
+            <ToggleButton fx:id="circle_btn" mnemonicParsing="false" onAction="#onCircleClicked" styleClass="toolbar-button" text="%fa.circle-o" toggleGroup="$btnGroup" />
         </items>
       </ToolBar>
    </left>
