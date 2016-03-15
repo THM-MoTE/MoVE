@@ -17,9 +17,7 @@ class DrawPanel(callback : InputEvent => Unit) extends Pane {
   this.setMaxHeight(Double.MaxValue)
 
   def drawShape(s:Shape):Unit = {
-    s.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
-      override def handle(event: InputEvent): Unit = callback(event)
-    })
+    s.addEventHandler(InputEvent.ANY, callback)
 
     super.getChildren.add(s)
 
