@@ -64,25 +64,17 @@ class MoveCtrl extends Initializable {
             val newX = mouseEvent.getX()
             val newY = mouseEvent.getY()
             //test if polygon is finish by checking if last clicked position is already in the coordinate list
-//            points.find {
-//              case (x, y) => Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10
-//            } match {
-//              case Some(_) =>
-//                //draw the polygon
-//                drawColored { context =>
-//                  val size = points.length
-//                  val xs = points.map(_._1).toArray
-//                  val ys = points.map(_._2).toArray
-//                  context.fillPolygon(xs, ys, size)
-//                }
-//                points = List()
-//              case None =>
-//                points = (newX, newY) :: points
-//
-//                drawColored { canvas =>
-//                  canvas.fillOval(newX, newY, 4, 4)
-//                }
-//            }
+            points.find {
+              case (x, y) => Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10
+            } match {
+              case Some(_) =>
+                //draw the polygon
+                drawPanel.drawPolygon(points)(getFillColor, getStrokeColor)
+                points = List()
+              case None =>
+                points = (newX, newY) :: points
+                drawPanel.drawCircle(points.head, 4,4)(getFillColor, getStrokeColor)
+            }
           }
         case Some(_) =>
           if (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED) {

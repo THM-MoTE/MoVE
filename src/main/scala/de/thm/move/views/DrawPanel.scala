@@ -49,4 +49,11 @@ class DrawPanel extends Pane {
     drawShape(circle)
   }
 
+  def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color):Unit = {
+    val singlePoints = points.flatMap { case (x,y) => List(x,y) }
+    val polygon = new Polygon(singlePoints:_*)
+    colorizeShape(polygon, fillColor, strokeColor)
+    drawShape(polygon)
+  }
+
 }
