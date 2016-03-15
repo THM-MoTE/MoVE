@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'FontAwesome';
-    src: url('fontawesome-webfont.ttf');
+    src: url('../fonts/fontawesome-webfont.ttf');
 }
 
 .toolbar-button {

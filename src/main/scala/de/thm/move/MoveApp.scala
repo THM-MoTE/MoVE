@@ -12,11 +12,10 @@ import javax.annotation.Resource
 
 class MoveApp extends Application {
   def start(stage: Stage): Unit = {
-    val styleSheetUrl = MoveApp.getClass.getResource("/style.css").toExternalForm
-    //val fontAwesome = Font.loadFont(MoveApp.getClass.getResource("/fontawesome-webfont.ttf").toExternalForm, 10)
+    val styleSheetUrl = MoveApp.getClass.getResource("/stylesheets/style.css").toExternalForm
 
-    val fxmlLoader = new FXMLLoader(MoveApp.getClass.getResource("/de/thm/move/views/move.fxml"))
-    val bundle = ResourceBundle.getBundle("fontawesome")
+    val fxmlLoader = new FXMLLoader(MoveApp.getClass.getResource("/fxml/move.fxml"))
+    val bundle = ResourceBundle.getBundle("fonts/fontawesome")
     fxmlLoader.setResources(bundle)
     val mainViewRoot: Parent = fxmlLoader.load()   
     val scene = new Scene(mainViewRoot)
