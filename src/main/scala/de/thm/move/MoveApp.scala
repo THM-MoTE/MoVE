@@ -4,8 +4,7 @@ import java.util.ResourceBundle
 import javafx.application.Application
 import javafx.scene.text.Font
 import javafx.stage.Stage
-import javafx.scene.Parent
-import javafx.scene.Scene
+import javafx.scene.{Cursor, Parent, Scene}
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.Label
 import javax.annotation.Resource

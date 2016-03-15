@@ -17,8 +17,9 @@
                   <ToggleGroup fx:id="btnGroup" />
                </toggleGroup>
             </ToggleButton>
-            <ToggleButton fx:id="line_btn" mnemonicParsing="false" onAction="#onLineClicked" styleClass="toolbar-button" text="line" toggleGroup="$btnGroup" />
+            <ToggleButton fx:id="line_btn" mnemonicParsing="false" onAction="#onLineClicked" styleClass="toolbar-button" text="%fa.minus" toggleGroup="$btnGroup" />
             <ToggleButton fx:id="rectangle_btn" mnemonicParsing="false" onAction="#onRectangleClicked" styleClass="toolbar-button" text="%fa.square-o" toggleGroup="$btnGroup" />
+            <ToggleButton fx:id="polygon_btn" mnemonicParsing="false" onAction="#onPolygonClicked" styleClass="toolbar-button" text="%fa.pencil-square-o" toggleGroup="$btnGroup" />
             <ToggleButton fx:id="circle_btn" mnemonicParsing="false" onAction="#onCircleClicked" styleClass="toolbar-button" text="%fa.circle-o" toggleGroup="$btnGroup" />
         </items>
       </ToolBar>

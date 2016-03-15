@@ -5,6 +5,7 @@ import java.util.ResourceBundle
 import javafx.collections.FXCollections
 import javafx.event.ActionEvent
 import javafx.fxml.{Initializable, FXML}
+import javafx.scene.Cursor
 import javafx.scene.canvas.{GraphicsContext, Canvas}
 import javafx.scene.control._
 import javafx.scene.input.MouseEvent
@@ -12,7 +13,6 @@ import javafx.scene.paint.Color
 import collection.JavaConversions._
 
 import de.thm.move.models.SelectedShape
-import de.thm.move.models.SelectedShape.SelectedShape
 import de.thm.move.models.SelectedShape.SelectedShape
 import implicits.FxHandlerImplicits._
 
@@ -35,12 +35,13 @@ class MoveCtrl extends Initializable {
   private val shapeBtnsToSelectedShapes = Map(
       "rectangle_btn" -> SelectedShape.Rectangle,
       "circle_btn" -> SelectedShape.Circle,
-      "line_btn" -> SelectedShape.Line
+      "line_btn" -> SelectedShape.Line,
+      "polygon_btn" -> SelectedShape.Polygon
     )
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     fillColorPicker.setValue(Color.BLACK)
-    strokeColorPicker.setValue(Color.WHITE)
+    strokeColorPicker.setValue(Color.BLACK)
 
     val sizesList:java.util.List[Int] = (8 until 72 by 2).toList
     borderThicknessChooser.setItems(FXCollections.observableArrayList(sizesList))
@@ -66,43 +67,20 @@ class MoveCtrl extends Initializable {
   }
 
   @FXML
-  def onPointerClicked(e:ActionEvent): Unit = {
-    //println( btnGroup.getSelectedToggle )
-    println("pointer clicked")
-  }
-
-
+  def onPointerClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.DEFAULT)
   @FXML
-  def onCircleClicked(e:ActionEvent): Unit = {
-//    drawColored { canvas =>
-//      canvas.fillOval(10, 60, 30, 30)
-//    }
-//
-//    println( btnGroup.getSelectedToggle )
-    println("Circle clicked")
-  }
-  
+  def onCircleClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.CROSSHAIR)
   @FXML
-  def onRectangleClicked(e:ActionEvent): Unit = {
-//    drawColored { canvas =>
-//      canvas.fillRect(0, 0, 20, 20)
-//    }
-//    println( btnGroup.getSelectedToggle )
-    println("rect clicked")
-  }
-
+  def onRectangleClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.CROSSHAIR)
   @FXML
-  def onLineClicked(e:ActionEvent): Unit = {
-//    drawColored { canvas =>
-//      canvas.strokeLine(5,5, 10,100)
-//    }
-
-    println("line clicked")
-  }
+  def onLineClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.CROSSHAIR)
+  @FXML
+  def onPolygonClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.CROSSHAIR)
 
   private def getStrokeColor: Color = strokeColorPicker.getValue
   private def getFillColor: Color = fillColorPicker.getValue
   private def selectedThickness: Int = borderThicknessChooser.getSelectionModel.getSelectedItem
+  private def changeDrawingCursor(c:Cursor): Unit = mainCanvas.setCursor(c)
 
   private def drawColored[A](fn: GraphicsContext => A): A = {
     val context = mainCanvas.getGraphicsContext2D
@@ -125,6 +103,7 @@ class MoveCtrl extends Initializable {
           val width = endX - startX
           val height = endY - startY
           canvas.fillRect(startX, startY, width, height)
+        case SelectedShape.Polygon =>
         case SelectedShape.Circle =>
           val width = endX - startX
           val height = endY - startY
