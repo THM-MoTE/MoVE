@@ -21,16 +21,16 @@ class MoveCtrl extends Initializable {
   type Point = (Double,Double)
 
   @FXML
-  private var mainCanvas: Canvas = _
+  var mainCanvas: Canvas = _
   @FXML
-  private var btnGroup: ToggleGroup = _
+  var btnGroup: ToggleGroup = _
   @FXML
-  private var fillColorPicker: ColorPicker = _
+  var fillColorPicker: ColorPicker = _
   @FXML
-  private var strokeColorPicker: ColorPicker = _
+  var strokeColorPicker: ColorPicker = _
 
   @FXML
-  private var borderThicknessChooser: ChoiceBox[Int] = _
+  var borderThicknessChooser: ChoiceBox[Int] = _
 
   private val shapeBtnsToSelectedShapes = Map(
       "rectangle_btn" -> SelectedShape.Rectangle,
@@ -43,28 +43,64 @@ class MoveCtrl extends Initializable {
     fillColorPicker.setValue(Color.BLACK)
     strokeColorPicker.setValue(Color.BLACK)
 
-    val sizesList:java.util.List[Int] = (8 until 72 by 2).toList
+    val sizesList:java.util.List[Int] = (1 until 20).toList
     borderThicknessChooser.setItems(FXCollections.observableArrayList(sizesList))
     borderThicknessChooser.getSelectionModel.selectFirst()
 
      var startX = -1.0
      var startY = -1.0
 
+      var points = List[Point]()
+
     val drawHandler = { mouseEvent:MouseEvent =>
-      if (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED) {
-        startX = mouseEvent.getX()
-        startY = mouseEvent.getY()
-      } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
-        val endX = mouseEvent.getX()
-        val endY = mouseEvent.getY()
-        drawCustomShape(startX -> startY, endX -> endY)
+      selectedShape match {
+        case s@Some(SelectedShape.Polygon) =>
+          if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
+            val newX = mouseEvent.getX()
+            val newY = mouseEvent.getY()
+
+            points.find {
+              case (x,y) => Math.abs(x-newX)<=10 && Math.abs(y-newY)<=10
+            } match {
+              case Some(_) =>
+                drawColored { context =>
+                  val size = points.length
+                  val xs = points.map(_._1).toArray
+                  val ys = points.map(_._2).toArray
+                  context.fillPolygon(xs, ys, size)
+                }
+                points = List()
+              case None =>
+                points = (newX,newY) :: points
+
+                drawColored { canvas =>
+                  canvas.fillOval(newX, newY, 4,4)
+                }
+            }
+          }
+        case Some(_) =>
+          if (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED) {
+            points = (mouseEvent.getX(), mouseEvent.getY()) :: points
+          } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
+            points = (mouseEvent.getX(), mouseEvent.getY()) :: points
+
+            points match {
+              case end::start::_ => drawCustomShape(start, end)
+            }
+          }
+        case _ =>
+        //ignore
       }
     }
 
     mainCanvas.setOnMousePressed(drawHandler)
+    mainCanvas.setOnMouseClicked(drawHandler)
     mainCanvas.setOnMouseReleased(drawHandler)
 
   }
+
+
+  private def drawPoint(x:Point):Unit = mainCanvas.getGraphicsContext2D.strokeOval(x._1, x._2, 5,5)
 
   @FXML
   def onPointerClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.DEFAULT)
@@ -98,6 +134,7 @@ class MoveCtrl extends Initializable {
     drawColored { canvas =>
       val (startX, startY) = start
       val (endX, endY) = end
+      println(selectedShape)
       selectedShape.foreach {
         case SelectedShape.Rectangle =>
           val width = endX - startX
@@ -108,7 +145,10 @@ class MoveCtrl extends Initializable {
           val width = endX - startX
           val height = endY - startY
           canvas.fillOval(startX, startY, width, height)
-        case SelectedShape.Line => canvas.strokeLine(startX, startY, endX, endY)
+        case SelectedShape.Line =>
+          val thickness = borderThicknessChooser.getSelectionModel.getSelectedItem
+          canvas.setLineWidth(thickness)
+          canvas.strokeLine(startX, startY, endX, endY)
       }
 
     }
