@@ -37,11 +37,12 @@ class DrawPanel(callback : InputEvent => Unit) extends Pane {
     drawShape(rectangle)
   }
 
-  def drawLine(start:Point, end:Point)(fillColor:Color, strokeColor:Color):Unit = {
+  def drawLine(start:Point, end:Point, strokeSize:Int)(fillColor:Color, strokeColor:Color):Unit = {
     val (startX, startY) = start
     val (endX, endY) = end
     val line = new Line(startX,startY, endX,endY)
     colorizeShape(line, fillColor, strokeColor)
+    line.setStrokeWidth(strokeSize.toDouble)
     drawShape(line)
   }
 
