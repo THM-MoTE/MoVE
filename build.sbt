@@ -1,3 +1,5 @@
+unmanagedJars in Compile += Attributed.blank(file(System.getenv("JAVA_HOME") + "/jre/lib/ext/jfxrt.jar"))
+
 //fork := true
 
 lazy val root = (project in file(".")).
