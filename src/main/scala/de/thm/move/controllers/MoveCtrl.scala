@@ -88,8 +88,7 @@ class MoveCtrl extends Initializable {
             }
             points = List()
           }
-        case _ =>
-        //ignore
+        case _ => //ignore
       }
     }
 
@@ -108,25 +107,35 @@ class MoveCtrl extends Initializable {
     if(selectedShape.isEmpty) {
       ev match {
         case mv: MouseEvent =>
+          //move an element
           if (mv.getEventType == MouseEvent.MOUSE_PRESSED) {
+            //save original coordinates
             orgSceneX = mv.getSceneX
             orgSceneY = mv.getSceneY
-            orgTransX = mv.getSource.asInstanceOf[Shape].getTranslateX
-            orgTransY = mv.getSource.asInstanceOf[Shape].getTranslateY
+            mv.getSource match {
+              case s:Shape =>
+                orgTransX = s.getTranslateX
+                orgTransY = s.getTranslateY
+              case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
+            }
           } else if (mv.getEventType == MouseEvent.MOUSE_DRAGGED) {
+            //translate from original to new position
             val offsetX = mv.getSceneX() - orgSceneX
             val offsetY = mv.getSceneY() - orgSceneY
             val newX = orgTransX + offsetX
             val newY = orgTransY + offsetY
-
-            mv.getSource.asInstanceOf[Shape].setTranslateX(newX)
-            mv.getSource.asInstanceOf[Shape].setTranslateY(newY)
+            mv.getSource match {
+              case s:Shape =>
+               s.setTranslateX(newX)
+               s.setTranslateY(newY)
+              case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
+            }
           }
       }
     }
   }
 
-  private def drawPoint(x:Point):Unit = drawPanel.drawCircle(x, 5.0, 5.0)(getFillColor, getStrokeColor)
+  private def drawAnchor(x:Point):Unit = drawPanel.drawCircle(x, 5.0, 5.0)(getFillColor, getStrokeColor)
 
   @FXML
   def onPointerClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.DEFAULT)
@@ -165,7 +174,6 @@ class MoveCtrl extends Initializable {
           drawPanel.drawCircle(start, width, height)(getFillColor, getStrokeColor)
         case SelectedShape.Line =>
           val thickness = borderThicknessChooser.getSelectionModel.getSelectedItem
-          //drawPanel.setLineWidth(thickness)
           drawPanel.drawLine(start, end)(getFillColor, getStrokeColor)
       }
   }
