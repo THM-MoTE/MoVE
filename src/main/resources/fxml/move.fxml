@@ -33,7 +33,9 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Delete" />
+                        <MenuItem mnemonicParsing="false" text="Undo" />
+                        <MenuItem mnemonicParsing="false" text="Redo" />
+                        <MenuItem mnemonicParsing="false" text="Insert Bitmap" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
@@ -45,7 +47,8 @@
             </MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
                <items>
-                  <ChoiceBox fx:id="borderThicknessChooser" prefWidth="150.0" />
+                  <Label text="%fa.minus" />
+                  <ChoiceBox fx:id="borderThicknessChooser" />
                   <Label styleClass="toolbar-button" text="%fa.square" />
                   <ColorPicker fx:id="fillColorPicker" />
                   <Label styleClass="toolbar-button" text="%fa.square-o" />
