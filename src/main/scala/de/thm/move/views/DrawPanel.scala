@@ -52,11 +52,28 @@ class DrawPanel(callback : InputEvent => Unit) extends Pane {
     drawShape(circle)
   }
 
+  def drawAnchor(point:Point)(fillColor:Color):Unit = {
+    val (x,y) = point
+    drawShape(new Anchor(x,y,fillColor))
+  }
+
   def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color):Unit = {
     val singlePoints = points.flatMap { case (x,y) => List(x,y) }
     val polygon = new Polygon(singlePoints:_*)
     colorizeShape(polygon, fillColor, strokeColor)
+    removeDrawnAchors()
     drawShape(polygon)
+  }
+
+  private def removeDrawnAchors():Unit = {
+    println(shapes)
+    //get indexes of drawn anchors
+    val removingAnchors = shapes.takeWhile( _.isInstanceOf[Anchor] )
+    //remove from shapelist
+    shapes = shapes.dropWhile(_.isInstanceOf[Anchor])
+
+    //remove from painting area
+    this.getChildren.removeAll(removingAnchors:_*)
   }
 
 }

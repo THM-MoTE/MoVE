@@ -74,7 +74,7 @@ class MoveCtrl extends Initializable {
                 points = List()
               case None =>
                 points = (newX, newY) :: points
-                drawPanel.drawCircle(points.head, 4,4)(getFillColor, getStrokeColor)
+                drawPanel.drawAnchor(points.head)(getFillColor)
             }
           }
         case Some(_) =>
@@ -135,7 +135,7 @@ class MoveCtrl extends Initializable {
     }
   }
 
-  private def drawAnchor(x:Point):Unit = drawPanel.drawCircle(x, 5.0, 5.0)(getFillColor, getStrokeColor)
+  private def drawAnchor(x:Point):Unit = drawPanel.drawAnchor(x)(getFillColor)
 
   @FXML
   def onPointerClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.DEFAULT)
