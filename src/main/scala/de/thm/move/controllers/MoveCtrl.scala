@@ -54,15 +54,16 @@ class MoveCtrl extends Initializable {
 
     val drawHandler = { mouseEvent:MouseEvent =>
       selectedShape match {
-        case s@Some(SelectedShape.Polygon) =>
+        case Some(SelectedShape.Polygon) =>
           if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
             val newX = mouseEvent.getX()
             val newY = mouseEvent.getY()
-
+            //test if polygon is finish by checking if last clicked position is already in the coordinate list
             points.find {
-              case (x,y) => Math.abs(x-newX)<=10 && Math.abs(y-newY)<=10
+              case (x, y) => Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10
             } match {
               case Some(_) =>
+                //draw the polygon
                 drawColored { context =>
                   val size = points.length
                   val xs = points.map(_._1).toArray
@@ -71,10 +72,10 @@ class MoveCtrl extends Initializable {
                 }
                 points = List()
               case None =>
-                points = (newX,newY) :: points
+                points = (newX, newY) :: points
 
                 drawColored { canvas =>
-                  canvas.fillOval(newX, newY, 4,4)
+                  canvas.fillOval(newX, newY, 4, 4)
                 }
             }
           }
@@ -87,6 +88,7 @@ class MoveCtrl extends Initializable {
             points match {
               case end::start::_ => drawCustomShape(start, end)
             }
+            points = List()
           }
         case _ =>
         //ignore
