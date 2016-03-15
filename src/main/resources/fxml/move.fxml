@@ -7,7 +7,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.MoveCtrl">
    <left>
-      <ToolBar orientation="VERTICAL" prefHeight="371.0" prefWidth="140.0" BorderPane.alignment="CENTER">
+      <ToolBar orientation="VERTICAL" BorderPane.alignment="CENTER">
         <items>
             <ToggleButton fx:id="line_pointer" mnemonicParsing="false" onAction="#onPointerClicked" styleClass="toolbar-button" text="%fa.mouse-pointer">
                <toggleGroup>
