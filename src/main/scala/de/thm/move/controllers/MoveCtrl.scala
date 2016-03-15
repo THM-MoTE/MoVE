@@ -8,9 +8,10 @@ import javafx.fxml.{Initializable, FXML}
 import javafx.scene.Cursor
 import javafx.scene.canvas.{GraphicsContext, Canvas}
 import javafx.scene.control._
-import javafx.scene.input.MouseEvent
+import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.layout.{StackPane, HBox, Pane}
 import javafx.scene.paint.Color
+import javafx.scene.shape.{Rectangle, Shape}
 import de.thm.move.views.DrawPanel
 
 import collection.JavaConversions._
@@ -34,7 +35,7 @@ class MoveCtrl extends Initializable {
 
   @FXML
   var drawStub: StackPane = _
-  private lazy val drawPanel = new DrawPanel
+  private lazy val drawPanel = new DrawPanel(shapeInputHandler)
 
   private val shapeBtnsToSelectedShapes = Map(
       "rectangle_btn" -> SelectedShape.Rectangle,
@@ -98,6 +99,32 @@ class MoveCtrl extends Initializable {
 
   }
 
+  private var orgSceneX = -1.0
+  private var orgSceneY = -1.0
+  private var orgTransX = -1.0
+  private var orgTransY = -1.0
+
+  def shapeInputHandler(ev:InputEvent): Unit = {
+    if(selectedShape.isEmpty) {
+      ev match {
+        case mv: MouseEvent =>
+          if (mv.getEventType == MouseEvent.MOUSE_PRESSED) {
+            orgSceneX = mv.getSceneX
+            orgSceneY = mv.getSceneY
+            orgTransX = mv.getSource.asInstanceOf[Shape].getTranslateX
+            orgTransY = mv.getSource.asInstanceOf[Shape].getTranslateY
+          } else if (mv.getEventType == MouseEvent.MOUSE_DRAGGED) {
+            val offsetX = mv.getSceneX() - orgSceneX
+            val offsetY = mv.getSceneY() - orgSceneY
+            val newX = orgTransX + offsetX
+            val newY = orgTransY + offsetY
+
+            mv.getSource.asInstanceOf[Shape].setTranslateX(newX)
+            mv.getSource.asInstanceOf[Shape].setTranslateY(newY)
+          }
+      }
+    }
+  }
 
   private def drawPoint(x:Point):Unit = drawPanel.drawCircle(x, 5.0, 5.0)(getFillColor, getStrokeColor)
 

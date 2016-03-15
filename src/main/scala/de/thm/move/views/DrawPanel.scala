@@ -1,24 +1,28 @@
 package de.thm.move.views
 
+import javafx.event.{EventHandler, EventType}
 import javafx.scene.Cursor
 import javafx.scene.control.Label
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape._
-
+import javafx.scene.input.{InputEvent, MouseDragEvent, MouseEvent}
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes._
 
-class DrawPanel extends Pane {
+class DrawPanel(callback : InputEvent => Unit) extends Pane {
   private var shapes = List[Shape]()
-
-  super.setStyle("-fx-background-color:black")
 
   this.setMaxWidth(Double.MaxValue)
   this.setMaxHeight(Double.MaxValue)
-  super.getChildren.add(new Label("lökajsdflökjasdf"))
 
   def drawShape(s:Shape):Unit = {
+    s.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
+      override def handle(event: InputEvent): Unit = callback(event)
+    })
+
     super.getChildren.add(s)
+
     shapes = s :: shapes
   }
 
@@ -31,6 +35,7 @@ class DrawPanel extends Pane {
     val (x,y) = point
     val rectangle = new Rectangle(x,y,width,height)
     colorizeShape(rectangle, fillColor, strokeColor)
+
     drawShape(rectangle)
   }
 
