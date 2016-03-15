@@ -9,19 +9,19 @@ import javafx.scene.Cursor
 import javafx.scene.canvas.{GraphicsContext, Canvas}
 import javafx.scene.control._
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.{StackPane, HBox, Pane}
 import javafx.scene.paint.Color
+import de.thm.move.views.DrawPanel
+
 import collection.JavaConversions._
 
 import de.thm.move.models.SelectedShape
+import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape.SelectedShape
 import implicits.FxHandlerImplicits._
 
 class MoveCtrl extends Initializable {
 
-  type Point = (Double,Double)
-
-  @FXML
-  var mainCanvas: Canvas = _
   @FXML
   var btnGroup: ToggleGroup = _
   @FXML
@@ -32,6 +32,10 @@ class MoveCtrl extends Initializable {
   @FXML
   var borderThicknessChooser: ChoiceBox[Int] = _
 
+  @FXML
+  var drawStub: StackPane = _
+  private lazy val drawPanel = new DrawPanel
+
   private val shapeBtnsToSelectedShapes = Map(
       "rectangle_btn" -> SelectedShape.Rectangle,
       "circle_btn" -> SelectedShape.Circle,
@@ -40,6 +44,7 @@ class MoveCtrl extends Initializable {
     )
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
+    drawStub.getChildren.add(drawPanel)
     fillColorPicker.setValue(Color.BLACK)
     strokeColorPicker.setValue(Color.BLACK)
 
@@ -59,25 +64,25 @@ class MoveCtrl extends Initializable {
             val newX = mouseEvent.getX()
             val newY = mouseEvent.getY()
             //test if polygon is finish by checking if last clicked position is already in the coordinate list
-            points.find {
-              case (x, y) => Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10
-            } match {
-              case Some(_) =>
-                //draw the polygon
-                drawColored { context =>
-                  val size = points.length
-                  val xs = points.map(_._1).toArray
-                  val ys = points.map(_._2).toArray
-                  context.fillPolygon(xs, ys, size)
-                }
-                points = List()
-              case None =>
-                points = (newX, newY) :: points
-
-                drawColored { canvas =>
-                  canvas.fillOval(newX, newY, 4, 4)
-                }
-            }
+//            points.find {
+//              case (x, y) => Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10
+//            } match {
+//              case Some(_) =>
+//                //draw the polygon
+//                drawColored { context =>
+//                  val size = points.length
+//                  val xs = points.map(_._1).toArray
+//                  val ys = points.map(_._2).toArray
+//                  context.fillPolygon(xs, ys, size)
+//                }
+//                points = List()
+//              case None =>
+//                points = (newX, newY) :: points
+//
+//                drawColored { canvas =>
+//                  canvas.fillOval(newX, newY, 4, 4)
+//                }
+//            }
           }
         case Some(_) =>
           if (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED) {
@@ -95,14 +100,14 @@ class MoveCtrl extends Initializable {
       }
     }
 
-    mainCanvas.setOnMousePressed(drawHandler)
-    mainCanvas.setOnMouseClicked(drawHandler)
-    mainCanvas.setOnMouseReleased(drawHandler)
+    drawPanel.setOnMousePressed(drawHandler)
+    drawPanel.setOnMouseClicked(drawHandler)
+    drawPanel.setOnMouseReleased(drawHandler)
 
   }
 
 
-  private def drawPoint(x:Point):Unit = mainCanvas.getGraphicsContext2D.strokeOval(x._1, x._2, 5,5)
+  private def drawPoint(x:Point):Unit = drawPanel.drawCircle(x, 5.0, 5.0)(getFillColor, getStrokeColor)
 
   @FXML
   def onPointerClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.DEFAULT)
@@ -118,14 +123,7 @@ class MoveCtrl extends Initializable {
   private def getStrokeColor: Color = strokeColorPicker.getValue
   private def getFillColor: Color = fillColorPicker.getValue
   private def selectedThickness: Int = borderThicknessChooser.getSelectionModel.getSelectedItem
-  private def changeDrawingCursor(c:Cursor): Unit = mainCanvas.setCursor(c)
-
-  private def drawColored[A](fn: GraphicsContext => A): A = {
-    val context = mainCanvas.getGraphicsContext2D
-    context.setFill(getFillColor)
-    context.setStroke(getStrokeColor)
-    fn(context)
-  }
+  private def changeDrawingCursor(c:Cursor): Unit = drawPanel.setCursor(c)
 
   private def selectedShape: Option[SelectedShape] = {
     val btn = btnGroup.getSelectedToggle.asInstanceOf[ToggleButton]
@@ -133,26 +131,23 @@ class MoveCtrl extends Initializable {
   }
 
   private def drawCustomShape(start:Point, end:Point) = {
-    drawColored { canvas =>
       val (startX, startY) = start
       val (endX, endY) = end
-      println(selectedShape)
+
       selectedShape.foreach {
         case SelectedShape.Rectangle =>
           val width = endX - startX
           val height = endY - startY
-          canvas.fillRect(startX, startY, width, height)
+          drawPanel.drawRectangle(start, width, height)(getFillColor, getStrokeColor)
         case SelectedShape.Polygon =>
         case SelectedShape.Circle =>
           val width = endX - startX
           val height = endY - startY
-          canvas.fillOval(startX, startY, width, height)
+          drawPanel.drawCircle(start, width, height)(getFillColor, getStrokeColor)
         case SelectedShape.Line =>
           val thickness = borderThicknessChooser.getSelectionModel.getSelectedItem
-          canvas.setLineWidth(thickness)
-          canvas.strokeLine(startX, startY, endX, endY)
+          //drawPanel.setLineWidth(thickness)
+          drawPanel.drawLine(start, end)(getFillColor, getStrokeColor)
       }
-
-    }
   }
 }
