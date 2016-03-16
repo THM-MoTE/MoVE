@@ -1,5 +1,6 @@
 package de.thm.move.views
 
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.{ObservableValue, ChangeListener}
 import javafx.event.{EventHandler, EventType}
 import javafx.scene.Cursor
@@ -97,6 +98,29 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     val polygon = new Polygon(singlePoints:_*)
     colorizeShape(polygon, fillColor, strokeColor)
     removeDrawnAchors()
+
+    //create drag-drop anchors
+    val observablePoints = polygon.getPoints
+    for(i <- 0 until observablePoints.size by 2) {
+      val xIdx = i
+      val yIdx = i+1
+      val xProperty = new SimpleDoubleProperty(observablePoints.get(xIdx))
+      val yProperty = new SimpleDoubleProperty(observablePoints.get(yIdx))
+
+      xProperty.addListener({ (ov: ObservableValue[_ <: Number], oldX: Number, newX: Number) =>
+        val _ = observablePoints.set(xIdx, newX.asInstanceOf[Double])
+      })
+      yProperty.addListener({ (ov: ObservableValue[_ <: Number], oldX: Number, newX: Number) =>
+        val _ = observablePoints.set(yIdx, newX.asInstanceOf[Double])
+      })
+
+      val anchor = new Anchor(xProperty.get(), yProperty.get(), Color.RED)
+      xProperty.bind(anchor.centerXProperty())
+      yProperty.bind(anchor.centerYProperty())
+      bindAnchorsTranslationToShapesLayout(polygon)(anchor)
+      drawShape(anchor)
+    }
+
     drawShape(polygon)
   }
 

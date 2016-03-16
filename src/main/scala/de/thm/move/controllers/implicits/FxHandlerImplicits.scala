@@ -14,6 +14,6 @@ object FxHandlerImplicits {
   }
 
   implicit def changeListener[A](fn: (ObservableValue[_<:A], A, A) => Unit) = new ChangeListener[A] {
-    override def changed(observable: ObservableValue[_ <: A], oldValue: A, newValue: A): Unit = fn(observable, oldValue, newValue)
+    override def changed(observable: ObservableValue[_<: A], oldValue: A, newValue: A): Unit = fn(observable, oldValue, newValue)
   }
 }
