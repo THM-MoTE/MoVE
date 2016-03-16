@@ -19,8 +19,8 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
 
   def drawShape(s:Shape):Unit = {
     s.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
-    override def handle(event: InputEvent): Unit = inputEventHandler(event)
-  })
+      override def handle(event: InputEvent): Unit = inputEventHandler(event)
+    })
 
     super.getChildren.add(s)
 
