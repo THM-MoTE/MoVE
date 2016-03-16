@@ -37,6 +37,17 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     val rectangle = new Rectangle(x,y,width,height)
     colorizeShape(rectangle, fillColor, strokeColor)
 
+    //create resize anchors
+    val topLeftAnchor = new Anchor(x,y, fillColor)
+    val topRightAnchor = new Anchor(x+width,y, fillColor)
+    val bottomLeftAnchor = new Anchor(x,y+height, fillColor)
+    val bottomRightAnchor = new Anchor(x+width, y+height, fillColor)
+
+    drawShape(topLeftAnchor)
+    drawShape(topRightAnchor)
+    drawShape(bottomLeftAnchor)
+    drawShape(bottomRightAnchor)
+
     drawShape(rectangle)
   }
 
@@ -56,6 +67,7 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     startAnchor.centerYProperty().bindBidirectional(line.startYProperty())
     endAnchor.centerXProperty().bindBidirectional(line.endXProperty())
     endAnchor.centerYProperty().bindBidirectional(line.endYProperty())
+
     drawShape(startAnchor)
     drawShape(endAnchor)
 
