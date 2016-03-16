@@ -1,14 +1,13 @@
 package de.thm.move.views
 
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.value.{ObservableValue, ChangeListener}
-import javafx.event.{EventHandler, EventType}
-import javafx.scene.Cursor
-import javafx.scene.control.Label
+import javafx.beans.value.{ObservableValue}
+import javafx.event.{EventHandler}
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape._
-import javafx.scene.input.{InputEvent, MouseDragEvent, MouseEvent}
+import javafx.scene.image.{ImageView, Image}
+import javafx.scene.input.{InputEvent}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes._
 
@@ -17,6 +16,7 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
 
   this.setMaxWidth(Double.MaxValue)
   this.setMaxHeight(Double.MaxValue)
+
 
   def drawShape(s:Shape):Unit = {
     s.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
@@ -37,6 +37,7 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
 
   def drawRectangle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):Unit = {
     val (x,y) = point
+/*
     val rectangle = new Rectangle(x,y,width,height)
     colorizeShape(rectangle, fillColor, strokeColor)
 
@@ -52,6 +53,11 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     bindAnchorsTranslationToShapesLayout(rectangle)(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
     drawShapes(rectangle, topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
+*/
+    val topRightP = (x+width, y)
+    val bottomLeftP = (x, y-height)
+    val bottomRightP = (x+width, y-height)
+    drawPolygon(List(point, topRightP, bottomRightP, bottomLeftP).reverse)(fillColor, strokeColor)
   }
 
   def drawLine(start:Point, end:Point, strokeSize:Int)(fillColor:Color, strokeColor:Color):Unit = {
