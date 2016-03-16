@@ -43,7 +43,7 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
 
   def drawRectangle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):Unit = {
     val (x,y) = point
-/*
+
     val rectangle = new Rectangle(x,y,width,height)
     colorizeShape(rectangle, fillColor, strokeColor)
 
@@ -59,11 +59,6 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     bindAnchorsTranslationToShapesLayout(rectangle)(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
     drawShapes(rectangle, topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
-*/
-    val topRightP = (x+width, y)
-    val bottomLeftP = (x, y-height)
-    val bottomRightP = (x+width, y-height)
-    drawPolygon(List(point, topRightP, bottomRightP, bottomLeftP).reverse)(fillColor, strokeColor)
   }
 
   def drawLine(start:Point, end:Point, strokeSize:Int)(fillColor:Color, strokeColor:Color):Unit = {
