@@ -144,8 +144,8 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
 
   private def bindAnchorsTranslationToShapesLayout(shape:Shape)(anchors:Anchor*): Unit = {
     anchors.foreach { anchor =>
-      anchor.translateXProperty().bind(shape.layoutXProperty())
-      anchor.translateYProperty().bind(shape.layoutYProperty())
+      anchor.layoutXProperty().bind(shape.layoutXProperty())
+      anchor.layoutYProperty().bind(shape.layoutYProperty())
     }
   }
 }
