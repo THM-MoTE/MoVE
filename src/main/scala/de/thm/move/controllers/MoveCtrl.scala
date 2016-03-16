@@ -53,9 +53,6 @@ class MoveCtrl extends Initializable {
     borderThicknessChooser.setItems(FXCollections.observableArrayList(sizesList))
     borderThicknessChooser.getSelectionModel.selectFirst()
 
-     var startX = -1.0
-     var startY = -1.0
-
       var points = List[Point]()
 
     val drawHandler = { mouseEvent:MouseEvent =>
