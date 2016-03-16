@@ -99,41 +99,46 @@ class MoveCtrl extends Initializable {
   private var deltaX = -1.0
   private var deltaY = -1.0
 
+  def moveElement(mv:MouseEvent): Unit = {
+    //move selected element
+    mv.getEventType match {
+      case MouseEvent.MOUSE_PRESSED =>
+        //save original coordinate
+        println("old: "+mv.getSource)
+        println(mv.getSource.asInstanceOf[Shape].getLayoutX)
+        println(mv.getSource.asInstanceOf[Shape].getLayoutY)
+        mv.getSource match {
+          case a:Anchor =>
+            deltaX = a.getCenterX - mv.getSceneX
+            deltaY = a.getCenterY - mv.getSceneY
+          case s:Shape =>
+            deltaX = s.getLayoutX - mv.getSceneX
+            deltaY = s.getLayoutY - mv.getSceneY
+          case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
+        }
+      case MouseEvent.MOUSE_DRAGGED =>
+        //translate from original to new position
+        mv.getSource match {
+          case a:Anchor =>
+            a.setCenterX(deltaX + mv.getSceneX)
+            a.setCenterY(deltaY + mv.getSceneY)
+          case s:Shape =>
+            s.setLayoutX(deltaX + mv.getSceneX)
+            s.setLayoutY(deltaY + mv.getSceneY)
+          case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
+        }
+      case MouseEvent.MOUSE_RELEASED =>
+        println("new: " + mv.getSource)
+        println(mv.getSource.asInstanceOf[Shape].getLayoutX)
+        println(mv.getSource.asInstanceOf[Shape].getLayoutY)
+      case _ => //unknown event
+    }
+  }
+
   def shapeInputHandler(ev:InputEvent): Unit = {
     if(selectedShape.isEmpty) {
       ev match {
-        case mv: MouseEvent =>
-          //move an element
-          if (mv.getEventType == MouseEvent.MOUSE_PRESSED) {
-            //save original coordinate
-            println("old: "+mv.getSource)
-            println(mv.getSource.asInstanceOf[Shape].getLayoutX)
-            println(mv.getSource.asInstanceOf[Shape].getLayoutY)
-            mv.getSource match {
-              case a:Anchor =>
-                deltaX = a.getCenterX - mv.getSceneX
-                deltaY = a.getCenterY - mv.getSceneY
-              case s:Shape =>
-                deltaX = s.getLayoutX - mv.getSceneX
-                deltaY = s.getLayoutY - mv.getSceneY
-              case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
-            }
-          } else if (mv.getEventType == MouseEvent.MOUSE_DRAGGED) {
-            //translate from original to new position
-            mv.getSource match {
-              case a:Anchor =>
-                a.setCenterX(deltaX + mv.getSceneX)
-                a.setCenterY(deltaY + mv.getSceneY)
-              case s:Shape =>
-               s.setLayoutX(deltaX + mv.getSceneX)
-                s.setLayoutY(deltaY + mv.getSceneY)
-              case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
-            }
-          } else if(mv.getEventType == MouseEvent.MOUSE_RELEASED) {
-            println("new: " + mv.getSource)
-            println(mv.getSource.asInstanceOf[Shape].getLayoutX)
-            println(mv.getSource.asInstanceOf[Shape].getLayoutY)
-          }
+        case mv: MouseEvent => moveElement(mv)
       }
     }
   }
