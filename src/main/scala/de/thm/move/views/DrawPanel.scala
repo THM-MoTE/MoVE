@@ -120,10 +120,10 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
       val yProperty = new SimpleDoubleProperty(observablePoints.get(yIdx))
 
       xProperty.addListener({ (ov: ObservableValue[_ <: Number], oldX: Number, newX: Number) =>
-        val _ = observablePoints.set(xIdx, newX.asInstanceOf[Double])
+        val _ = observablePoints.set(xIdx, newX.doubleValue())
       })
       yProperty.addListener({ (ov: ObservableValue[_ <: Number], oldX: Number, newX: Number) =>
-        val _ = observablePoints.set(yIdx, newX.asInstanceOf[Double])
+        val _ = observablePoints.set(yIdx, newX.doubleValue())
       })
 
       val anchor = new Anchor(xProperty.get(), yProperty.get(), Color.RED)
