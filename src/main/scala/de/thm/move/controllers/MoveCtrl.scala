@@ -19,6 +19,7 @@ import collection.JavaConversions._
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape.SelectedShape
+import de.thm.move.views.Anchor
 import implicits.FxHandlerImplicits._
 
 class MoveCtrl extends Initializable {
@@ -95,10 +96,8 @@ class MoveCtrl extends Initializable {
 
   }
 
-  private var orgSceneX = -1.0
-  private var orgSceneY = -1.0
-  private var orgTransX = -1.0
-  private var orgTransY = -1.0
+  private var deltaX = -1.0
+  private var deltaY = -1.0
 
   def shapeInputHandler(ev:InputEvent): Unit = {
     if(selectedShape.isEmpty) {
@@ -106,25 +105,19 @@ class MoveCtrl extends Initializable {
         case mv: MouseEvent =>
           //move an element
           if (mv.getEventType == MouseEvent.MOUSE_PRESSED) {
-            //save original coordinates
-            orgSceneX = mv.getSceneX
-            orgSceneY = mv.getSceneY
+            //save original coordinate
             mv.getSource match {
               case s:Shape =>
-                orgTransX = s.getTranslateX
-                orgTransY = s.getTranslateY
+                deltaX = s.getLayoutX - mv.getSceneX
+                deltaY = s.getLayoutY - mv.getSceneY
               case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
             }
           } else if (mv.getEventType == MouseEvent.MOUSE_DRAGGED) {
             //translate from original to new position
-            val offsetX = mv.getSceneX() - orgSceneX
-            val offsetY = mv.getSceneY() - orgSceneY
-            val newX = orgTransX + offsetX
-            val newY = orgTransY + offsetY
             mv.getSource match {
               case s:Shape =>
-               s.setTranslateX(newX)
-               s.setTranslateY(newY)
+               s.setLayoutX(deltaX + mv.getSceneX)
+                s.setLayoutY(deltaY + mv.getSceneY)
               case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
             }
           }
