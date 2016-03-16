@@ -45,6 +45,8 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     val bottomLeftAnchor = new Anchor(x,y+height, fillColor)
     val bottomRightAnchor = new Anchor(x+width, y+height, fillColor)
 
+    rectangle.widthProperty().bind(bottomRightAnchor.centerXProperty().subtract(x))
+    rectangle.heightProperty().bind(bottomRightAnchor.centerYProperty().subtract(y))
 
     bindAnchorsTranslationToShapesLayout(rectangle)(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
@@ -76,7 +78,13 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     val (x,y) = point
     val circle = new Ellipse(x,y, width, height)
     colorizeShape(circle, fillColor, strokeColor)
-    drawShape(circle)
+
+    val anchor = new Anchor(x,y, Color.WHITE)
+
+    circle.radiusXProperty().bind(anchor.centerXProperty())
+    circle.radiusYProperty().bind(anchor.centerYProperty())
+    bindAnchorsTranslationToShapesLayout(circle)(anchor)
+    drawShapes(circle, anchor)
   }
 
   def drawAnchor(point:Point)(fillColor:Color):Unit = {
