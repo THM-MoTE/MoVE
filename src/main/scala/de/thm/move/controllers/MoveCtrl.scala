@@ -106,6 +106,9 @@ class MoveCtrl extends Initializable {
           //move an element
           if (mv.getEventType == MouseEvent.MOUSE_PRESSED) {
             //save original coordinate
+            println("old: "+mv.getSource)
+            println(mv.getSource.asInstanceOf[Shape].getLayoutX)
+            println(mv.getSource.asInstanceOf[Shape].getLayoutY)
             mv.getSource match {
               case a:Anchor =>
                 deltaX = a.getCenterX - mv.getSceneX
@@ -126,6 +129,10 @@ class MoveCtrl extends Initializable {
                 s.setLayoutY(deltaY + mv.getSceneY)
               case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
             }
+          } else if(mv.getEventType == MouseEvent.MOUSE_RELEASED) {
+            println("new: " + mv.getSource)
+            println(mv.getSource.asInstanceOf[Shape].getLayoutX)
+            println(mv.getSource.asInstanceOf[Shape].getLayoutY)
           }
       }
     }

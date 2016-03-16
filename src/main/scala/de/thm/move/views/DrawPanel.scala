@@ -63,10 +63,15 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     val startAnchor = new Anchor(startX, startY, fillColor)
     val endAnchor = new Anchor(endX, endY, fillColor)
 
-    startAnchor.centerXProperty().bindBidirectional(line.startXProperty())
-    startAnchor.centerYProperty().bindBidirectional(line.startYProperty())
-    endAnchor.centerXProperty().bindBidirectional(line.endXProperty())
-    endAnchor.centerYProperty().bindBidirectional(line.endYProperty())
+    line.startXProperty().bind(startAnchor.centerXProperty())
+    line.startYProperty().bind(startAnchor.centerYProperty())
+    line.endXProperty().bind(endAnchor.centerXProperty())
+    line.endYProperty().bind(endAnchor.centerYProperty())
+
+    startAnchor.translateXProperty().bind(line.layoutXProperty())
+    startAnchor.translateYProperty().bind(line.layoutYProperty())
+    endAnchor.translateXProperty().bind(line.layoutXProperty())
+    endAnchor.translateYProperty().bind(line.layoutYProperty())
 
     drawShape(startAnchor)
     drawShape(endAnchor)
