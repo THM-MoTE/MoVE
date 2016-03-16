@@ -17,6 +17,12 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   this.setMaxWidth(Double.MaxValue)
   this.setMaxHeight(Double.MaxValue)
 
+  def drawImage(img:Image) = {
+    val view = new ImageView(img)
+    view.setPreserveRatio(true)
+    view.setFitWidth(200)
+    super.getChildren.add(view)
+  }
 
   def drawShape(s:Shape):Unit = {
     s.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {

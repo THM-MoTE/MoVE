@@ -8,10 +8,12 @@ import javafx.fxml.{Initializable, FXML}
 import javafx.scene.Cursor
 import javafx.scene.canvas.{GraphicsContext, Canvas}
 import javafx.scene.control._
+import javafx.scene.image.Image
 import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.layout.{StackPane, HBox, Pane}
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
+import javafx.stage.FileChooser
 import de.thm.move.views.DrawPanel
 
 import collection.JavaConversions._
@@ -145,6 +147,19 @@ class MoveCtrl extends Initializable {
 
   private def drawAnchor(x:Point):Unit = drawPanel.drawAnchor(x)(getFillColor)
 
+
+  @FXML
+  def onLoadBitmap(e:ActionEvent): Unit = {
+    val chooser = new FileChooser()
+    chooser.setTitle("Open bitmap")
+    val fileOp = Option(chooser.showOpenDialog(getWindow))
+    fileOp map { file =>
+      new Image(file.toURI.toString)
+    } foreach {
+      drawPanel.drawImage
+    }
+  }
+
   @FXML
   def onPointerClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.DEFAULT)
   @FXML
@@ -160,6 +175,7 @@ class MoveCtrl extends Initializable {
   private def getFillColor: Color = fillColorPicker.getValue
   private def selectedThickness: Int = borderThicknessChooser.getSelectionModel.getSelectedItem
   private def changeDrawingCursor(c:Cursor): Unit = drawPanel.setCursor(c)
+  private def getWindow = drawPanel.getScene.getWindow
 
   private def selectedShape: Option[SelectedShape] = {
     val btn = btnGroup.getSelectedToggle.asInstanceOf[ToggleButton]

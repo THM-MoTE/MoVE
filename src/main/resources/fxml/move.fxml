@@ -35,7 +35,7 @@
                   <items>
                         <MenuItem mnemonicParsing="false" text="Undo" />
                         <MenuItem mnemonicParsing="false" text="Redo" />
-                        <MenuItem mnemonicParsing="false" text="Insert Bitmap" />
+                        <MenuItem mnemonicParsing="false" text="Insert Bitmap" onAction="#onLoadBitmap"/>
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
