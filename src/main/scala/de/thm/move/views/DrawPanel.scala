@@ -27,6 +27,8 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     shapes = s :: shapes
   }
 
+  def drawShapes(shapes:Shape*) = shapes.foreach(drawShape)
+
   private def colorizeShape(s:Shape, fColor:Color, strColor:Color):Unit = {
     s.setFill(fColor)
     s.setStroke(strColor)
@@ -43,12 +45,10 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     val bottomLeftAnchor = new Anchor(x,y+height, fillColor)
     val bottomRightAnchor = new Anchor(x+width, y+height, fillColor)
 
-    drawShape(topLeftAnchor)
-    drawShape(topRightAnchor)
-    drawShape(bottomLeftAnchor)
-    drawShape(bottomRightAnchor)
 
-    drawShape(rectangle)
+    bindAnchorsTranslationToShapesLayout(rectangle)(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
+
+    drawShapes(rectangle, topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
   }
 
   def drawLine(start:Point, end:Point, strokeSize:Int)(fillColor:Color, strokeColor:Color):Unit = {
@@ -57,7 +57,6 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     val line = new Line(startX,startY, endX,endY)
     colorizeShape(line, fillColor, strokeColor)
     line.setStrokeWidth(strokeSize.toDouble)
-
 
     //create resize anchors
     val startAnchor = new Anchor(startX, startY, fillColor)
@@ -68,15 +67,9 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     line.endXProperty().bind(endAnchor.centerXProperty())
     line.endYProperty().bind(endAnchor.centerYProperty())
 
-    startAnchor.translateXProperty().bind(line.layoutXProperty())
-    startAnchor.translateYProperty().bind(line.layoutYProperty())
-    endAnchor.translateXProperty().bind(line.layoutXProperty())
-    endAnchor.translateYProperty().bind(line.layoutYProperty())
+    bindAnchorsTranslationToShapesLayout(line)(startAnchor, endAnchor)
 
-    drawShape(startAnchor)
-    drawShape(endAnchor)
-
-    drawShape(line)
+    drawShapes(line, startAnchor, endAnchor)
   }
 
   def drawCircle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):Unit = {
@@ -110,4 +103,10 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     this.getChildren.removeAll(removingAnchors:_*)
   }
 
+  private def bindAnchorsTranslationToShapesLayout(shape:Shape)(anchors:Anchor*): Unit = {
+    anchors.foreach { anchor =>
+      anchor.translateXProperty().bind(shape.layoutXProperty())
+      anchor.translateYProperty().bind(shape.layoutYProperty())
+    }
+  }
 }
