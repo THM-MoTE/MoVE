@@ -10,14 +10,14 @@ import javafx.scene.input.{InputEvent, MouseDragEvent, MouseEvent}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes._
 
-class DrawPanel(callback : InputEvent => Unit) extends Pane {
+class DrawPanel(inputEventHandler : InputEvent => Unit) extends Pane {
   private var shapes = List[Shape]()
 
   this.setMaxWidth(Double.MaxValue)
   this.setMaxHeight(Double.MaxValue)
 
   def drawShape(s:Shape):Unit = {
-    s.addEventHandler(InputEvent.ANY, callback)
+    s.addEventHandler(InputEvent.ANY, inputEventHandler)
 
     super.getChildren.add(s)
 
