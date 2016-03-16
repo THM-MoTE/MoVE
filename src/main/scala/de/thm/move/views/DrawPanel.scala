@@ -1,5 +1,6 @@
 package de.thm.move.views
 
+import javafx.beans.value.{ObservableValue, ChangeListener}
 import javafx.event.{EventHandler, EventType}
 import javafx.scene.Cursor
 import javafx.scene.control.Label
@@ -45,6 +46,19 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     val line = new Line(startX,startY, endX,endY)
     colorizeShape(line, fillColor, strokeColor)
     line.setStrokeWidth(strokeSize.toDouble)
+
+
+    //create resize anchors
+    val startAnchor = new Anchor(startX, startY, fillColor)
+    val endAnchor = new Anchor(endX, endY, fillColor)
+
+    startAnchor.centerXProperty().bindBidirectional(line.startXProperty())
+    startAnchor.centerYProperty().bindBidirectional(line.startYProperty())
+    endAnchor.centerXProperty().bindBidirectional(line.endXProperty())
+    endAnchor.centerYProperty().bindBidirectional(line.endYProperty())
+    drawShape(startAnchor)
+    drawShape(endAnchor)
+
     drawShape(line)
   }
 

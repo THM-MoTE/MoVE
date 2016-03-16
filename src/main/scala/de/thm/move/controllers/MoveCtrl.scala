@@ -107,6 +107,9 @@ class MoveCtrl extends Initializable {
           if (mv.getEventType == MouseEvent.MOUSE_PRESSED) {
             //save original coordinate
             mv.getSource match {
+              case a:Anchor =>
+                deltaX = a.getCenterX - mv.getSceneX
+                deltaY = a.getCenterY - mv.getSceneY
               case s:Shape =>
                 deltaX = s.getLayoutX - mv.getSceneX
                 deltaY = s.getLayoutY - mv.getSceneY
@@ -115,6 +118,9 @@ class MoveCtrl extends Initializable {
           } else if (mv.getEventType == MouseEvent.MOUSE_DRAGGED) {
             //translate from original to new position
             mv.getSource match {
+              case a:Anchor =>
+                a.setCenterX(deltaX + mv.getSceneX)
+                a.setCenterY(deltaY + mv.getSceneY)
               case s:Shape =>
                s.setLayoutX(deltaX + mv.getSceneX)
                 s.setLayoutY(deltaY + mv.getSceneY)
