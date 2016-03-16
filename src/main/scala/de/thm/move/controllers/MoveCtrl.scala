@@ -181,7 +181,6 @@ class MoveCtrl extends Initializable {
           val height = endY - startY
           drawPanel.drawCircle(start, width, height)(getFillColor, getStrokeColor)
         case SelectedShape.Line =>
-          val thickness = borderThicknessChooser.getSelectionModel.getSelectedItem
           drawPanel.drawLine(start, end, selectedThickness)(getFillColor, getStrokeColor)
       }
   }
