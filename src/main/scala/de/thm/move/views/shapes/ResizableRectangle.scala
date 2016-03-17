@@ -19,12 +19,25 @@ class ResizableRectangle(
   private val bottomLeftAnchor = new Anchor(x,y+height)
   private val bottomRightAnchor = new Anchor(x+width, y+height)
 
+  topLeftAnchor.centerXProperty().bind(xProperty())
+  topLeftAnchor.centerYProperty().bind(yProperty())
+
+  topRightAnchor.centerXProperty().bind(xProperty().add(widthProperty()))
+  topRightAnchor.centerYProperty().bind(yProperty())
+
+  bottomLeftAnchor.centerXProperty().bind(xProperty())
+  bottomLeftAnchor.centerYProperty().bind(yProperty().add(heightProperty()))
+
+  bottomRightAnchor.centerXProperty().bind(xProperty().add(widthProperty()))
+  bottomRightAnchor.centerYProperty().bind(yProperty().add(heightProperty()))
+
   topLeftAnchor.centerYProperty().addListener({ (ov: ObservableValue[_ <: Number], oldN: Number, newN: Number) =>
     val oldY = oldN.doubleValue()
     val newY = newN.doubleValue()
     val oldHeight = this.getHeight
+    val delta = if(newY > oldY) oldHeight - (newY-oldY) else oldHeight + (oldY-newY)
     this.setY(newY)
-    this.setHeight(oldY + oldHeight - newY)
+    this.setHeight(delta)
   })
 
   topLeftAnchor.centerXProperty().addListener({ (ov: ObservableValue[_ <: Number], oldN: Number, newN: Number) =>
@@ -59,7 +72,6 @@ class ResizableRectangle(
     val delta = oldX - newX
     this.setX(newX)
     this.setWidth(oldWidth + delta)
-
   })
 
   bottomLeftAnchor.centerYProperty().addListener({ (ov: ObservableValue[_ <: Number], oldN: Number, newN: Number) =>
@@ -74,7 +86,6 @@ class ResizableRectangle(
       val oldX = oldN.doubleValue()
       val newX = newN.doubleValue()
       val oldWidth = this.getWidth
-      println(s"oldX $oldX newX $newX")
       val delta = if(newX > oldX) oldWidth + (newX - oldX) else oldWidth - (oldX - newX)
       this.setWidth(delta)
     })
@@ -88,5 +99,5 @@ class ResizableRectangle(
 
   val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
-  bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
+  //bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
 }
