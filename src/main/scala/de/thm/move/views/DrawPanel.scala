@@ -10,6 +10,9 @@ import javafx.scene.image.{ImageView, Image}
 import javafx.scene.input.{InputEvent}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes._
+import javafx.beans.binding.Bindings
+
+import de.thm.move.views.shapes.ResizableRectangle
 
 class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   private var shapes = List[Shape]()
@@ -42,6 +45,12 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   }
 
   def drawRectangle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):Unit = {
+
+    val rectangle = new ResizableRectangle(point, width, height)
+    rectangle.colorizeShape(fillColor, strokeColor)
+    drawShapes(rectangle)
+    drawShapes(rectangle.getAnchors:_*)
+    /*
     val (x,y) = point
 
     val rectangle = new Rectangle(x,y,width,height)
@@ -53,12 +62,17 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     val bottomLeftAnchor = new Anchor(x,y+height, fillColor)
     val bottomRightAnchor = new Anchor(x+width, y+height, fillColor)
 
+    rectangle.xProperty().bind(topLeftAnchor.centerXProperty())
+    rectangle.yProperty().bind(topLeftAnchor.centerYProperty())
+    rectangle.widthProperty().bind(topLeftAnchor.centerXProperty().multiply(4))
+
     rectangle.widthProperty().bind(bottomRightAnchor.centerXProperty().subtract(x))
     rectangle.heightProperty().bind(bottomRightAnchor.centerYProperty().subtract(y))
-
+ 
     bindAnchorsTranslationToShapesLayout(rectangle)(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
     drawShapes(rectangle, topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
+    */
   }
 
   def drawLine(start:Point, end:Point, strokeSize:Int)(fillColor:Color, strokeColor:Color):Unit = {

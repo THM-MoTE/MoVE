@@ -3,7 +3,7 @@ package de.thm.move.views
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Ellipse, Circle}
 
-class Anchor(x:Double, y:Double, fillColor:Color) extends Ellipse {
+class Anchor(x:Double, y:Double, fillColor:Color = Anchor.anchorFill) extends Ellipse {
   this.setCenterX(x)
   this.setCenterY(y)
   this.setFill(fillColor)
@@ -14,4 +14,5 @@ class Anchor(x:Double, y:Double, fillColor:Color) extends Ellipse {
 object Anchor {
   val anchorWeight = 5.0
   val anchorHeight = 5.0
+  val anchorFill = Color.RED
 }
