@@ -1,9 +1,11 @@
 package de.thm.move.views.shapes
 
+import javafx.beans.value.ObservableValue
 import javafx.scene.shape.Rectangle
 
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.views.Anchor
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
 class ResizableRectangle(
             startPoint:Point,
@@ -17,8 +19,72 @@ class ResizableRectangle(
   private val bottomLeftAnchor = new Anchor(x,y+height)
   private val bottomRightAnchor = new Anchor(x+width, y+height)
 
-  widthProperty().bind(bottomRightAnchor.centerXProperty().subtract(x))
-  heightProperty().bind(bottomRightAnchor.centerYProperty().subtract(y))
+  topLeftAnchor.centerYProperty().addListener({ (ov: ObservableValue[_ <: Number], oldN: Number, newN: Number) =>
+    val oldY = oldN.doubleValue()
+    val newY = newN.doubleValue()
+    val oldHeight = this.getHeight
+    this.setY(newY)
+    this.setHeight(oldY + oldHeight - newY)
+  })
+
+  topLeftAnchor.centerXProperty().addListener({ (ov: ObservableValue[_ <: Number], oldN: Number, newN: Number) =>
+    val oldX = oldN.doubleValue()
+    val newX = newN.doubleValue()
+    val oldWidth = this.getWidth
+    this.setX(newX)
+    this.setWidth(oldX + oldWidth - newX)
+  })
+
+  topRightAnchor.centerXProperty().addListener({ (ov: ObservableValue[_ <: Number], oldN: Number, newN: Number) =>
+    val oldX = oldN.doubleValue()
+    val newX = newN.doubleValue()
+    val oldWidth = this.getWidth
+    val delta = newX-oldX
+    this.setWidth(oldWidth + delta)
+  })
+
+  topRightAnchor.centerYProperty().addListener({ (ov: ObservableValue[_ <: Number], oldN: Number, newN: Number) =>
+    val oldY = oldN.doubleValue()
+    val newY = newN.doubleValue()
+    val oldHeight = this.getHeight
+    val delta = oldHeight + (newY - oldY)*(-1)
+    this.setY(newY)
+    this.setHeight(delta)
+  })
+
+  bottomLeftAnchor.centerXProperty().addListener({ (ov: ObservableValue[_ <: Number], oldN: Number, newN: Number) =>
+    val oldX = oldN.doubleValue()
+    val newX = newN.doubleValue()
+    val oldWidth = this.getWidth
+    val delta = oldX - newX
+    this.setX(newX)
+    this.setWidth(oldWidth + delta)
+
+  })
+
+  bottomLeftAnchor.centerYProperty().addListener({ (ov: ObservableValue[_ <: Number], oldN: Number, newN: Number) =>
+    val oldY = oldN.doubleValue()
+    val newY = newN.doubleValue()
+    val oldHeight = this.getHeight
+    val delta = newY - oldY
+    this.setHeight(oldHeight + delta)
+  })
+
+  bottomRightAnchor.centerXProperty().addListener({ (ov: ObservableValue[_ <: Number], oldN: Number, newN: Number) =>
+      val oldX = oldN.doubleValue()
+      val newX = newN.doubleValue()
+      val oldWidth = this.getWidth
+      println(s"oldX $oldX newX $newX")
+      val delta = if(newX > oldX) oldWidth + (newX - oldX) else oldWidth - (oldX - newX)
+      this.setWidth(delta)
+    })
+  bottomRightAnchor.centerYProperty().addListener({ (ov: ObservableValue[_ <: Number], oldN: Number, newN: Number) =>
+    val oldY = oldN.doubleValue()
+    val newY = newN.doubleValue()
+    val oldHeight = this.getHeight
+    val delta = if(newY > oldY) oldHeight + (newY - oldY) else oldHeight - (oldY - newY)
+    this.setHeight(delta)
+  })
 
   val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
