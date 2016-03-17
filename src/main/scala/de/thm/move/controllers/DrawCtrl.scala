@@ -1,6 +1,6 @@
 package de.thm.move.controllers
 
-import javafx.scene.input.MouseEvent
+import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 
@@ -20,15 +20,13 @@ class DrawCtrl(drawPanel: DrawPanel) {
           if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
             val newX = mouseEvent.getX()
             val newY = mouseEvent.getY()
-            //test if polygon is finish by checking if last clicked position is already in the coordinate list
-            points.find {
-              case (x, y) => Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10
-            } match {
-              case Some(_) =>
+            //test if polygon is finish by checking if last clicked position is 1st clicked point
+            points.reverse.headOption match {
+              case Some((x,y)) if Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10 =>
                 //draw the polygon
                 drawPanel.drawPolygon(points)(fillColor, strokeColor)
                 points = List()
-              case None =>
+              case _ =>
                 points = (newX, newY) :: points
                 drawPanel.drawAnchor(points.head)
             }
