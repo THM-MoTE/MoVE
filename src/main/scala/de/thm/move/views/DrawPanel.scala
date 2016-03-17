@@ -17,9 +17,6 @@ import de.thm.move.views.shapes.{ResizableCircle, ResizablePolygon, ResizableLin
 class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   private var shapes = List[Shape]()
 
-  this.setMaxWidth(Double.MaxValue)
-  this.setMaxHeight(Double.MaxValue)
-
   def drawImage(img:Image) = {
     val view = new ImageView(img)
     view.setPreserveRatio(true)
