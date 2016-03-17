@@ -16,6 +16,10 @@ class ResizableRectangle(
   private val topRightAnchor = new Anchor(x+width,y)
   private val bottomLeftAnchor = new Anchor(x,y+height)
   private val bottomRightAnchor = new Anchor(x+width, y+height)
+
+  widthProperty().bind(bottomRightAnchor.centerXProperty().subtract(x))
+  heightProperty().bind(bottomRightAnchor.centerYProperty().subtract(y))
+
   val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
   bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)

@@ -11,11 +11,19 @@ class ResizableCircle(
         height:Double) extends Ellipse(point._1, point._2, width, height) with ResizableShape with ColorizableShape {
   private val (x,y) = point
 
-  val anchor = new Anchor(x,y)
-  val getAnchors: List[Anchor] = List(anchor)
+  val minX = getBoundsInLocal.getMinX
+  val minY = getBoundsInLocal.getMinY
+  val maxX = getBoundsInLocal.getMaxX
+  val maxY = getBoundsInLocal.getMaxY
+  val topLeftAnchor = new Anchor(minX,minY)
+  val topRightAnchor = new Anchor(minX+width*2, minY)
+  val bottomLeftAnchor = new Anchor(minX, minY+height*2)
+  val bottomRightAnchor = new Anchor(maxX, maxY)
 
-  radiusXProperty().bind(anchor.centerXProperty())
-  radiusYProperty().bind(anchor.centerYProperty())
+  radiusXProperty().bind(bottomRightAnchor.centerXProperty().subtract(width).divide(2))
+  radiusYProperty().bind(bottomRightAnchor.centerYProperty().subtract(height).divide(2))
+
+  val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
   bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
 }
