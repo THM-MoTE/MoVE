@@ -12,7 +12,7 @@ import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes._
 import javafx.beans.binding.Bindings
 
-import de.thm.move.views.shapes.{ResizableLine, ResizableRectangle}
+import de.thm.move.views.shapes.{ResizablePolygon, ResizableLine, ResizableRectangle}
 
 class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   private var shapes = List[Shape]()
@@ -120,34 +120,11 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   }
 
   def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color):Unit = {
-    val singlePoints = points.flatMap { case (x,y) => List(x,y) }
-    val polygon = new Polygon(singlePoints:_*)
-    colorizeShape(polygon, fillColor, strokeColor)
+    val polygon = ResizablePolygon(points)
+    polygon.colorizeShape(fillColor, strokeColor)
     removeDrawnAchors()
-
-    //create drag-drop anchors
-    val observablePoints = polygon.getPoints
-    for(i <- 0 until observablePoints.size by 2) {
-      val xIdx = i
-      val yIdx = i+1
-      val xProperty = new SimpleDoubleProperty(observablePoints.get(xIdx))
-      val yProperty = new SimpleDoubleProperty(observablePoints.get(yIdx))
-
-      xProperty.addListener({ (ov: ObservableValue[_ <: Number], oldX: Number, newX: Number) =>
-        val _ = observablePoints.set(xIdx, newX.doubleValue())
-      })
-      yProperty.addListener({ (ov: ObservableValue[_ <: Number], oldX: Number, newX: Number) =>
-        val _ = observablePoints.set(yIdx, newX.doubleValue())
-      })
-
-      val anchor = new Anchor(xProperty.get(), yProperty.get(), Color.RED)
-      xProperty.bind(anchor.centerXProperty())
-      yProperty.bind(anchor.centerYProperty())
-      bindAnchorsTranslationToShapesLayout(polygon)(anchor)
-      drawShape(anchor)
-    }
-
     drawShape(polygon)
+    drawShapes(polygon.getAnchors:_*)
   }
 
   private def removeDrawnAchors():Unit = {
