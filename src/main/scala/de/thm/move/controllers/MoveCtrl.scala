@@ -38,7 +38,8 @@ class MoveCtrl extends Initializable {
 
   @FXML
   var drawStub: StackPane = _
-  private lazy val drawPanel = new DrawPanel(shapeInputHandler)
+  private val drawPanel = new DrawPanel(shapeInputHandler)
+  private val drawCtrl = new DrawCtrl(drawPanel)
 
   private val shapeBtnsToSelectedShapes = Map(
       "rectangle_btn" -> SelectedShape.Rectangle,
