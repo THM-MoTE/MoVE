@@ -9,7 +9,7 @@ import de.thm.move.views.Anchor
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes.Point
 
-class ResizablePolygon(points:List[Double]) extends Polygon(points:_*) with ColorizableShape {
+class ResizablePolygon(points:List[Double]) extends Polygon(points:_*) with ResizableShape with ColorizableShape {
 
   //create drag-drop anchors
   private val observablePoints = getPoints
@@ -32,6 +32,8 @@ class ResizablePolygon(points:List[Double]) extends Polygon(points:_*) with Colo
       yProperty.bind(anchor.centerYProperty())
       anchor
     }).toList
+
+  bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
 }
 
 object ResizablePolygon {

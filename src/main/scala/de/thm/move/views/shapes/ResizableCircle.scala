@@ -8,12 +8,14 @@ import de.thm.move.views.Anchor
 class ResizableCircle(
         point:Point,
         width:Double,
-        height:Double) extends Ellipse(point._1, point._2, width, height) with ColorizableShape {
+        height:Double) extends Ellipse(point._1, point._2, width, height) with ResizableShape with ColorizableShape {
   private val (x,y) = point
 
   val anchor = new Anchor(x,y)
+  val getAnchors: List[Anchor] = List(anchor)
+
   radiusXProperty().bind(anchor.centerXProperty())
   radiusYProperty().bind(anchor.centerYProperty())
 
-  val getAnchors: List[Anchor] = List(anchor)
+  bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
 }
