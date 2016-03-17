@@ -57,6 +57,8 @@ class ResizableRectangle(
   bottomLeftAnchor.setOnMouseDragged({ me: MouseEvent =>
     val (newX, newY) = (me.getX, me.getY)
     val (oldX, oldY) = (this.getX, this.getY+this.getHeight)
+
+   //TODO fix calculation of new size, height
     val deltaY = if(newY > oldY) getHeight + (newY-oldY) else getHeight - (oldY-newY)
     val deltaX = if(newX < oldX) getWidth + (oldX-newX) else getWidth - (newX-oldX)
 
