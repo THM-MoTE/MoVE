@@ -2,7 +2,7 @@ package de.thm.move.controllers
 
 import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.paint.Color
-import javafx.scene.shape.Shape
+import javafx.scene.shape.{Rectangle, Shape}
 
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape
@@ -55,14 +55,13 @@ class DrawCtrl(drawPanel: DrawPanel) {
       //move selected element
       mv.getEventType match {
         case MouseEvent.MOUSE_PRESSED =>
-          //save original coordinate
-          println("old: "+mv.getSource)
-          println(mv.getSource.asInstanceOf[Shape].getLayoutX)
-          println(mv.getSource.asInstanceOf[Shape].getLayoutY)
           mv.getSource match {
             case a:Anchor =>
               deltaX = a.getCenterX - mv.getSceneX
               deltaY = a.getCenterY - mv.getSceneY
+            case r:Rectangle =>
+              deltaX = r.getX() - mv.getSceneX
+              deltaY = r.getY() - mv.getSceneY
             case s:Shape =>
               deltaX = s.getLayoutX - mv.getSceneX
               deltaY = s.getLayoutY - mv.getSceneY
@@ -72,8 +71,11 @@ class DrawCtrl(drawPanel: DrawPanel) {
           //translate from original to new position
           mv.getSource match {
             case a:Anchor =>
-              a.setCenterX(deltaX + mv.getSceneX)
-              a.setCenterY(deltaY + mv.getSceneY)
+//              a.setCenterX(deltaX + mv.getSceneX)
+//              a.setCenterY(deltaY + mv.getSceneY)
+            case r:Rectangle =>
+                r.setX(deltaX + mv.getSceneX)
+                r.setY(deltaY + mv.getSceneY)
             case s:Shape =>
               s.setLayoutX(deltaX + mv.getSceneX)
               s.setLayoutY(deltaY + mv.getSceneY)
