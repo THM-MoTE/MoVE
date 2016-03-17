@@ -12,7 +12,7 @@ import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes._
 import javafx.beans.binding.Bindings
 
-import de.thm.move.views.shapes.ResizableRectangle
+import de.thm.move.views.shapes.{ResizableLine, ResizableRectangle}
 
 class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   private var shapes = List[Shape]()
@@ -76,7 +76,12 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   }
 
   def drawLine(start:Point, end:Point, strokeSize:Int)(fillColor:Color, strokeColor:Color):Unit = {
-    val (startX, startY) = start
+    val line = new ResizableLine(start, end, strokeSize)
+    line.colorizeShape(fillColor, strokeColor)
+    drawShape(line)
+    drawShapes(line.getAnchors:_*)
+
+    /*val (startX, startY) = start
     val (endX, endY) = end
     val line = new Line(startX,startY, endX,endY)
     colorizeShape(line, fillColor, strokeColor)
@@ -93,7 +98,7 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
 
     bindAnchorsTranslationToShapesLayout(line)(startAnchor, endAnchor)
 
-    drawShapes(line, startAnchor, endAnchor)
+    drawShapes(line, startAnchor, endAnchor)*/
   }
 
   def drawCircle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):Unit = {
