@@ -74,7 +74,7 @@ class MoveCtrl extends Initializable {
                 points = List()
               case None =>
                 points = (newX, newY) :: points
-                drawPanel.drawAnchor(points.head)(getFillColor)
+                drawPanel.drawAnchor(points.head)
             }
           }
         case Some(_) =>
@@ -144,9 +144,6 @@ class MoveCtrl extends Initializable {
       }
     }
   }
-
-  private def drawAnchor(x:Point):Unit = drawPanel.drawAnchor(x)(getFillColor)
-
 
   @FXML
   def onLoadBitmap(e:ActionEvent): Unit = {

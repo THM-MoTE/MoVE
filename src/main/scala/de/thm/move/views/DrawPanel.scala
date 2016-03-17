@@ -45,34 +45,10 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   }
 
   def drawRectangle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):Unit = {
-
     val rectangle = new ResizableRectangle(point, width, height)
     rectangle.colorizeShape(fillColor, strokeColor)
     drawShapes(rectangle)
     drawShapes(rectangle.getAnchors:_*)
-    /*
-    val (x,y) = point
-
-    val rectangle = new Rectangle(x,y,width,height)
-    colorizeShape(rectangle, fillColor, strokeColor)
-
-    //create resize anchors
-    val topLeftAnchor = new Anchor(x,y, fillColor)
-    val topRightAnchor = new Anchor(x+width,y, fillColor)
-    val bottomLeftAnchor = new Anchor(x,y+height, fillColor)
-    val bottomRightAnchor = new Anchor(x+width, y+height, fillColor)
-
-    rectangle.xProperty().bind(topLeftAnchor.centerXProperty())
-    rectangle.yProperty().bind(topLeftAnchor.centerYProperty())
-    rectangle.widthProperty().bind(topLeftAnchor.centerXProperty().multiply(4))
-
-    rectangle.widthProperty().bind(bottomRightAnchor.centerXProperty().subtract(x))
-    rectangle.heightProperty().bind(bottomRightAnchor.centerYProperty().subtract(y))
- 
-    bindAnchorsTranslationToShapesLayout(rectangle)(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
-
-    drawShapes(rectangle, topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
-    */
   }
 
   def drawLine(start:Point, end:Point, strokeSize:Int)(fillColor:Color, strokeColor:Color):Unit = {
@@ -80,25 +56,6 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     line.colorizeShape(fillColor, strokeColor)
     drawShape(line)
     drawShapes(line.getAnchors:_*)
-
-    /*val (startX, startY) = start
-    val (endX, endY) = end
-    val line = new Line(startX,startY, endX,endY)
-    colorizeShape(line, fillColor, strokeColor)
-    line.setStrokeWidth(strokeSize.toDouble)
-
-    //create resize anchors
-    val startAnchor = new Anchor(startX, startY, fillColor)
-    val endAnchor = new Anchor(endX, endY, fillColor)
-
-    line.startXProperty().bind(startAnchor.centerXProperty())
-    line.startYProperty().bind(startAnchor.centerYProperty())
-    line.endXProperty().bind(endAnchor.centerXProperty())
-    line.endYProperty().bind(endAnchor.centerYProperty())
-
-    bindAnchorsTranslationToShapesLayout(line)(startAnchor, endAnchor)
-
-    drawShapes(line, startAnchor, endAnchor)*/
   }
 
   def drawCircle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):Unit = {
@@ -107,20 +64,20 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     drawShapes(circle.getAnchors:_*)
   }
 
-  def drawAnchor(point:Point)(fillColor:Color):Unit = {
+  def drawAnchor(point:Point):Unit = {
     val (x,y) = point
-    drawShape(new Anchor(x,y,fillColor))
+    drawShape(new Anchor(x,y))
   }
 
   def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color):Unit = {
     val polygon = ResizablePolygon(points)
     polygon.colorizeShape(fillColor, strokeColor)
-    removeDrawnAchors()
+    removeDrawnAnchors()
     drawShape(polygon)
     drawShapes(polygon.getAnchors:_*)
   }
 
-  private def removeDrawnAchors():Unit = {
+  private def removeDrawnAnchors():Unit = {
     println(shapes)
     //get indexes of drawn anchors
     val removingAnchors = shapes.takeWhile( _.isInstanceOf[Anchor] )
