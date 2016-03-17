@@ -41,6 +41,8 @@ class MoveCtrl extends Initializable {
   private val drawPanel = new DrawPanel(shapeInputHandler)
   private val drawCtrl = new DrawCtrl(drawPanel)
 
+  private val moveHandler = drawCtrl.getMoveHandler
+
   private val shapeBtnsToSelectedShapes = Map(
       "rectangle_btn" -> SelectedShape.Rectangle,
       "circle_btn" -> SelectedShape.Circle,
@@ -57,38 +59,10 @@ class MoveCtrl extends Initializable {
     borderThicknessChooser.setItems(FXCollections.observableArrayList(sizesList))
     borderThicknessChooser.getSelectionModel.selectFirst()
 
-      var points = List[Point]()
-
+    val handler = drawCtrl.getDrawHandler
     val drawHandler = { mouseEvent:MouseEvent =>
       selectedShape match {
-        case Some(SelectedShape.Polygon) =>
-          if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
-            val newX = mouseEvent.getX()
-            val newY = mouseEvent.getY()
-            //test if polygon is finish by checking if last clicked position is already in the coordinate list
-            points.find {
-              case (x, y) => Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10
-            } match {
-              case Some(_) =>
-                //draw the polygon
-                drawPanel.drawPolygon(points)(getFillColor, getStrokeColor)
-                points = List()
-              case None =>
-                points = (newX, newY) :: points
-                drawPanel.drawAnchor(points.head)
-            }
-          }
-        case Some(_) =>
-          if (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED) {
-            points = (mouseEvent.getX(), mouseEvent.getY()) :: points
-          } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
-            points = (mouseEvent.getX(), mouseEvent.getY()) :: points
-
-            points match {
-              case end::start::_ => drawCustomShape(start, end)
-            }
-            points = List()
-          }
+        case Some(shape) =>  handler(shape, mouseEvent)(getFillColor, getStrokeColor, selectedThickness)
         case _ => //ignore
       }
     }
@@ -99,49 +73,10 @@ class MoveCtrl extends Initializable {
 
   }
 
-  private var deltaX = -1.0
-  private var deltaY = -1.0
-
-  def moveElement(mv:MouseEvent): Unit = {
-    //move selected element
-    mv.getEventType match {
-      case MouseEvent.MOUSE_PRESSED =>
-        //save original coordinate
-        println("old: "+mv.getSource)
-        println(mv.getSource.asInstanceOf[Shape].getLayoutX)
-        println(mv.getSource.asInstanceOf[Shape].getLayoutY)
-        mv.getSource match {
-          case a:Anchor =>
-            deltaX = a.getCenterX - mv.getSceneX
-            deltaY = a.getCenterY - mv.getSceneY
-          case s:Shape =>
-            deltaX = s.getLayoutX - mv.getSceneX
-            deltaY = s.getLayoutY - mv.getSceneY
-          case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
-        }
-      case MouseEvent.MOUSE_DRAGGED =>
-        //translate from original to new position
-        mv.getSource match {
-          case a:Anchor =>
-            a.setCenterX(deltaX + mv.getSceneX)
-            a.setCenterY(deltaY + mv.getSceneY)
-          case s:Shape =>
-            s.setLayoutX(deltaX + mv.getSceneX)
-            s.setLayoutY(deltaY + mv.getSceneY)
-          case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
-        }
-      case MouseEvent.MOUSE_RELEASED =>
-        println("new: " + mv.getSource)
-        println(mv.getSource.asInstanceOf[Shape].getLayoutX)
-        println(mv.getSource.asInstanceOf[Shape].getLayoutY)
-      case _ => //unknown event
-    }
-  }
-
   def shapeInputHandler(ev:InputEvent): Unit = {
     if(selectedShape.isEmpty) {
       ev match {
-        case mv: MouseEvent => moveElement(mv)
+        case mv: MouseEvent => moveHandler(mv)
       }
     }
   }
@@ -178,24 +113,5 @@ class MoveCtrl extends Initializable {
   private def selectedShape: Option[SelectedShape] = {
     val btn = btnGroup.getSelectedToggle.asInstanceOf[ToggleButton]
     Option(btn.getId).flatMap(shapeBtnsToSelectedShapes.get(_))
-  }
-
-  private def drawCustomShape(start:Point, end:Point) = {
-      val (startX, startY) = start
-      val (endX, endY) = end
-
-      selectedShape.foreach {
-        case SelectedShape.Rectangle =>
-          val width = endX - startX
-          val height = endY - startY
-          drawPanel.drawRectangle(start, width, height)(getFillColor, getStrokeColor)
-        case SelectedShape.Polygon =>
-        case SelectedShape.Circle =>
-          val width = endX - startX
-          val height = endY - startY
-          drawPanel.drawCircle(start, width, height)(getFillColor, getStrokeColor)
-        case SelectedShape.Line =>
-          drawPanel.drawLine(start, end, selectedThickness)(getFillColor, getStrokeColor)
-      }
   }
 }
