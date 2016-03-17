@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.ObservableValue
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
-import de.thm.move.views.Anchor
+import de.thm.move.views.{MovableAnchor, Anchor}
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes.Point
@@ -27,7 +27,7 @@ class ResizablePolygon(points:List[Double]) extends Polygon(points:_*) with Resi
         val _ = observablePoints.set(yIdx, newX.doubleValue())
       })
 
-      val anchor = new Anchor(xProperty.get(), yProperty.get(), Color.RED)
+      val anchor = new Anchor(xProperty.get(), yProperty.get(), Color.RED) with MovableAnchor
       xProperty.bind(anchor.centerXProperty())
       yProperty.bind(anchor.centerYProperty())
       anchor
