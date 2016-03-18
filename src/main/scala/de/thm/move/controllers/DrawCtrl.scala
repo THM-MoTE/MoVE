@@ -1,5 +1,6 @@
 package de.thm.move.controllers
 
+import javafx.scene.Node
 import javafx.scene.image.ImageView
 import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.paint.Color
@@ -60,34 +61,24 @@ class DrawCtrl(drawPanel: DrawPanel) {
         case MouseEvent.MOUSE_PRESSED =>
           mv.getSource match {
             case a:Anchor =>
-              deltaX = a.getCenterX - mv.getSceneX
-              deltaY = a.getCenterY - mv.getSceneY
             case r:Rectangle =>
               deltaX = r.getX() - mv.getSceneX
               deltaY = r.getY() - mv.getSceneY
-            case s:Shape =>
-              deltaX = s.getLayoutX - mv.getSceneX
-              deltaY = s.getLayoutY - mv.getSceneY
-            case img:ImageView =>
-              deltaX = img.getLayoutX - mv.getSceneX
-              deltaY = img.getLayoutY - mv.getSceneY
+            case n:Node =>
+              deltaX = n.getLayoutX - mv.getSceneX
+              deltaY = n.getLayoutY - mv.getSceneY
             case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
           }
         case MouseEvent.MOUSE_DRAGGED =>
           //translate from original to new position
           mv.getSource match {
             case a:Anchor =>
-//              a.setCenterX(deltaX + mv.getSceneX)
-//              a.setCenterY(deltaY + mv.getSceneY)
             case r:Rectangle =>
                 r.setX(deltaX + mv.getSceneX)
                 r.setY(deltaY + mv.getSceneY)
-            case s:Shape =>
-              s.setLayoutX(deltaX + mv.getSceneX)
-              s.setLayoutY(deltaY + mv.getSceneY)
-            case img:ImageView =>
-              img.setLayoutX(deltaX + mv.getSceneX)
-              img.setLayoutY(deltaY + mv.getSceneY)
+            case n:Node =>
+              n.setLayoutX(deltaX + mv.getSceneX)
+              n.setLayoutY(deltaY + mv.getSceneY)
             case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
           }
         case MouseEvent.MOUSE_RELEASED =>
