@@ -4,6 +4,7 @@ import javafx.scene.image.{ImageView, Image}
 import javafx.scene.input.MouseEvent
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.util.BindingUtils
 
 import de.thm.move.views.Anchor
 
@@ -22,4 +23,6 @@ class ResizableImage(img:Image) extends ImageView(img) with ResizableShape with 
   })
 
   override val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
+
+  BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 }

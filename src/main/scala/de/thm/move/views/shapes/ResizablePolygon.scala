@@ -33,7 +33,7 @@ class ResizablePolygon(points:List[Double]) extends Polygon(points:_*) with Resi
       anchor
     }).toList
 
-  BindingUtils.bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
+  BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 }
 
 object ResizablePolygon {

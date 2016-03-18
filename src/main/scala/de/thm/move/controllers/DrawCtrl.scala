@@ -1,5 +1,6 @@
 package de.thm.move.controllers
 
+import javafx.scene.image.ImageView
 import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
@@ -67,6 +68,9 @@ class DrawCtrl(drawPanel: DrawPanel) {
             case s:Shape =>
               deltaX = s.getLayoutX - mv.getSceneX
               deltaY = s.getLayoutY - mv.getSceneY
+            case img:ImageView =>
+              deltaX = img.getLayoutX - mv.getSceneX
+              deltaY = img.getLayoutY - mv.getSceneY
             case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
           }
         case MouseEvent.MOUSE_DRAGGED =>
@@ -81,12 +85,12 @@ class DrawCtrl(drawPanel: DrawPanel) {
             case s:Shape =>
               s.setLayoutX(deltaX + mv.getSceneX)
               s.setLayoutY(deltaY + mv.getSceneY)
+            case img:ImageView =>
+              img.setLayoutX(deltaX + mv.getSceneX)
+              img.setLayoutY(deltaY + mv.getSceneY)
             case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
           }
         case MouseEvent.MOUSE_RELEASED =>
-          println("new: " + mv.getSource)
-          println(mv.getSource.asInstanceOf[Shape].getLayoutX)
-          println(mv.getSource.asInstanceOf[Shape].getLayoutY)
         case _ => //unknown event
       }
     }

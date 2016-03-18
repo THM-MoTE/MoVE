@@ -3,12 +3,14 @@ package de.thm.move.util
 import javafx.scene.shape.Shape
 
 import de.thm.move.views.Anchor
+import javafx.scene.Node
+
 
 object BindingUtils {
-  def bindAnchorsTranslationToShapesLayout(shape:Shape)(anchors:Anchor*): Unit = {
+  def binAnchorsLayoutToNodeLayout(node:Node)(anchors:Anchor*): Unit = {
     anchors.foreach { anchor =>
-      anchor.layoutXProperty().bind(shape.layoutXProperty())
-      anchor.layoutYProperty().bind(shape.layoutYProperty())
+      anchor.layoutXProperty().bind(node.layoutXProperty())
+      anchor.layoutYProperty().bind(node.layoutYProperty())
     }
   }
 }

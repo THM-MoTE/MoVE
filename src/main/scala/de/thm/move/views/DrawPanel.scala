@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.{ObservableValue}
 import javafx.event.{EventHandler}
 import javafx.geometry.Bounds
+import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape._
@@ -18,17 +19,23 @@ import de.thm.move.views.shapes._
 class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   private var shapes = List[Shape]()
 
+  private def addInputEventHandler(node:Node) = {
+    node.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
+      override def handle(event: InputEvent): Unit = inputEventHandler(event)
+    })
+  }
+
   def drawImage(img:Image) = {
     val view = new ResizableImage(img)
+
+    addInputEventHandler(view)
+
     super.getChildren.add(view)
     super.getChildren.addAll(view.getAnchors:_*)
   }
 
   def drawShape(s:Shape):Unit = {
-    s.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
-      override def handle(event: InputEvent): Unit = inputEventHandler(event)
-    })
-
+    addInputEventHandler(s)
     super.getChildren.add(s)
 
     shapes = s :: shapes

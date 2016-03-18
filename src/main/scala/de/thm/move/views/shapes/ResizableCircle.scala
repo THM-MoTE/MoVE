@@ -73,5 +73,5 @@ class ResizableCircle(
 
   val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
-  BindingUtils.bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
+  BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 }

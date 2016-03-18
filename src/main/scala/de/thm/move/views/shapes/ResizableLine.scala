@@ -16,7 +16,7 @@ class ResizableLine(
   val endAnchor = new Anchor(end) with MovableAnchor
   val getAnchors: List[Anchor] = List(startAnchor, endAnchor)
 
-  BindingUtils.bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
+  BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 
   startXProperty().bind(startAnchor.centerXProperty())
   startYProperty().bind(startAnchor.centerYProperty())
