@@ -10,3 +10,8 @@
 
 .draw-canvas {
 }
+
+.anchor {
+    -fx-fill: #b3b3b3;
+    -fx-opacity: 70%;
+}
