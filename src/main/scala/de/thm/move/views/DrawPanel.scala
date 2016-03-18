@@ -71,17 +71,20 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color):Unit = {
     val polygon = ResizablePolygon(points)
     polygon.colorizeShape(fillColor, strokeColor)
-    removeDrawnAnchors()
+    removeDrawnAnchors(points.size+1)
     drawShape(polygon)
     drawShapes(polygon.getAnchors:_*)
   }
 
-  private def removeDrawnAnchors():Unit = {
-    println(shapes)
-    //get indexes of drawn anchors
-    val removingAnchors = shapes.takeWhile( _.isInstanceOf[Anchor] )
+  private def removeDrawnAnchors(cnt:Int):Unit = {
+    val removingAnchors = shapes.zipWithIndex.takeWhile {
+      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt-1
+    }.map(_._1)
+
     //remove from shapelist
-    shapes = shapes.dropWhile(_.isInstanceOf[Anchor])
+    shapes = shapes.zipWithIndex.dropWhile {
+      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt-1
+    }.map(_._1)
 
     //remove from painting area
     this.getChildren.removeAll(removingAnchors:_*)
