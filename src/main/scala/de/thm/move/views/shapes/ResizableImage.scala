@@ -12,6 +12,40 @@ class ResizableImage(img:Image) extends ImageView(img) with ResizableShape with 
   setPreserveRatio(true)
   setFitWidth(200)
 
+  topLeftAnchor.setOnMouseDragged({me:MouseEvent =>
+    val (newX, newY) = (me.getX, me.getY)
+    val (oldX, oldY) = (this.getX, this.getY)
+    val deltaY = if(newY < oldY) getFitHeight + (oldY-newY)else getFitHeight - (newY-oldY)
+    val deltaX = if(newX > oldX) getFitWidth + (oldX-newX) else getFitWidth - (newX-oldX)
+    this.setY(newY)
+    this.setFitHeight(deltaY)
+    this.setX(newX)
+    this.setFitWidth(deltaX)
+  })
+
+  topRightAnchor.setOnMouseDragged({ me: MouseEvent =>
+    val (newX, newY) = (me.getX, me.getY)
+    val (oldX, oldY) = (this.getX+this.getFitWidth, this.getY)
+    val deltaY = if(newY < oldY) getFitHeight + (oldY-newY) else getFitHeight - (newY-oldY)
+    val deltaX = if(newX > oldX) getFitWidth + (newX-oldX) else getFitWidth - (oldX-newX)
+
+    this.setY(newY)
+    this.setFitHeight(deltaY)
+    this.setFitWidth(deltaX)
+  })
+
+  bottomLeftAnchor.setOnMouseDragged({ me: MouseEvent =>
+    val (newX, newY) = (me.getX, me.getY)
+    val (oldX, oldY) = (this.getX, this.getY+getFitHeight)
+
+    val deltaY = (newY-oldY) + getFitHeight
+    val deltaX = (oldX-newX) + getFitWidth
+
+    this.setX(newX)
+    this.setFitHeight(deltaY)
+    this.setFitWidth(deltaX)
+  })
+
   bottomRightAnchor.setOnMouseDragged({ me: MouseEvent =>
     val (newX, newY) = (me.getX, me.getY)
     val (oldX, oldY) = (this.getX+this.getFitWidth, this.getY+this.getFitHeight)
