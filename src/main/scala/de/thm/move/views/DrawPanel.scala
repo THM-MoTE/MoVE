@@ -59,22 +59,8 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   def drawCircle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):Unit = {
     val circle = new ResizableCircle(point, width, height)
 
-    val rectangle = new Rectangle(circle.getBoundsInLocal.getMinX, circle.getBoundsInLocal.getMinY, circle.getBoundsInLocal.getWidth, circle.getBoundsInLocal.getHeight)
-    rectangle.setStroke(Color.BLUE)
-    rectangle.setFill(Color.TRANSPARENT)
-
-    circle.boundsInLocalProperty().addListener({ (newB:Bounds, oldB:Bounds) =>
-      rectangle.setX(newB.getMinX)
-      rectangle.setY(newB.getMinY)
-      rectangle.setWidth(newB.getWidth)
-      rectangle.setHeight(newB.getHeight)
-
-    })
-
-
     drawShape(circle)
     drawShapes(circle.getAnchors:_*)
-    getChildren.add(rectangle)
   }
 
   def drawAnchor(point:Point):Unit = {
