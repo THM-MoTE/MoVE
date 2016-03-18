@@ -9,6 +9,8 @@ import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
 import de.thm.move.views.{Anchor, DrawPanel}
 
+import collection.JavaConversions._
+
 class DrawCtrl(drawPanel: DrawPanel) {
 
   def getDrawHandler: (SelectedShape, MouseEvent) => (Color, Color, Int) => Unit = {
@@ -106,6 +108,12 @@ class DrawCtrl(drawPanel: DrawPanel) {
         drawPanel.drawCircle(start, width, height)(fillColor, strokeColor)
       case SelectedShape.Line => drawPanel.drawLine(start, end, selectedThickness)(fillColor, strokeColor)
       case _ => //ignore
+    }
+  }
+
+  def setVisibilityOfAnchors(flag:Boolean): Unit = {
+    drawPanel.getChildren.filter(_.isInstanceOf[Anchor]).foreach { anchor =>
+      anchor.setVisible(flag)
     }
   }
 }

@@ -37,6 +37,9 @@ class MoveCtrl extends Initializable {
   var borderThicknessChooser: ChoiceBox[Int] = _
 
   @FXML
+  var showAnchorsCheckbox: CheckBox = _
+
+  @FXML
   var drawStub: StackPane = _
   private val drawPanel = new DrawPanel(shapeInputHandler)
   private val drawCtrl = new DrawCtrl(drawPanel)
@@ -94,6 +97,9 @@ class MoveCtrl extends Initializable {
   }
 
   @FXML
+  def onShowAnchorsClicked(e:ActionEvent): Unit = drawCtrl.setVisibilityOfAnchors(showAnchorsSelected)
+
+  @FXML
   def onPointerClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.DEFAULT)
   @FXML
   def onCircleClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.CROSSHAIR)
@@ -109,6 +115,7 @@ class MoveCtrl extends Initializable {
   private def selectedThickness: Int = borderThicknessChooser.getSelectionModel.getSelectedItem
   private def changeDrawingCursor(c:Cursor): Unit = drawPanel.setCursor(c)
   private def getWindow = drawPanel.getScene.getWindow
+  private def showAnchorsSelected: Boolean = showAnchorsCheckbox.isSelected
 
   private def selectedShape: Option[SelectedShape] = {
     val btn = btnGroup.getSelectedToggle.asInstanceOf[ToggleButton]
