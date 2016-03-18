@@ -5,6 +5,7 @@ import javafx.geometry.Bounds
 
 import de.thm.move.models.CommonTypes._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.util.BindingUtils
 import de.thm.move.views.Anchor
 import javafx.scene.input.MouseEvent
 
@@ -71,4 +72,6 @@ class ResizableCircle(
   })
 
   val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
+
+  BindingUtils.bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
 }
