@@ -1,6 +1,5 @@
 package de.thm.move.views.shapes
 
-import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.scene.shape.Ellipse
 import javafx.geometry.Bounds
 
@@ -12,45 +11,8 @@ import javafx.scene.input.MouseEvent
 class ResizableCircle(
         point:Point,
         width:Double,
-        height:Double) extends Ellipse(point._1, point._2, width, height) with ResizableShape with ColorizableShape {
+        height:Double) extends Ellipse(point._1, point._2, width, height) with ResizableShape with BoundedAnchors with ColorizableShape {
   private val (x,y) = point
-
-  val minX = getBoundsInLocal.getMinX
-  val minY = getBoundsInLocal.getMinY
-  val maxX = getBoundsInLocal.getMaxX
-  val maxY = getBoundsInLocal.getMaxY
-  val topLeftAnchor = new Anchor(minX,minY)
-  val topRightAnchor = new Anchor(minX+width*2, minY)
-  val bottomLeftAnchor = new Anchor(minX, minY+height*2)
-  val bottomRightAnchor = new Anchor(maxX, maxY)
-
-  boundsInLocalProperty().addListener({ (oldBounds:Bounds, newBounds:Bounds) =>
-    val (oldX,oldY) = (oldBounds.getMinX, oldBounds.getMinY)
-    val (oldWidth, oldHeight) = (oldBounds.getWidth, oldBounds.getHeight)
-    val (newX, newY) = (newBounds.getMinX, newBounds.getMinY)
-    val (newWidth, newHeight) = (newBounds.getWidth, newBounds.getHeight)
-
-    //adjust topLeft
-    topLeftAnchor.setCenterX(getTopLeft._1)
-    topLeftAnchor.setCenterY(getTopLeft._2)
-
-    //adjust topRight
-    topRightAnchor.setCenterX(getTopRight._1)
-    topRightAnchor.setCenterY(getTopRight._2)
-
-    //adjust bottomLeft
-    bottomLeftAnchor.setCenterX(getBottomLeft._1)
-    bottomLeftAnchor.setCenterY(getBottomLeft._2)
-
-    //adjust bottomRight
-    bottomRightAnchor.setCenterX(getBottomRight._1)
-    bottomRightAnchor.setCenterY(getBottomRight._2)
-  })
-
-  def getTopLeft:Point = (getBoundsInLocal.getMinX, getBoundsInLocal.getMinY)
-  def getTopRight:Point = (getBoundsInLocal.getMaxX, getBoundsInLocal.getMinY)
-  def getBottomLeft:Point = (getBoundsInLocal.getMinX, getBoundsInLocal.getMaxY)
-  def getBottomRight:Point = (getBoundsInLocal.getMaxX,getBoundsInLocal.getMaxY)
 
   topLeftAnchor.setOnMouseDragged ({ me: MouseEvent =>
     val (oldX, oldY) = getTopLeft
@@ -109,6 +71,4 @@ class ResizableCircle(
   })
 
   val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
-
-  //bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
 }
