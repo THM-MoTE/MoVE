@@ -118,7 +118,7 @@ class MoveCtrl extends Initializable {
   private def showAnchorsSelected: Boolean = showAnchorsCheckbox.isSelected
 
   private def selectedShape: Option[SelectedShape] = {
-    val btn = btnGroup.getSelectedToggle.asInstanceOf[ToggleButton]
-    Option(btn.getId).flatMap(shapeBtnsToSelectedShapes.get(_))
+    val btn = Option(btnGroup.getSelectedToggle).map(_.asInstanceOf[ToggleButton])
+    btn.map(_.getId).flatMap(shapeBtnsToSelectedShapes.get(_))
   }
 }

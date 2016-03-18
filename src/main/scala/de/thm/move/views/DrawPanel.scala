@@ -13,16 +13,15 @@ import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes._
 import javafx.beans.binding.Bindings
 
-import de.thm.move.views.shapes.{ResizableCircle, ResizablePolygon, ResizableLine, ResizableRectangle}
+import de.thm.move.views.shapes._
 
 class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
   private var shapes = List[Shape]()
 
   def drawImage(img:Image) = {
-    val view = new ImageView(img)
-    view.setPreserveRatio(true)
-    view.setFitWidth(200)
+    val view = new ResizableImage(img)
     super.getChildren.add(view)
+    super.getChildren.addAll(view.getAnchors:_*)
   }
 
   def drawShape(s:Shape):Unit = {
