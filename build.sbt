@@ -2,6 +2,10 @@ unmanagedJars in Compile += Attributed.blank(file(System.getenv("JAVA_HOME") + "
 
 fork := true
 
+scalacOptions ++= Seq(
+    "-unchecked",
+    "-deprecation")
+
 lazy val root = (project in file(".")).
   settings(
     organization := "thm",
