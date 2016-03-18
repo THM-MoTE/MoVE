@@ -3,6 +3,7 @@ package de.thm.move.views.shapes
 import javafx.scene.shape.Line
 
 import de.thm.move.models.CommonTypes.Point
+import de.thm.move.util.BindingUtils
 import de.thm.move.views.{MovableAnchor, Anchor}
 
 class ResizableLine(
@@ -15,7 +16,7 @@ class ResizableLine(
   val endAnchor = new Anchor(end) with MovableAnchor
   val getAnchors: List[Anchor] = List(startAnchor, endAnchor)
 
-  bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
+  BindingUtils.bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
 
   startXProperty().bind(startAnchor.centerXProperty())
   startYProperty().bind(startAnchor.centerYProperty())

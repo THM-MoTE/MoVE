@@ -1,9 +1,9 @@
 package de.thm.move.views.shapes
 
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.value.ObservableValue
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
+import de.thm.move.util.BindingUtils
 import de.thm.move.views.{MovableAnchor, Anchor}
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
@@ -20,10 +20,10 @@ class ResizablePolygon(points:List[Double]) extends Polygon(points:_*) with Resi
       val xProperty = new SimpleDoubleProperty(observablePoints.get(xIdx))
       val yProperty = new SimpleDoubleProperty(observablePoints.get(yIdx))
 
-      xProperty.addListener({ (ov: ObservableValue[_ <: Number], oldX: Number, newX: Number) =>
+      xProperty.addListener({ (_: Number, newX: Number) =>
         val _ = observablePoints.set(xIdx, newX.doubleValue())
       })
-      yProperty.addListener({ (ov: ObservableValue[_ <: Number], oldX: Number, newX: Number) =>
+      yProperty.addListener({ (_: Number, newX: Number) =>
         val _ = observablePoints.set(yIdx, newX.doubleValue())
       })
 
@@ -33,7 +33,7 @@ class ResizablePolygon(points:List[Double]) extends Polygon(points:_*) with Resi
       anchor
     }).toList
 
-  bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
+  BindingUtils.bindAnchorsTranslationToShapesLayout(this)(getAnchors:_*)
 }
 
 object ResizablePolygon {
