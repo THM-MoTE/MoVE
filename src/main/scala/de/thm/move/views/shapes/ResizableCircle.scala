@@ -1,6 +1,8 @@
 package de.thm.move.views.shapes
 
+import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.scene.shape.Ellipse
+import javafx.geometry.Bounds
 
 import de.thm.move.models.CommonTypes._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
@@ -22,8 +24,36 @@ class ResizableCircle(
   val bottomLeftAnchor = new Anchor(minX, minY+height*2)
   val bottomRightAnchor = new Anchor(maxX, maxY)
 
+  boundsInLocalProperty().addListener({ (oldBounds:Bounds, newBounds:Bounds) =>
+    val (oldX,oldY) = (oldBounds.getMinX, oldBounds.getMinY)
+    val (oldWidth, oldHeight) = (oldBounds.getWidth, oldBounds.getHeight)
+    val (newX, newY) = (newBounds.getMinX, newBounds.getMinY)
+    val (newWidth, newHeight) = (newBounds.getWidth, newBounds.getHeight)
+
+    //adjust topLeft
+    topLeftAnchor.setCenterX(getTopLeft._1)
+    topLeftAnchor.setCenterY(getTopLeft._2)
+
+    //adjust topRight
+    topRightAnchor.setCenterX(getTopRight._1)
+    topRightAnchor.setCenterY(getTopRight._2)
+
+    //adjust bottomLeft
+    bottomLeftAnchor.setCenterX(getBottomLeft._1)
+    bottomLeftAnchor.setCenterY(getBottomLeft._2)
+
+    //adjust bottomRight
+    bottomRightAnchor.setCenterX(getBottomRight._1)
+    bottomRightAnchor.setCenterY(getBottomRight._2)
+  })
+
+  def getTopLeft:Point = (getBoundsInLocal.getMinX, getBoundsInLocal.getMinY)
+  def getTopRight:Point = (getBoundsInLocal.getMaxX, getBoundsInLocal.getMinY)
+  def getBottomLeft:Point = (getBoundsInLocal.getMinX, getBoundsInLocal.getMaxY)
+  def getBottomRight:Point = (getBoundsInLocal.getMaxX,getBoundsInLocal.getMaxY)
+
   topLeftAnchor.setOnMouseDragged ({ me: MouseEvent =>
-    val (oldX, oldY) = (topLeftAnchor.getCenterX, topLeftAnchor.getCenterY)
+    val (oldX, oldY) = getTopLeft
     val (newX, newY) = (me.getX, me.getY)
     val boundWidth = getBoundsInLocal.getWidth
     val boundHeight = getBoundsInLocal.getHeight
@@ -36,7 +66,7 @@ class ResizableCircle(
   })
 
   topRightAnchor.setOnMouseDragged({ me: MouseEvent =>
-    val (oldX, oldY) = (topRightAnchor.getCenterX, topRightAnchor.getCenterY)
+    val (oldX, oldY) = getTopRight
     val (newX, newY) = (me.getX, me.getY)
 
     val boundWidth = getBoundsInLocal.getWidth
@@ -51,7 +81,7 @@ class ResizableCircle(
   })
 
   bottomRightAnchor.setOnMouseDragged({ me: MouseEvent =>
-    val (oldX, oldY) = (bottomRightAnchor.getCenterX, bottomRightAnchor.getCenterY)
+    val (oldX, oldY) = getBottomRight
     val (newX, newY) = (me.getX, me.getY)
 
     val boundWidth = getBoundsInLocal.getWidth
@@ -65,7 +95,7 @@ class ResizableCircle(
   })
 
   bottomLeftAnchor.setOnMouseDragged({ me: MouseEvent =>
-    val (oldX, oldY) = (bottomLeftAnchor.getCenterX, bottomLeftAnchor.getCenterY)
+    val (oldX, oldY) = getBottomLeft
     val (newX, newY) = (me.getX, me.getY)
 
     val boundWidth = getBoundsInLocal.getWidth
