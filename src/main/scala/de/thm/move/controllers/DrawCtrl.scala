@@ -43,6 +43,7 @@ class DrawCtrl(drawPanel: DrawPanel) {
 
             points match {
               case end :: start :: _ => drawCustomShape(shape, start, end)(fillColor, strokeColor, selectedThickness)
+              case _ => //ignore
             }
             points = List()
           }
