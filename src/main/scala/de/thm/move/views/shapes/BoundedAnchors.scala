@@ -12,6 +12,8 @@ import de.thm.move.controllers.implicits.FxHandlerImplicits._
 trait BoundedAnchors {
   self: ResizableShape =>
 
+  protected val adjustCoordinates:Boolean = true
+
   //resize anchors at edges
   val topLeftAnchor = new Anchor(getTopLeft)
   val topRightAnchor = new Anchor(getTopRight)
@@ -47,6 +49,10 @@ trait BoundedAnchors {
     val deltaX = if(oldX > newX) ((oldX-newX) + boundWidth) else (boundWidth - (newX-oldX))
     val deltaY = if(newY < oldY) ((oldY - newY)  + boundHeight) else (boundHeight - (newY-oldY))
 
+    if(adjustCoordinates) {
+      setX(newX)
+      setY(newY)
+    }
     setWidth(deltaX)
     setHeight(deltaY)
   })
@@ -61,9 +67,11 @@ trait BoundedAnchors {
     val deltaX = if(newX>oldX) ((newX - oldX) + boundWidth) else (boundWidth-(oldX-newX))
     val deltaY = if(newY < oldY) (oldY - newY  + boundHeight) else (boundHeight - (newY-oldY))
 
+    if(adjustCoordinates) {
+      setY(newY)
+    }
     setWidth(deltaX)
     setHeight(deltaY)
-
   })
 
   bottomRightAnchor.setOnMouseDragged({ me: MouseEvent =>
@@ -90,6 +98,9 @@ trait BoundedAnchors {
     val deltaX = if(newX<oldX) ((oldX-newX) + boundWidth) else (boundWidth-(newX-oldX))
     val deltaY = if(newY > oldY) ((newY-oldY)+boundHeight) else (boundHeight-(oldY-newY))
 
+    if(adjustCoordinates) {
+      setX(newX)
+    }
     setWidth(deltaX)
     setHeight(deltaY)
   })

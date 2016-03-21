@@ -15,6 +15,8 @@ class ResizableCircle(
         height:Double) extends Ellipse(point._1, point._2, width, height) with ResizableShape with BoundedAnchors with ColorizableShape {
   private val (x,y) = point
 
+  override val adjustCoordinates = false
+
   BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 
   override def setX(x: Double): Unit = setCenterX(x)
