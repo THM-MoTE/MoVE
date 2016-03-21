@@ -20,12 +20,12 @@ class ResizablePolygon(points:List[Double]) extends Polygon(points:_*) with Resi
       val xProperty = new SimpleDoubleProperty(observablePoints.get(xIdx))
       val yProperty = new SimpleDoubleProperty(observablePoints.get(yIdx))
 
-      xProperty.addListener({ (_: Number, newX: Number) =>
+      xProperty.addListener { (_: Number, newX: Number) =>
         val _ = observablePoints.set(xIdx, newX.doubleValue())
-      })
-      yProperty.addListener({ (_: Number, newX: Number) =>
+      }
+      yProperty.addListener { (_: Number, newX: Number) =>
         val _ = observablePoints.set(yIdx, newX.doubleValue())
-      })
+      }
 
       val anchor = new Anchor(xProperty.get(), yProperty.get()) with de.thm.move.views.MovableAnchor
       xProperty.bind(anchor.centerXProperty())

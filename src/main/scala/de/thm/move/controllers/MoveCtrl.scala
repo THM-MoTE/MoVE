@@ -79,9 +79,9 @@ class MoveCtrl extends Initializable {
     fillColorPicker.setOnAction(colorPickerChanged _)
     strokeColorPicker.setOnAction(colorPickerChanged _)
 
-    borderThicknessChooser.getSelectionModel.selectedItemProperty.addListener({ (_:Int, newX:Int) =>
+    borderThicknessChooser.getSelectionModel.selectedItemProperty.addListener { (_:Int, newX:Int) =>
       drawCtrl.changeStrokeWidthForSelectedShape(newX)
-    })
+    }
 
     drawPanel.setOnMousePressed(drawHandler)
     drawPanel.setOnMouseClicked(drawHandler)

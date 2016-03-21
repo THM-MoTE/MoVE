@@ -36,22 +36,22 @@ trait BoundedAnchors {
   }
 
   //adjust the anchors to the bounding-box
-  boundsInLocalProperty().addListener({ (_:Bounds, _:Bounds) =>
+  boundsInLocalProperty().addListener { (_:Bounds, _:Bounds) =>
     adjustCenter(topLeftAnchor, getTopLeft)
     adjustCenter(topRightAnchor, getTopRight)
     adjustCenter(bottomLeftAnchor, getBottomLeft)
     adjustCenter(bottomRightAnchor, getBottomRight)
-  })
+  }
 
   //undo-/redo command
   private var command: (=> Unit) => Command = x => { History.emptyAction }
 
-  topLeftAnchor.setOnMousePressed({ _: MouseEvent =>
+  topLeftAnchor.setOnMousePressed { _: MouseEvent =>
     val (oldX, oldY) = getTopLeft
     val oldHeight = getHeight
     val oldWidth = getWidth
 
-    command = History.partialAction{
+    command = History.partialAction {
       if(adjustCoordinates) {
         setX(oldX)
         setY(oldY)
@@ -59,9 +59,9 @@ trait BoundedAnchors {
       setWidth(oldWidth)
       setHeight(oldHeight)
     }
-  })
+  }
 
-  topLeftAnchor.setOnMouseDragged ({ me: MouseEvent =>
+  topLeftAnchor.setOnMouseDragged { me: MouseEvent =>
     val (oldX, oldY) = getTopLeft
     val (newX, newY) = (me.getX, me.getY)
     val boundWidth = getWidth
@@ -70,7 +70,7 @@ trait BoundedAnchors {
     val deltaX = if(oldX > newX) ((oldX-newX) + boundWidth) else (boundWidth - (newX-oldX))
     val deltaY = if(newY < oldY) ((oldY - newY)  + boundHeight) else (boundHeight - (newY-oldY))
 
-    history.execute(command{
+    history.execute(command {
       if(adjustCoordinates) {
         setX(newX)
         setY(newY)
@@ -78,23 +78,23 @@ trait BoundedAnchors {
       setWidth(deltaX)
       setHeight(deltaY)
     })
-  })
+  }
 
-  topRightAnchor.setOnMousePressed({ _: MouseEvent =>
+  topRightAnchor.setOnMousePressed { _: MouseEvent =>
     val (oldX, oldY) = getTopLeft
     val oldHeight = getHeight
     val oldWidth = getWidth
 
-    command = History.partialAction{
+    command = History.partialAction {
       if(adjustCoordinates) {
         setY(oldY)
       }
       setWidth(oldWidth)
       setHeight(oldWidth)
     }
-  })
+  }
 
-  topRightAnchor.setOnMouseDragged({ me: MouseEvent =>
+  topRightAnchor.setOnMouseDragged { me: MouseEvent =>
     val (oldX, oldY) = getTopRight
     val (newX, newY) = (me.getX, me.getY)
 
@@ -104,16 +104,16 @@ trait BoundedAnchors {
     val deltaX = if (newX > oldX) ((newX - oldX) + boundWidth) else (boundWidth - (oldX - newX))
     val deltaY = if (newY < oldY) (oldY - newY + boundHeight) else (boundHeight - (newY - oldY))
 
-    history.execute(command{
+    history.execute(command {
       if (adjustCoordinates) {
         setY(newY)
       }
       setWidth(deltaX)
       setHeight(deltaY)
     })
-  })
+  }
 
-  bottomRightAnchor.setOnMousePressed({ _: MouseEvent =>
+  bottomRightAnchor.setOnMousePressed { _: MouseEvent =>
     val oldHeight = getHeight
     val oldWidth = getWidth
 
@@ -121,9 +121,9 @@ trait BoundedAnchors {
       setWidth(oldWidth)
       setHeight(oldWidth)
     }
-  })
+  }
 
-  bottomRightAnchor.setOnMouseDragged({ me: MouseEvent =>
+  bottomRightAnchor.setOnMouseDragged { me: MouseEvent =>
     val (oldX, oldY) = getBottomRight
     val (newX, newY) = (me.getX, me.getY)
 
@@ -137,7 +137,7 @@ trait BoundedAnchors {
       setWidth(deltaX)
       setHeight(deltaY)
     })
-  })
+  }
 
   bottomLeftAnchor.setOnMousePressed { _: MouseEvent =>
     val (oldX, oldY) = getTopLeft
@@ -153,7 +153,7 @@ trait BoundedAnchors {
     }
   }
 
-  bottomLeftAnchor.setOnMouseDragged({ me: MouseEvent =>
+  bottomLeftAnchor.setOnMouseDragged { me: MouseEvent =>
     val (oldX, oldY) = getBottomLeft
     val (newX, newY) = (me.getX, me.getY)
 
@@ -168,5 +168,5 @@ trait BoundedAnchors {
     }
     setWidth(deltaX)
     setHeight(deltaY)
-  })
+  }
 }

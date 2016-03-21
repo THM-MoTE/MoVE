@@ -83,11 +83,11 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
               val oldX = shape.getX
               val oldY = shape.getY
 
-              command = History.partialAction({
+              command = History.partialAction {
                 println("undo action")
                 shape.setX(oldX)
                 shape.setY(oldY)
-              })
+              }
 
               deltaX = oldX - mv.getSceneX
               deltaY = oldY - mv.getSceneY
@@ -108,11 +108,11 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             case shape:ResizableShape =>
               val newX = shape.getX
               val newY = shape.getY
-              val cmd = command({
+              val cmd = command {
                 println("redo action")
                 shape.setX(newX)
                 shape.setY(newY)
-              })
+              }
 
               println("saving action")
 
