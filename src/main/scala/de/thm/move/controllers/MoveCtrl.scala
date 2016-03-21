@@ -77,11 +77,7 @@ class MoveCtrl extends Initializable {
     //add eventhandlers
     fillColorPicker.setOnAction(colorPickerChanged _)
     strokeColorPicker.setOnAction(colorPickerChanged _)
-//    borderThicknessChooser.getItems.addListener()
 
-    val list:ChangeListener[Int] = { (_:Int, newX:Int) =>
-
-    }
     borderThicknessChooser.getSelectionModel.selectedItemProperty.addListener({ (_:Int, newX:Int) =>
       drawCtrl.changeStrokeWidthForSelectedShape(newX)
     })
