@@ -3,11 +3,14 @@ package de.thm.move.views.shapes
 import javafx.geometry.Bounds
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Ellipse
-import javafx.scene.Node
 
+import de.thm.move.Global
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.history.History
+import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._
 import de.thm.move.views.Anchor
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.Global._
 
 trait BoundedAnchors {
   self: ResizableShape =>
@@ -40,6 +43,24 @@ trait BoundedAnchors {
     adjustCenter(bottomRightAnchor, getBottomRight)
   })
 
+  //undo-/redo command
+  private var command: (=> Unit) => Command = null
+
+  topLeftAnchor.setOnMousePressed({ _: MouseEvent =>
+    val (oldX, oldY) = getTopLeft
+    val oldHeight = getHeight
+    val oldWidth = getWidth
+
+    command = History.partialAction{
+      if(adjustCoordinates) {
+        setX(oldX)
+        setY(oldY)
+      }
+      setWidth(oldWidth)
+      setHeight(oldHeight)
+    }
+  })
+
   topLeftAnchor.setOnMouseDragged ({ me: MouseEvent =>
     val (oldX, oldY) = getTopLeft
     val (newX, newY) = (me.getX, me.getY)
@@ -49,12 +70,28 @@ trait BoundedAnchors {
     val deltaX = if(oldX > newX) ((oldX-newX) + boundWidth) else (boundWidth - (newX-oldX))
     val deltaY = if(newY < oldY) ((oldY - newY)  + boundHeight) else (boundHeight - (newY-oldY))
 
-    if(adjustCoordinates) {
-      setX(newX)
-      setY(newY)
+    history.execute(command{
+      if(adjustCoordinates) {
+        setX(newX)
+        setY(newY)
+      }
+      setWidth(deltaX)
+      setHeight(deltaY)
+    })
+  })
+
+  topRightAnchor.setOnMousePressed({ _: MouseEvent =>
+    val (oldX, oldY) = getTopLeft
+    val oldHeight = getHeight
+    val oldWidth = getWidth
+
+    command = History.partialAction{
+      if(adjustCoordinates) {
+        setY(oldY)
+      }
+      setWidth(oldWidth)
+      setHeight(oldWidth)
     }
-    setWidth(deltaX)
-    setHeight(deltaY)
   })
 
   topRightAnchor.setOnMouseDragged({ me: MouseEvent =>
@@ -64,14 +101,26 @@ trait BoundedAnchors {
     val boundWidth = getWidth
     val boundHeight = getHeight
 
-    val deltaX = if(newX>oldX) ((newX - oldX) + boundWidth) else (boundWidth-(oldX-newX))
-    val deltaY = if(newY < oldY) (oldY - newY  + boundHeight) else (boundHeight - (newY-oldY))
+    val deltaX = if (newX > oldX) ((newX - oldX) + boundWidth) else (boundWidth - (oldX - newX))
+    val deltaY = if (newY < oldY) (oldY - newY + boundHeight) else (boundHeight - (newY - oldY))
 
-    if(adjustCoordinates) {
-      setY(newY)
+    history.execute(command{
+      if (adjustCoordinates) {
+        setY(newY)
+      }
+      setWidth(deltaX)
+      setHeight(deltaY)
+    })
+  })
+
+  bottomRightAnchor.setOnMousePressed({ _: MouseEvent =>
+    val oldHeight = getHeight
+    val oldWidth = getWidth
+
+    command = History.partialAction {
+      setWidth(oldWidth)
+      setHeight(oldWidth)
     }
-    setWidth(deltaX)
-    setHeight(deltaY)
   })
 
   bottomRightAnchor.setOnMouseDragged({ me: MouseEvent =>
@@ -84,9 +133,25 @@ trait BoundedAnchors {
     val deltaX = (newX - oldX + boundWidth)
     val deltaY = (newY - oldY + boundHeight)
 
-    setWidth(deltaX)
-    setHeight(deltaY)
+    history.execute(command {
+      setWidth(deltaX)
+      setHeight(deltaY)
+    })
   })
+
+  bottomLeftAnchor.setOnMousePressed { _: MouseEvent =>
+    val (oldX, oldY) = getTopLeft
+    val oldHeight = getHeight
+    val oldWidth = getWidth
+
+    command = History.partialAction {
+      if(adjustCoordinates) {
+        setX(oldX)
+      }
+      setWidth(oldWidth)
+      setHeight(oldWidth)
+    }
+  }
 
   bottomLeftAnchor.setOnMouseDragged({ me: MouseEvent =>
     val (oldX, oldY) = getBottomLeft
