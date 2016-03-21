@@ -33,8 +33,8 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                   <items>
-                        <MenuItem mnemonicParsing="false" text="Undo" />
-                        <MenuItem mnemonicParsing="false" text="Redo" />
+                        <MenuItem mnemonicParsing="false" onAction="#onUndoClicked" text="Undo"/>
+                        <MenuItem mnemonicParsing="false" onAction="#onRedoClicked" text="Redo" />
                         <MenuItem mnemonicParsing="false" onAction="#onLoadBitmap" text="Insert Bitmap" />
                   </items>
                 </Menu>

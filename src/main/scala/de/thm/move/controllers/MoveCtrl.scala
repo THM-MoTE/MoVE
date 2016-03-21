@@ -15,6 +15,7 @@ import javafx.scene.layout.{StackPane, HBox, Pane}
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
 import javafx.stage.FileChooser
+import de.thm.move.Global
 import de.thm.move.views.DrawPanel
 import de.thm.move.views.shapes.ResizableShape
 
@@ -122,6 +123,11 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onShowAnchorsClicked(e:ActionEvent): Unit = drawCtrl.setVisibilityOfAnchors(showAnchorsSelected)
+
+  @FXML
+  def onUndoClicked(e:ActionEvent): Unit = Global.history.undo()
+  @FXML
+  def onRedoClicked(e:ActionEvent): Unit = Global.history.redo()
 
   @FXML
   def onPointerClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.DEFAULT)
