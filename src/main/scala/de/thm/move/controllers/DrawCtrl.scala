@@ -143,7 +143,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color, selectedThickness: Int) = {
     val polygon = ShapeFactory.newPolygon(points)(fillColor, strokeColor, selectedThickness)
-    removeDrawnAnchors(points.size+1)
+    removeDrawnAnchors(points.size)
     addToPanel(polygon)
     addToPanel(polygon.getAnchors:_*)
   }
@@ -179,12 +179,12 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   private def removeDrawnAnchors(cnt:Int):Unit = {
     val removingAnchors = drawPanel.getShapes.zipWithIndex.takeWhile {
-      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt-1
+      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt
     }.map(_._1)
 
     //remove from shapelist
     drawPanel.setShapes( drawPanel.getShapes.zipWithIndex.dropWhile {
-      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt-1
+      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt
     }.map(_._1) )
 
     //remove from painting area
@@ -193,7 +193,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
 
   def setVisibilityOfAnchors(flag:Boolean): Unit = {
-    drawPanel.getChildren.filter(_.isInstanceOf[Anchor]).foreach { anchor =>
+    drawPanel.getChildren.filter(_.isInstanceOf[Anchor]) foreach { anchor =>
       anchor.setVisible(flag)
     }
   }
