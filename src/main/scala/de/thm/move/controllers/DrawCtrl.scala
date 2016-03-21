@@ -9,6 +9,7 @@ import javafx.scene.shape.{Rectangle, Shape}
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
+import de.thm.move.views.shapes.ResizableShape
 import de.thm.move.views.{Anchor, DrawPanel}
 
 import collection.JavaConversions._
@@ -61,25 +62,19 @@ class DrawCtrl(drawPanel: DrawPanel) {
       mv.getEventType match {
         case MouseEvent.MOUSE_PRESSED =>
           mv.getSource match {
-            case a:Anchor =>
-            case r:Rectangle =>
-              deltaX = r.getX() - mv.getSceneX
-              deltaY = r.getY() - mv.getSceneY
-            case n:Node =>
-              deltaX = n.getLayoutX - mv.getSceneX
-              deltaY = n.getLayoutY - mv.getSceneY
+            case shape:ResizableShape =>
+              deltaX = shape.getX - mv.getSceneX
+              deltaY = shape.getY - mv.getSceneY
+            case _:Anchor =>
             case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
           }
         case MouseEvent.MOUSE_DRAGGED =>
           //translate from original to new position
           mv.getSource match {
-            case a:Anchor =>
-            case r:Rectangle =>
-                r.setX(deltaX + mv.getSceneX)
-                r.setY(deltaY + mv.getSceneY)
-            case n:Node =>
-              n.setLayoutX(deltaX + mv.getSceneX)
-              n.setLayoutY(deltaY + mv.getSceneY)
+            case shape:ResizableShape =>
+              shape.setX(deltaX + mv.getSceneX)
+              shape.setY(deltaY + mv.getSceneY)
+            case _:Anchor =>
             case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
           }
         case MouseEvent.MOUSE_RELEASED =>
