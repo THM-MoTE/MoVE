@@ -7,12 +7,15 @@ import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
 
+import de.thm.move.Global
 import de.thm.move.controllers.factorys.ShapeFactory
+import de.thm.move.history.History
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 import de.thm.move.views.{Anchor, DrawPanel}
+import de.thm.move.history.History.{Action, Command}
 
 import collection.JavaConversions._
 
@@ -67,14 +70,27 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
   def getMoveHandler: (MouseEvent => Unit) = {
     var deltaX = -1.0
     var deltaY = -1.0
+
+    var command: Action => Command = null
+
     def moveElement(mv:MouseEvent): Unit = {
       //move selected element
       mv.getEventType match {
         case MouseEvent.MOUSE_PRESSED =>
           mv.getSource match {
             case shape:ResizableShape =>
-              deltaX = shape.getX - mv.getSceneX
-              deltaY = shape.getY - mv.getSceneY
+              //save old coordinates for un-/redo
+              val oldX = shape.getX
+              val oldY = shape.getY
+
+              command = History.partialAction( () => {
+                println("undo action")
+                shape.setX(oldX)
+                shape.setY(oldY)
+              })
+
+              deltaX = oldX - mv.getSceneX
+              deltaY = oldY - mv.getSceneY
             case _:Anchor => //ignore, will be repositioned when moving the shape
             case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
           }
@@ -88,6 +104,22 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
           }
         case MouseEvent.MOUSE_RELEASED =>
+          mv.getSource match {
+            case shape:ResizableShape =>
+              val newX = shape.getX
+              val newY = shape.getY
+              val cmd = command( () => {
+                println("redo action")
+                shape.setX(newX)
+                shape.setY(newY)
+              })
+
+              println("saving action")
+
+              Global.history.save(cmd)
+
+            case _ => println("WARNING ignoring mouse pressed")//ignore
+          }
         case _ => //unknown event
       }
     }
