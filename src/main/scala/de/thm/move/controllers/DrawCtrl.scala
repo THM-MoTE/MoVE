@@ -71,7 +71,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     var deltaX = -1.0
     var deltaY = -1.0
 
-    var command: Action => Command = null
+    var command: (=> Unit) => Command = null
 
     def moveElement(mv:MouseEvent): Unit = {
       //move selected element
@@ -83,7 +83,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
               val oldX = shape.getX
               val oldY = shape.getY
 
-              command = History.partialAction( () => {
+              command = History.partialAction({
                 println("undo action")
                 shape.setX(oldX)
                 shape.setY(oldY)
@@ -108,7 +108,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             case shape:ResizableShape =>
               val newX = shape.getX
               val newY = shape.getY
-              val cmd = command( () => {
+              val cmd = command({
                 println("redo action")
                 shape.setX(newX)
                 shape.setY(newY)
