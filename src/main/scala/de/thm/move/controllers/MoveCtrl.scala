@@ -15,6 +15,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
 import javafx.stage.FileChooser
 import de.thm.move.views.DrawPanel
+import de.thm.move.views.shapes.ResizableShape
 
 import collection.JavaConversions._
 
@@ -65,10 +66,16 @@ class MoveCtrl extends Initializable {
     val handler = drawCtrl.getDrawHandler
     val drawHandler = { mouseEvent:MouseEvent =>
       selectedShape match {
-        case Some(shape) =>  handler(shape, mouseEvent)(getFillColor, getStrokeColor, selectedThickness)
+        case Some(shape) =>
+          drawCtrl.removeSelectedShape
+          handler(shape, mouseEvent)(getFillColor, getStrokeColor, selectedThickness)
         case _ => //ignore
       }
     }
+
+    //add eventhandlers
+    fillColorPicker.setOnAction(colorPickerChanged _)
+    strokeColorPicker.setOnAction(colorPickerChanged _)
 
     drawPanel.setOnMousePressed(drawHandler)
     drawPanel.setOnMouseClicked(drawHandler)
@@ -76,9 +83,21 @@ class MoveCtrl extends Initializable {
 
   }
 
+
+  def colorPickerChanged(ae:ActionEvent): Unit = {
+    val src = ae.getSource
+    if(src == strokeColorPicker) drawCtrl.changeColorForSelectedShape(None, Some(strokeColorPicker.getValue))
+    else if(src == fillColorPicker) drawCtrl.changeColorForSelectedShape(Some(fillColorPicker.getValue), None)
+  }
+
   def shapeInputHandler(ev:InputEvent): Unit = {
     if(selectedShape.isEmpty) {
       ev match {
+        case mv:MouseEvent if mv.getEventType == MouseEvent.MOUSE_CLICKED =>
+          mv.getSource() match {
+            case s:ResizableShape => drawCtrl.setSelectedShape(s)
+          }
+
         case mv: MouseEvent => moveHandler(mv)
       }
     }

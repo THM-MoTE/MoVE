@@ -18,6 +18,8 @@ import collection.JavaConversions._
 
 class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
+  private var selectedShape:Option[Node] = None
+
   def getDrawHandler: (SelectedShape, MouseEvent) => (Color, Color, Int) => Unit = {
     var points = List[Point]()
 
@@ -55,6 +57,12 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
     drawHandler
   }
+
+  def setSelectedShape(shape:Node): Unit = {
+    selectedShape = Some(shape)
+  }
+
+  def removeSelectedShape: Unit = selectedShape = None
 
   def getMoveHandler: (MouseEvent => Unit) = {
     var deltaX = -1.0
@@ -156,5 +164,20 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     drawPanel.getChildren.filter(_.isInstanceOf[Anchor]).foreach { anchor =>
       anchor.setVisible(flag)
     }
+  }
+
+  def changeColorForSelectedShape(fillColor:Option[Color], strokeColor:Option[Color]): Unit = {
+    selectedShape flatMap {
+      case x:ColorizableShape => Some(x)
+      case _ => None
+    } foreach { x =>
+      fillColor foreach ( x.setFillColor(_) )
+      strokeColor foreach ( x.setStrokeColor(_) )
+    }
+  }
+
+  def changeStrokeWidthForSelectedShape(width:Int): Unit = {
+    //TODO implement this
+    ???
   }
 }

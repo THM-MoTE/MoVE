@@ -10,4 +10,7 @@ trait ColorizableShape {
     self.setFill(fillColor)
     self.setStroke(strokeColor)
   }
+
+  def setFillColor(c:Color): Unit = self.setFill(c)
+  def setStrokeColor(c:Color): Unit = self.setStroke(c)
 }

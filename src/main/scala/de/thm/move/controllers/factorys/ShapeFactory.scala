@@ -27,6 +27,7 @@ object ShapeFactory {
   def newCircle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):ResizableCircle = {
     val circle = new ResizableCircle(point, width, height)
     circle.colorizeShape(fillColor, strokeColor)
+    circle
   }
 
   def newAnchor(point:Point):Anchor = {
