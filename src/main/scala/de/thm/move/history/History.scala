@@ -3,9 +3,7 @@ package de.thm.move.history
 import scala.collection.mutable.ArrayBuffer
 
 class History {
-
-  type Action = () => Unit
-  type UndoAction = () => Unit
+  import History._
 
   private val undoStack = ArrayBuffer[Command]()
   private val redoStack = ArrayBuffer[Command]()
@@ -14,23 +12,35 @@ class History {
     execute(Command(doFn, undoFn))
 
   def execute(c:Command): Unit = {
-    c.exec
-    undoStack += c
+    c.exec()
+    undoStack.prepend(c)
   }
 
-  def undo: Unit = {
+  def save(c:Command): Unit = undoStack.prepend(c)
+
+  def undo(): Unit = {
     undoStack.headOption foreach { cmd =>
       undoStack.remove(0)
-      cmd.undo
+      redoStack.prepend(cmd)
+      cmd.undo()
     }
   }
 
-  def redo: Unit = {
+  def redo(): Unit = {
     redoStack.headOption foreach { cmd =>
       redoStack.remove(0)
-      cmd.exec
+      cmd.exec()
     }
   }
+}
 
-  case class Command(exec: Action, undo:Action)
+object History {
+  type Action = () => Unit
+  case class Command(exec: Action, undo: Action)
+
+  val emptyAction = Command( () => Unit , () => Unit )
+
+  def partialAction(undo: Action): Action => Command = { exec =>
+    Command(exec, undo)
+  }
 }
