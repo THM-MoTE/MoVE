@@ -163,10 +163,12 @@ trait BoundedAnchors {
     val deltaX = if(newX<oldX) ((oldX-newX) + boundWidth) else (boundWidth-(newX-oldX))
     val deltaY = if(newY > oldY) ((newY-oldY)+boundHeight) else (boundHeight-(oldY-newY))
 
-    if(adjustCoordinates) {
-      setX(newX)
-    }
-    setWidth(deltaX)
-    setHeight(deltaY)
+    history.execute(command {
+      if(adjustCoordinates) {
+        setX(newX)
+      }
+      setWidth(deltaX)
+      setHeight(deltaY)
+    })
   }
 }
