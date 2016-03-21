@@ -2,6 +2,7 @@ package de.thm.move.controllers
 
 import java.net.URL
 import java.util.ResourceBundle
+import javafx.beans.value.ChangeListener
 import javafx.collections.FXCollections
 import javafx.event.ActionEvent
 import javafx.fxml.{Initializable, FXML}
@@ -76,13 +77,20 @@ class MoveCtrl extends Initializable {
     //add eventhandlers
     fillColorPicker.setOnAction(colorPickerChanged _)
     strokeColorPicker.setOnAction(colorPickerChanged _)
+//    borderThicknessChooser.getItems.addListener()
+
+    val list:ChangeListener[Int] = { (_:Int, newX:Int) =>
+
+    }
+    borderThicknessChooser.getSelectionModel.selectedItemProperty.addListener({ (_:Int, newX:Int) =>
+      drawCtrl.changeStrokeWidthForSelectedShape(newX)
+    })
 
     drawPanel.setOnMousePressed(drawHandler)
     drawPanel.setOnMouseClicked(drawHandler)
     drawPanel.setOnMouseReleased(drawHandler)
 
   }
-
 
   def colorPickerChanged(ae:ActionEvent): Unit = {
     val src = ae.getSource

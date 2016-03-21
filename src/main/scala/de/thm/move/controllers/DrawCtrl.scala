@@ -177,7 +177,11 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
   }
 
   def changeStrokeWidthForSelectedShape(width:Int): Unit = {
-    //TODO implement this
-    ???
+    selectedShape flatMap {
+      case x:ColorizableShape => Some(x)
+      case _ => None
+    } foreach { x =>
+      x.setStrokeWidth(width)
+    }
   }
 }
