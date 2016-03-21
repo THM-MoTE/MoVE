@@ -1,5 +1,6 @@
 package de.thm.move.controllers
 
+import javafx.event.EventHandler
 import javafx.scene.Node
 import javafx.scene.image.{Image, ImageView}
 import javafx.scene.input.{InputEvent, MouseEvent}
@@ -15,7 +16,7 @@ import de.thm.move.views.{Anchor, DrawPanel}
 
 import collection.JavaConversions._
 
-class DrawCtrl(drawPanel: DrawPanel) {
+class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   def getDrawHandler: (SelectedShape, MouseEvent) => (Color, Color, Int) => Unit = {
     var points = List[Point]()
@@ -85,6 +86,16 @@ class DrawCtrl(drawPanel: DrawPanel) {
     moveElement
   }
 
+  def addToPanel[T <: Node](shape:T*): Unit = {
+    shape foreach { x =>
+      //add eventhandler
+      x.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
+        override def handle(event: InputEvent): Unit = shapeInputHandler(event)
+      })
+      drawPanel.drawShape(x)
+    }
+  }
+
   def drawAnchor(p:Point): Unit = {
     val anchor = ShapeFactory.newAnchor(p)
     drawPanel.drawShape(anchor)
@@ -93,14 +104,14 @@ class DrawCtrl(drawPanel: DrawPanel) {
   def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color) = {
     val polygon = ShapeFactory.newPolygon(points)(fillColor, strokeColor)
     removeDrawnAnchors(points.size+1)
-    drawPanel.drawShape(polygon)
-    drawPanel.drawShapes(polygon.getAnchors:_*)
+    addToPanel(polygon)
+    addToPanel(polygon.getAnchors:_*)
   }
 
   def drawImage(img:Image): Unit = {
     val imgview = ShapeFactory.newImage(img)
-    drawPanel.drawShape(imgview)
-    drawPanel.drawShapes(imgview.getAnchors:_*)
+    addToPanel(imgview)
+    addToPanel(imgview.getAnchors:_*)
   }
 
   def drawCustomShape(shape:SelectedShape, start:Point, end:Point)(fillColor:Color, strokeColor:Color, selectedThickness:Int) = {
@@ -121,8 +132,8 @@ class DrawCtrl(drawPanel: DrawPanel) {
     }
 
     newShapeOpt foreach { x =>
-      drawPanel.drawShape(x)
-      drawPanel.drawShapes(x.getAnchors:_*)
+      addToPanel(x)
+      addToPanel(x.getAnchors:_*)
     }
   }
 

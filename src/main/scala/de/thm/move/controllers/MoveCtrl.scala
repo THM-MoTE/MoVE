@@ -41,8 +41,8 @@ class MoveCtrl extends Initializable {
 
   @FXML
   var drawStub: StackPane = _
-  private val drawPanel = new DrawPanel(shapeInputHandler)
-  private val drawCtrl = new DrawCtrl(drawPanel)
+  private val drawPanel = new DrawPanel()
+  private val drawCtrl = new DrawCtrl(drawPanel, shapeInputHandler)
 
   private val moveHandler = drawCtrl.getMoveHandler
 

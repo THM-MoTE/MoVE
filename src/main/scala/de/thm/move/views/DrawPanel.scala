@@ -16,25 +16,16 @@ import javafx.beans.binding.Bindings
 
 import de.thm.move.views.shapes._
 
-class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
+class DrawPanel() extends Pane {
   private var shapes = List[Node]()
 
   def getShapes:List[Node] = shapes
 
   def setShapes(xs:List[_ <: Node]) = shapes = xs
 
-  private def addInputEventHandler(node:Node) = {
-    node.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
-      override def handle(event: InputEvent): Unit = inputEventHandler(event)
-    })
-  }
-
   def drawShape[T <: Node](n:T):Unit = {
-    addInputEventHandler(n)
     super.getChildren.add(n)
 
     shapes = n :: shapes
   }
-
-  def drawShapes[T <: Node](shapes:T*) = shapes foreach drawShape
 }
