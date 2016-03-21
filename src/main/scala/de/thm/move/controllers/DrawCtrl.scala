@@ -67,7 +67,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             case shape:ResizableShape =>
               deltaX = shape.getX - mv.getSceneX
               deltaY = shape.getY - mv.getSceneY
-            case _:Anchor =>
+            case _:Anchor => //ignore, will be repositioned when moving the shape
             case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
           }
         case MouseEvent.MOUSE_DRAGGED =>
@@ -76,7 +76,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             case shape:ResizableShape =>
               shape.setX(deltaX + mv.getSceneX)
               shape.setY(deltaY + mv.getSceneY)
-            case _:Anchor =>
+            case _:Anchor => //ignore, will be repositioned when moving the shape
             case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
           }
         case MouseEvent.MOUSE_RELEASED =>
