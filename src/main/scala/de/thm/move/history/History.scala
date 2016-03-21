@@ -8,6 +8,7 @@ class History {
   private val undoStack = ArrayBuffer[Command]()
   private val redoStack = ArrayBuffer[Command]()
 
+  def execute(doFn: => Unit)(undoFn: => Unit): Unit = execute( newCommand(doFn, undoFn) )
   def execute(doFn: Action)(undoFn: Action): Unit =
     execute(Command(doFn, undoFn))
 
@@ -40,7 +41,10 @@ object History {
 
   val emptyAction = Command( () => Unit , () => Unit )
 
-  def partialAction(undo: Action): Action => Command = { exec =>
-    Command(exec, undo)
+  def newCommand(exec: => Unit, undo: => Unit):Command = Command( () => exec, () => undo )
+
+  def partialAction(undo: => Unit)(exec: => Unit): Command = {
+    Command( () => exec, () => undo)
   }
+
 }
