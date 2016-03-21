@@ -33,7 +33,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             points.reverse.headOption match {
               case Some((x,y)) if Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10 =>
                 //draw the polygon
-                drawPolygon(points)(fillColor, strokeColor)
+                drawPolygon(points)(fillColor, strokeColor, selectedThickness)
                 points = List()
               case _ =>
                 points = (newX, newY) :: points
@@ -109,8 +109,8 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     drawPanel.drawShape(anchor)
   }
 
-  def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color) = {
-    val polygon = ShapeFactory.newPolygon(points)(fillColor, strokeColor)
+  def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color, selectedThickness: Int) = {
+    val polygon = ShapeFactory.newPolygon(points)(fillColor, strokeColor, selectedThickness)
     removeDrawnAnchors(points.size+1)
     addToPanel(polygon)
     addToPanel(polygon.getAnchors:_*)
@@ -130,12 +130,12 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
       case SelectedShape.Rectangle =>
         val width = endX - startX
         val height = endY - startY
-        Some( ShapeFactory.newRectangle(start, width, height)(fillColor, strokeColor) )
+        Some( ShapeFactory.newRectangle(start, width, height)(fillColor, strokeColor, selectedThickness) )
       case SelectedShape.Circle =>
         val width = endX - startX
         val height = endY - startY
-        Some( ShapeFactory.newCircle(start, width, height)(fillColor, strokeColor) )
-      case SelectedShape.Line => Some( ShapeFactory.newLine(start, end, selectedThickness)(fillColor, strokeColor) )
+        Some( ShapeFactory.newCircle(start, width, height)(fillColor, strokeColor, selectedThickness) )
+      case SelectedShape.Line => Some( ShapeFactory.newLine(start, end, selectedThickness)(fillColor, strokeColor, selectedThickness) )
       case _ => None
     }
 

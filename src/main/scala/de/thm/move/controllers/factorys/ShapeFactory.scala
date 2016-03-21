@@ -12,22 +12,25 @@ object ShapeFactory {
     new ResizableImage(img)
   }
 
-  def newRectangle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):ResizableRectangle = {
+  private def setDefaultColor[T <: ColorizableShape](shape:T)(fillColor:Color, strokeColor:Color, strokeWidth:Int): T = {
+    shape.colorizeShape(fillColor, strokeColor)
+    shape.setStrokeWidth(strokeWidth)
+    shape
+  }
+
+  def newRectangle(point:Point, width:Double, height:Double): (Color, Color, Int) => ResizableRectangle = {
     val rectangle = new ResizableRectangle(point, width, height)
-    rectangle.colorizeShape(fillColor, strokeColor)
-    rectangle
+    (setDefaultColor(rectangle) _)
   }
 
-  def newLine(start:Point, end:Point, strokeSize:Int)(fillColor:Color, strokeColor:Color):ResizableLine = {
+  def newLine(start:Point, end:Point, strokeSize:Int): (Color, Color, Int) => ResizableLine = {
     val line = new ResizableLine(start, end, strokeSize)
-    line.colorizeShape(fillColor, strokeColor)
-    line
+    (setDefaultColor(line) _)
   }
 
-  def newCircle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):ResizableCircle = {
+  def newCircle(point:Point, width:Double, height:Double): (Color, Color, Int) => ResizableCircle = {
     val circle = new ResizableCircle(point, width, height)
-    circle.colorizeShape(fillColor, strokeColor)
-    circle
+    (setDefaultColor(circle) _)
   }
 
   def newAnchor(point:Point):Anchor = {
@@ -35,9 +38,8 @@ object ShapeFactory {
     new Anchor(x,y)
   }
 
-  def newPolygon(points:List[Point])(fillColor:Color, strokeColor:Color):ResizablePolygon = {
+  def newPolygon(points:List[Point]): (Color, Color, Int) => ResizablePolygon = {
     val polygon = ResizablePolygon(points)
-    polygon.colorizeShape(fillColor, strokeColor)
-    polygon
+    (setDefaultColor(polygon) _)
   }
 }

@@ -104,6 +104,7 @@ class MoveCtrl extends Initializable {
         case mv:MouseEvent if mv.getEventType == MouseEvent.MOUSE_CLICKED =>
           mv.getSource() match {
             case s:ResizableShape => drawCtrl.setSelectedShape(s)
+            case _:Anchor => //ignore can't change
           }
 
         case mv: MouseEvent => moveHandler(mv)
