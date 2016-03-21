@@ -1,6 +1,7 @@
 package de.thm.move.views.shapes
 
 import javafx.geometry.Bounds
+import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Ellipse
 import javafx.scene.Node
 
@@ -9,13 +10,14 @@ import de.thm.move.views.Anchor
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
 trait BoundedAnchors {
-  self: Node =>
+  self: Node with ResizableShape =>
 
   //resize anchors at edges
   val topLeftAnchor = new Anchor(getTopLeft)
   val topRightAnchor = new Anchor(getTopRight)
   val bottomLeftAnchor = new Anchor(getBottomLeft)
   val bottomRightAnchor = new Anchor(getBottomRight)
+  override val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
   def getTopLeft:Point = (getBoundsInLocal.getMinX, getBoundsInLocal.getMinY)
   def getTopRight:Point = (getBoundsInLocal.getMaxX, getBoundsInLocal.getMinY)
@@ -34,5 +36,61 @@ trait BoundedAnchors {
     adjustCenter(topRightAnchor, getTopRight)
     adjustCenter(bottomLeftAnchor, getBottomLeft)
     adjustCenter(bottomRightAnchor, getBottomRight)
+  })
+
+  topLeftAnchor.setOnMouseDragged ({ me: MouseEvent =>
+    val (oldX, oldY) = getTopLeft
+    val (newX, newY) = (me.getX, me.getY)
+    val boundWidth = getWidth
+    val boundHeight = getHeight
+
+    val deltaX = if(oldX > newX) ((oldX-newX) + boundWidth) else (boundWidth - (newX-oldX))
+    val deltaY = if(newY < oldY) ((oldY - newY)  + boundHeight) else (boundHeight - (newY-oldY))
+
+    setWidth(deltaX)
+    setHeight(deltaY)
+  })
+
+  topRightAnchor.setOnMouseDragged({ me: MouseEvent =>
+    val (oldX, oldY) = getTopRight
+    val (newX, newY) = (me.getX, me.getY)
+
+    val boundWidth = getWidth
+    val boundHeight = getHeight
+
+    val deltaX = if(newX>oldX) ((newX - oldX) + boundWidth) else (boundWidth-(oldX-newX))
+    val deltaY = if(newY < oldY) (oldY - newY  + boundHeight) else (boundHeight - (newY-oldY))
+
+    setWidth(deltaX)
+    setHeight(deltaY)
+
+  })
+
+  bottomRightAnchor.setOnMouseDragged({ me: MouseEvent =>
+    val (oldX, oldY) = getBottomRight
+    val (newX, newY) = (me.getX, me.getY)
+
+    val boundWidth = getWidth
+    val boundHeight = getHeight
+
+    val deltaX = (newX - oldX + boundWidth)
+    val deltaY = (newY - oldY + boundHeight)
+
+    setWidth(deltaX)
+    setHeight(deltaY)
+  })
+
+  bottomLeftAnchor.setOnMouseDragged({ me: MouseEvent =>
+    val (oldX, oldY) = getBottomLeft
+    val (newX, newY) = (me.getX, me.getY)
+
+    val boundWidth = getWidth
+    val boundHeight = getHeight
+
+    val deltaX = if(newX<oldX) ((oldX-newX) + boundWidth) else (boundWidth-(newX-oldX))
+    val deltaY = if(newY > oldY) ((newY-oldY)+boundHeight) else (boundHeight-(oldY-newY))
+
+    setWidth(deltaX)
+    setHeight(deltaY)
   })
 }
