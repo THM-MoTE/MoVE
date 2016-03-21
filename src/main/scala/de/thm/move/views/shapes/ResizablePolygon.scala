@@ -27,7 +27,7 @@ class ResizablePolygon(points:List[Double]) extends Polygon(points:_*) with Resi
         val _ = observablePoints.set(yIdx, newX.doubleValue())
       })
 
-      val anchor = new Anchor(xProperty.get(), yProperty.get()) with MovableAnchor
+      val anchor = new Anchor(xProperty.get(), yProperty.get()) with de.thm.move.views.MovableAnchor
       xProperty.bind(anchor.centerXProperty())
       yProperty.bind(anchor.centerYProperty())
       anchor

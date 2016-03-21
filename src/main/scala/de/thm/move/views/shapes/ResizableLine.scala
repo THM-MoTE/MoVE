@@ -12,8 +12,8 @@ class ResizableLine(
          strokeSize:Int) extends Line(start._1, start._2, end._1, end._2) with ResizableShape with ColorizableShape {
   setStrokeWidth(strokeSize)
 
-  val startAnchor = new Anchor(start) with MovableAnchor
-  val endAnchor = new Anchor(end) with MovableAnchor
+  val startAnchor = new Anchor(start) with de.thm.move.views.MovableAnchor
+  val endAnchor = new Anchor(end) with de.thm.move.views.MovableAnchor
   val getAnchors: List[Anchor] = List(startAnchor, endAnchor)
 
   BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
