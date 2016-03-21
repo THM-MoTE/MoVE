@@ -118,7 +118,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
               Global.history.save(cmd)
 
-            case _ => println("WARNING ignoring mouse pressed")//ignore
+            case _ => //ignore
           }
         case _ => //unknown event
       }
