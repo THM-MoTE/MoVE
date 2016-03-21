@@ -15,7 +15,7 @@ trait MovableAnchor {
   private var deltaY = -1.0
 
   //undo-/redo command
-  private var command: (=> Unit) => Command = null
+  private var command: (=> Unit) => Command = x => { History.emptyAction }
 
   self.setOnMousePressed { me: MouseEvent =>
     val oldX = self.getCenterX

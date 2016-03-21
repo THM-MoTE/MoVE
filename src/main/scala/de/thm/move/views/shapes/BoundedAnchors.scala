@@ -44,7 +44,7 @@ trait BoundedAnchors {
   })
 
   //undo-/redo command
-  private var command: (=> Unit) => Command = null
+  private var command: (=> Unit) => Command = x => { History.emptyAction }
 
   topLeftAnchor.setOnMousePressed({ _: MouseEvent =>
     val (oldX, oldY) = getTopLeft
