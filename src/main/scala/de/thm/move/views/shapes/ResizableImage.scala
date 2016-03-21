@@ -11,7 +11,7 @@ import de.thm.move.views.Anchor
 class ResizableImage(img:Image) extends ImageView(img) with ResizableShape with BoundedAnchors {
   setPreserveRatio(true)
   setFitWidth(200)
-
+/*
   topLeftAnchor.setOnMouseDragged({me:MouseEvent =>
     val (newX, newY) = (me.getX, me.getY)
     val (oldX, oldY) = (this.getX, this.getY)
@@ -56,7 +56,13 @@ class ResizableImage(img:Image) extends ImageView(img) with ResizableShape with 
     setFitHeight(deltaY)
   })
 
-  override val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
+  */
+
+  override def getWidth: Double = getFitWidth
+  override def getHeight: Double = getFitHeight
+
+  override def setWidth(w:Double): Unit = setFitWidth(w)
+  override def setHeight(h:Double): Unit = setFitHeight(h)
 
   BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 }

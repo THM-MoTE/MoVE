@@ -13,7 +13,7 @@ class ResizableRectangle(
             width:Double,
             height:Double) extends Rectangle(startPoint._1, startPoint._2, width, height) with ResizableShape with BoundedAnchors with ColorizableShape {
   private val (x,y) = startPoint
-
+/*
   topLeftAnchor.setOnMouseDragged({me:MouseEvent =>
     val (newX, newY) = (me.getX, me.getY)
     val (oldX, oldY) = (this.getX, this.getY)
@@ -55,7 +55,5 @@ class ResizableRectangle(
     val deltaY = (newY-oldY) + getHeight
     setWidth(deltaX)
     setHeight(deltaY)
-  })
-
-  val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
+  })*/
 }

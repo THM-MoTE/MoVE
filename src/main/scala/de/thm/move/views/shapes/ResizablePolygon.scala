@@ -34,6 +34,22 @@ class ResizablePolygon(points:List[Double]) extends Polygon(points:_*) with Resi
     }).toList
 
   BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
+
+  override def getX: Double = getLayoutX()
+
+  override def setY(y: Double): Unit = setLayoutY(y)
+
+  override def getY: Double = getLayoutY()
+
+  override def getHeight: Double = getLayoutBounds.getHeight
+
+  override def getWidth: Double = getLayoutBounds.getWidth
+
+  override def setX(x: Double): Unit = setLayoutX(x)
+
+  override def setWidth(w: Double): Unit = { /*can't set width*/ }
+
+  override def setHeight(h: Double): Unit = { /*can't set height*/ }
 }
 
 object ResizablePolygon {

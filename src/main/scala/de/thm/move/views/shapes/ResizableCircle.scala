@@ -15,63 +15,21 @@ class ResizableCircle(
         height:Double) extends Ellipse(point._1, point._2, width, height) with ResizableShape with BoundedAnchors with ColorizableShape {
   private val (x,y) = point
 
-  topLeftAnchor.setOnMouseDragged ({ me: MouseEvent =>
-    val (oldX, oldY) = getTopLeft
-    val (newX, newY) = (me.getX, me.getY)
-    val boundWidth = getBoundsInLocal.getWidth
-    val boundHeight = getBoundsInLocal.getHeight
-
-    val deltaX = if(oldX > newX) ((oldX-newX) + boundWidth) / 2 else (boundWidth - (newX-oldX)) / 2
-    val deltaY = if(newY < oldY) ((oldY - newY)  + boundHeight) / 2 else (boundHeight - (newY-oldY)) / 2
-
-    setRadiusX(deltaX)
-    setRadiusY(deltaY)
-  })
-
-  topRightAnchor.setOnMouseDragged({ me: MouseEvent =>
-    val (oldX, oldY) = getTopRight
-    val (newX, newY) = (me.getX, me.getY)
-
-    val boundWidth = getBoundsInLocal.getWidth
-    val boundHeight = getBoundsInLocal.getHeight
-
-    val deltaX = if(newX>oldX) ((newX - oldX) + boundWidth) / 2 else (boundWidth-(oldX-newX)) / 2
-    val deltaY = if(newY < oldY) (oldY - newY  + boundHeight) / 2 else (boundHeight - (newY-oldY)) / 2
-
-    setRadiusX(deltaX)
-    setRadiusY(deltaY)
-
-  })
-
-  bottomRightAnchor.setOnMouseDragged({ me: MouseEvent =>
-    val (oldX, oldY) = getBottomRight
-    val (newX, newY) = (me.getX, me.getY)
-
-    val boundWidth = getBoundsInLocal.getWidth
-    val boundHeight = getBoundsInLocal.getHeight
-
-    val deltaX = (newX - oldX + boundWidth) / 2
-    val deltaY = (newY - oldY + boundHeight) / 2
-
-    setRadiusX(deltaX)
-    setRadiusY(deltaY)
-  })
-
-  bottomLeftAnchor.setOnMouseDragged({ me: MouseEvent =>
-    val (oldX, oldY) = getBottomLeft
-    val (newX, newY) = (me.getX, me.getY)
-
-    val boundWidth = getBoundsInLocal.getWidth
-    val boundHeight = getBoundsInLocal.getHeight
-
-    val deltaX = if(newX<oldX) ((oldX-newX) + boundWidth)/2 else (boundWidth-(newX-oldX))/2
-    val deltaY = if(newY > oldY) ((newY-oldY)+boundHeight)/2 else (boundHeight-(oldY-newY))/2
-
-    setRadiusX(deltaX)
-    setRadiusY(deltaY)
-  })
-
-  val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
-
   BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
+
+  override def setX(x: Double): Unit = setCenterX(x)
+
+  override def setY(y: Double): Unit = setCenterY(y)
+
+  override def setWidth(w: Double): Unit = setRadiusX(w/2)
+
+  override def setHeight(h: Double): Unit = setRadiusY(h/2)
+
+  override def getX: Double = getCenterX
+
+  override def getY: Double = getCenterY
+
+  override def getWidth: Double = getBoundsInLocal.getWidth
+  override def getHeight: Double = getBoundsInLocal.getHeight
+
 }
