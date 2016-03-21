@@ -92,7 +92,7 @@ class MoveCtrl extends Initializable {
     fileOp map { file =>
       new Image(file.toURI.toString)
     } foreach {
-      drawPanel.drawImage
+      drawCtrl.drawImage
     }
   }
 

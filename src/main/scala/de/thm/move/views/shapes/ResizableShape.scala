@@ -1,8 +1,11 @@
 package de.thm.move.views.shapes
 
+import javafx.scene.Node
+
 import de.thm.move.views.Anchor
 
-trait ResizableShape {
+trait ResizableShape extends Node {
+
   def getAnchors: List[Anchor]
 
   def getX: Double

@@ -1,15 +1,16 @@
 package de.thm.move.controllers
 
 import javafx.scene.Node
-import javafx.scene.image.ImageView
+import javafx.scene.image.{Image, ImageView}
 import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
 
+import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
-import de.thm.move.views.shapes.ResizableShape
+import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 import de.thm.move.views.{Anchor, DrawPanel}
 
 import collection.JavaConversions._
@@ -29,11 +30,11 @@ class DrawCtrl(drawPanel: DrawPanel) {
             points.reverse.headOption match {
               case Some((x,y)) if Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10 =>
                 //draw the polygon
-                drawPanel.drawPolygon(points)(fillColor, strokeColor)
+                drawPolygon(points)(fillColor, strokeColor)
                 points = List()
               case _ =>
                 points = (newX, newY) :: points
-                drawPanel.drawAnchor(points.head)
+                drawAnchor(points.head)
             }
           }
         case _ =>
@@ -84,23 +85,61 @@ class DrawCtrl(drawPanel: DrawPanel) {
     moveElement
   }
 
+  def drawAnchor(p:Point): Unit = {
+    val anchor = ShapeFactory.newAnchor(p)
+    drawPanel.drawShape(anchor)
+  }
+
+  def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color) = {
+    val polygon = ShapeFactory.newPolygon(points)(fillColor, strokeColor)
+    removeDrawnAnchors(points.size+1)
+    drawPanel.drawShape(polygon)
+    drawPanel.drawShapes(polygon.getAnchors:_*)
+  }
+
+  def drawImage(img:Image): Unit = {
+    val imgview = ShapeFactory.newImage(img)
+    drawPanel.drawShape(imgview)
+    drawPanel.drawShapes(imgview.getAnchors:_*)
+  }
+
   def drawCustomShape(shape:SelectedShape, start:Point, end:Point)(fillColor:Color, strokeColor:Color, selectedThickness:Int) = {
     val (startX, startY) = start
     val (endX, endY) = end
 
-    shape match {
+    val newShapeOpt:Option[ResizableShape] = shape match {
       case SelectedShape.Rectangle =>
         val width = endX - startX
         val height = endY - startY
-        drawPanel.drawRectangle(start, width, height)(fillColor, strokeColor)
+        Some( ShapeFactory.newRectangle(start, width, height)(fillColor, strokeColor) )
       case SelectedShape.Circle =>
         val width = endX - startX
         val height = endY - startY
-        drawPanel.drawCircle(start, width, height)(fillColor, strokeColor)
-      case SelectedShape.Line => drawPanel.drawLine(start, end, selectedThickness)(fillColor, strokeColor)
-      case _ => //ignore
+        Some( ShapeFactory.newCircle(start, width, height)(fillColor, strokeColor) )
+      case SelectedShape.Line => Some( ShapeFactory.newLine(start, end, selectedThickness)(fillColor, strokeColor) )
+      case _ => None
+    }
+
+    newShapeOpt foreach { x =>
+      drawPanel.drawShape(x)
+      drawPanel.drawShapes(x.getAnchors:_*)
     }
   }
+
+  private def removeDrawnAnchors(cnt:Int):Unit = {
+    val removingAnchors = drawPanel.getShapes.zipWithIndex.takeWhile {
+      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt-1
+    }.map(_._1)
+
+    //remove from shapelist
+    drawPanel.setShapes( drawPanel.getShapes.zipWithIndex.dropWhile {
+      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt-1
+    }.map(_._1) )
+
+    //remove from painting area
+    drawPanel.getChildren.removeAll(removingAnchors:_*)
+  }
+
 
   def setVisibilityOfAnchors(flag:Boolean): Unit = {
     drawPanel.getChildren.filter(_.isInstanceOf[Anchor]).foreach { anchor =>

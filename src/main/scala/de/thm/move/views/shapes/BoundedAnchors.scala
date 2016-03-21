@@ -10,7 +10,7 @@ import de.thm.move.views.Anchor
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
 trait BoundedAnchors {
-  self: Node with ResizableShape =>
+  self: ResizableShape =>
 
   //resize anchors at edges
   val topLeftAnchor = new Anchor(getTopLeft)

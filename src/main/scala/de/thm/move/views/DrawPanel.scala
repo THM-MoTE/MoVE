@@ -17,7 +17,11 @@ import javafx.beans.binding.Bindings
 import de.thm.move.views.shapes._
 
 class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
-  private var shapes = List[Shape]()
+  private var shapes = List[Node]()
+
+  def getShapes:List[Node] = shapes
+
+  def setShapes(xs:List[_ <: Node]) = shapes = xs
 
   private def addInputEventHandler(node:Node) = {
     node.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
@@ -25,81 +29,12 @@ class DrawPanel(inputEventHandler:InputEvent => Unit) extends Pane {
     })
   }
 
-  def drawImage(img:Image) = {
-    val view = new ResizableImage(img)
+  def drawShape[T <: Node](n:T):Unit = {
+    addInputEventHandler(n)
+    super.getChildren.add(n)
 
-    addInputEventHandler(view)
-
-    super.getChildren.add(view)
-    super.getChildren.addAll(view.getAnchors:_*)
+    shapes = n :: shapes
   }
 
-  def drawShape(s:Shape):Unit = {
-    addInputEventHandler(s)
-    super.getChildren.add(s)
-
-    shapes = s :: shapes
-  }
-
-  def drawShapes(shapes:Shape*) = shapes.foreach(drawShape)
-
-  private def colorizeShape(s:Shape, fColor:Color, strColor:Color):Unit = {
-    s.setFill(fColor)
-    s.setStroke(strColor)
-  }
-
-  def drawRectangle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):Unit = {
-    val rectangle = new ResizableRectangle(point, width, height)
-    rectangle.colorizeShape(fillColor, strokeColor)
-    drawShapes(rectangle)
-    drawShapes(rectangle.getAnchors:_*)
-  }
-
-  def drawLine(start:Point, end:Point, strokeSize:Int)(fillColor:Color, strokeColor:Color):Unit = {
-    val line = new ResizableLine(start, end, strokeSize)
-    line.colorizeShape(fillColor, strokeColor)
-    drawShape(line)
-    drawShapes(line.getAnchors:_*)
-  }
-
-  def drawCircle(point:Point, width:Double, height:Double)(fillColor:Color, strokeColor:Color):Unit = {
-    val circle = new ResizableCircle(point, width, height)
-
-    drawShape(circle)
-    drawShapes(circle.getAnchors:_*)
-  }
-
-  def drawAnchor(point:Point):Unit = {
-    val (x,y) = point
-    drawShape(new Anchor(x,y))
-  }
-
-  def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color):Unit = {
-    val polygon = ResizablePolygon(points)
-    polygon.colorizeShape(fillColor, strokeColor)
-    removeDrawnAnchors(points.size+1)
-    drawShape(polygon)
-    drawShapes(polygon.getAnchors:_*)
-  }
-
-  private def removeDrawnAnchors(cnt:Int):Unit = {
-    val removingAnchors = shapes.zipWithIndex.takeWhile {
-      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt-1
-    }.map(_._1)
-
-    //remove from shapelist
-    shapes = shapes.zipWithIndex.dropWhile {
-      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt-1
-    }.map(_._1)
-
-    //remove from painting area
-    this.getChildren.removeAll(removingAnchors:_*)
-  }
-
-  private def bindAnchorsTranslationToShapesLayout(shape:Shape)(anchors:Anchor*): Unit = {
-    anchors.foreach { anchor =>
-      anchor.layoutXProperty().bind(shape.layoutXProperty())
-      anchor.layoutYProperty().bind(shape.layoutYProperty())
-    }
-  }
+  def drawShapes[T <: Node](shapes:T*) = shapes foreach drawShape
 }
