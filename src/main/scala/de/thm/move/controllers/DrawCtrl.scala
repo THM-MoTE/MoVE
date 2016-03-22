@@ -21,7 +21,7 @@ import collection.JavaConversions._
 
 class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
-  private var selectedShape:Option[Node] = None
+  private var selectedShape:Option[ResizableShape] = None
 
   def getDrawHandler: (SelectedShape, MouseEvent) => (Color, Color, Int) => Unit = {
     var points = List[Point]()
@@ -61,11 +61,27 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     drawHandler
   }
 
-  def setSelectedShape(shape:Node): Unit = {
-    selectedShape = Some(shape)
+  def setSelectedShape(shape:ResizableShape): Unit = {
+    println(s"set selected $selectedShape")
+    selectedShape match {
+      case Some(oldShape) =>
+        drawPanel.getChildren.remove(oldShape.selectionRectangle)
+        drawPanel.getChildren.add(shape.selectionRectangle)
+        selectedShape = Some(shape)
+      case _ =>
+        selectedShape = Some(shape)
+        drawPanel.getChildren.add(shape.selectionRectangle)
+    }
   }
 
-  def removeSelectedShape: Unit = selectedShape = None
+  def removeSelectedShape: Unit = {
+    selectedShape match {
+      case Some(shape) =>
+        drawPanel.getChildren.remove(shape.selectionRectangle)
+        selectedShape = None
+      case _ => //ignore
+    }
+  }
 
   def getMoveHandler: (MouseEvent => Unit) = {
     var deltaX = -1.0
