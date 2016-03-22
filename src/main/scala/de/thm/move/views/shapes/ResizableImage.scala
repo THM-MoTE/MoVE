@@ -5,7 +5,7 @@ import javafx.scene.input.MouseEvent
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.util.BindingUtils
-
+import de.thm.move.models.CommonTypes._
 import de.thm.move.views.Anchor
 
 class ResizableImage(img:Image) extends ImageView(img) with ResizableShape with BoundedAnchors {
@@ -58,6 +58,7 @@ class ResizableImage(img:Image) extends ImageView(img) with ResizableShape with 
 
   */
 
+  override def getTopLeft:Point = (getX, getY)
   override def getWidth: Double = getFitWidth
   override def getHeight: Double = getFitHeight
 
