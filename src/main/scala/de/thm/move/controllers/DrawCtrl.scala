@@ -6,6 +6,7 @@ import javafx.scene.image.{Image, ImageView}
 import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
+import javafx.scene.input.KeyEvent
 
 import de.thm.move.Global
 import de.thm.move.controllers.factorys.ShapeFactory
@@ -190,6 +191,9 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     newShapeOpt foreach { x =>
       addToPanel(x)
       addToPanel(x.getAnchors:_*)
+      //add shapes to focus-chain for getting keyboard-events
+      x.setFocusTraversable(true)
+      x.requestFocus()
     }
   }
 
