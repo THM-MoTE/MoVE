@@ -2,11 +2,15 @@ package de.thm.move.controllers.implicits
 
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.event.{ActionEvent, EventHandler}
-import javafx.scene.input.{InputEvent, MouseEvent}
+import javafx.scene.input.{InputEvent, MouseEvent, KeyEvent}
 
 object FxHandlerImplicits {
   implicit def mouseEventHandler[T >: MouseEvent](fn: T => Unit): EventHandler[MouseEvent] = new EventHandler[MouseEvent]() {
     override def handle(event: MouseEvent): Unit = fn(event)
+  }
+
+  implicit def keyEventHandler[T >: KeyEvent](fn: T => Unit): EventHandler[KeyEvent] = new EventHandler[KeyEvent]() {
+    override def handle(ke:KeyEvent): Unit = fn(ke)
   }
 
   implicit def actionEventHandler[T >: ActionEvent](fn: T => Unit): EventHandler[ActionEvent] = new EventHandler[ActionEvent]() {
