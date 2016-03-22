@@ -3,6 +3,7 @@ package de.thm.move.views
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.{ObservableValue}
 import javafx.event.{EventHandler}
+import javafx.scene.input.KeyEvent;
 import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.layout.Pane
