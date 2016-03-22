@@ -56,4 +56,9 @@ class ResizableRectangle(
     setWidth(deltaX)
     setHeight(deltaY)
   })*/
+
+  override def getTopLeft:Point = (getX, getY)
+  override def getTopRight:Point = (getX + getWidth, getY)
+  override def getBottomLeft:Point = (getX, getY + getHeight)
+  override def getBottomRight:Point = (getX + getWidth,getY + getHeight)
 }
