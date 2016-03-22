@@ -5,7 +5,7 @@ import java.net.URL
 
 class ConfigLoader(path:URL) extends Config {
   private val map =
-    Source.fromURL(path, "UTF_8").getLines().flatMap { line =>
+    Source.fromURL(path, "UTF-8").getLines().flatMap { line =>
       if(line.startsWith("#")) List()
       else {
         val splitted = line.split("=")
