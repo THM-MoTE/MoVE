@@ -15,3 +15,9 @@
     -fx-fill: #99b3e6;
     -fx-opacity: 80%;
 }
+
+.selection-rectangle {
+  -fx-stroke: #c1d1f0;
+  -fx-fill: null;
+  -fx-stroke-dash-offset: 10;
+}
