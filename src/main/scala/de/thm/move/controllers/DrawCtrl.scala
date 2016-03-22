@@ -71,7 +71,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     var deltaX = -1.0
     var deltaY = -1.0
 
-    var command: (=> Unit) => Command = null
+    var command: (=> Unit) => Command = x => { History.emptyAction }
 
     def moveElement(mv:MouseEvent): Unit = {
       //move selected element
