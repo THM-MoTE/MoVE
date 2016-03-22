@@ -10,4 +10,7 @@ class ShortCutHandler(src:URL) {
 
   def getShortcut(key:String):Option[KeyCombination] =
     shortcutConfig.getString(key).map(KeyCombination.valueOf)
+
+  def getKeyCode(key:String): Option[KeyCode] =
+    shortcutConfig.getString(key).map(_.toUpperCase).map(KeyCode.valueOf)
 }
