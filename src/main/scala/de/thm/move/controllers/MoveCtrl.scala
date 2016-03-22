@@ -30,6 +30,13 @@ import implicits.FxHandlerImplicits._
 class MoveCtrl extends Initializable {
 
   @FXML
+  var undoMenuItem: MenuItem = _
+  @FXML
+  var redoMenuItem: MenuItem = _
+  @FXML
+  var loadImgMenuItem: MenuItem = _
+
+  @FXML
   var btnGroup: ToggleGroup = _
   @FXML
   var fillColorPicker: ColorPicker = _
@@ -56,7 +63,19 @@ class MoveCtrl extends Initializable {
       "polygon_btn" -> SelectedShape.Polygon
     )
 
+    private def setupShortcuts(keys:String*)(menues:MenuItem*) = {
+      for (
+        (key, menu) <- keys zip menues
+      ) {
+        Global.shortcuts.getShortcut(key) foreach menu.setAccelerator
+      }
+    }
+
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
+    //setup keyboard shortcuts
+    setupShortcuts("undo", "redo", "load-image")(undoMenuItem, redoMenuItem, loadImgMenuItem)
+
+
     drawStub.getChildren.add(drawPanel)
     fillColorPicker.setValue(Color.BLACK)
     strokeColorPicker.setValue(Color.BLACK)
