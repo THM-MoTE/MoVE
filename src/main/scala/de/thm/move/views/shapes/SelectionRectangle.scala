@@ -5,6 +5,7 @@ import javafx.scene.shape.Rectangle
 import javafx.geometry.Bounds
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.Global
 
 class SelectionRectangle(selectedShape:ResizableShape) extends Rectangle {
   import SelectionRectangle._
@@ -25,10 +26,13 @@ class SelectionRectangle(selectedShape:ResizableShape) extends Rectangle {
 
   this.xProperty().bind(xProp.subtract(distanceToShape))
   this.yProperty().bind(yProp.subtract(distanceToShape))
-  this.widthProperty().bind(widthProp.add(distanceToShape).add(8))
-  this.heightProperty().bind(heightProp.add(distanceToShape).add(8))
+  this.widthProperty().bind(widthProp.add(distanceToShape).add(aditionalSpace))
+  this.heightProperty().bind(heightProp.add(distanceToShape).add(aditionalSpace))
 }
 
 object SelectionRectangle {
-  val distanceToShape = 10
+  val distanceToShape =
+    Global.config.getInt("selection-rectangle.distance").getOrElse(5)
+  //needed for width, height because of some strange boundsInLocal behaviour
+  val aditionalSpace = 8
 }
