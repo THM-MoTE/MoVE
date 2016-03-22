@@ -63,6 +63,7 @@ class MoveCtrl extends Initializable {
       "polygon_btn" -> SelectedShape.Polygon
     )
 
+    /*Setup given keyboard shortcuts to given item*/
     private def setupShortcuts(keys:String*)(menues:MenuItem*) = {
       for (
         (key, menu) <- keys zip menues
@@ -71,18 +72,27 @@ class MoveCtrl extends Initializable {
       }
     }
 
+    /*Setup default colors for fill-,strokeChooser & strokeWidth*/
+    private def setupDefaultColors(): Unit = {
+      def asColor(key:String): Option[Color] =
+        Global.config.getString(key).map(Color.web)
+
+      val fillColor = asColor("colorChooser.fillColor").getOrElse(Color.BLACK)
+      val strokeColor = asColor("colorChooser.strokeColor").getOrElse(Color.BLACK)
+      val width = Global.config.getInt("colorChooser.strokeWidth").getOrElse(1)
+
+      fillColorPicker.setValue(fillColor)
+      strokeColorPicker.setValue(strokeColor)
+      borderThicknessChooser.setValue(width)
+    }
+
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    //setup keyboard shortcuts
     setupShortcuts("undo", "redo", "load-image")(undoMenuItem, redoMenuItem, loadImgMenuItem)
-
-
     drawStub.getChildren.add(drawPanel)
-    fillColorPicker.setValue(Color.BLACK)
-    strokeColorPicker.setValue(Color.BLACK)
 
     val sizesList:java.util.List[Int] = (1 until 20).toList
     borderThicknessChooser.setItems(FXCollections.observableArrayList(sizesList))
-    borderThicknessChooser.getSelectionModel.selectFirst()
+    setupDefaultColors()
 
     val handler = drawCtrl.getDrawHandler
 
