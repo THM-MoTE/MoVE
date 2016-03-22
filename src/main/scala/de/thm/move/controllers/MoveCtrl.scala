@@ -66,6 +66,7 @@ class MoveCtrl extends Initializable {
     borderThicknessChooser.getSelectionModel.selectFirst()
 
     val handler = drawCtrl.getDrawHandler
+
     val drawHandler = { mouseEvent:MouseEvent =>
       selectedShape match {
         case Some(shape) =>
@@ -86,7 +87,6 @@ class MoveCtrl extends Initializable {
     drawPanel.setOnMousePressed(drawHandler)
     drawPanel.setOnMouseClicked(drawHandler)
     drawPanel.setOnMouseReleased(drawHandler)
-
   }
 
   def colorPickerChanged(ae:ActionEvent): Unit = {
@@ -121,6 +121,11 @@ class MoveCtrl extends Initializable {
     }
   }
 
+  private def onDrawShape: Unit = {
+    changeDrawingCursor(Cursor.CROSSHAIR)
+    drawCtrl.removeSelectedShape
+  }
+
   @FXML
   def onShowAnchorsClicked(e:ActionEvent): Unit = drawCtrl.setVisibilityOfAnchors(showAnchorsSelected)
 
@@ -130,15 +135,18 @@ class MoveCtrl extends Initializable {
   def onRedoClicked(e:ActionEvent): Unit = Global.history.redo()
 
   @FXML
-  def onPointerClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.DEFAULT)
+  def onPointerClicked(e:ActionEvent): Unit = {
+    changeDrawingCursor(Cursor.DEFAULT)
+    drawCtrl.removeSelectedShape
+  }
   @FXML
-  def onCircleClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.CROSSHAIR)
+  def onCircleClicked(e:ActionEvent): Unit = onDrawShape
   @FXML
-  def onRectangleClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.CROSSHAIR)
+  def onRectangleClicked(e:ActionEvent): Unit = onDrawShape
   @FXML
-  def onLineClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.CROSSHAIR)
+  def onLineClicked(e:ActionEvent): Unit = onDrawShape
   @FXML
-  def onPolygonClicked(e:ActionEvent): Unit = changeDrawingCursor(Cursor.CROSSHAIR)
+  def onPolygonClicked(e:ActionEvent): Unit = onDrawShape
 
   private def getStrokeColor: Color = strokeColorPicker.getValue
   private def getFillColor: Color = fillColorPicker.getValue
