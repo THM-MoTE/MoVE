@@ -25,8 +25,8 @@ class SelectionRectangle(selectedShape:ResizableShape) extends Rectangle {
 
   this.xProperty().bind(xProp.subtract(distanceToShape))
   this.yProperty().bind(yProp.subtract(distanceToShape))
-  this.widthProperty().bind(widthProp.add(distanceToShape).add(5))
-  this.heightProperty().bind(heightProp.add(distanceToShape).add(5))
+  this.widthProperty().bind(widthProp.add(distanceToShape).add(8))
+  this.heightProperty().bind(heightProp.add(distanceToShape).add(8))
 }
 
 object SelectionRectangle {
