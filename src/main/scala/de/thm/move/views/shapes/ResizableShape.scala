@@ -6,6 +6,8 @@ import de.thm.move.views.Anchor
 
 trait ResizableShape extends Node {
 
+  val selectionRectangle = new SelectionRectangle(this)
+
   def getAnchors: List[Anchor]
 
   def getX: Double
