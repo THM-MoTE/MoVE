@@ -2,6 +2,8 @@ unmanagedJars in Compile += Attributed.blank(file(System.getenv("JAVA_HOME") + "
 
 fork := true
 
+unmanagedClasspath in Compile += baseDirectory.value / "conf"
+
 scalacOptions ++= Seq(
     "-unchecked",
     "-deprecation")
