@@ -5,8 +5,10 @@ package de.thm.move.controllers.factorys
 
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 
 import de.thm.move.models.CommonTypes._
+import de.thm.move.models.SelectedShape
 import de.thm.move.views.Anchor
 import de.thm.move.views.shapes._
 
@@ -44,5 +46,16 @@ object ShapeFactory {
   def newPolygon(points:List[Point]): (Color, Color, Int) => ResizablePolygon = {
     val polygon = ResizablePolygon(points)
     (setDefaultColor(polygon) _)
+  }
+
+  def createTemporaryShape(shape:SelectedShape.SelectedShape, p:Point)(stroke:Color): ResizableShape = {
+    (shape match {
+      case SelectedShape.Rectangle =>
+        newRectangle(p, 2,2)
+      case SelectedShape.Circle =>
+        newCircle(p,2,2)
+      case SelectedShape.Line =>
+        newLine(p,p, 2)
+    })(null, stroke, 2)
   }
 }
