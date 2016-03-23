@@ -26,6 +26,8 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   private var selectedShape:Option[ResizableShape] = None
 
+  private val tmpShapeId = "temporary-shape"
+
   def getDrawHandler: (SelectedShape, MouseEvent) => (Color, Color, Int) => Unit = {
     var points = List[Point]()
     var drawingShape: ResizableShape = null
@@ -49,10 +51,9 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
           }
         case _ =>
           if (mouseEvent.getEventType == MouseEvent.MOUSE_PRESSED) {
-            drawingShape =
-              ShapeFactory.newRectangle((mouseEvent.getX, mouseEvent.getY), 2,4)(null, strokeColor, 4)
+            drawingShape = ShapeFactory.createTemporaryShape(shape, (mouseEvent.getX, mouseEvent.getY))(strokeColor)
 
-            drawingShape.setId("temporary-shape")
+            drawingShape.setId(tmpShapeId)
             drawPanel.getChildren.add(drawingShape)
             points = (mouseEvent.getX(), mouseEvent.getY()) :: points
           } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_DRAGGED) {
@@ -62,6 +63,15 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             drawingShape.setWidth(deltaX)
             drawingShape.setHeight(deltaY)
           } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
+
+            //remove temporary shape(s)
+            val removingNodes = drawPanel.getChildren.zipWithIndex.filter {
+              case (n,_) => n.getId() == tmpShapeId
+            }.map(_._1)
+
+            drawPanel.getChildren.removeAll(removingNodes)
+
+
             points = (mouseEvent.getX(), mouseEvent.getY()) :: points
 
             points match {
@@ -195,8 +205,8 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
         val height = endY - startY
         Some( ShapeFactory.newRectangle(start, width, height)(fillColor, strokeColor, selectedThickness) )
       case SelectedShape.Circle =>
-        val width = endX - startX
-        val height = endY - startY
+        val width = (endX - startX)/2
+        val height = (endY - startY)/2
         Some( ShapeFactory.newCircle(start, width, height)(fillColor, strokeColor, selectedThickness) )
       case SelectedShape.Line => Some( ShapeFactory.newLine(start, end, selectedThickness)(fillColor, strokeColor, selectedThickness) )
       case _ => None
