@@ -70,8 +70,8 @@ trait BoundedAnchors {
     val boundWidth = getWidth
     val boundHeight = getHeight
 
-    val deltaX = if(oldX > newX) ((oldX-newX) + boundWidth) else (boundWidth - (newX-oldX))
-    val deltaY = if(newY < oldY) ((oldY - newY)  + boundHeight) else (boundHeight - (newY-oldY))
+    val deltaX = if(oldX > newX) (oldX-newX) + boundWidth else boundWidth - (newX-oldX)
+    val deltaY = if(newY < oldY) (oldY - newY)  + boundHeight else boundHeight - (newY-oldY)
 
     history.execute(command {
       if(adjustCoordinates) {
@@ -93,7 +93,7 @@ trait BoundedAnchors {
         setY(oldY)
       }
       setWidth(oldWidth)
-      setHeight(oldWidth)
+      setHeight(oldHeight)
     }
   }
 
@@ -104,8 +104,8 @@ trait BoundedAnchors {
     val boundWidth = getWidth
     val boundHeight = getHeight
 
-    val deltaX = if (newX > oldX) ((newX - oldX) + boundWidth) else (boundWidth - (oldX - newX))
-    val deltaY = if (newY < oldY) (oldY - newY + boundHeight) else (boundHeight - (newY - oldY))
+    val deltaX = if (newX > oldX) (newX - oldX) + boundWidth else boundWidth - (oldX - newX)
+    val deltaY = if (newY < oldY) oldY - newY + boundHeight else boundHeight - (newY - oldY)
 
     history.execute(command {
       if (adjustCoordinates) {
@@ -122,7 +122,7 @@ trait BoundedAnchors {
 
     command = History.partialAction {
       setWidth(oldWidth)
-      setHeight(oldWidth)
+      setHeight(oldHeight)
     }
   }
 
@@ -133,8 +133,8 @@ trait BoundedAnchors {
     val boundWidth = getWidth
     val boundHeight = getHeight
 
-    val deltaX = (newX - oldX + boundWidth)
-    val deltaY = (newY - oldY + boundHeight)
+    val deltaX = newX - oldX + boundWidth
+    val deltaY = newY - oldY + boundHeight
 
     history.execute(command {
       setWidth(deltaX)
@@ -152,7 +152,7 @@ trait BoundedAnchors {
         setX(oldX)
       }
       setWidth(oldWidth)
-      setHeight(oldWidth)
+      setHeight(oldHeight)
     }
   }
 
@@ -163,8 +163,8 @@ trait BoundedAnchors {
     val boundWidth = getWidth
     val boundHeight = getHeight
 
-    val deltaX = if(newX<oldX) ((oldX-newX) + boundWidth) else (boundWidth-(newX-oldX))
-    val deltaY = if(newY > oldY) ((newY-oldY)+boundHeight) else (boundHeight-(oldY-newY))
+    val deltaX = if(newX<oldX) (oldX-newX) + boundWidth else boundWidth-(newX-oldX)
+    val deltaY = if(newY > oldY) (newY-oldY)+boundHeight else boundHeight-(oldY-newY)
 
     history.execute(command {
       if(adjustCoordinates) {
