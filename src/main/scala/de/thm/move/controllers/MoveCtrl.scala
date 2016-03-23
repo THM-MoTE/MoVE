@@ -117,6 +117,7 @@ class MoveCtrl extends Initializable {
     }
 
     drawPanel.setOnMousePressed(drawHandler)
+    drawPanel.setOnMouseDragged(drawHandler)
     drawPanel.setOnMouseClicked(drawHandler)
     drawPanel.setOnMouseReleased(drawHandler)
   }

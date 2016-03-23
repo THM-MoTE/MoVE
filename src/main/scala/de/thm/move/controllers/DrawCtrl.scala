@@ -6,10 +6,9 @@ package de.thm.move.controllers
 import javafx.event.EventHandler
 import javafx.scene.Node
 import javafx.scene.image.{Image, ImageView}
-import javafx.scene.input.{InputEvent, MouseEvent}
+import javafx.scene.input.{MouseEvent, InputEvent, KeyEvent}
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
-import javafx.scene.input.KeyEvent
 
 import de.thm.move.Global
 import de.thm.move.controllers.factorys.ShapeFactory
@@ -29,6 +28,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   def getDrawHandler: (SelectedShape, MouseEvent) => (Color, Color, Int) => Unit = {
     var points = List[Point]()
+    var drawingShape: ResizableShape = null
 
     def drawHandler(shape:SelectedShape, mouseEvent:MouseEvent)(fillColor:Color, strokeColor:Color, selectedThickness:Int): Unit = {
       shape match {
@@ -38,7 +38,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             val newY = mouseEvent.getY()
             //test if polygon is finish by checking if last clicked position is 1st clicked point
             points.reverse.headOption match {
-              case Some((x,y)) if Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10 =>
+              case Some((x, y)) if Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10 =>
                 //draw the polygon
                 drawPolygon(points)(fillColor, strokeColor, selectedThickness)
                 points = List()
@@ -48,8 +48,20 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             }
           }
         case _ =>
-          if (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED) {
+          if (mouseEvent.getEventType == MouseEvent.MOUSE_PRESSED) {
+            drawingShape =
+              ShapeFactory.newRectangle((mouseEvent.getX, mouseEvent.getY), 2,4)(null, strokeColor, 4)
+
+            println("pressed")
+            drawPanel.getChildren.add(drawingShape)
+
             points = (mouseEvent.getX(), mouseEvent.getY()) :: points
+          } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+            val deltaX = mouseEvent.getX - drawingShape.getX
+            val deltaY = mouseEvent.getY - drawingShape.getY
+
+            drawingShape.setWidth(deltaX)
+            drawingShape.setHeight(deltaY)
           } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
             points = (mouseEvent.getX(), mouseEvent.getY()) :: points
 
