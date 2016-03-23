@@ -1,3 +1,6 @@
+/** Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+ */
+
 package de.thm.move.shortcuts
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyCodeCombination

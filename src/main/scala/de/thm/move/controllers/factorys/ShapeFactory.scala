@@ -1,3 +1,6 @@
+/** Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+ */
+
 package de.thm.move.controllers.factorys
 
 import javafx.scene.image.Image
