@@ -33,11 +33,23 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                   <items>
-                        <MenuItem fx:id="undoMenuItem" mnemonicParsing="false" onAction="#onUndoClicked" text="Undo"/>
+                        <MenuItem fx:id="undoMenuItem" mnemonicParsing="false" onAction="#onUndoClicked" text="Undo" />
                         <MenuItem fx:id="redoMenuItem" mnemonicParsing="false" onAction="#onRedoClicked" text="Redo" />
                         <MenuItem fx:id="loadImgMenuItem" mnemonicParsing="false" onAction="#onLoadBitmap" text="Insert Bitmap" />
                   </items>
                 </Menu>
+                  <Menu mnemonicParsing="false" text="View">
+                     <items>
+                        <CheckMenuItem fx:id="showAnchorsItem" mnemonicParsing="false" onAction="#onShowAnchorsClicked" selected="true" text="Show Anchors" />
+                        <Menu mnemonicParsing="false" text="Edit">
+                           <items>
+                              <MenuItem fx:id="undoMenuItem1" mnemonicParsing="false" onAction="#onUndoClicked" text="Undo" />
+                              <MenuItem fx:id="redoMenuItem1" mnemonicParsing="false" onAction="#onRedoClicked" text="Redo" />
+                              <MenuItem fx:id="loadImgMenuItem1" mnemonicParsing="false" onAction="#onLoadBitmap" text="Insert Bitmap" />
+                           </items>
+                        </Menu>
+                     </items>
+                  </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                   <items>
                     <MenuItem mnemonicParsing="false" text="About" />
@@ -53,7 +65,6 @@
                   <ColorPicker fx:id="fillColorPicker" />
                   <Label styleClass="toolbar-button" text="%fa.square-o" />
                   <ColorPicker fx:id="strokeColorPicker" />
-                  <CheckBox fx:id="showAnchorsCheckbox" mnemonicParsing="false" onAction="#onShowAnchorsClicked" selected="true" text="Show Anchors" />
                </items>
             </ToolBar>
          </children>
