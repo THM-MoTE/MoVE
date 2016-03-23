@@ -65,6 +65,7 @@
                   <ColorPicker fx:id="fillColorPicker" />
                   <Label styleClass="toolbar-button" text="%fa.square-o" />
                   <ColorPicker fx:id="strokeColorPicker" />
+                  <CheckBox mnemonicParsing="false" onAction="#onPreserveRatioPressed" text="Preserve ratio" />
                </items>
             </ToolBar>
          </children>
