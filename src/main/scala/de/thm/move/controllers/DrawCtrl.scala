@@ -52,9 +52,8 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             drawingShape =
               ShapeFactory.newRectangle((mouseEvent.getX, mouseEvent.getY), 2,4)(null, strokeColor, 4)
 
-            println("pressed")
+            drawingShape.setId("temporary-shape")
             drawPanel.getChildren.add(drawingShape)
-
             points = (mouseEvent.getX(), mouseEvent.getY()) :: points
           } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_DRAGGED) {
             val deltaX = mouseEvent.getX - drawingShape.getX
