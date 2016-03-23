@@ -18,7 +18,7 @@ class SelectionRectangle(selectedShape:ResizableShape) extends Rectangle {
   val widthProp = new SimpleDoubleProperty(selectedShape.getBoundsInLocal().getWidth)
   val heightProp = new SimpleDoubleProperty(selectedShape.getBoundsInLocal().getHeight)
 
-  selectedShape.layoutBoundsProperty().addListener { (_:Bounds, newBounds:Bounds) =>
+  selectedShape.boundsInParentProperty().addListener { (_:Bounds, newBounds:Bounds) =>
     xProp.set( newBounds.getMinX )
     yProp.set( newBounds.getMinY )
     widthProp.set( newBounds.getWidth )
