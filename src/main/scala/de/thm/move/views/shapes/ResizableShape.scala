@@ -21,7 +21,7 @@ trait ResizableShape extends Node {
     filter(_==code).foreach { _ => fn }
   }
 
-  setOnKeyPressed { ke:KeyEvent =>
+  /*setOnKeyPressed { ke:KeyEvent =>
       ifKeyMatches(ke.getCode(), "resize-proportional") {
           resizeProportionalProperty.set(true)
       }
@@ -31,7 +31,7 @@ trait ResizableShape extends Node {
     ifKeyMatches(ke.getCode(), "resize-proportional") {
       resizeProportionalProperty.set(false)
     }
-  }
+  }*/
 
 
   def getAnchors: List[Anchor]
