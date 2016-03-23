@@ -37,6 +37,9 @@ class MoveCtrl extends Initializable {
   var loadImgMenuItem: MenuItem = _
 
   @FXML
+  var showAnchorsItem: CheckMenuItem = _
+
+  @FXML
   var btnGroup: ToggleGroup = _
   @FXML
   var fillColorPicker: ColorPicker = _
@@ -45,9 +48,6 @@ class MoveCtrl extends Initializable {
 
   @FXML
   var borderThicknessChooser: ChoiceBox[Int] = _
-
-  @FXML
-  var showAnchorsCheckbox: CheckBox = _
 
   @FXML
   var drawStub: StackPane = _
@@ -87,7 +87,7 @@ class MoveCtrl extends Initializable {
     }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    setupShortcuts("undo", "redo", "load-image")(undoMenuItem, redoMenuItem, loadImgMenuItem)
+    setupShortcuts("undo", "redo", "load-image", "show-anchors")(undoMenuItem, redoMenuItem, loadImgMenuItem, showAnchorsItem)
     drawStub.getChildren.add(drawPanel)
 
     val sizesList:java.util.List[Int] = (1 until 20).toList
@@ -182,7 +182,7 @@ class MoveCtrl extends Initializable {
   private def selectedThickness: Int = borderThicknessChooser.getSelectionModel.getSelectedItem
   private def changeDrawingCursor(c:Cursor): Unit = drawPanel.setCursor(c)
   private def getWindow = drawPanel.getScene.getWindow
-  private def showAnchorsSelected: Boolean = showAnchorsCheckbox.isSelected
+  private def showAnchorsSelected: Boolean = showAnchorsItem.isSelected
 
   private def selectedShape: Option[SelectedShape] = {
     val btn = Option(btnGroup.getSelectedToggle).map(_.asInstanceOf[ToggleButton])
