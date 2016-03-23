@@ -1,6 +1,6 @@
 HEADER_FILE="header.txt" #where is the header?
 INCLUDE=["../src"] #to which files/directorys should be added?
-EXCLUDE=["resources", "views"] #which files/directorys should be ignored?
+EXCLUDE=["resources"] #which files/directorys should be ignored?
 UPDATE_HEADER=True #remove old header?
 
 #which comment characters should be used?
@@ -25,7 +25,7 @@ def writeHeader(header, filePath):
                                 x.startswith(END_COMMENT)
                         , original)
 
-        newLines = header + "\n" + "\n".join(content)
+        newLines = header + "\n\n" + "".join(content)
         f.write(newLines)
 
 def asComment(lines):
