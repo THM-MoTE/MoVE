@@ -38,6 +38,11 @@ trait BoundedAnchors {
     e.setCenterY(y)
   }
 
+  def getWidth: Double
+  def getHeight: Double
+  def setWidth(w:Double): Unit
+  def setHeight(h:Double): Unit
+
   //adjust the anchors to the bounding-box
   boundsInLocalProperty().addListener { (_:Bounds, _:Bounds) =>
     adjustCenter(topLeftAnchor, getTopLeft)

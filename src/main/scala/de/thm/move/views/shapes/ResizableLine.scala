@@ -27,18 +27,7 @@ class ResizableLine(
   endYProperty().bind(endAnchor.centerYProperty())
 
   override def getX: Double = getLayoutX
-
   override def setY(y: Double): Unit = setLayoutY(y)
-
   override def getY: Double = getLayoutY
-
-  override def getHeight: Double = getStrokeWidth
-
-  override def getWidth: Double = getStrokeWidth
-
   override def setX(x: Double): Unit = setLayoutX(x)
-
-  override def setWidth(w: Double): Unit = setStrokeWidth(w)
-
-  override def setHeight(h: Double): Unit = setStrokeWidth(h)
 }
