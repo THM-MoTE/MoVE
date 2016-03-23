@@ -21,3 +21,7 @@
   -fx-fill: null;
   -fx-stroke-dash-array: 5 5 5;
 }
+
+.tool-bar:hover{
+    -fx-cursor: default;
+}
