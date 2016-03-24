@@ -18,7 +18,7 @@ import de.thm.move.history.History
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
-import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
+import de.thm.move.views.shapes.{ResizableLine, BoundedAnchors, ColorizableShape, ResizableShape}
 import de.thm.move.views.{Anchor, DrawPanel}
 import de.thm.move.history.History.{Action, Command}
 
@@ -62,8 +62,16 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             val deltaX = mouseEvent.getX - drawingShape.getX
             val deltaY = mouseEvent.getY - drawingShape.getY
 
-            drawingShape.setWidth(deltaX)
-            drawingShape.setHeight(deltaY)
+            drawingShape match {
+              case ba:BoundedAnchors =>
+                ba.setWidth(deltaX)
+                ba.setHeight(deltaY)
+              case l:ResizableLine =>
+                l.setEndX(mouseEvent.getX)
+                l.setEndY(mouseEvent.getY)
+              case _ => println("WARNING: ignoring width/height")
+            }
+
           } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
 
             //remove temporary shape(s)
