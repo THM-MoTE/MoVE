@@ -9,6 +9,7 @@ import javafx.event.EventHandler
 import javafx.scene.Node
 import javafx.scene.image.{Image, ImageView}
 import javafx.scene.input.{MouseEvent, InputEvent, KeyEvent}
+import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
 
@@ -37,6 +38,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     def drawHandler(shape:SelectedShape, mouseEvent:MouseEvent)(fillColor:Color, strokeColor:Color, selectedThickness:Int): Unit = {
       shape match {
         case SelectedShape.Polygon =>
+
           if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
             val newX = mouseEvent.getX()
             val newY = mouseEvent.getY()
@@ -45,8 +47,32 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
               case Some((x, y)) if Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10 =>
                 //draw the polygon
                 drawPolygon(points)(fillColor, strokeColor, selectedThickness)
-                points = List()
+                points = List() //clear points list
+
+                //remove temporary shape(s)
+                removeTmpShapes(drawPanel, tmpShapeId)
               case _ =>
+                //draw tmp line between last anchor and mouse point
+                points match {
+                  case (hdX,hdY)::_ =>
+                    drawingShape match {
+                      case l:ResizableLine =>
+                        //draw line between last anchor (head of list) and mouse point
+                        l.setEndX(newX)
+                        l.setEndY(newY)
+
+                        //create new line with start-point = mouse-point
+                        drawingShape = ShapeFactory.createTemporaryShape(SelectedShape.Line, (newX, newY))(strokeColor)
+                        drawingShape.setId(tmpShapeId)
+                        drawPanel.getChildren.add(drawingShape)
+                      case _ => //other things shouldn't get drawed
+                    }
+                  case _ =>
+                    drawingShape = ShapeFactory.createTemporaryShape(SelectedShape.Line, (mouseEvent.getX, mouseEvent.getY))(strokeColor)
+                    drawingShape.setId(tmpShapeId)
+                    drawPanel.getChildren.add(drawingShape)
+                }
+
                 points = (newX, newY) :: points
                 drawAnchor(points.head)
             }
@@ -69,18 +95,13 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
               case l:ResizableLine =>
                 l.setEndX(mouseEvent.getX)
                 l.setEndY(mouseEvent.getY)
-              case _ => println("WARNING: ignoring width/height")
+              case _ => //ignore other shapes
             }
 
           } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
 
             //remove temporary shape(s)
-            val removingNodes = drawPanel.getChildren.zipWithIndex.filter {
-              case (n,_) => n.getId() == tmpShapeId
-            }.map(_._1)
-
-            drawPanel.getChildren.removeAll(removingNodes)
-
+            removeTmpShapes(drawPanel, tmpShapeId)
 
             points = (mouseEvent.getX(), mouseEvent.getY()) :: points
 
@@ -94,6 +115,15 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     }
 
     drawHandler
+  }
+
+
+  private def removeTmpShapes(node:Pane, temporaryId:String): Unit = {
+    val removingNodes = node.getChildren.zipWithIndex.filter {
+      case (n,_) => n.getId() == tmpShapeId
+    }.map(_._1)
+
+    node.getChildren.removeAll(removingNodes)
   }
 
   def setSelectedShape(shape:ResizableShape): Unit = {
