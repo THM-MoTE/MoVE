@@ -122,7 +122,6 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
   }
 
   def setSelectedShape(shape:ResizableShape): Unit = {
-    println(s"set selected $selectedShape")
     selectedShape match {
       case Some(oldShape) =>
         drawPanel.getChildren.remove(oldShape.selectionRectangle)
@@ -160,7 +159,6 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
               val oldY = shape.getY
 
               command = History.partialAction {
-                println("undo action")
                 shape.setX(oldX)
                 shape.setY(oldY)
               }
@@ -185,12 +183,9 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
               val newX = shape.getX
               val newY = shape.getY
               val cmd = command {
-                println("redo action")
                 shape.setX(newX)
                 shape.setY(newY)
               }
-
-              println("saving action")
 
               Global.history.save(cmd)
 
@@ -256,19 +251,10 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     }
   }
 
-  private def removeDrawnAnchors(cnt:Int):Unit = {
-    val removingAnchors = drawPanel.getShapes.zipWithIndex.takeWhile {
+  private def removeDrawnAnchors(cnt:Int):Unit =
+    drawPanel.removeWhileIdx {
       case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt
-    }.map(_._1)
-
-    //remove from shapelist
-    drawPanel.setShapes( drawPanel.getShapes.zipWithIndex.dropWhile {
-      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt
-    }.map(_._1) )
-
-    //remove from painting area
-    drawPanel.getChildren.removeAll(removingAnchors:_*)
-  }
+    }
 
 
   def setVisibilityOfAnchors(flag:Boolean): Unit = {

@@ -25,13 +25,30 @@ import de.thm.move.views.shapes._
 class DrawPanel() extends Pane {
   private var shapes = List[Node]()
 
-  def getShapes:List[Node] = shapes
-
-  def setShapes(xs:List[_ <: Node]) = shapes = xs
-
   def drawShape[T <: Node](n:T):Unit = {
     super.getChildren.add(n)
 
     shapes = n :: shapes
+  }
+
+  def removeWhile(pred: Node => Boolean): Unit = {
+    val removingShapes = shapes.takeWhile(pred)
+    shapes = shapes.dropWhile(pred)
+
+    getChildren.removeAll(removingShapes:_*)
+  }
+
+
+  def removeWhileIdx(pred: (Node, Int) => Boolean): Unit = {
+    val shapeWithidx = shapes.zipWithIndex
+    val removingShapes = shapeWithidx.takeWhile {
+      case (n, idx) => pred(n,idx)
+    }.map(_._1)
+
+    shapes = shapeWithidx.dropWhile  {
+      case (n, idx) => pred(n,idx)
+    }.map(_._1)
+
+    getChildren.removeAll(removingShapes:_*)
   }
 }
