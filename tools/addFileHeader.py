@@ -7,7 +7,7 @@ UPDATE_HEADER=True #remove old header?
 START_COMMENT="/**" #first line of comment
 LINE_COMMENT=" *" #lines between first and last comment
 END_COMMENT=" */" #last line of comment, can be empty
-BLANK_FIRST_LINE=False #leave first line empty?
+BLANK_FIRST_LINE=True #leave first line empty?
 
 import os
 import itertools

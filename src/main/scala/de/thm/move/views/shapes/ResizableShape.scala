@@ -1,5 +1,7 @@
-/** Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+/**
+ * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
  */
+
 
 package de.thm.move.views.shapes
 
@@ -38,11 +40,7 @@ trait ResizableShape extends Node {
 
   def getX: Double
   def getY: Double
-  def getWidth: Double
-  def getHeight: Double
 
   def setX(x:Double): Unit
   def setY(y:Double): Unit
-  def setWidth(w:Double): Unit
-  def setHeight(h:Double): Unit
 }
