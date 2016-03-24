@@ -53,25 +53,15 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
                 removeTmpShapes(drawPanel, tmpShapeId)
               case _ =>
                 //draw tmp line between last anchor and mouse point
-                points match {
-                  case (hdX,hdY)::_ =>
-                    drawingShape match {
-                      case l:ResizableLine =>
+                (points, drawingShape) match {
+                  case ( (hdX,hdY)::_, l:ResizableLine ) =>
                         //draw line between last anchor (head of list) and mouse point
                         l.setEndX(newX)
                         l.setEndY(newY)
-
-                        //create new line with start-point = mouse-point
-                        drawingShape = ShapeFactory.createTemporaryShape(SelectedShape.Line, (newX, newY))(strokeColor)
-                        drawingShape.setId(tmpShapeId)
-                        drawPanel.getChildren.add(drawingShape)
-                      case _ => //other things shouldn't get drawed
-                    }
                   case _ =>
-                    drawingShape = ShapeFactory.createTemporaryShape(SelectedShape.Line, (mouseEvent.getX, mouseEvent.getY))(strokeColor)
-                    drawingShape.setId(tmpShapeId)
-                    drawPanel.getChildren.add(drawingShape)
                 }
+                //create new line with this mouse point as start point
+                drawingShape = createTmpShape(SelectedShape.Line, (mouseEvent.getX, mouseEvent.getY), strokeColor, drawPanel)
 
                 points = (newX, newY) :: points
                 drawAnchor(points.head)
@@ -79,10 +69,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
           }
         case _ =>
           if (mouseEvent.getEventType == MouseEvent.MOUSE_PRESSED) {
-            drawingShape = ShapeFactory.createTemporaryShape(shape, (mouseEvent.getX, mouseEvent.getY))(strokeColor)
-
-            drawingShape.setId(tmpShapeId)
-            drawPanel.getChildren.add(drawingShape)
+            drawingShape = createTmpShape(shape, (mouseEvent.getX, mouseEvent.getY), strokeColor, drawPanel)
             points = (mouseEvent.getX(), mouseEvent.getY()) :: points
           } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_DRAGGED) {
             val deltaX = mouseEvent.getX - drawingShape.getX
@@ -97,7 +84,6 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
                 l.setEndY(mouseEvent.getY)
               case _ => //ignore other shapes
             }
-
           } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
 
             //remove temporary shape(s)
@@ -118,9 +104,18 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
   }
 
 
+  /**Creates a temporary shape and adds it to the given node for displaying during drawing a shape.*/
+  private def createTmpShape(selectedShape:SelectedShape.SelectedShape, start:Point, stroke:Color, node:Pane, shapeId:String = tmpShapeId): ResizableShape = {
+    val shape = ShapeFactory.createTemporaryShape(selectedShape, start)(stroke)
+    shape.setId(shapeId)
+    node.getChildren.add(shape)
+    shape
+  }
+
+  /**Removes all temporary shapes (identified by temporaryId) from the given node.*/
   private def removeTmpShapes(node:Pane, temporaryId:String): Unit = {
     val removingNodes = node.getChildren.zipWithIndex.filter {
-      case (n,_) => n.getId() == tmpShapeId
+      case (n,_) => n.getId() == temporaryId
     }.map(_._1)
 
     node.getChildren.removeAll(removingNodes)
