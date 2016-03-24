@@ -7,23 +7,22 @@ package de.thm.move.controllers
 
 import javafx.event.EventHandler
 import javafx.scene.Node
-import javafx.scene.image.{Image, ImageView}
-import javafx.scene.input.{MouseEvent, InputEvent, KeyEvent}
+import javafx.scene.image.Image
+import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
-import javafx.scene.shape.{Rectangle, Shape}
 
 import de.thm.move.Global
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.history.History
+import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
-import de.thm.move.views.shapes.{ResizableLine, BoundedAnchors, ColorizableShape, ResizableShape}
+import de.thm.move.views.shapes.{BoundedAnchors, ColorizableShape, ResizableLine, ResizableShape}
 import de.thm.move.views.{Anchor, DrawPanel}
-import de.thm.move.history.History.{Action, Command}
 
-import collection.JavaConversions._
+import scala.collection.JavaConversions._
 
 class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
@@ -258,9 +257,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
 
   def setVisibilityOfAnchors(flag:Boolean): Unit = {
-    drawPanel.getChildren.filter(_.isInstanceOf[Anchor]) foreach { anchor =>
-      anchor.setVisible(flag)
-    }
+    drawPanel.getChildren.filter(_.isInstanceOf[Anchor]) foreach (  _.setVisible(flag) )
   }
 
   def changeColorForSelectedShape(fillColor:Option[Color], strokeColor:Option[Color]): Unit = {
@@ -268,8 +265,8 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
       case x:ColorizableShape => Some(x)
       case _ => None
     } foreach { x =>
-      fillColor foreach ( x.setFillColor(_) )
-      strokeColor foreach ( x.setStrokeColor(_) )
+      fillColor foreach x.setFillColor
+      strokeColor foreach x.setStrokeColor
     }
   }
 
@@ -277,8 +274,6 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     selectedShape flatMap {
       case x:ColorizableShape => Some(x)
       case _ => None
-    } foreach { x =>
-      x.setStrokeWidth(width)
-    }
+    } foreach ( _.setStrokeWidth(width) )
   }
 }
