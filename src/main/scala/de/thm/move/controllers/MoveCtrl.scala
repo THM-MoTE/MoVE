@@ -15,7 +15,7 @@ import javafx.scene.Cursor
 import javafx.scene.canvas.{GraphicsContext, Canvas}
 import javafx.scene.control._
 import javafx.scene.image.Image
-import javafx.scene.input.{InputEvent, MouseEvent}
+import javafx.scene.input.{KeyCode, KeyEvent, InputEvent, MouseEvent}
 import javafx.scene.layout.{StackPane, HBox, Pane}
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
@@ -67,6 +67,33 @@ class MoveCtrl extends Initializable {
       "line_btn" -> SelectedShape.Line,
       "polygon_btn" -> SelectedShape.Polygon
     )
+
+  /**
+   * Maps registered KeyCodes (from shortcuts.conf) to corresponding button
+    * '''! Ensure that this field is initialized AFTER all fields are initiazlized !'''
+    */
+  private lazy val keyCodeToButtons = {
+    val buttons = btnGroup.getToggles.map(_.asInstanceOf[ToggleButton])
+    def getButtonById(id:String): Option[ToggleButton] = {
+      buttons.find(_.getId == id)
+    }
+
+    val keyCodeOpts = List(
+      Global.shortcuts.getKeyCode("move-elements") -> getButtonById("line_pointer"),
+      Global.shortcuts.getKeyCode("draw-rectangle") -> getButtonById("rectangle_btn"),
+      Global.shortcuts.getKeyCode("draw-line") -> getButtonById("line_btn"),
+      Global.shortcuts.getKeyCode("draw-polygon") -> getButtonById("polygon_btn"),
+      Global.shortcuts.getKeyCode("draw-circle") -> getButtonById("circle_btn")
+      )
+
+    val codes = keyCodeOpts flatMap {
+      case (Some(code),Some(btn)) => List( (code, btn) )
+      case _ => Nil
+    }
+
+    codes.toMap
+  }
+
 
     /*Setup given keyboard shortcuts to given item*/
     private def setupShortcuts(keys:String*)(menues:MenuItem*) = {
@@ -122,6 +149,16 @@ class MoveCtrl extends Initializable {
     drawPanel.setOnMouseDragged(drawHandler)
     drawPanel.setOnMouseClicked(drawHandler)
     drawPanel.setOnMouseReleased(drawHandler)
+  }
+
+  /** Called after the scene is fully-constructed and displayed.
+    * (Used for adding a key-event listener)
+    */
+  def setupMove(): Unit = {
+    drawStub.getScene.setOnKeyPressed { ke: KeyEvent =>
+      keyCodeToButtons.get(ke.getCode) foreach (_.fire)
+    }
+    drawStub.requestFocus()
   }
 
   def colorPickerChanged(ae:ActionEvent): Unit = {

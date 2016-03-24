@@ -14,6 +14,8 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.control.Label
 import javax.annotation.Resource
 
+import de.thm.move.controllers.MoveCtrl
+
 class MoveApp extends Application {
   def start(stage: Stage): Unit = {
     val windowWidth = Global.config.getDouble("window.width").getOrElse(600.0)
@@ -32,6 +34,7 @@ class MoveApp extends Application {
     stage.setWidth(windowWidth)
     stage.setHeight(windowHeight)
     stage.show()
+    fxmlLoader.getController[MoveCtrl].setupMove()
   }
 }
 
