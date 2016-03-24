@@ -24,6 +24,7 @@ class AboutCtrl extends Initializable {
   var licenseArea: TextArea = _
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
+    //about pane
     val m = Map(
       "Copyright" -> Global.copyright,
       "Version" -> Global.version
@@ -40,6 +41,10 @@ class AboutCtrl extends Initializable {
 
     aboutPaneRight.getChildren.addAll(toInfoLines(m):_*)
     aboutPaneRight.getChildren.addAll(infolines:_*)
+
+
+    //setup license pane
+    licenseArea.setText(Global.licenseString)
   }
 
   private def toInfoLines(m:Map[String,String]): List[InfoLine] = {

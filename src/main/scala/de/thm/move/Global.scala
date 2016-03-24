@@ -22,4 +22,6 @@ object Global {
 
   lazy val fontBoundle = ResourceBundle.getBundle("fonts/fontawesome")
   lazy val styleSheetUrl = MoveApp.getClass.getResource("/stylesheets/style.css").toExternalForm
+
+  lazy val licenseString = scala.io.Source.fromURL(getClass.getResource("/LICENSE"),  "UTF-8").getLines.mkString("\n")
 }
