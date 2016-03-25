@@ -18,24 +18,6 @@ trait ResizableShape extends Node {
   val resizeProportionalProperty = new SimpleBooleanProperty(false)
   val selectionRectangle = new SelectionRectangle(this)
 
-  private def ifKeyMatches(code:KeyCode, fileKey:String)(fn : => Unit): Unit = {
-    Global.shortcuts.getKeyCode(fileKey).
-    filter(_==code).foreach { _ => fn }
-  }
-
-  /*setOnKeyPressed { ke:KeyEvent =>
-      ifKeyMatches(ke.getCode(), "resize-proportional") {
-          resizeProportionalProperty.set(true)
-      }
-  }
-
-  setOnKeyReleased { ke:KeyEvent =>
-    ifKeyMatches(ke.getCode(), "resize-proportional") {
-      resizeProportionalProperty.set(false)
-    }
-  }*/
-
-
   def getAnchors: List[Anchor]
 
   def getX: Double

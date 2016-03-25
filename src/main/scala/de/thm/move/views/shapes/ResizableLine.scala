@@ -40,11 +40,6 @@ class ResizableLine(
 
   BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 
-//  startXProperty().bind(startAnchor.centerXProperty())
-//  startYProperty().bind(startAnchor.centerYProperty())
-//  endXProperty().bind(endAnchor.centerXProperty())
-//  endYProperty().bind(endAnchor.centerYProperty())
-
   override def getX: Double = getLayoutX
   override def setY(y: Double): Unit = setLayoutY(y)
   override def getY: Double = getLayoutY
