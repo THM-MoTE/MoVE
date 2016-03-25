@@ -22,8 +22,6 @@ class ResizableCircle(
 
   override val adjustCoordinates = false
 
-  BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
-
   override def setX(x: Double): Unit = setCenterX(x)
 
   override def setY(y: Double): Unit = setCenterY(y)

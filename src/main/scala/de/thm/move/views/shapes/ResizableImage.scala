@@ -22,6 +22,4 @@ class ResizableImage(img:Image) extends ImageView(img) with ResizableShape with 
 
   override def setWidth(w:Double): Unit = setFitWidth(w)
   override def setHeight(h:Double): Unit = setFitHeight(h)
-
-  BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 }
