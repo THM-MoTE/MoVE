@@ -16,3 +16,7 @@ lazy val root = (project in file(".")).
     scalaVersion := "2.11.7",
     javacOptions ++= Seq("-source", "1.8")
     )
+
+libraryDependencies ++= Seq(
+    "com.novocode" % "junit-interface" % "0.11" % "test"
+    )
