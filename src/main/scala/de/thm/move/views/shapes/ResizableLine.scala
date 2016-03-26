@@ -8,6 +8,9 @@ package de.thm.move.views.shapes
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Line
 
+import de.thm.move.Global._
+import de.thm.move.history.History
+import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.util.BindingUtils
 import de.thm.move.views.{MovableAnchor, Anchor}
@@ -28,14 +31,37 @@ class ResizableLine(
   endAnchor.centerXProperty().bind(endXProperty())
   endAnchor.centerYProperty().bind(endYProperty())
 
-  startAnchor.setOnMouseDragged { (me:MouseEvent) =>
-    setStartX(me.getX)
-    setStartY(me.getY)
+  //undo-/redo command
+  private var command: (=> Unit) => Command = x => { History.emptyAction }
+
+  startAnchor.setOnMousePressed { _:MouseEvent =>
+    val (oldX,oldY) = (getStartX, getStartY)
+    command = History.partialAction {
+      setStartX(oldX)
+      setStartY(oldY)
+    }
   }
 
-  endAnchor.setOnMouseDragged { (me:MouseEvent) =>
-    setEndX(me.getX)
-    setEndY(me.getY)
+  startAnchor.setOnMouseDragged { me:MouseEvent =>
+    history.execute(command {
+      setStartX(me.getX)
+      setStartY(me.getY)
+    })
+  }
+
+  endAnchor.setOnMousePressed { _:MouseEvent =>
+    val (oldX,oldY) = (getEndX, getEndY)
+    command = History.partialAction {
+      setEndX(oldX)
+      setEndY(oldY)
+    }
+  }
+
+  endAnchor.setOnMouseDragged { me:MouseEvent =>
+    history.execute(command {
+      setEndX(me.getX)
+      setEndY(me.getY)
+    })
   }
 
   BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
