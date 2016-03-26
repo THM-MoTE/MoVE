@@ -56,7 +56,6 @@ class HistoryTest {
     assert(counter == 20)
 
     for(i <- 20 until 10 by -1) {
-      println(counter)
       assert(counter==i)
       h.undo()
     }

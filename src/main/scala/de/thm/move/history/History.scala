@@ -10,29 +10,29 @@ import de.thm.move.Global
 class History(cacheSize: Int) {
   import History._
 
-  private var memory = List[Command]()
-  private var revertedCmds = List[Command]()
+  /*
+    Commands are moved between these 2 lists when someone uses un-/redo
+  */
+  private var memory = List[Command]() //all executed cmds
+  private var revertedCmds = List[Command]() //all reverted cmds
 
   def execute(doFn: => Unit)(undoFn: => Unit): Unit =
     execute(Command( () => doFn, () => undoFn))
 
   def execute(c:Command): Unit = {
     c.exec()
-    if(memory.length < cacheSize) memory = c :: memory
-    else memory = c :: memory.init
+    save(c)
   }
 
   def save(c:Command): Unit =  {
-    if(memory.length < cacheSize) memory = c :: memory
-    else memory = c :: memory.init
+    memory = addWithFixedSize(memory, c, cacheSize)
   }
 
   def undo(): Unit = {
     (memory headOption) foreach { x =>
       x.undo()
       memory = memory.tail
-      if(revertedCmds.length < cacheSize) revertedCmds = x :: revertedCmds
-      else revertedCmds = x :: revertedCmds.init
+      revertedCmds = addWithFixedSize(revertedCmds, x, cacheSize)
     }
   }
 
@@ -40,8 +40,7 @@ class History(cacheSize: Int) {
     (revertedCmds headOption) foreach { x =>
       x.exec()
       revertedCmds = revertedCmds.tail
-      if(memory.length < cacheSize) memory = x :: memory
-      else memory = x :: memory.init
+      memory = addWithFixedSize(memory, x, cacheSize)
     }
   }
 }
@@ -58,4 +57,14 @@ object History {
     Command( () => exec, () => undo)
   }
 
+
+  /** Prepends the element to the list if xs.size < fixedSize,
+    * if xs.size>=fixedSize the last element of the list is dropped
+    * for this new element!
+    */
+  private[history]
+  def addWithFixedSize[A](xs:List[A], elem:A, fixedSize:Int): List[A] = {
+    if(xs.length < fixedSize) elem :: xs
+    else elem :: xs.init
+  }
 }
