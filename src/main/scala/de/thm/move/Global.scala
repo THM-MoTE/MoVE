@@ -13,5 +13,6 @@ import de.thm.move.shortcuts.ShortCutHandler
 object Global {
   lazy val shortcuts = new ShortCutHandler(getClass.getResource("/shortcuts.conf"))
   lazy val config: Config = new ConfigLoader(getClass.getResource("/move.conf"))
-  lazy val history = new History()
+  lazy val historySize = Global.config.getInt("history.cache-size").getOrElse(50)
+  lazy val history = new History(historySize)
 }

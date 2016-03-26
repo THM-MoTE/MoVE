@@ -5,36 +5,43 @@
 
 package de.thm.move.history
 
-import scala.collection.mutable.ArrayBuffer
+import de.thm.move.Global
 
-class History {
+class History(cacheSize: Int) {
   import History._
 
-  private val undoStack = ArrayBuffer[Command]()
-  private val redoStack = ArrayBuffer[Command]()
+  private var memory = List[Command]()
+  private var revertedCmds = List[Command]()
 
   def execute(doFn: => Unit)(undoFn: => Unit): Unit =
     execute(Command( () => doFn, () => undoFn))
 
   def execute(c:Command): Unit = {
     c.exec()
-    undoStack.prepend(c)
+    if(memory.length < cacheSize) memory = c :: memory
+    else memory = c :: memory.init
   }
 
-  def save(c:Command): Unit = undoStack.prepend(c)
+  def save(c:Command): Unit =  {
+    if(memory.length < cacheSize) memory = c :: memory
+    else memory = c :: memory.init
+  }
 
   def undo(): Unit = {
-    undoStack.headOption foreach { cmd =>
-      undoStack.remove(0)
-      redoStack.prepend(cmd)
-      cmd.undo()
+    (memory headOption) foreach { x =>
+      x.undo()
+      memory = memory.tail
+      if(revertedCmds.length < cacheSize) revertedCmds = x :: revertedCmds
+      else revertedCmds = x :: revertedCmds.init
     }
   }
 
   def redo(): Unit = {
-    redoStack.headOption foreach { cmd =>
-      redoStack.remove(0)
-      cmd.exec()
+    (revertedCmds headOption) foreach { x =>
+      x.exec()
+      revertedCmds = revertedCmds.tail
+      if(memory.length < cacheSize) memory = x :: memory
+      else memory = x :: memory.init
     }
   }
 }
