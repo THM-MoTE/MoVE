@@ -260,17 +260,21 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     drawPanel.getChildren.filter(_.isInstanceOf[Anchor]) foreach (  _.setVisible(flag) )
   }
 
-  def changeColorForSelectedShape(fillColor:Option[Color], strokeColor:Option[Color]): Unit = {
+  def setFillColorForSelectedShape(color:Color): Unit = {
     selectedShape flatMap {
       case x:ColorizableShape => Some(x)
       case _ => None
-    } foreach { x =>
-      fillColor foreach x.setFillColor
-      strokeColor foreach x.setStrokeColor
-    }
+    } foreach ( _.setFillColor(color) )
   }
 
-  def changeStrokeWidthForSelectedShape(width:Int): Unit = {
+  def setStrokeColorForSelectedShape(color:Color): Unit = {
+    selectedShape flatMap {
+      case x:ColorizableShape => Some(x)
+      case _ => None
+    } foreach ( _.setStrokeColor(color) )
+  }
+
+  def setStrokeWidthForSelectedShape(width:Int): Unit = {
     selectedShape flatMap {
       case x:ColorizableShape => Some(x)
       case _ => None

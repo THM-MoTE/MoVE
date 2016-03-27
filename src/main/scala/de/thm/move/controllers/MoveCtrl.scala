@@ -141,9 +141,10 @@ class MoveCtrl extends Initializable {
     fillColorPicker.setOnAction(colorPickerChanged _)
     strokeColorPicker.setOnAction(colorPickerChanged _)
 
-    borderThicknessChooser.getSelectionModel.selectedItemProperty.addListener { (_:Int, newX:Int) =>
-      drawCtrl.changeStrokeWidthForSelectedShape(newX)
-    }
+    borderThicknessChooser.getSelectionModel.
+      selectedItemProperty.addListener { (_:Int, newX:Int) =>
+        drawCtrl.setStrokeWidthForSelectedShape(newX)
+      }
 
     drawPanel.setOnMousePressed(drawHandler)
     drawPanel.setOnMouseDragged(drawHandler)
@@ -163,8 +164,10 @@ class MoveCtrl extends Initializable {
 
   def colorPickerChanged(ae:ActionEvent): Unit = {
     val src = ae.getSource
-    if(src == strokeColorPicker) drawCtrl.changeColorForSelectedShape(None, Some(strokeColorPicker.getValue))
-    else if(src == fillColorPicker) drawCtrl.changeColorForSelectedShape(Some(fillColorPicker.getValue), None)
+    if(src == strokeColorPicker)
+      drawCtrl.setStrokeColorForSelectedShape(strokeColorPicker.getValue)
+    else if(src == fillColorPicker)
+      drawCtrl.setFillColorForSelectedShape(fillColorPicker.getValue)
   }
 
   def shapeInputHandler(ev:InputEvent): Unit = {
