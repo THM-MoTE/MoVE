@@ -197,7 +197,7 @@ class MoveCtrl extends Initializable {
   }
 
   private def onDrawShape: Unit = {
-    changeDrawingCursor(Cursor.CROSSHAIR)
+    setDrawingCursor(Cursor.CROSSHAIR)
     drawCtrl.removeSelectedShape
   }
 
@@ -221,7 +221,7 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onPointerClicked(e:ActionEvent): Unit = {
-    changeDrawingCursor(Cursor.DEFAULT)
+    setDrawingCursor(Cursor.DEFAULT)
     drawCtrl.removeSelectedShape
   }
   @FXML
@@ -236,7 +236,7 @@ class MoveCtrl extends Initializable {
   private def getStrokeColor: Color = strokeColorPicker.getValue
   private def getFillColor: Color = fillColorPicker.getValue
   private def selectedThickness: Int = borderThicknessChooser.getSelectionModel.getSelectedItem
-  private def changeDrawingCursor(c:Cursor): Unit = drawPanel.setCursor(c)
+  private def setDrawingCursor(c:Cursor): Unit = drawPanel.setCursor(c)
   private def getWindow = drawPanel.getScene.getWindow
   private def showAnchorsSelected: Boolean = showAnchorsItem.isSelected
 
