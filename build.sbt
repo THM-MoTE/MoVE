@@ -8,6 +8,23 @@ scalacOptions ++= Seq(
     "-unchecked",
     "-deprecation")
 
+lazy val copyRscs = taskKey[Unit]("Copies needed resources to resource-directory.")
+
+lazy val rscFiles = settingKey[Seq[File]]("The files that get copied with copyRscs task")
+
+lazy val rscCopyTarget = settingKey[File]("The target directory for copyRscs task")
+
+rscFiles := Seq(baseDirectory.value / "LICENSE")
+
+rscCopyTarget := (classDirectory in Compile).value
+
+copyRscs := rscFiles.value.foreach { file =>
+  IO.copyFile(file, rscCopyTarget.value / file.getName)
+}
+
+//append copyRscs-task to compile-task
+compile <<= (compile in Compile) dependsOn copyRscs
+
 lazy val root = (project in file(".")).
   settings(
     organization := "thm",
