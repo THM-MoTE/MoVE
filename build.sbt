@@ -18,7 +18,8 @@ rscFiles := Seq(baseDirectory.value / "LICENSE")
 
 rscCopyTarget := (classDirectory in Compile).value
 
-copyRscs := rscFiles.value.foreach { file =>
+copyRscs := rscFiles.map { files =>
+  val file = files.head
   IO.copyFile(file, rscCopyTarget.value / file.getName)
 }
 
