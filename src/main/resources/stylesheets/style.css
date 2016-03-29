@@ -25,3 +25,10 @@
 .tool-bar:hover{
     -fx-cursor: default;
 }
+
+.key-label {
+    -fx-font-weight: bold;
+}
+.msg-label {
+
+}

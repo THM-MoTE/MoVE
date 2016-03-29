@@ -10,8 +10,8 @@ import java.util.ResourceBundle
 import javafx.beans.value.ChangeListener
 import javafx.collections.FXCollections
 import javafx.event.ActionEvent
-import javafx.fxml.{Initializable, FXML}
-import javafx.scene.Cursor
+import javafx.fxml.{FXMLLoader, Initializable, FXML}
+import javafx.scene.{Scene, Parent, Cursor}
 import javafx.scene.canvas.{GraphicsContext, Canvas}
 import javafx.scene.control._
 import javafx.scene.image.Image
@@ -19,7 +19,7 @@ import javafx.scene.input.{KeyCode, KeyEvent, InputEvent, MouseEvent}
 import javafx.scene.layout.{StackPane, HBox, Pane}
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
-import javafx.stage.FileChooser
+import javafx.stage.{Stage, FileChooser}
 import de.thm.move.Global
 import de.thm.move.views.DrawPanel
 import de.thm.move.views.shapes.ResizableShape
@@ -33,6 +33,8 @@ import de.thm.move.views.Anchor
 import implicits.FxHandlerImplicits._
 
 class MoveCtrl extends Initializable {
+
+  private val aboutStage = new Stage()
 
   @FXML
   var undoMenuItem: MenuItem = _
@@ -62,6 +64,8 @@ class MoveCtrl extends Initializable {
   var drawStub: StackPane = _
   private val drawPanel = new DrawPanel()
   private val drawCtrl = new DrawCtrl(drawPanel, shapeInputHandler)
+
+  private val aboutCtrl = new AboutCtrl()
 
   private val moveHandler = drawCtrl.getMoveHandler
 
@@ -122,6 +126,23 @@ class MoveCtrl extends Initializable {
       borderThicknessChooser.setValue(width)
     }
 
+  private def setupAboutDialog(): Unit = {
+    //=== setup about dialog
+    val aboutWindowWidth = Global.config.getDouble("window.about.width").getOrElse(200.0)
+    val aboutWindowHeight = Global.config.getDouble("window.about.height").getOrElse(200.0)
+    val fxmlLoader = new FXMLLoader(getClass.getResource("/fxml/about.fxml"))
+    fxmlLoader.setController(aboutCtrl)
+    val aboutViewRoot: Parent = fxmlLoader.load()
+    aboutStage.initOwner(getWindow)
+    val scene = new Scene(aboutViewRoot)
+    scene.getStylesheets.add(Global.styleSheetUrl)
+
+    aboutStage.setTitle(Global.config.getString("window.title").map(_+" - About").getOrElse(""))
+    aboutStage.setScene(scene)
+    aboutStage.setWidth(aboutWindowWidth)
+    aboutStage.setHeight(aboutWindowHeight)
+  }
+
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     setupShortcuts("undo", "redo", "delete-item", "load-image",
       "show-anchors")(undoMenuItem, redoMenuItem, deleteMenuItem,
@@ -162,6 +183,8 @@ class MoveCtrl extends Initializable {
     * (Used for adding a key-event listener)
     */
   def setupMove(): Unit = {
+    setupAboutDialog()
+
     drawStub.getScene.setOnKeyPressed { ke: KeyEvent =>
       keyCodeToButtons.get(ke.getCode) foreach (_.fire)
     }
@@ -217,9 +240,12 @@ class MoveCtrl extends Initializable {
     } foreach (_.resizeProportionalProperty.set(src.isSelected))
   }
 
+
+  @FXML
+  def onAboutClicked(e:ActionEvent): Unit = aboutStage.show()
+
   @FXML
   def onShowAnchorsClicked(e:ActionEvent): Unit = drawCtrl.setVisibilityOfAnchors(showAnchorsSelected)
-
   @FXML
   def onUndoClicked(e:ActionEvent): Unit = Global.history.undo()
   @FXML
