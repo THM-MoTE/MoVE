@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 
 import de.thm.move.Global
+import de.thm.move.Global._
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
@@ -22,7 +23,6 @@ import de.thm.move.models.SelectedShape._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.views.shapes._
 import de.thm.move.views.{Anchor, DrawPanel}
-import de.thm.move.Global._
 
 import scala.collection.JavaConversions._
 
@@ -39,7 +39,6 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     def drawHandler(shape:SelectedShape, mouseEvent:MouseEvent)(fillColor:Color, strokeColor:Color, selectedThickness:Int): Unit = {
       shape match {
         case SelectedShape.Polygon =>
-
           if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
             val newX = mouseEvent.getX()
             val newY = mouseEvent.getY()
@@ -170,52 +169,37 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
     var command: (=> Unit) => Command = x => { History.emptyAction }
 
-    def moveElement(mv:MouseEvent): Unit = {
-      //move selected element
-      mv.getEventType match {
-        case MouseEvent.MOUSE_PRESSED =>
-          mv.getSource match {
-            case shape:ResizableShape =>
-              //save old coordinates for un-/redo
-              val oldX = shape.getX
-              val oldY = shape.getY
+    def moveElement(mv: MouseEvent): Unit =
+      (mv.getEventType, mv.getSource) match {
+        case (MouseEvent.MOUSE_PRESSED, shape: ResizableShape) =>
+          //save old coordinates for undo
+          val oldX = shape.getX
+          val oldY = shape.getY
 
-              command = History.partialAction {
-                shape.setX(oldX)
-                shape.setY(oldY)
-              }
-
-              deltaX = oldX - mv.getSceneX
-              deltaY = oldY - mv.getSceneY
-            case _:Anchor => //ignore, will be repositioned when moving the shape
-            case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
+          command = History.partialAction {
+            shape.setX(oldX)
+            shape.setY(oldY)
           }
-        case MouseEvent.MOUSE_DRAGGED =>
+
+          deltaX = oldX - mv.getSceneX
+          deltaY = oldY - mv.getSceneY
+        case (MouseEvent.MOUSE_DRAGGED, shape: ResizableShape) =>
           //translate from original to new position
-          mv.getSource match {
-            case shape:ResizableShape =>
-              shape.setX(deltaX + mv.getSceneX)
-              shape.setY(deltaY + mv.getSceneY)
-            case _:Anchor => //ignore, will be repositioned when moving the shape
-            case _ => throw new IllegalStateException("shapeInputHandler: source isn't a shape")
+          shape.setX(deltaX + mv.getSceneX)
+          shape.setY(deltaY + mv.getSceneY)
+        case (MouseEvent.MOUSE_RELEASED, shape: ResizableShape) =>
+          //save coordinates for redo
+          val newX = shape.getX
+          val newY = shape.getY
+          val cmd = command {
+            shape.setX(newX)
+            shape.setY(newY)
           }
-        case MouseEvent.MOUSE_RELEASED =>
-          mv.getSource match {
-            case shape:ResizableShape =>
-              val newX = shape.getX
-              val newY = shape.getY
-              val cmd = command {
-                shape.setX(newX)
-                shape.setY(newY)
-              }
 
-              Global.history.save(cmd)
-
-            case _ => //ignore
-          }
+          Global.history.save(cmd)
         case _ => //unknown event
       }
-    }
+
     moveElement
   }
 
