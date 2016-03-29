@@ -37,74 +37,61 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     var drawingShape: ResizableShape = null
 
     def drawHandler(shape:SelectedShape, mouseEvent:MouseEvent)(fillColor:Color, strokeColor:Color, selectedThickness:Int): Unit = {
-      shape match {
-        case SelectedShape.Polygon =>
-          if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
-            val newX = mouseEvent.getX()
-            val newY = mouseEvent.getY()
-            //test if polygon is finish by checking if last clicked position is 1st clicked point
-            points.reverse.headOption match {
-              case Some((x, y)) if Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10 =>
-                //draw the polygon
-                drawPolygon(points)(fillColor, strokeColor, selectedThickness)
-                points = List() //clear points list
+      (shape, mouseEvent.getEventType, (mouseEvent.getX, mouseEvent.getY)) match {
+        case (SelectedShape.Polygon, MouseEvent.MOUSE_CLICKED, (newX, newY)) =>
+          //test if polygon is finish by checking if last clicked position is 1st clicked point
+          points.lastOption match {
+            case Some((x, y)) if Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10 =>
+              drawPolygon(points)(fillColor, strokeColor, selectedThickness)
+              points = List()
+              removeTmpShapes(drawPanel, tmpShapeId)
+            case _ =>
+              //draw tmp line between last anchor and mouse point
+              (points, drawingShape) match {
+                case ((hdX, hdY) :: _, l: ResizableLine) =>
+                  //draw line between last anchor (head of list) and mouse point
+                  l.setEndX(newX)
+                  l.setEndY(newY)
+                case _ =>
+              }
+              //create new line with this mouse point as start point
+              drawingShape = createTmpShape(SelectedShape.Line, (mouseEvent.getX, mouseEvent.getY), strokeColor, drawPanel)
 
-                //remove temporary shape(s)
-                removeTmpShapes(drawPanel, tmpShapeId)
-              case _ =>
-                //draw tmp line between last anchor and mouse point
-                (points, drawingShape) match {
-                  case ( (hdX,hdY)::_, l:ResizableLine ) =>
-                        //draw line between last anchor (head of list) and mouse point
-                        l.setEndX(newX)
-                        l.setEndY(newY)
-                  case _ =>
-                }
-                //create new line with this mouse point as start point
-                drawingShape = createTmpShape(SelectedShape.Line, (mouseEvent.getX, mouseEvent.getY), strokeColor, drawPanel)
-
-                points = (newX, newY) :: points
-                drawAnchor(points.head)
-            }
+              points = (newX, newY) :: points
+              drawAnchor(points.head)
           }
-        case _ =>
-          if (mouseEvent.getEventType == MouseEvent.MOUSE_PRESSED) {
-            drawingShape = createTmpShape(shape, (mouseEvent.getX, mouseEvent.getY), strokeColor, drawPanel)
-            points = (mouseEvent.getX(), mouseEvent.getY()) :: points
-          } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-            val (startX, startY) = points.head
-            val (deltaX, deltaY) = (mouseEvent.getX - startX, mouseEvent.getY - startY)
-
-            drawingShape match {
-              case c:ResizableCircle =>
-                val mousePoint = (mouseEvent.getX, mouseEvent.getY)
-
-                val (middleX, middleY) = GeometryUtils.middleOfLine(points.head, mousePoint)
-                c.setX(middleX)
-                c.setY(middleY)
-                c.setWidth(deltaX)
-                c.setHeight(deltaY)
-              case ba:BoundedAnchors =>
-                ba.setWidth(deltaX)
-                ba.setHeight(deltaY)
-              case l:ResizableLine =>
-                l.setEndX(mouseEvent.getX)
-                l.setEndY(mouseEvent.getY)
-              case _ => //ignore other shapes
-            }
-          } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
-
-            //remove temporary shape(s)
-            removeTmpShapes(drawPanel, tmpShapeId)
-
-            points = (mouseEvent.getX(), mouseEvent.getY()) :: points
-
-            points match {
-              case end :: start :: _ => drawCustomShape(shape, start, end)(fillColor, strokeColor, selectedThickness)
-              case _ => //ignore
-            }
-            points = List()
+        case (SelectedShape.Polygon, _, _) => //ignore other polygon events
+        case (_, MouseEvent.MOUSE_PRESSED, newP) =>
+          //start drawing; create tmp-shape
+          drawingShape = createTmpShape(shape, newP, strokeColor, drawPanel)
+          points = newP :: points
+        case (_, MouseEvent.MOUSE_DRAGGED, newP@(newX, newY)) =>
+          //adjust tmp-figure
+          val (startX, startY) = points.head
+          val (deltaX, deltaY) = (newX - startX, newY - startY)
+          drawingShape match {
+            case c: ResizableCircle =>
+              val (middleX, middleY) = GeometryUtils.middleOfLine(points.head, newP)
+              c.setX(middleX)
+              c.setY(middleY)
+              c.setWidth(deltaX)
+              c.setHeight(deltaY)
+            case ba: BoundedAnchors =>
+              ba.setWidth(deltaX)
+              ba.setHeight(deltaY)
+            case l: ResizableLine =>
+              l.setEndX(newX)
+              l.setEndY(newY)
+            case _ => //ignore other shapes
           }
+        case (_, MouseEvent.MOUSE_RELEASED, newP) =>
+          //end drawing; remove temporary shape(s)
+          removeTmpShapes(drawPanel, tmpShapeId)
+          points.headOption foreach { start =>
+            drawCustomShape(shape, start, newP)(fillColor, strokeColor, selectedThickness)
+          }
+          points = List()
+        case _ => //ignore all other
       }
     }
 
