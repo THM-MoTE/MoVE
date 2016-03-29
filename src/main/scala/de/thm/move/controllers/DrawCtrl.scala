@@ -135,9 +135,17 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
   def removeSelectedShape: Unit = {
     selectedShape match {
       case Some(shape) =>
-        drawPanel.getChildren.remove(shape.selectionRectangle)
+        drawPanel.remove(shape.selectionRectangle)
         selectedShape = None
       case _ => //ignore
+    }
+  }
+
+  def deleteSelectedShape: Unit = {
+    selectedShape foreach { shape =>
+      drawPanel.remove(shape)
+      drawPanel.remove(shape.selectionRectangle)
+      selectedShape = None
     }
   }
 

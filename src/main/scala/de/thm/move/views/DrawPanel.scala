@@ -31,6 +31,16 @@ class DrawPanel() extends Pane {
     shapes = n :: shapes
   }
 
+  def remove[A <: Node](shape:A): Unit = {
+    shapes = shapes.filterNot(_ == shape)
+    shape match {
+      case rs:ResizableShape =>
+        getChildren.removeAll(rs.getAnchors:_*)
+        getChildren.remove(shape)
+      case _ => getChildren.remove(shape)
+    }
+  }
+
   def removeWhile(pred: Node => Boolean): Unit = {
     val removingShapes = shapes.takeWhile(pred)
     shapes = shapes.dropWhile(pred)

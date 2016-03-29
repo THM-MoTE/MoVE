@@ -38,6 +38,10 @@ class MoveCtrl extends Initializable {
   var undoMenuItem: MenuItem = _
   @FXML
   var redoMenuItem: MenuItem = _
+
+  @FXML
+  var deleteMenuItem: MenuItem = _
+
   @FXML
   var loadImgMenuItem: MenuItem = _
 
@@ -119,7 +123,9 @@ class MoveCtrl extends Initializable {
     }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    setupShortcuts("undo", "redo", "load-image", "show-anchors")(undoMenuItem, redoMenuItem, loadImgMenuItem, showAnchorsItem)
+    setupShortcuts("undo", "redo", "delete-item", "load-image",
+      "show-anchors")(undoMenuItem, redoMenuItem, deleteMenuItem,
+        loadImgMenuItem, showAnchorsItem)
     drawStub.getChildren.add(drawPanel)
 
     val sizesList:java.util.List[Int] = (1 until 20).toList
@@ -218,6 +224,9 @@ class MoveCtrl extends Initializable {
   def onUndoClicked(e:ActionEvent): Unit = Global.history.undo()
   @FXML
   def onRedoClicked(e:ActionEvent): Unit = Global.history.redo()
+
+  @FXML
+  def onDeleteClicked(e:ActionEvent): Unit = drawCtrl.deleteSelectedShape
 
   @FXML
   def onPointerClicked(e:ActionEvent): Unit = {

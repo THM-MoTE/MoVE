@@ -35,7 +35,8 @@
                   <items>
                         <MenuItem fx:id="undoMenuItem" mnemonicParsing="false" onAction="#onUndoClicked" text="Undo" />
                         <MenuItem fx:id="redoMenuItem" mnemonicParsing="false" onAction="#onRedoClicked" text="Redo" />
-                        <MenuItem fx:id="loadImgMenuItem" mnemonicParsing="false" onAction="#onLoadBitmap" text="Insert Bitmap" />
+                        <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#onDeleteClicked" text="Delete" />
+                      <MenuItem fx:id="loadImgMenuItem" mnemonicParsing="false" onAction="#onLoadBitmap" text="Insert Bitmap" />
                   </items>
                 </Menu>
                   <Menu mnemonicParsing="false" text="View">
