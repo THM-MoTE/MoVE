@@ -21,6 +21,7 @@ import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
 import de.thm.move.util.GeometryUtils
+import de.thm.move.util.PointUtils._
 import de.thm.move.views.shapes._
 import de.thm.move.views.{Anchor, DrawPanel}
 
@@ -38,7 +39,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
     def drawHandler(shape:SelectedShape, mouseEvent:MouseEvent)(fillColor:Color, strokeColor:Color, selectedThickness:Int): Unit = {
       (shape, mouseEvent.getEventType, (mouseEvent.getX, mouseEvent.getY)) match {
-        case (SelectedShape.Polygon, MouseEvent.MOUSE_CLICKED, (newX, newY)) =>
+        case (SelectedShape.Polygon, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
           //test if polygon is finish by checking if last clicked position is 1st clicked point
           points.lastOption match {
             case Some((x, y)) if Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10 =>
@@ -57,7 +58,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
               //create new line with this mouse point as start point
               drawingShape = createTmpShape(SelectedShape.Line, (mouseEvent.getX, mouseEvent.getY), strokeColor, drawPanel)
 
-              points = (newX, newY) :: points
+              points = newP :: points
               drawAnchor(points.head)
           }
         case (SelectedShape.Polygon, _, _) => //ignore other polygon events
@@ -67,8 +68,8 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
           points = newP :: points
         case (_, MouseEvent.MOUSE_DRAGGED, newP@(newX, newY)) =>
           //adjust tmp-figure
-          val (startX, startY) = points.head
-          val (deltaX, deltaY) = (newX - startX, newY - startY)
+          val startP = points.head
+          val (deltaX, deltaY) = newP - startP
           drawingShape match {
             case c: ResizableCircle =>
               val (middleX, middleY) = GeometryUtils.middleOfLine(points.head, newP)
