@@ -31,6 +31,7 @@ import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape.SelectedShape
 import de.thm.move.views.Anchor
 import implicits.FxHandlerImplicits._
+import implicits.ConcurrentImplicits._
 
 class MoveCtrl extends Initializable {
 
@@ -87,11 +88,11 @@ class MoveCtrl extends Initializable {
     }
 
     val keyCodeOpts = List(
-      Global.shortcuts.getKeyCode("move-elements") -> getButtonById("line_pointer"),
-      Global.shortcuts.getKeyCode("draw-rectangle") -> getButtonById("rectangle_btn"),
-      Global.shortcuts.getKeyCode("draw-line") -> getButtonById("line_btn"),
-      Global.shortcuts.getKeyCode("draw-polygon") -> getButtonById("polygon_btn"),
-      Global.shortcuts.getKeyCode("draw-circle") -> getButtonById("circle_btn")
+      Global.shortcuts.getShortcut("move-elements") -> getButtonById("line_pointer"),
+      Global.shortcuts.getShortcut("draw-rectangle") -> getButtonById("rectangle_btn"),
+      Global.shortcuts.getShortcut("draw-line") -> getButtonById("line_btn"),
+      Global.shortcuts.getShortcut("draw-polygon") -> getButtonById("polygon_btn"),
+      Global.shortcuts.getShortcut("draw-circle") -> getButtonById("circle_btn")
       )
 
     val codes = keyCodeOpts flatMap {
@@ -185,9 +186,12 @@ class MoveCtrl extends Initializable {
   def setupMove(): Unit = {
     setupAboutDialog()
 
-    drawStub.getScene.setOnKeyPressed { ke: KeyEvent =>
-      keyCodeToButtons.get(ke.getCode) foreach (_.fire)
+    val combinationsToRunnable = keyCodeToButtons.map {
+      case (combination, btn) => combination -> fnRunnable(btn.fire)
     }
+
+    drawStub.getScene.getAccelerators.putAll(combinationsToRunnable)
+
     drawStub.requestFocus()
   }
 
@@ -209,6 +213,7 @@ class MoveCtrl extends Initializable {
           }
 
         case mv: MouseEvent => moveHandler(mv)
+        case _ => //not mapped event
       }
     }
   }
