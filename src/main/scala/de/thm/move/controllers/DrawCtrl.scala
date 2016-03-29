@@ -22,6 +22,7 @@ import de.thm.move.models.SelectedShape._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.views.shapes._
 import de.thm.move.views.{Anchor, DrawPanel}
+import de.thm.move.Global._
 
 import scala.collection.JavaConversions._
 
@@ -287,20 +288,29 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     selectedShape flatMap {
       case x:ColorizableShape => Some(x)
       case _ => None
-    } foreach ( _.setFillColor(color) )
+    } foreach { x =>
+      val oldColor = x.getFillColor
+      history.execute(x.setFillColor(color))(x.setFillColor(oldColor))
+    }
   }
 
   def setStrokeColorForSelectedShape(color:Color): Unit = {
     selectedShape flatMap {
       case x:ColorizableShape => Some(x)
       case _ => None
-    } foreach ( _.setStrokeColor(color) )
+    } foreach { x =>
+      val oldColor = x.getStrokeColor
+      history.execute(x.setStrokeColor(color))(x.setStrokeColor(oldColor))
+    }
   }
 
   def setStrokeWidthForSelectedShape(width:Int): Unit = {
     selectedShape flatMap {
       case x:ColorizableShape => Some(x)
       case _ => None
-    } foreach ( _.setStrokeWidth(width) )
+    } foreach { x =>
+      val oldWidth = x.getStrokeWidth
+      history.execute(x.setStrokeWidth(width))(x.setStrokeWidth(oldWidth))
+    }
   }
 }

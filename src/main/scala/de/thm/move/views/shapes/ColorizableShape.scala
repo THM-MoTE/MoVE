@@ -5,7 +5,7 @@
 
 package de.thm.move.views.shapes
 
-import javafx.scene.paint.Color
+import javafx.scene.paint.{Paint, Color}
 import javafx.scene.shape.Shape
 
 import de.thm.move.Global
@@ -20,19 +20,15 @@ trait ColorizableShape {
     self.setStrokeColor(strokeColor)
   }
 
-  def setStrokeWidth(width:Int): Unit = {
-    val oldWidth = self.strokeWidthProperty().get()
-    val cmd = History.newCommand(self.strokeWidthProperty().set(width), self.strokeWidthProperty().set(oldWidth))
-    Global.history.execute(cmd)
+  def getStrokeWidth: Double
+  def getFillColor:Paint = self.getFill
+  def getStrokeColor:Paint = self.getStroke
+
+  def setStrokeWidth(width:Double): Unit
+  def setFillColor(c:Paint): Unit = {
+    self.setFill(c)
   }
-  def setFillColor(c:Color): Unit = {
-    val oldColor = self.getFill
-    val cmd =  History.newCommand(self.setFill(c), self.setFill(oldColor))
-    Global.history.execute(cmd)
-  }
-  def setStrokeColor(c:Color): Unit = {
-    val oldColor = self.getFill
-    val cmd =  History.newCommand(self.setStroke(c), self.setStroke(oldColor))
-    Global.history.execute(cmd)
+  def setStrokeColor(c:Paint): Unit = {
+    self.setStroke(c)
   }
 }
