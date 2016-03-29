@@ -143,9 +143,14 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   def deleteSelectedShape: Unit = {
     selectedShape foreach { shape =>
-      drawPanel.remove(shape)
-      drawPanel.remove(shape.selectionRectangle)
-      selectedShape = None
+      Global.history.execute {
+        drawPanel.remove(shape)
+        drawPanel.remove(shape.selectionRectangle)
+        selectedShape = None
+      } {
+        addToPanel(shape)
+        addToPanel(shape.getAnchors:_*)
+      }
     }
   }
 
