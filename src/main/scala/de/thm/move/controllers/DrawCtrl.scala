@@ -218,17 +218,12 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
   }
 
   def drawCustomShape(shape:SelectedShape, start:Point, end:Point)(fillColor:Color, strokeColor:Color, selectedThickness:Int) = {
-    val (startX, startY) = start
-    val (endX, endY) = end
-
     val newShapeOpt:Option[ResizableShape] = shape match {
       case SelectedShape.Rectangle =>
-        val width = endX - startX
-        val height = endY - startY
+        val (width,height) = end - start
         Some( ShapeFactory.newRectangle(start, width, height)(fillColor, strokeColor, selectedThickness) )
       case SelectedShape.Circle =>
-        val width = GeometryUtils.asRadius(endX - startX)
-        val height = GeometryUtils.asRadius(endY - startY)
+        val (width, height) = (end - start) map GeometryUtils.asRadius
         val middlePoint = GeometryUtils.middleOfLine(start,end)
         Some( ShapeFactory.newCircle(middlePoint, width, height)(fillColor, strokeColor, selectedThickness) )
       case SelectedShape.Line => Some( ShapeFactory.newLine(start, end, selectedThickness)(fillColor, strokeColor, selectedThickness) )
