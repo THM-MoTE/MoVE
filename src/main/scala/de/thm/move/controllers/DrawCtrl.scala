@@ -19,7 +19,8 @@ import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
-import de.thm.move.views.shapes.{BoundedAnchors, ColorizableShape, ResizableLine, ResizableShape}
+import de.thm.move.util.GeometryUtils
+import de.thm.move.views.shapes._
 import de.thm.move.views.{Anchor, DrawPanel}
 
 import scala.collection.JavaConversions._
@@ -71,10 +72,18 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             drawingShape = createTmpShape(shape, (mouseEvent.getX, mouseEvent.getY), strokeColor, drawPanel)
             points = (mouseEvent.getX(), mouseEvent.getY()) :: points
           } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-            val deltaX = mouseEvent.getX - drawingShape.getX
-            val deltaY = mouseEvent.getY - drawingShape.getY
+            val (startX, startY) = points.head
+            val (deltaX, deltaY) = (mouseEvent.getX - startX, mouseEvent.getY - startY)
 
             drawingShape match {
+              case c:ResizableCircle =>
+                val mousePoint = (mouseEvent.getX, mouseEvent.getY)
+
+                val (middleX, middleY) = GeometryUtils.middleOfLine(points.head, mousePoint)
+                c.setX(middleX)
+                c.setY(middleY)
+                c.setWidth(deltaX)
+                c.setHeight(deltaY)
               case ba:BoundedAnchors =>
                 ba.setWidth(deltaX)
                 ba.setHeight(deltaY)
@@ -247,9 +256,10 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
         val height = endY - startY
         Some( ShapeFactory.newRectangle(start, width, height)(fillColor, strokeColor, selectedThickness) )
       case SelectedShape.Circle =>
-        val width = (endX - startX)/2
-        val height = (endY - startY)/2
-        Some( ShapeFactory.newCircle(start, width, height)(fillColor, strokeColor, selectedThickness) )
+        val width = GeometryUtils.asRadius(endX - startX)
+        val height = GeometryUtils.asRadius(endY - startY)
+        val middlePoint = GeometryUtils.middleOfLine(start,end)
+        Some( ShapeFactory.newCircle(middlePoint, width, height)(fillColor, strokeColor, selectedThickness) )
       case SelectedShape.Line => Some( ShapeFactory.newLine(start, end, selectedThickness)(fillColor, strokeColor, selectedThickness) )
       case _ => None
     }

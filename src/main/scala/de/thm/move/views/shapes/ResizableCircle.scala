@@ -10,7 +10,7 @@ import javafx.geometry.Bounds
 
 import de.thm.move.models.CommonTypes._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
-import de.thm.move.util.BindingUtils
+import de.thm.move.util.{GeometryUtils, BindingUtils}
 import de.thm.move.views.Anchor
 import javafx.scene.input.MouseEvent
 
@@ -26,9 +26,9 @@ class ResizableCircle(
 
   override def setY(y: Double): Unit = setCenterY(y)
 
-  override def setWidth(w: Double): Unit = setRadiusX(w/2)
+  override def setWidth(w: Double): Unit = setRadiusX(GeometryUtils.asRadius(w))
 
-  override def setHeight(h: Double): Unit = setRadiusY(h/2)
+  override def setHeight(h: Double): Unit = setRadiusY(GeometryUtils.asRadius(h))
 
   override def getX: Double = getCenterX
 
