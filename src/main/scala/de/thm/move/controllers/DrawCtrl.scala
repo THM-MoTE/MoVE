@@ -130,11 +130,9 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
   }
 
   def removeSelectedShape: Unit = {
-    selectedShape match {
-      case Some(shape) =>
+    selectedShape foreach { shape =>
         drawPanel.remove(shape.selectionRectangle)
         selectedShape = None
-      case _ => //ignore
     }
   }
 
