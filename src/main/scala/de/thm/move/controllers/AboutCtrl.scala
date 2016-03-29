@@ -42,7 +42,6 @@ class AboutCtrl extends Initializable {
     aboutPaneRight.getChildren.addAll(toInfoLines(m):_*)
     aboutPaneRight.getChildren.addAll(infolines:_*)
 
-
     //setup license pane
     licenseArea.setText(Global.licenseString)
   }

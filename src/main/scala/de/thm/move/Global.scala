@@ -22,8 +22,11 @@ object Global {
   lazy val copyright = "(c) 2016 Nicola Justs"
   lazy val version = "0.1"
 
+  lazy val licenseFile = "/LICENSE"
+
   lazy val fontBoundle = ResourceBundle.getBundle("fonts/fontawesome")
   lazy val styleSheetUrl = MoveApp.getClass.getResource("/stylesheets/style.css").toExternalForm
 
-  lazy val licenseString = scala.io.Source.fromURL(getClass.getResource("/LICENSE"),  "UTF-8").getLines.mkString("\n")
+  lazy val licenseString =
+    scala.io.Source.fromURL(getClass.getResource(licenseFile),  "UTF-8").getLines.mkString("\n")
 }

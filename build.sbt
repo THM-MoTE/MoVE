@@ -18,9 +18,8 @@ rscFiles := Seq(baseDirectory.value / "LICENSE")
 
 rscCopyTarget := (classDirectory in Compile).value
 
-copyRscs := rscFiles.map { files =>
-  val file = files.head
-  IO.copyFile(file, rscCopyTarget.value / file.getName)
+copyRscs := rscFiles.value.map { file =>
+    IO.copyFile(file, rscCopyTarget.value / file.getName)
 }
 
 //append copyRscs-task to compile-task
