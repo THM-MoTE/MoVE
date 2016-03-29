@@ -23,13 +23,11 @@ trait ResizableShape extends Node {
 
   def getX: Double
   def getY: Double
-  @inline
-  def getXY: Point = (getX, getY)
+  final def getXY: Point = (getX, getY)
 
   def setX(x:Double): Unit
   def setY(y:Double): Unit
-  @inline
-  def setXY(p:Point): Unit = {
+  final def setXY(p:Point): Unit = {
     setX(p._1)
     setY(p._2)
   }
