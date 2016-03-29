@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode
 import de.thm.move.views.Anchor
 import de.thm.move.Global
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.models.CommonTypes._
 
 trait ResizableShape extends Node {
 
@@ -22,7 +23,12 @@ trait ResizableShape extends Node {
 
   def getX: Double
   def getY: Double
+  def getXY: Point = (getX, getY)
 
   def setX(x:Double): Unit
   def setY(y:Double): Unit
+  def setXY(p:Point): Unit = {
+    setX(p._1)
+    setY(p._2)
+  }
 }
