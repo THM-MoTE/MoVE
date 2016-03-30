@@ -190,6 +190,17 @@ class MoveCtrl extends Initializable {
       case (combination, btn) => combination -> fnRunnable(btn.fire)
     }
 
+    //shortcuts that aren't mapped to buttons
+    drawStub.getScene.setOnKeyPressed { ke:KeyEvent =>
+      if(ke.getCode == KeyCode.SHIFT)
+        drawCtrl.drawConstraintProperty.set(true)
+    }
+
+    drawStub.getScene.setOnKeyReleased { ke:KeyEvent =>
+      if(ke.getCode == KeyCode.SHIFT)
+        drawCtrl.drawConstraintProperty.set(false)
+    }
+
     drawStub.getScene.getAccelerators.putAll(combinationsToRunnable)
 
     drawStub.requestFocus()

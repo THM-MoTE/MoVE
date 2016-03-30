@@ -5,6 +5,7 @@
 
 package de.thm.move.controllers
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.event.EventHandler
 import javafx.scene.Node
 import javafx.scene.image.Image
@@ -32,6 +33,8 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
   private var selectedShape:Option[ResizableShape] = None
 
   private val tmpShapeId = "temporary-shape"
+
+  val drawConstraintProperty = new SimpleBooleanProperty()
 
   def getDrawHandler: (SelectedShape, MouseEvent) => (Color, Color, Int) => Unit = {
     var points = List[Point]()
@@ -75,21 +78,40 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
               val (middleX, middleY) = GeometryUtils.middleOfLine(points.head, newP)
               c.setX(middleX)
               c.setY(middleY)
-              c.setWidth(deltaX)
-              c.setHeight(deltaY)
+              if(drawConstraintProperty.get) {
+                val tmpDelta = deltaX min deltaY
+                c.setWidth(tmpDelta)
+                c.setHeight(tmpDelta)
+              } else {
+                c.setWidth(deltaX)
+                c.setHeight(deltaY)
+              }
             case ba: BoundedAnchors =>
-              ba.setWidth(deltaX)
-              ba.setHeight(deltaY)
+              if(drawConstraintProperty.get) {
+                val tmpDelta = deltaX min deltaY
+                ba.setWidth(tmpDelta)
+                ba.setHeight(tmpDelta)
+              } else {
+                ba.setWidth(deltaX)
+                ba.setHeight(deltaY)
+              }
             case l: ResizableLine =>
-              l.setEndX(newX)
-              l.setEndY(newY)
+              if(drawConstraintProperty.get) {
+                val (startX,startY) = startP
+                val (x,y) = if(deltaX > deltaY) (newX,startY) else (startX,newY)
+                l.setEndX(x)
+                l.setEndY(y)
+              } else {
+                l.setEndX(newX)
+                l.setEndY(newY)
+              }
             case _ => //ignore other shapes
           }
         case (_, MouseEvent.MOUSE_RELEASED, newP) =>
           //end drawing; remove temporary shape(s)
           removeTmpShapes(drawPanel, tmpShapeId)
           points.headOption foreach { start =>
-            drawCustomShape(shape, start, newP)(fillColor, strokeColor, selectedThickness)
+            drawCustomShape(shape, start, newP, drawConstraintProperty.get)(fillColor, strokeColor, selectedThickness)
           }
           points = List()
         case _ => //ignore all other
@@ -98,7 +120,6 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
     drawHandler
   }
-
 
   /**Creates a temporary shape and adds it to the given node for displaying during drawing a shape.*/
   private def createTmpShape(selectedShape:SelectedShape.SelectedShape, start:Point, stroke:Color, node:Pane, shapeId:String = tmpShapeId): ResizableShape = {
@@ -212,16 +233,32 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     addToPanel(imgview.getAnchors:_*)
   }
 
-  def drawCustomShape(shape:SelectedShape, start:Point, end:Point)(fillColor:Color, strokeColor:Color, selectedThickness:Int) = {
+  def drawCustomShape(shape:SelectedShape, start:Point, end:Point, drawConstraint:Boolean)(fillColor:Color, strokeColor:Color, selectedThickness:Int) = {
     val newShapeOpt:Option[ResizableShape] = shape match {
-      case SelectedShape.Rectangle =>
+      case SelectedShape.Rectangle if drawConstraint =>
+        val (width,height) = end - start
+        val min = width min height
+        Some( ShapeFactory.newRectangle(start, min, min)(fillColor, strokeColor, selectedThickness) )
+      case SelectedShape.Rectangle if !drawConstraint =>
         val (width,height) = end - start
         Some( ShapeFactory.newRectangle(start, width, height)(fillColor, strokeColor, selectedThickness) )
-      case SelectedShape.Circle =>
+      case SelectedShape.Circle if drawConstraint =>
+        val (width, height) = (end - start) map GeometryUtils.asRadius
+        val min = width min height
+        val middlePoint = GeometryUtils.middleOfLine(start,end)
+        Some( ShapeFactory.newCircle(middlePoint, min, min)(fillColor, strokeColor, selectedThickness) )
+      case SelectedShape.Circle if !drawConstraint =>
         val (width, height) = (end - start) map GeometryUtils.asRadius
         val middlePoint = GeometryUtils.middleOfLine(start,end)
         Some( ShapeFactory.newCircle(middlePoint, width, height)(fillColor, strokeColor, selectedThickness) )
-      case SelectedShape.Line => Some( ShapeFactory.newLine(start, end, selectedThickness)(fillColor, strokeColor, selectedThickness) )
+      case SelectedShape.Line if drawConstraint =>
+        val (deltaX,deltaY) = end - start
+        val (startX,startY) = start
+        val (endX,endY) = end
+        val newEnd = if(deltaX > deltaY) (endX,startY) else (startX, endY)
+        Some( ShapeFactory.newLine(start, newEnd, selectedThickness)(fillColor, strokeColor, selectedThickness) )
+      case SelectedShape.Line if !drawConstraint =>
+        Some( ShapeFactory.newLine(start, end, selectedThickness)(fillColor, strokeColor, selectedThickness) )
       case _ => None
     }
 
