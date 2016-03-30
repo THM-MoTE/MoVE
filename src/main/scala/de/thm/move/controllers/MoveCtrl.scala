@@ -15,7 +15,7 @@ import javafx.scene.{Scene, Parent, Cursor}
 import javafx.scene.canvas.{GraphicsContext, Canvas}
 import javafx.scene.control._
 import javafx.scene.image.Image
-import javafx.scene.input.{KeyCode, KeyEvent, InputEvent, MouseEvent}
+import javafx.scene.input._
 import javafx.scene.layout.{StackPane, HBox, Pane}
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
@@ -191,14 +191,15 @@ class MoveCtrl extends Initializable {
     }
 
     //shortcuts that aren't mapped to buttons
-    drawStub.getScene.setOnKeyPressed { ke:KeyEvent =>
-      if(ke.getCode == KeyCode.SHIFT)
-        drawCtrl.drawConstraintProperty.set(true)
-    }
-
-    drawStub.getScene.setOnKeyReleased { ke:KeyEvent =>
-      if(ke.getCode == KeyCode.SHIFT)
-        drawCtrl.drawConstraintProperty.set(false)
+    Global.shortcuts.getKeyCode("draw-constraint").foreach { code =>
+      drawStub.getScene.setOnKeyPressed { ke: KeyEvent =>
+        if(ke.getCode == code)
+          drawCtrl.drawConstraintProperty.set(true)
+      }
+      drawStub.getScene.setOnKeyReleased { ke: KeyEvent =>
+        if(ke.getCode == code)
+          drawCtrl.drawConstraintProperty.set(false)
+      }
     }
 
     drawStub.getScene.getAccelerators.putAll(combinationsToRunnable)
