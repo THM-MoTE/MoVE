@@ -61,4 +61,6 @@ class DrawPanel() extends Pane {
 
     getChildren.removeAll(removingShapes:_*)
   }
+
+  def getShapes: List[Node] = shapes
 }
