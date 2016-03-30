@@ -26,7 +26,7 @@ import de.thm.move.views.shapes.ResizableShape
 
 import collection.JavaConversions._
 
-import de.thm.move.models.SelectedShape
+import de.thm.move.models.{ModelicaCodeGenerator, SelectedShape}
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape.SelectedShape
 import de.thm.move.views.Anchor
@@ -241,7 +241,8 @@ class MoveCtrl extends Initializable {
     fileOp map { file =>
       file.toURI
     } foreach { uri =>
-      println(uri)
+      val shapes = drawPanel.getShapes.filterNot(_.isInstanceOf[Anchor])
+      ModelicaCodeGenerator.generateAndWrite(shapes)(uri)
     }
   }
 
