@@ -28,6 +28,8 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
+                        <MenuItem mnemonicParsing="false" text="Save" />
+                        <MenuItem mnemonicParsing="false" onAction="#onSaveAsClicked" text="Save as.." />
                     <MenuItem mnemonicParsing="false" text="Close" />
                   </items>
                 </Menu>
@@ -46,7 +48,7 @@
                   </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="About" onAction="#onAboutClicked"/>
+                    <MenuItem mnemonicParsing="false" onAction="#onAboutClicked" text="About" />
                   </items>
                 </Menu>
               </menus>
@@ -59,7 +61,6 @@
                   <ColorPicker fx:id="fillColorPicker" />
                   <Label styleClass="toolbar-button" text="%fa.square-o" />
                   <ColorPicker fx:id="strokeColorPicker" />
-                  <CheckBox mnemonicParsing="false" onAction="#onPreserveRatioPressed" text="Preserve ratio" />
                </items>
             </ToolBar>
          </children>

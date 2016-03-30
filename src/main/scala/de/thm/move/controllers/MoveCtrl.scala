@@ -230,6 +230,21 @@ class MoveCtrl extends Initializable {
     }
   }
 
+
+  @FXML
+  def onSaveAsClicked(e:ActionEvent): Unit = {
+    val chooser = new FileChooser()
+    val filter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo");
+    chooser.setTitle("Save as..")
+    chooser.setSelectedExtensionFilter(filter)
+    val fileOp = Option(chooser.showSaveDialog(getWindow))
+    fileOp map { file =>
+      file.toURI
+    } foreach { uri =>
+      println(uri)
+    }
+  }
+
   @FXML
   def onLoadBitmap(e:ActionEvent): Unit = {
     val chooser = new FileChooser()
