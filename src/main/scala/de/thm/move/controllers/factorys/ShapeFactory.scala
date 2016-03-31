@@ -5,9 +5,12 @@
 
 package de.thm.move.controllers.factorys
 
+import java.net.URI
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
+
+import javafx.scene.image.Image
 
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape
@@ -15,8 +18,9 @@ import de.thm.move.views.Anchor
 import de.thm.move.views.shapes._
 
 object ShapeFactory {
-  def newImage(img:Image):ResizableImage = {
-    new ResizableImage(img)
+  def newImage(imgUri:URI):ResizableImage = {
+    val img = new Image(imgUri.toString)
+    new ResizableImage(imgUri, img)
   }
 
   private def setDefaultColor[T <: ColorizableShape](shape:T)(fillColor:Color, strokeColor:Color, strokeWidth:Int): T = {

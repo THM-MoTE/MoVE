@@ -272,7 +272,7 @@ class MoveCtrl extends Initializable {
     chooser.setTitle("Open bitmap")
     val fileOp = Option(chooser.showOpenDialog(getWindow))
     fileOp map { file =>
-      new Image(file.toURI.toString)
+      file.toURI
     } foreach {
       drawCtrl.drawImage
     }

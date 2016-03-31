@@ -5,6 +5,7 @@
 
 package de.thm.move.views.shapes
 
+import java.net.URI
 import javafx.scene.image.{ImageView, Image}
 import javafx.scene.input.MouseEvent
 
@@ -13,7 +14,7 @@ import de.thm.move.util.BindingUtils
 import de.thm.move.models.CommonTypes._
 import de.thm.move.views.Anchor
 
-class ResizableImage(img:Image) extends ImageView(img) with ResizableShape with BoundedAnchors {
+class ResizableImage(uri:URI, img:Image) extends ImageView(img) with ResizableShape with BoundedAnchors {
   setPreserveRatio(true)
   setFitWidth(200)
 

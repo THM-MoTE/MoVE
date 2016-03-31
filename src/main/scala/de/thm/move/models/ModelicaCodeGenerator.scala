@@ -123,6 +123,8 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
          |${spaces}fillPattern = FillPattern.Solid,
          |${spaces}${thickness}
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+
+    case img:ResizableImage =>
   }
 
   def generate[A <: Node](modelname:String, shapes:List[A]): Lines = {

@@ -5,6 +5,7 @@
 
 package de.thm.move.controllers
 
+import java.net.URI
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.event.EventHandler
 import javafx.scene.Node
@@ -227,8 +228,8 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     addToPanel(polygon.getAnchors:_*)
   }
 
-  def drawImage(img:Image): Unit = {
-    val imgview = ShapeFactory.newImage(img)
+  def drawImage(imgUri:URI): Unit = {
+    val imgview = ShapeFactory.newImage(imgUri)
     addToPanel(imgview)
     addToPanel(imgview.getAnchors:_*)
   }
