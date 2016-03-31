@@ -76,9 +76,12 @@ class ModelicaCodeGenerator(paneWidth:Double, paneHeight:Double) {
           |$angle
           |)""".stripMargin
     case line:ResizableLine =>
+      //offset, if element was moved (=0 if not moved)
+      val offsetX = line.getLayoutX
+      val offsetY = line.getLayoutY
       val pointList = List(
-        (line.getStartX, paneHeight - line.getStartY),
-        (line.getEndX, paneHeight - line.getEndY)
+        (line.getStartX + offsetX, paneHeight - (line.getStartY + offsetY)),
+        (line.getEndX + offsetX, paneHeight - (line.getEndY + offsetY))
       )
       val points = genPoints( pointList )
       val color = genColor("color", line.getStrokeColor)
@@ -91,11 +94,14 @@ class ModelicaCodeGenerator(paneWidth:Double, paneHeight:Double) {
          |)""".stripMargin
 
     case polygon:ResizablePolygon =>
+      //offset, if element was moved (=0 if not moved)
+      val offsetX = polygon.getLayoutX
+      val offsetY = polygon.getLayoutY
       val edgePoints = for {
         idx <- 0 until polygon.getPoints.size by 2
         x = polygon.getPoints.get(idx).toDouble
         y = polygon.getPoints.get(idx+1).toDouble
-      } yield (x,paneHeight-y)
+      } yield (x+offsetX,paneHeight-(y+offsetY))
 
       val points = genPoints(edgePoints)
       val strokeColor = genColor("lineColor", polygon.getStrokeColor)
