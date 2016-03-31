@@ -71,7 +71,7 @@ object ModelicaCodeGenerator {
     val path = Paths.get(target)
     val writer = Files.newBufferedWriter(path, encoding)
     val filenamestr = path.getFileName.toString
-    val modelName = if(filenamestr.endsWith(".ml")) filenamestr.dropRight(3) else filenamestr
+    val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
 
     try {
       val header = generateHeader(modelName)
