@@ -29,12 +29,16 @@ class ModelicaCodeGenerator(paneWidth:Double, paneHeight:Double) {
     case _ => throw new IllegalArgumentException("Can't create rgb-values from non-color paint-values")
   }
 
+  private def genStrokeWidth(elem:ColorizableShape, key:String="lineThickness"): String =
+    s"$key = ${elem.getStrokeWidth}"
+
   private def genPoint(p:Point):String = s"{${p._1.toInt},${p._2.toInt}}"
 
   def generateShape[A <: Node](shape:A): String = shape match {
     case rectangle:ResizableRectangle =>
       val strokeColor = genColor("lineColor", rectangle.getStrokeColor)
       val fillColor = genColor("fillColor", rectangle.getFillColor)
+      val thickness = genStrokeWidth(rectangle)
 
       val newY = paneHeight - rectangle.getY
       val endY = newY - rectangle.getHeight
@@ -45,12 +49,15 @@ class ModelicaCodeGenerator(paneWidth:Double, paneHeight:Double) {
          |${strokeColor},
          |${fillColor},
          |fillPattern = FillPattern.Solid,
+         |${thickness},
          |extent = {$start, $endBottom}
          |)""".stripMargin
     case circle:ResizableCircle =>
       val angle = "endAngle = 360"
       val strokeColor = genColor("lineColor", circle.getStrokeColor)
       val fillColor = genColor("fillColor", circle.getFillColor)
+      val thickness = genStrokeWidth(circle)
+
       val bounding = circle.getBoundsInLocal
       val newY = paneHeight - bounding.getMinY
       val endY = newY - bounding.getHeight
@@ -64,20 +71,23 @@ class ModelicaCodeGenerator(paneWidth:Double, paneHeight:Double) {
           |${strokeColor},
           |${fillColor},
           |fillPattern = FillPattern.Solid,
+          |${thickness},
           |extent = {$start,$end},
           |$angle
           |)""".stripMargin
     case line:ResizableLine =>
-      val origin = genOrigin(line.getStartX, line.getStartY)
-      val points = genPoints( List((line.getStartX, line.getStartY), (line.getEndX, line.getEndY)) )
+      val pointList = List(
+        (line.getStartX, paneHeight - line.getStartY),
+        (line.getEndX, paneHeight - line.getEndY)
+      )
+      val points = genPoints( pointList )
       val color = genColor("color", line.getStrokeColor)
-      val thickness = s"thickness = ${line.getStrokeWidth}"
+      val thickness = genStrokeWidth(line, "thickness")
 
       s"""Line(
-         |${origin},
          |${points},
          |${color},
-         |${thickness},
+         |${thickness}
          |)""".stripMargin
   }
 
