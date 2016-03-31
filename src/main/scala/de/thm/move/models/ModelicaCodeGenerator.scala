@@ -8,9 +8,10 @@ import javafx.scene.Node
 import javafx.scene.paint.{Paint, Color}
 
 import de.thm.move.models.CommonTypes.Point
+
 import de.thm.move.views.shapes._
 
-class ModelicaCodeGenerator(paneWidth:Double, paneHeight:Double) {
+class ModelicaCodeGenerator(srcFormat:ModelicaCodeGenerator.FormatSrc.Value, paneWidth:Double, paneHeight:Double) {
   type Lines = List[String]
   val encoding = Charset.forName("UTF-8")
   val generateAndWrite = (writeToFile _).compose(generate)
@@ -158,4 +159,12 @@ class ModelicaCodeGenerator(paneWidth:Double, paneHeight:Double) {
   private def generateFooter(modelName:String):String =
       s");\nend $modelName;"
 
+}
+
+
+object ModelicaCodeGenerator {
+  object FormatSrc extends Enumeration {
+    type FormatSrc = Value
+    val Oneline, Pretty = Value
+  }
 }

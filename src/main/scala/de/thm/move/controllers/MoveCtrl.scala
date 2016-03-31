@@ -21,17 +21,18 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
 import javafx.stage.{Stage, FileChooser}
 import de.thm.move.Global
-import de.thm.move.views.DrawPanel
+import de.thm.move.views.{SaveDialog, DrawPanel, Anchor}
 import de.thm.move.views.shapes.ResizableShape
 
 import collection.JavaConversions._
 
 import de.thm.move.models.{ModelicaCodeGenerator, SelectedShape}
+import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape.SelectedShape
-import de.thm.move.views.Anchor
 import implicits.FxHandlerImplicits._
 import implicits.ConcurrentImplicits._
+import implicits.MonadImplicits._
 
 class MoveCtrl extends Initializable {
 
@@ -231,6 +232,15 @@ class MoveCtrl extends Initializable {
   }
 
 
+  private def showSrcCodeDialog():Option[FormatSrc] = {
+    val dialog = new SaveDialog
+    val selectOpt:Option[ButtonType] = dialog.showAndWait()
+    selectOpt.map {
+      case dialog.onelineBtn => Oneline
+      case dialog.prettyBtn => Pretty
+    }
+  }
+
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
     val chooser = new FileChooser()
@@ -238,13 +248,16 @@ class MoveCtrl extends Initializable {
     chooser.setTitle("Save as..")
     chooser.setSelectedExtensionFilter(filter)
     val fileOp = Option(chooser.showSaveDialog(getWindow))
-    fileOp map { file =>
-      file.toURI
-    } foreach { uri =>
+
+    for (
+      file <- fileOp;
+      uri = file.toURI;
+      srcFormat <- showSrcCodeDialog()
+    ) {
       val shapes = drawPanel.getShapes.filterNot(_.isInstanceOf[Anchor])
       val width = drawPanel.getWidth
       val height = drawPanel.getHeight
-      val generator = new ModelicaCodeGenerator(width, height)
+      val generator = new ModelicaCodeGenerator(srcFormat, width, height)
       generator.generateAndWrite(shapes)(uri)
     }
   }
