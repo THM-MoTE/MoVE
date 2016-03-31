@@ -242,7 +242,10 @@ class MoveCtrl extends Initializable {
       file.toURI
     } foreach { uri =>
       val shapes = drawPanel.getShapes.filterNot(_.isInstanceOf[Anchor])
-      ModelicaCodeGenerator.generateAndWrite(shapes)(uri)
+      val width = drawPanel.getWidth
+      val height = drawPanel.getHeight
+      val generator = new ModelicaCodeGenerator(width, height)
+      generator.generateAndWrite(shapes)(uri)
     }
   }
 
