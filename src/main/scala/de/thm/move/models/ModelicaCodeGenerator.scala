@@ -125,6 +125,19 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
 
     case img:ResizableImage =>
+      val uri = img.uri
+      val bounding = img.getBoundsInLocal
+      val newY = paneHeight - img.getY
+      val endY = newY - bounding.getHeight
+      val start = genPoint(img.getX, newY)
+      val end = genPoint(bounding.getWidth, endY)
+
+      implicit val newIndentIdx = indentIdx + 2
+
+      s"""${spaces(indentIdx)}Bitmap(
+         |${spaces}extent = {${start}, ${end}},
+         |${spaces}fileName "$uri"
+         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
   }
 
   def generate[A <: Node](modelname:String, shapes:List[A]): Lines = {

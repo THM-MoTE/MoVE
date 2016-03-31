@@ -14,7 +14,7 @@ import de.thm.move.util.BindingUtils
 import de.thm.move.models.CommonTypes._
 import de.thm.move.views.Anchor
 
-class ResizableImage(uri:URI, img:Image) extends ImageView(img) with ResizableShape with BoundedAnchors {
+class ResizableImage(val uri:URI, val img:Image) extends ImageView(img) with ResizableShape with BoundedAnchors {
   setPreserveRatio(true)
   setFitWidth(200)
 
