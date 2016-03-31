@@ -18,7 +18,7 @@ class ModelicaCodeGenerator(paneWidth:Double, paneHeight:Double) {
   private def genOrigin(x:Double, y:Double): String =
     s"""origin={${x.toInt}, ${y.toInt}}"""
 
-  private def genPoints(ps:List[Point]):String = {
+  private def genPoints(ps: Seq[Point]):String = {
     val psStrings = ps.map (genPoint(_)+",").mkString.dropRight(1)
     s"""points = {$psStrings}"""
   }
@@ -87,6 +87,26 @@ class ModelicaCodeGenerator(paneWidth:Double, paneHeight:Double) {
       s"""Line(
          |${points},
          |${color},
+         |${thickness}
+         |)""".stripMargin
+
+    case polygon:ResizablePolygon =>
+      val edgePoints = for {
+        idx <- 0 until polygon.getPoints.size by 2
+        x = polygon.getPoints.get(idx).toDouble
+        y = polygon.getPoints.get(idx+1).toDouble
+      } yield (x,paneHeight-y)
+
+      val points = genPoints(edgePoints)
+      val strokeColor = genColor("lineColor", polygon.getStrokeColor)
+      val fillColor = genColor("fillColor", polygon.getFillColor)
+      val thickness = genStrokeWidth(polygon)
+
+      s"""Polygon(
+         |${points},
+         |${strokeColor},
+         |${fillColor},
+         |fillPattern = FillPattern.Solid,
          |${thickness}
          |)""".stripMargin
   }
