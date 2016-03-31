@@ -47,7 +47,26 @@ class ModelicaCodeGenerator(paneWidth:Double, paneHeight:Double) {
          |fillPattern = FillPattern.Solid,
          |extent = {$start, $endBottom}
          |)""".stripMargin
-    case circle:ResizableCircle => "NOT IMPLEMENTED"
+    case circle:ResizableCircle =>
+      val angle = "endAngle = 360"
+      val strokeColor = genColor("lineColor", circle.getStrokeColor)
+      val fillColor = genColor("fillColor", circle.getFillColor)
+      val bounding = circle.getBoundsInLocal
+      val newY = paneHeight - bounding.getMinY
+      val endY = newY - bounding.getHeight
+      val start = genPoint(bounding.getMinX, newY)
+      val end = genPoint(bounding.getMaxX, endY)
+
+      println(s"Boundingbox: top ${bounding.getMinX}, ${bounding.getMinY}")
+      println(s"bottom ${bounding.getMaxX}, ${bounding.getMaxY}")
+
+      s"""Ellipse(
+          |${strokeColor},
+          |${fillColor},
+          |fillPattern = FillPattern.Solid,
+          |extent = {$start,$end},
+          |$angle
+          |)""".stripMargin
     case line:ResizableLine =>
       val origin = genOrigin(line.getStartX, line.getStartY)
       val points = genPoints( List((line.getStartX, line.getStartY), (line.getEndX, line.getEndY)) )
