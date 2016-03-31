@@ -6,6 +6,7 @@
 package de.thm.move.controllers
 
 import java.net.URL
+import java.nio.file.Paths
 import java.util.ResourceBundle
 import javafx.beans.value.ChangeListener
 import javafx.collections.FXCollections
@@ -231,7 +232,6 @@ class MoveCtrl extends Initializable {
     }
   }
 
-
   private def showSrcCodeDialog():Option[FormatSrc] = {
     val dialog = new SaveDialog
     val selectOpt:Option[ButtonType] = dialog.showAndWait()
@@ -258,7 +258,11 @@ class MoveCtrl extends Initializable {
       val width = drawPanel.getWidth
       val height = drawPanel.getHeight
       val generator = new ModelicaCodeGenerator(srcFormat, width, height)
-      generator.generateAndWrite(shapes)(uri)
+
+      val filenamestr = Paths.get(uri).getFileName.toString
+      val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
+      val lines = generator.generate(modelName, shapes)
+      generator.writeToFile(lines)(uri)
     }
   }
 
