@@ -140,7 +140,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
 
       s"""${spaces(indentIdx)}Bitmap(
          |${spaces}extent = {${start}, ${end}},
-         |${spaces}fileName "$uri"
+         |${spaces}fileName = "$uri"
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
   }
 
