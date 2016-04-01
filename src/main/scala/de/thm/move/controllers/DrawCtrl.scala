@@ -60,7 +60,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
                 case _ =>
               }
               //create new line with this mouse point as start point
-              drawingShape = createTmpShape(SelectedShape.Line, (mouseEvent.getX, mouseEvent.getY), strokeColor, drawPanel)
+              drawingShape = createTmpShape(SelectedShape.Line, newP, strokeColor, drawPanel)
 
               points = newP :: points
               drawAnchor(points.head)
@@ -68,8 +68,20 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
         case (SelectedShape.Path, MouseEvent.MOUSE_CLICKED, newP@(newX, newY))  if mouseEvent.getClickCount == 2 =>
           drawPath(newP::points)(fillColor, strokeColor, selectedThickness)
           points = List()
+          removeTmpShapes(drawPanel, tmpShapeId)
         case (SelectedShape.Path, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
+          //draw tmp line between last anchor and mouse point
+          (points, drawingShape) match {
+            case ((hdX, hdY) :: _, l: ResizableLine) =>
+              //draw line between last anchor (head of list) and mouse point
+              l.setEndX(newX)
+              l.setEndY(newY)
+            case _ =>
+          }
+          //create new line with this mouse point as start point
+          drawingShape = createTmpShape(SelectedShape.Line, newP, strokeColor, drawPanel)
           points = newP :: points
+          drawAnchor(points.head)
         case (SelectedShape.Path, _,_) | (SelectedShape.Polygon, _, _) => //ignore other path/polygon events
         case (_, MouseEvent.MOUSE_PRESSED, newP) =>
           //start drawing; create tmp-shape
