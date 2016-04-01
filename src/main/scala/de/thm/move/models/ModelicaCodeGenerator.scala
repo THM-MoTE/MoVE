@@ -171,7 +171,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
         generateShape(e, modelname, target)(6) + ","
       case (e,_) => generateShape(e, modelname, target)(6)
     }
-    val graphics = graphicsStart :: shapeStr ::: List(s"${spacesOrNothing(4)}}", footer)
+    val graphics = graphicsStart :: shapeStr ::: List(s"${spacesOrNothing(4)}})", footer)
     header :: iconStr :: graphics
   }
 
