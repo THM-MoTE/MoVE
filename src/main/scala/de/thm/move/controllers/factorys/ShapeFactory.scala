@@ -61,7 +61,7 @@ object ShapeFactory {
       new LineTo(x,y)
     }
 
-    val path = new ResizablePath(startpoint::pathElements)
+    val path = new ResizablePath(startpoint, pathElements)
     (setDefaultColor(path) _)
   }
 
