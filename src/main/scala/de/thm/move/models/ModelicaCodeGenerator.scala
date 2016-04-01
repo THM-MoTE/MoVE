@@ -131,10 +131,10 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       val uri = s"modelica://$modelname/$filename"
 
       val bounding = img.getBoundsInLocal
-      val newY = paneHeight - img.getY
+      val newY = paneHeight - bounding.getMinY
       val endY = newY - bounding.getHeight
-      val start = genPoint(img.getX, newY)
-      val end = genPoint(bounding.getWidth, endY)
+      val start = genPoint(bounding.getMinX, newY)
+      val end = genPoint(bounding.getMinX + bounding.getWidth, endY)
 
       implicit val newIndentIdx = indentIdx + 2
 
