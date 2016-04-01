@@ -6,6 +6,7 @@
 package de.thm.move.controllers
 
 import java.net.URL
+import java.nio.file.Paths
 import java.util.ResourceBundle
 import javafx.beans.value.ChangeListener
 import javafx.collections.FXCollections
@@ -21,17 +22,18 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.{Rectangle, Shape}
 import javafx.stage.{Stage, FileChooser}
 import de.thm.move.Global
-import de.thm.move.views.DrawPanel
+import de.thm.move.views.{SaveDialog, DrawPanel, Anchor}
 import de.thm.move.views.shapes.ResizableShape
 
 import collection.JavaConversions._
 
-import de.thm.move.models.SelectedShape
+import de.thm.move.models.{ModelicaCodeGenerator, SelectedShape}
+import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape.SelectedShape
-import de.thm.move.views.Anchor
 import implicits.FxHandlerImplicits._
 import implicits.ConcurrentImplicits._
+import implicits.MonadImplicits._
 
 class MoveCtrl extends Initializable {
 
@@ -230,13 +232,47 @@ class MoveCtrl extends Initializable {
     }
   }
 
+  private def showSrcCodeDialog():Option[FormatSrc] = {
+    val dialog = new SaveDialog
+    val selectOpt:Option[ButtonType] = dialog.showAndWait()
+    selectOpt.map {
+      case dialog.onelineBtn => Oneline
+      case dialog.prettyBtn => Pretty
+    }
+  }
+
+  @FXML
+  def onSaveAsClicked(e:ActionEvent): Unit = {
+    val chooser = new FileChooser()
+    val filter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo");
+    chooser.setTitle("Save as..")
+    chooser.setSelectedExtensionFilter(filter)
+    val fileOp = Option(chooser.showSaveDialog(getWindow))
+
+    for (
+      file <- fileOp;
+      uri = file.toURI;
+      srcFormat <- showSrcCodeDialog()
+    ) {
+      val shapes = drawPanel.getShapes.filterNot(_.isInstanceOf[Anchor])
+      val width = drawPanel.getWidth
+      val height = drawPanel.getHeight
+      val generator = new ModelicaCodeGenerator(srcFormat, width, height)
+
+      val filenamestr = Paths.get(uri).getFileName.toString
+      val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
+      val lines = generator.generate(modelName, uri, shapes)
+      generator.writeToFile(lines)(uri)
+    }
+  }
+
   @FXML
   def onLoadBitmap(e:ActionEvent): Unit = {
     val chooser = new FileChooser()
     chooser.setTitle("Open bitmap")
     val fileOp = Option(chooser.showOpenDialog(getWindow))
     fileOp map { file =>
-      new Image(file.toURI.toString)
+      file.toURI
     } foreach {
       drawCtrl.drawImage
     }
