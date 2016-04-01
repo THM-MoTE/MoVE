@@ -7,5 +7,5 @@ package de.thm.move.models
 
 object SelectedShape extends Enumeration {
   type SelectedShape = Value
-  val Rectangle, Line, Circle, Polygon = Value
+  val Rectangle, Line, Path, Circle, Polygon = Value
 }

@@ -76,6 +76,7 @@ class MoveCtrl extends Initializable {
       "rectangle_btn" -> SelectedShape.Rectangle,
       "circle_btn" -> SelectedShape.Circle,
       "line_btn" -> SelectedShape.Line,
+      "path_btn" -> SelectedShape.Path,
       "polygon_btn" -> SelectedShape.Polygon
     )
 
@@ -318,6 +319,8 @@ class MoveCtrl extends Initializable {
   def onRectangleClicked(e:ActionEvent): Unit = onDrawShape
   @FXML
   def onLineClicked(e:ActionEvent): Unit = onDrawShape
+  @FXML
+  def onPathClicked(e:ActionEvent): Unit = onDrawShape
   @FXML
   def onPolygonClicked(e:ActionEvent): Unit = onDrawShape
 
