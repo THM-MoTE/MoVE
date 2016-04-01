@@ -247,6 +247,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   def drawPath(points:List[Point])(fillColor:Color, strokeColor:Color, selectedThickness: Int) = {
     val path = ShapeFactory.newPath(points)(fillColor, strokeColor, selectedThickness)
+    removeDrawnAnchors(points.size)
     addToPanel(path)
     addToPanel(path.getAnchors:_*)
   }
