@@ -65,8 +65,13 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
               points = newP :: points
               drawAnchor(points.head)
           }
-        case (SelectedShape.Path, MouseEvent.MOUSE_CLICKED, newP@(newX, newY))  if mouseEvent.getClickCount == 2 =>
-          drawPath(newP::points)(fillColor, strokeColor, selectedThickness)
+        case (SelectedShape.Path, MouseEvent.MOUSE_CLICKED, _)  if mouseEvent.getClickCount == 2 =>
+          /* Point of double-click already added to points because the eventhandler
+            get's double-executed with the same point from javafx:
+            1. clickCount = 1|0 (branch below)
+            2. clickCount = 2 (this branch)
+           */
+          drawPath(points)(fillColor, strokeColor, selectedThickness)
           points = List()
           removeTmpShapes(drawPanel, tmpShapeId)
         case (SelectedShape.Path, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
