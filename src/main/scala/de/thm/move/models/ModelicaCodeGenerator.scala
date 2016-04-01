@@ -11,6 +11,7 @@ import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
+import de.thm.move.util.ResourceUtils
 
 import de.thm.move.views.shapes._
 
@@ -37,7 +38,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
 
   private def genPoint(p:Point):String = s"{${p._1.toInt},${p._2.toInt}}"
 
-  def generateShape[A <: Node](shape:A)(indentIdx:Int): String = shape match {
+  def generateShape[A <: Node](shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
     case rectangle:ResizableRectangle =>
       val strokeColor = genColor("lineColor", rectangle.getStrokeColor)
       val fillColor = genColor("fillColor", rectangle.getFillColor)
@@ -125,7 +126,10 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
 
     case img:ResizableImage =>
-      val uri = img.uri
+      copyImg(img.uri, target)
+      val filename = ResourceUtils.getFilename(img.uri)
+      val uri = s"modelica://$modelname/$filename"
+
       val bounding = img.getBoundsInLocal
       val newY = paneHeight - img.getY
       val endY = newY - bounding.getHeight
@@ -140,7 +144,15 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
   }
 
-  def generate[A <: Node](modelname:String, shapes:List[A]): Lines = {
+
+  private def copyImg(src:URI, target:URI): Unit = {
+    val targetPath = Paths.get(target).getParent
+    val srcPath = Paths.get(src)
+    val filename = srcPath.getFileName
+    Files.copy(srcPath, targetPath.resolve(filename))
+  }
+
+  def generate[A <: Node](modelname:String, target:URI, shapes:List[A]): Lines = {
     val systemStartpoint = genPoint((0.0,0.0))
     val systemEndpoint = genPoint((paneWidth, paneHeight))
 
@@ -156,8 +168,8 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
     val graphicsStart = s"${spaces(4)}graphics = {"
     val shapeStr = shapes.zipWithIndex.map {
       case (e,idx) if idx < shapes.length-1 =>
-        generateShape(e)(6) + ","
-      case (e,_) => generateShape(e)(6)
+        generateShape(e, modelname, target)(6) + ","
+      case (e,_) => generateShape(e, modelname, target)(6)
     }
     val graphics = graphicsStart :: shapeStr ::: List(s"${spacesOrNothing(4)}}", footer)
     header :: iconStr :: graphics

@@ -261,7 +261,7 @@ class MoveCtrl extends Initializable {
 
       val filenamestr = Paths.get(uri).getFileName.toString
       val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
-      val lines = generator.generate(modelName, shapes)
+      val lines = generator.generate(modelName, uri, shapes)
       generator.writeToFile(lines)(uri)
     }
   }
