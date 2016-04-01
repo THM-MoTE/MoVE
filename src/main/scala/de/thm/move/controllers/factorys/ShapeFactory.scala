@@ -8,7 +8,7 @@ package de.thm.move.controllers.factorys
 import java.net.URI
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
+import javafx.scene.shape.{LineTo, MoveTo, Rectangle}
 
 import javafx.scene.image.Image
 
@@ -52,6 +52,17 @@ object ShapeFactory {
   def newPolygon(points:List[Point]): (Color, Color, Int) => ResizablePolygon = {
     val polygon = ResizablePolygon(points)
     (setDefaultColor(polygon) _)
+  }
+
+  def newPath(points:List[Point]): (Color,Color, Int) => ResizablePath = {
+    val (hdX,hdY) = points.head
+    val startpoint = new MoveTo(hdX,hdY)
+    val pathElements = for ( (x,y) <- points.tail ) yield {
+      new LineTo(x,y)
+    }
+
+    val path = new ResizablePath(startpoint::pathElements)
+    (setDefaultColor(path) _)
   }
 
   def createTemporaryShape(shape:SelectedShape.SelectedShape, p:Point)(stroke:Color): ResizableShape = {
