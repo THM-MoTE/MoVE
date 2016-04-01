@@ -28,5 +28,7 @@ object Global {
   lazy val styleSheetUrl = MoveApp.getClass.getResource("/stylesheets/style.css").toExternalForm
 
   lazy val licenseString =
-    scala.io.Source.fromURL(getClass.getResource(licenseFile),  "UTF-8").getLines.mkString("\n")
+    Option( getClass.getResource(licenseFile) ).map { file =>
+      scala.io.Source.fromURL(file,  "UTF-8").getLines.mkString("\n")
+    }.getOrElse("Can't load license!")
 }
