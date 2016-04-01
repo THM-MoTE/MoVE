@@ -65,7 +65,12 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
               points = newP :: points
               drawAnchor(points.head)
           }
-        case (SelectedShape.Polygon, _, _) => //ignore other polygon events
+        case (SelectedShape.Path, MouseEvent.MOUSE_CLICKED, newP@(newX, newY))  if mouseEvent.getClickCount == 2 =>
+          drawPath(newP::points)(fillColor, strokeColor, selectedThickness)
+          points = List()
+        case (SelectedShape.Path, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
+          points = newP :: points
+        case (SelectedShape.Path, _,_) | (SelectedShape.Polygon, _, _) => //ignore other path/polygon events
         case (_, MouseEvent.MOUSE_PRESSED, newP) =>
           //start drawing; create tmp-shape
           drawingShape = createTmpShape(shape, newP, strokeColor, drawPanel)
@@ -226,6 +231,12 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     removeDrawnAnchors(points.size)
     addToPanel(polygon)
     addToPanel(polygon.getAnchors:_*)
+  }
+
+  def drawPath(points:List[Point])(fillColor:Color, strokeColor:Color, selectedThickness: Int) = {
+    val path = ShapeFactory.newPath(points)(fillColor, strokeColor, selectedThickness)
+    addToPanel(path)
+    addToPanel(path.getAnchors:_*)
   }
 
   def drawImage(imgUri:URI): Unit = {
