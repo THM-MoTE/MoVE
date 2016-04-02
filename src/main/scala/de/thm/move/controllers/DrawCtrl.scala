@@ -9,13 +9,11 @@ import java.net.URI
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.event.EventHandler
 import javafx.scene.Node
-import javafx.scene.image.Image
 import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 
 import de.thm.move.Global
-import de.thm.move.Global._
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
@@ -29,9 +27,7 @@ import de.thm.move.views.{Anchor, DrawPanel}
 
 import scala.collection.JavaConversions._
 
-class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
-
-  private var selectedShape:Option[ResizableShape] = None
+class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) extends SelectableShapeCtrl {
 
   private val tmpShapeId = "temporary-shape"
 
@@ -67,7 +63,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
           }
         case (SelectedShape.Polygon, _, _) => //ignore other polygon events
         case (_, MouseEvent.MOUSE_PRESSED, newP) =>
-          //start drawing; create tmp-shape
+          //start drawing
           drawingShape = createTmpShape(shape, newP, strokeColor, drawPanel)
           points = newP :: points
         case (_, MouseEvent.MOUSE_DRAGGED, newP@(newX, newY)) =>
@@ -109,7 +105,7 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
             case _ => //ignore other shapes
           }
         case (_, MouseEvent.MOUSE_RELEASED, newP) =>
-          //end drawing; remove temporary shape(s)
+          //end drawing
           removeTmpShapes(drawPanel, tmpShapeId)
           points.headOption foreach { start =>
             drawCustomShape(shape, start, newP, drawConstraintProperty.get)(fillColor, strokeColor, selectedThickness)
@@ -133,47 +129,13 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
   /**Removes all temporary shapes (identified by temporaryId) from the given node.*/
   private def removeTmpShapes(node:Pane, temporaryId:String): Unit = {
     val removingNodes = node.getChildren.zipWithIndex.filter {
-      case (n,_) => n.getId() == temporaryId
+      case (n,_) => n.getId == temporaryId
     }.map(_._1)
 
     node.getChildren.removeAll(removingNodes)
   }
 
-  def setSelectedShape(shape:ResizableShape): Unit = {
-    selectedShape match {
-      case Some(oldShape) =>
-        drawPanel.getChildren.remove(oldShape.selectionRectangle)
-        drawPanel.getChildren.add(shape.selectionRectangle)
-        selectedShape = Some(shape)
-      case _ =>
-        selectedShape = Some(shape)
-        drawPanel.getChildren.add(shape.selectionRectangle)
-    }
-  }
-
-  def removeSelectedShape: Unit = {
-    selectedShape foreach { shape =>
-        drawPanel.remove(shape.selectionRectangle)
-        selectedShape = None
-    }
-  }
-
-  def deleteSelectedShape: Unit = {
-    selectedShape foreach { shape =>
-      Global.history.execute {
-        drawPanel.remove(shape)
-        drawPanel.remove(shape.selectionRectangle)
-        selectedShape = None
-      } {
-        addToPanel(shape)
-        addToPanel(shape.getAnchors:_*)
-      }
-    }
-  }
-
   def getMoveHandler: (MouseEvent => Unit) = {
-    //var deltaX = -1.0
-    //var deltaY = -1.0
     var delta = (-1.0,-1.0)
 
     var command: (=> Unit) => Command = x => { History.emptyAction }
@@ -208,7 +170,6 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   def addToPanel[T <: Node](shape:T*): Unit = {
     shape foreach { x =>
-      //add eventhandler
       x.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
         override def handle(event: InputEvent): Unit = shapeInputHandler(event)
       })
@@ -266,9 +227,6 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     newShapeOpt foreach { x =>
       addToPanel(x)
       addToPanel(x.getAnchors:_*)
-      //add shapes to focus-chain for getting keyboard-events
-      x.setFocusTraversable(true)
-      x.requestFocus()
     }
   }
 
@@ -280,35 +238,5 @@ class DrawCtrl(drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   def setVisibilityOfAnchors(flag:Boolean): Unit = {
     drawPanel.getChildren.filter(_.isInstanceOf[Anchor]) foreach (  _.setVisible(flag) )
-  }
-
-  def setFillColorForSelectedShape(color:Color): Unit = {
-    selectedShape flatMap {
-      case x:ColorizableShape => Some(x)
-      case _ => None
-    } foreach { x =>
-      val oldColor = x.getFillColor
-      history.execute(x.setFillColor(color))(x.setFillColor(oldColor))
-    }
-  }
-
-  def setStrokeColorForSelectedShape(color:Color): Unit = {
-    selectedShape flatMap {
-      case x:ColorizableShape => Some(x)
-      case _ => None
-    } foreach { x =>
-      val oldColor = x.getStrokeColor
-      history.execute(x.setStrokeColor(color))(x.setStrokeColor(oldColor))
-    }
-  }
-
-  def setStrokeWidthForSelectedShape(width:Int): Unit = {
-    selectedShape flatMap {
-      case x:ColorizableShape => Some(x)
-      case _ => None
-    } foreach { x =>
-      val oldWidth = x.getStrokeWidth
-      history.execute(x.setStrokeWidth(width))(x.setStrokeWidth(oldWidth))
-    }
   }
 }
