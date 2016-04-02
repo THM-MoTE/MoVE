@@ -8,18 +8,14 @@ package de.thm.move.controllers
 import java.net.URL
 import java.nio.file.Paths
 import java.util.ResourceBundle
-import javafx.beans.value.ChangeListener
 import javafx.collections.FXCollections
 import javafx.event.ActionEvent
 import javafx.fxml.{FXMLLoader, Initializable, FXML}
 import javafx.scene.{Scene, Parent, Cursor}
-import javafx.scene.canvas.{GraphicsContext, Canvas}
 import javafx.scene.control._
-import javafx.scene.image.Image
 import javafx.scene.input._
-import javafx.scene.layout.{StackPane, HBox, Pane}
+import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.scene.shape.{Rectangle, Shape}
 import javafx.stage.{Stage, FileChooser}
 import de.thm.move.Global
 import de.thm.move.views.{SaveDialog, DrawPanel, Anchor}
@@ -29,7 +25,6 @@ import collection.JavaConversions._
 
 import de.thm.move.models.{ModelicaCodeGenerator, SelectedShape}
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
-import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape.SelectedShape
 import implicits.FxHandlerImplicits._
 import implicits.ConcurrentImplicits._
@@ -247,7 +242,7 @@ class MoveCtrl extends Initializable {
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
     val chooser = new FileChooser()
-    val filter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo");
+    val filter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo")
     chooser.setTitle("Save as..")
     chooser.setSelectedExtensionFilter(filter)
     val fileOp = Option(chooser.showSaveDialog(getWindow))
