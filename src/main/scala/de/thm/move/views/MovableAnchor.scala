@@ -36,10 +36,16 @@ trait MovableAnchor {
   }
 
   self.setOnMouseDragged { me: MouseEvent =>
-    history.execute(command {
-      self.setCenterX(deltaX + me.getX)
-      self.setCenterY(deltaY + me.getY)
-    })
+    self.setCenterX(deltaX + me.getX)
+    self.setCenterY(deltaY + me.getY)
+  }
 
+  self.setOnMouseReleased { me: MouseEvent =>
+    val newX = getCenterX
+    val newY = getCenterY
+    history.save(command {
+      self.setCenterX(newX)
+      self.setCenterY(newY)
+    })
   }
 }
