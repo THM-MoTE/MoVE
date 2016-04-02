@@ -17,7 +17,7 @@ __Move is fast!__ Nearly every feature works in real time!
 ### Drawing shapes
 ![Example drawings](doc/drawings.png)
 ### Generated formatted Modelica code
-```modelica
+``` modelica
 model test
   annotation(
   Icon (
