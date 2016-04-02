@@ -27,7 +27,7 @@ import de.thm.move.views.{Anchor, DrawPanel}
 
 import scala.collection.JavaConversions._
 
-class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) extends SelectableShapeCtrl {
+class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   private val tmpShapeId = "temporary-shape"
 

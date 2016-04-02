@@ -65,7 +65,7 @@ class MoveCtrl extends Initializable {
   var drawStub: StackPane = _
   private val drawPanel = new DrawPanel()
   private val drawCtrl = new DrawCtrl(drawPanel, shapeInputHandler)
-
+  private val selectionCtrl = new SelectedShapeCtrl(drawPanel)
   private val aboutCtrl = new AboutCtrl()
 
   private val moveHandler = drawCtrl.getMoveHandler
@@ -159,7 +159,7 @@ class MoveCtrl extends Initializable {
     val drawHandler = { mouseEvent:MouseEvent =>
       selectedShape match {
         case Some(shape) =>
-          drawCtrl.removeSelectedShape
+          selectionCtrl.removeSelectedShape
           handler(shape, mouseEvent)(getFillColor, getStrokeColor, selectedThickness)
         case _ => //ignore
       }
@@ -171,7 +171,7 @@ class MoveCtrl extends Initializable {
 
     borderThicknessChooser.getSelectionModel.
       selectedItemProperty.addListener { (_:Int, newX:Int) =>
-        drawCtrl.setStrokeWidthForSelectedShape(newX)
+        selectionCtrl.setStrokeWidthForSelectedShape(newX)
       }
 
     drawPanel.setOnMousePressed(drawHandler)
@@ -210,9 +210,9 @@ class MoveCtrl extends Initializable {
   def colorPickerChanged(ae:ActionEvent): Unit = {
     val src = ae.getSource
     if(src == strokeColorPicker)
-      drawCtrl.setStrokeColorForSelectedShape(strokeColorPicker.getValue)
+      selectionCtrl.setStrokeColorForSelectedShape(strokeColorPicker.getValue)
     else if(src == fillColorPicker)
-      drawCtrl.setFillColorForSelectedShape(fillColorPicker.getValue)
+      selectionCtrl.setFillColorForSelectedShape(fillColorPicker.getValue)
   }
 
   def shapeInputHandler(ev:InputEvent): Unit = {
@@ -220,7 +220,7 @@ class MoveCtrl extends Initializable {
       ev match {
         case mv:MouseEvent if mv.getEventType == MouseEvent.MOUSE_CLICKED =>
           mv.getSource() match {
-            case s:ResizableShape => drawCtrl.setSelectedShape(s)
+            case s:ResizableShape => selectionCtrl.setSelectedShape(s)
             case _:Anchor => //ignore can't change
           }
 
@@ -278,7 +278,7 @@ class MoveCtrl extends Initializable {
 
   private def onDrawShape: Unit = {
     setDrawingCursor(Cursor.CROSSHAIR)
-    drawCtrl.removeSelectedShape
+    selectionCtrl.removeSelectedShape
   }
 
   @FXML
@@ -303,12 +303,12 @@ class MoveCtrl extends Initializable {
   def onRedoClicked(e:ActionEvent): Unit = Global.history.redo()
 
   @FXML
-  def onDeleteClicked(e:ActionEvent): Unit = drawCtrl.deleteSelectedShape
+  def onDeleteClicked(e:ActionEvent): Unit = selectionCtrl.deleteSelectedShape
 
   @FXML
   def onPointerClicked(e:ActionEvent): Unit = {
     setDrawingCursor(Cursor.DEFAULT)
-    drawCtrl.removeSelectedShape
+    selectionCtrl.removeSelectedShape
   }
   @FXML
   def onCircleClicked(e:ActionEvent): Unit = onDrawShape

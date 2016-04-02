@@ -1,6 +1,5 @@
 package de.thm.move.controllers
 
-import javafx.scene.Node
 import javafx.scene.paint.Color
 
 import de.thm.move.Global
@@ -8,12 +7,9 @@ import de.thm.move.Global._
 import de.thm.move.views.DrawPanel
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 
-trait SelectableShapeCtrl {
+class SelectedShapeCtrl(drawPanel:DrawPanel) {
 
   private var selectedShape:Option[ResizableShape] = None
-
-  val drawPanel:DrawPanel
-  def addToPanel[T <: Node](shape:T*): Unit
 
   def setSelectedShape(shape:ResizableShape): Unit = {
     selectedShape match {
@@ -41,8 +37,8 @@ trait SelectableShapeCtrl {
         drawPanel.remove(shape.selectionRectangle)
         selectedShape = None
       } {
-        addToPanel(shape)
-        addToPanel(shape.getAnchors:_*)
+        drawPanel.getChildren.add(shape)
+        drawPanel.getChildren.addAll(shape.getAnchors:_*)
       }
     }
   }
@@ -77,3 +73,4 @@ trait SelectableShapeCtrl {
     }
   }
 }
+
