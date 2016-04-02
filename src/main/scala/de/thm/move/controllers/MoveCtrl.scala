@@ -40,6 +40,9 @@ class MoveCtrl extends Initializable {
   private val aboutStage = new Stage()
 
   @FXML
+  var saveAsMenuItem: MenuItem = _
+
+  @FXML
   var undoMenuItem: MenuItem = _
   @FXML
   var redoMenuItem: MenuItem = _
@@ -147,8 +150,8 @@ class MoveCtrl extends Initializable {
   }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    setupShortcuts("undo", "redo", "delete-item", "load-image",
-      "show-anchors")(undoMenuItem, redoMenuItem, deleteMenuItem,
+    setupShortcuts("save-as", "undo", "redo", "delete-item", "load-image",
+      "show-anchors")(saveAsMenuItem, undoMenuItem, redoMenuItem, deleteMenuItem,
         loadImgMenuItem, showAnchorsItem)
     drawStub.getChildren.add(drawPanel)
 
