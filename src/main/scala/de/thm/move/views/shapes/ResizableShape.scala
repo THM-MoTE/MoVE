@@ -16,7 +16,6 @@ import de.thm.move.models.CommonTypes._
 
 trait ResizableShape extends Node {
 
-  val resizeProportionalProperty = new SimpleBooleanProperty(false)
   val selectionRectangle = new SelectionRectangle(this)
 
   val getAnchors: List[Anchor]

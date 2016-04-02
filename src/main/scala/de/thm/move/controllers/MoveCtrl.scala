@@ -285,17 +285,6 @@ class MoveCtrl extends Initializable {
   }
 
   @FXML
-  def onPreserveRatioPressed(e:ActionEvent): Unit = {
-    val src = e.getSource.asInstanceOf[CheckBox]
-
-    drawPanel.getChildren.flatMap {
-      case x:ResizableShape => List(x)
-      case _ => Nil
-    } foreach (_.resizeProportionalProperty.set(src.isSelected))
-  }
-
-
-  @FXML
   def onAboutClicked(e:ActionEvent): Unit = aboutStage.show()
 
   @FXML
