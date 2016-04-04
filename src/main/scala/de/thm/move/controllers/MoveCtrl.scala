@@ -74,6 +74,7 @@ class MoveCtrl extends Initializable {
       "rectangle_btn" -> SelectedShape.Rectangle,
       "circle_btn" -> SelectedShape.Circle,
       "line_btn" -> SelectedShape.Line,
+      "path_btn" -> SelectedShape.Path,
       "polygon_btn" -> SelectedShape.Polygon
     )
 
@@ -92,6 +93,7 @@ class MoveCtrl extends Initializable {
       Global.shortcuts.getShortcut("draw-rectangle") -> getButtonById("rectangle_btn"),
       Global.shortcuts.getShortcut("draw-line") -> getButtonById("line_btn"),
       Global.shortcuts.getShortcut("draw-polygon") -> getButtonById("polygon_btn"),
+      Global.shortcuts.getShortcut("draw-path") -> getButtonById("path_btn"),
       Global.shortcuts.getShortcut("draw-circle") -> getButtonById("circle_btn")
       )
 
@@ -282,17 +284,6 @@ class MoveCtrl extends Initializable {
   }
 
   @FXML
-  def onPreserveRatioPressed(e:ActionEvent): Unit = {
-    val src = e.getSource.asInstanceOf[CheckBox]
-
-    drawPanel.getChildren.flatMap {
-      case x:ResizableShape => List(x)
-      case _ => Nil
-    } foreach (_.resizeProportionalProperty.set(src.isSelected))
-  }
-
-
-  @FXML
   def onAboutClicked(e:ActionEvent): Unit = aboutStage.show()
 
   @FXML
@@ -316,6 +307,8 @@ class MoveCtrl extends Initializable {
   def onRectangleClicked(e:ActionEvent): Unit = onDrawShape
   @FXML
   def onLineClicked(e:ActionEvent): Unit = onDrawShape
+  @FXML
+  def onPathClicked(e:ActionEvent): Unit = onDrawShape
   @FXML
   def onPolygonClicked(e:ActionEvent): Unit = onDrawShape
 

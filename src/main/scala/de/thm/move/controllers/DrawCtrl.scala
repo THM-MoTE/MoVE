@@ -56,12 +56,34 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
                 case _ =>
               }
               //create new line with this mouse point as start point
-              drawingShape = createTmpShape(SelectedShape.Line, (mouseEvent.getX, mouseEvent.getY), strokeColor, drawPanel)
+              drawingShape = createTmpShape(SelectedShape.Line, newP, strokeColor, drawPanel)
 
               points = newP :: points
               drawAnchor(points.head)
           }
-        case (SelectedShape.Polygon, _, _) => //ignore other polygon events
+        case (SelectedShape.Path, MouseEvent.MOUSE_CLICKED, _)  if mouseEvent.getClickCount == 2 =>
+          /* Point of double-click already added to points because the eventhandler
+            get's double-executed with the same point from javafx:
+            1. clickCount = 1|0 (branch below)
+            2. clickCount = 2 (this branch)
+           */
+          drawPath(points)(fillColor, strokeColor, selectedThickness)
+          points = List()
+          removeTmpShapes(drawPanel, tmpShapeId)
+        case (SelectedShape.Path, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
+          //draw tmp line between last anchor and mouse point
+          (points, drawingShape) match {
+            case ((hdX, hdY) :: _, l: ResizableLine) =>
+              //draw line between last anchor (head of list) and mouse point
+              l.setEndX(newX)
+              l.setEndY(newY)
+            case _ =>
+          }
+          //create new line with this mouse point as start point
+          drawingShape = createTmpShape(SelectedShape.Line, newP, strokeColor, drawPanel)
+          points = newP :: points
+          drawAnchor(points.head)
+        case (SelectedShape.Path, _,_) | (SelectedShape.Polygon, _, _) => //ignore other path/polygon events
         case (_, MouseEvent.MOUSE_PRESSED, newP) =>
           //start drawing
           drawingShape = createTmpShape(shape, newP, strokeColor, drawPanel)
@@ -187,6 +209,13 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     removeDrawnAnchors(points.size)
     addToPanel(polygon)
     addToPanel(polygon.getAnchors:_*)
+  }
+
+  def drawPath(points:List[Point])(fillColor:Color, strokeColor:Color, selectedThickness: Int) = {
+    val path = ShapeFactory.newPath(points)(fillColor, strokeColor, selectedThickness)
+    removeDrawnAnchors(points.size)
+    addToPanel(path)
+    addToPanel(path.getAnchors:_*)
   }
 
   def drawImage(imgUri:URI): Unit = {
