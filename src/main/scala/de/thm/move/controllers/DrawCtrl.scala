@@ -26,10 +26,10 @@ import de.thm.move.views.shapes._
 import de.thm.move.views.{ShapeContextMenu, Anchor, DrawPanel}
 import scala.collection.JavaConversions._
 
-class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
+class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) extends ChangeDrawPanelLike {
 
   private val tmpShapeId = "temporary-shape"
-  private val contextMenuCtrl = new ContextMenuCtrl(drawPanel)
+  private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, this)
 
   val drawConstraintProperty = new SimpleBooleanProperty()
 
@@ -190,7 +190,7 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     moveElement
   }
 
-  def addToPanel[T <: Node](shape:T*): Unit = {
+  override def addShape[T <: Node](shape:T*): Unit = {
     shape foreach { x =>
       x.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
         override def handle(event: InputEvent): Unit = shapeInputHandler(event)
@@ -208,21 +208,21 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
   def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color, selectedThickness: Int) = {
     val polygon = ShapeFactory.newPolygon(points)(fillColor, strokeColor, selectedThickness)
     removeDrawnAnchors(points.size)
-    addToPanel(polygon)
-    addToPanel(polygon.getAnchors:_*)
+    addShape(polygon)
+    addShape(polygon.getAnchors:_*)
   }
 
   def drawPath(points:List[Point])(fillColor:Color, strokeColor:Color, selectedThickness: Int) = {
     val path = ShapeFactory.newPath(points)(fillColor, strokeColor, selectedThickness)
     removeDrawnAnchors(points.size)
-    addToPanel(path)
-    addToPanel(path.getAnchors:_*)
+    addShape(path)
+    addShape(path.getAnchors:_*)
   }
 
   def drawImage(imgUri:URI): Unit = {
     val imgview = ShapeFactory.newImage(imgUri)
-    addToPanel(imgview)
-    addToPanel(imgview.getAnchors:_*)
+    addShape(imgview)
+    addShape(imgview.getAnchors:_*)
   }
 
   def drawCustomShape(shape:SelectedShape, start:Point, end:Point, drawConstraint:Boolean)(fillColor:Color, strokeColor:Color, selectedThickness:Int) = {
@@ -255,8 +255,8 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
     }
 
     newShapeOpt foreach { x =>
-      addToPanel(x)
-      addToPanel(x.getAnchors:_*)
+      addShape(x)
+      addShape(x.getAnchors:_*)
     }
   }
 
@@ -268,5 +268,11 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   def setVisibilityOfAnchors(flag:Boolean): Unit = {
     drawPanel.getChildren.filter(_.isInstanceOf[Anchor]) foreach (  _.setVisible(flag) )
+  }
+
+  /** Removes the given shape with '''it's anchors''' from the DrawPanel */
+  override def removeShape(shape: ResizableShape): Unit = {
+    drawPanel.remove(shape)
+    shape.getAnchors.foreach(drawPanel.remove)
   }
 }
