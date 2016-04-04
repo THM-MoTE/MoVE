@@ -43,9 +43,15 @@ class ResizableLine(
   }
 
   startAnchor.setOnMouseDragged { me:MouseEvent =>
-    history.execute(command {
       setStartX(me.getX)
       setStartY(me.getY)
+  }
+
+  startAnchor.setOnMouseReleased { _:MouseEvent =>
+    val (oldX,oldY) = (getStartX,getStartY)
+    history.save(command {
+      setStartX(oldX)
+      setStartY(oldY)
     })
   }
 
@@ -58,9 +64,15 @@ class ResizableLine(
   }
 
   endAnchor.setOnMouseDragged { me:MouseEvent =>
-    history.execute(command {
       setEndX(me.getX)
       setEndY(me.getY)
+  }
+
+  endAnchor.setOnMouseReleased { _:MouseEvent =>
+    val (oldX,oldY) = (getEndX, getEndY)
+    history.save(command {
+      setEndX(oldX)
+      setEndY(oldY)
     })
   }
 
