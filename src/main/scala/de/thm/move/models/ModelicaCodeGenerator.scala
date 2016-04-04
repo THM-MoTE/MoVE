@@ -6,6 +6,7 @@ import java.nio.charset.Charset
 import java.nio.file.{Paths, Files}
 import javafx.scene.Node
 import javafx.scene.paint.{Paint, Color}
+import javafx.scene.shape.{LineTo, MoveTo}
 
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
@@ -100,6 +101,28 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
          |${spaces}${thickness}
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
 
+    case path:ResizablePath =>
+      val offsetX = path.getLayoutX
+      val offsetY = path.getLayoutY
+      val points = genPoints(path.alElements.flatMap {
+        case move:MoveTo =>
+          val point = ( move.getX+offsetX, paneHeight-(move.getY+offsetY) )
+          List( point )
+        case line:LineTo =>
+          val point = ( line.getX+offsetX, paneHeight-(line.getY+offsetY) )
+          List( point )
+      })
+
+      val color = genColor("color", path.getStrokeColor)
+      val thickness = genStrokeWidth(path, "thickness")
+
+      implicit val newIndentIdx = indentIdx + 2
+
+      s"""${spaces(indentIdx)}Line(
+         |${spaces}${points},
+         |${spaces}${color},
+         |${spaces}${thickness}
+         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
     case polygon:ResizablePolygon =>
       //offset, if element was moved (=0 if not moved)
       val offsetX = polygon.getLayoutX
