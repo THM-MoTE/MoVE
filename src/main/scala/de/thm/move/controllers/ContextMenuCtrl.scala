@@ -4,8 +4,10 @@ import javafx.event.ActionEvent
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.MouseButton
-
+import javafx.scene.control.{SeparatorMenuItem, Separator, MenuItem}
+import javafx.scene.input.{InputEvent, MouseEvent}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.views.shapes.{QuadCurvePolygon, ResizablePolygon}
 import de.thm.move.views.{DrawPanel, ShapeContextMenu}
 import de.thm.move.Global._
 
@@ -15,6 +17,15 @@ class ContextMenuCtrl(drawPanel:DrawPanel) {
     val menu = new ShapeContextMenu
     menu.inBackgroundItem.setOnAction { ae:ActionEvent => onBackgroundPressed(ae, underlyingElement) }
     menu.inForegroundItem.setOnAction { ae:ActionEvent => onForegroundPressed (ae, underlyingElement) }
+
+    underlyingElement match {
+      case polygon:ResizablePolygon =>
+        val becierItem = new MenuItem("Smooth")
+        becierItem.setOnAction{ ae:ActionEvent => onBecierPressed(ae, polygon) }
+        menu.getItems.addAll(new SeparatorMenuItem(), becierItem)
+      case _ => //ignore
+    }
+
     menu
   }
 
@@ -49,5 +60,20 @@ class ContextMenuCtrl(drawPanel:DrawPanel) {
       drawPanel.getChildren.remove(underlyingElement)
       drawPanel.getChildren.add(oldIdx, underlyingElement)
     }
+  }
+
+  private def onBecierPressed(ae:ActionEvent, polygon:ResizablePolygon): Unit = {
+    //TODO add listener from polygon onto curved polygon
+    val curvedPolygon = QuadCurvePolygon(polygon)
+    curvedPolygon.setX(polygon.getX)
+    curvedPolygon.setY(polygon.getY)
+
+    println("poly anchorcnt "+polygon.getAnchors.size)
+    println("curved anchorcnt "+curvedPolygon.getAnchors.size)
+
+    drawPanel.getChildren.remove(polygon)
+    drawPanel.getChildren.removeAll(polygon.getAnchors:_*)
+    drawPanel.getChildren.add(curvedPolygon)
+    drawPanel.getChildren.addAll(curvedPolygon.getAnchors:_*)
   }
 }
