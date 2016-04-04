@@ -14,7 +14,7 @@ import de.thm.move.views.{MovableAnchor, Anchor}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes.Point
 
-class ResizablePolygon(points:List[Double]) extends Polygon(points:_*) with ResizableShape with ColorizableShape {
+class ResizablePolygon(val points:List[Double]) extends Polygon(points:_*) with ResizableShape with ColorizableShape {
 
   //create drag-drop anchors
   private val observablePoints = getPoints
