@@ -195,8 +195,8 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
       x.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
         override def handle(event: InputEvent): Unit = shapeInputHandler(event)
       })
-      drawPanel.drawShape(x)
       contextMenuCtrl.setupContextMenu(x)
+      drawPanel.drawShape(x)
     }
   }
 

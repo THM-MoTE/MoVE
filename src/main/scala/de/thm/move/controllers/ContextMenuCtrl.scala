@@ -3,6 +3,7 @@ package de.thm.move.controllers
 import javafx.event.ActionEvent
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
+import javafx.scene.input.MouseButton
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.views.{DrawPanel, ShapeContextMenu}
@@ -19,8 +20,8 @@ class ContextMenuCtrl(drawPanel:DrawPanel) {
 
   def setupContextMenu(node:Node): Unit = {
     val contextMenu = newContextMenu(node)
-    node.setOnMousePressed { me: MouseEvent =>
-      if (me.isSecondaryButtonDown) {
+    node.setOnMouseClicked { me: MouseEvent =>
+      if (me.getButton == MouseButton.SECONDARY) {
         contextMenu.show(node, me.getScreenX, me.getScreenY)
       }
     }
