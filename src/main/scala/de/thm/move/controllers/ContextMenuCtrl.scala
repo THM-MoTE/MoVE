@@ -6,6 +6,7 @@ import javafx.scene.input.MouseEvent
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.views.{DrawPanel, ShapeContextMenu}
+import de.thm.move.Global._
 
 class ContextMenuCtrl(drawPanel:DrawPanel) {
 
@@ -26,12 +27,26 @@ class ContextMenuCtrl(drawPanel:DrawPanel) {
   }
 
   private def onForegroundPressed(ae:ActionEvent, underlyingElement:Node): Unit = {
-    drawPanel.getChildren.remove(underlyingElement)
-    drawPanel.getChildren.add(underlyingElement)
+    val oldIdx = drawPanel.getChildren.indexOf(underlyingElement)
+    history.execute {
+      drawPanel.getChildren.remove(underlyingElement)
+      drawPanel.getChildren.add(underlyingElement)
+      ()
+    } {
+      drawPanel.getChildren.remove(underlyingElement)
+      drawPanel.getChildren.add(oldIdx, underlyingElement)
+    }
   }
 
   private def onBackgroundPressed(ae:ActionEvent, underlyingElement:Node): Unit = {
-    drawPanel.getChildren.remove(underlyingElement)
-    drawPanel.getChildren.add(0, underlyingElement)
+    val oldIdx = drawPanel.getChildren.indexOf(underlyingElement)
+    history.execute {
+      drawPanel.getChildren.remove(underlyingElement)
+      drawPanel.getChildren.add(0, underlyingElement)
+      ()
+    } {
+      drawPanel.getChildren.remove(underlyingElement)
+      drawPanel.getChildren.add(oldIdx, underlyingElement)
+    }
   }
 }
