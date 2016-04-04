@@ -95,6 +95,7 @@ class MoveCtrl extends Initializable {
       Global.shortcuts.getShortcut("draw-rectangle") -> getButtonById("rectangle_btn"),
       Global.shortcuts.getShortcut("draw-line") -> getButtonById("line_btn"),
       Global.shortcuts.getShortcut("draw-polygon") -> getButtonById("polygon_btn"),
+      Global.shortcuts.getShortcut("draw-path") -> getButtonById("path_btn"),
       Global.shortcuts.getShortcut("draw-circle") -> getButtonById("circle_btn")
       )
 
