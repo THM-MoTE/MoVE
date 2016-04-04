@@ -14,6 +14,7 @@ import de.thm.move.util.{GeometryUtils, BindingUtils}
 import de.thm.move.views.Anchor
 import javafx.scene.input.MouseEvent
 
+/** A circle represented by it's '''middle-point''' and it's width + height */
 class ResizableCircle(
         point:Point,
         width:Double,

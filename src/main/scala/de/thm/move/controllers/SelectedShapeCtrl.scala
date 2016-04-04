@@ -7,6 +7,9 @@ import de.thm.move.Global._
 import de.thm.move.views.DrawPanel
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 
+/** Controller for selected shapes. Selected shapes are highlighted by a dotted
+ * black border around the bounding-box.
+ */
 class SelectedShapeCtrl(drawPanel:DrawPanel) {
 
   private var selectedShape:Option[ResizableShape] = None
@@ -73,4 +76,3 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     }
   }
 }
-

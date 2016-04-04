@@ -11,6 +11,7 @@ import de.thm.move.views.shapes.{QuadCurvePolygon, ResizablePolygon}
 import de.thm.move.views.{DrawPanel, ShapeContextMenu}
 import de.thm.move.Global._
 
+/** Controller for context-menus of shapes */
 class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
 
   private def newContextMenu(underlyingElement:Node):ShapeContextMenu = {
@@ -33,6 +34,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     menu
   }
 
+  /** Sets up a new context-menu for the given node */
   def setupContextMenu(node:Node): Unit = {
     val contextMenu = newContextMenu(node)
     node.setOnMouseClicked { me: MouseEvent =>

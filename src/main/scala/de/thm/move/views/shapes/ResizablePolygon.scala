@@ -16,7 +16,6 @@ import de.thm.move.models.CommonTypes.Point
 
 class ResizablePolygon(val points:List[Double]) extends Polygon(points:_*) with ResizableShape with ColorizableShape {
 
-  //create drag-drop anchors
   private val observablePoints = getPoints
   val getAnchors: List[Anchor] =
     (for(i <- 0 until observablePoints.size by 2) yield {
