@@ -67,9 +67,7 @@ object QuadCurvePolygon {
   }
 
   def apply(polygon:ResizablePolygon):QuadCurvePolygon = {
-    println("poly points "+polygon.points)
     val curvedPolygon = QuadCurvePolygon(polygon.points)
-    println("curv anchors: "+curvedPolygon.getAnchors)
     curvedPolygon.colorizeShape(polygon.getFillColor, polygon.getStrokeColor)
     curvedPolygon.setStrokeWidth(polygon.getStrokeWidth)
     curvedPolygon
