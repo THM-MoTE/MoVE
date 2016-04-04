@@ -11,7 +11,7 @@ import de.thm.move.views.{MovableAnchor, Anchor}
 
 class ResizablePath(startPoint: MoveTo, elements:List[LineTo]) extends Path(startPoint :: elements) with ResizableShape with ColorizableShape {
 
-  private val alElements = startPoint :: elements
+  val alElements = startPoint :: elements
 
   override val getAnchors: List[Anchor] =
     alElements.flatMap {
