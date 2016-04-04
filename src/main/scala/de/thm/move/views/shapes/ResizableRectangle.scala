@@ -12,7 +12,7 @@ import javafx.scene.input.KeyEvent
 import javafx.event.EventHandler
 
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.views.Anchor
+import de.thm.move.views.{ShapeContextMenu, Anchor}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
 import de.thm.move.Global

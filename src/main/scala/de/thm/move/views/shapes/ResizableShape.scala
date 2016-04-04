@@ -6,12 +6,7 @@
 package de.thm.move.views.shapes
 
 import javafx.scene.Node
-import javafx.beans.property.SimpleBooleanProperty
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.KeyCode
 import de.thm.move.views.Anchor
-import de.thm.move.Global
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes._
 
 trait ResizableShape extends Node {

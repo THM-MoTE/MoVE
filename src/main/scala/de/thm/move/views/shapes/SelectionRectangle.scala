@@ -8,7 +8,6 @@ package de.thm.move.views.shapes
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.shape.Rectangle
 import javafx.geometry.Bounds
-import javafx.beans.value.{ChangeListener, ObservableValue}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.Global
 
