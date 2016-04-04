@@ -11,7 +11,7 @@ import de.thm.move.views.shapes.{QuadCurvePolygon, ResizablePolygon}
 import de.thm.move.views.{DrawPanel, ShapeContextMenu}
 import de.thm.move.Global._
 
-class ContextMenuCtrl(drawPanel:DrawPanel) {
+class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
 
   private def newContextMenu(underlyingElement:Node):ShapeContextMenu = {
     val menu = new ShapeContextMenu
@@ -63,17 +63,12 @@ class ContextMenuCtrl(drawPanel:DrawPanel) {
   }
 
   private def onBecierPressed(ae:ActionEvent, polygon:ResizablePolygon): Unit = {
-    //TODO add listener from polygon onto curved polygon
     val curvedPolygon = QuadCurvePolygon(polygon)
     curvedPolygon.setX(polygon.getX)
     curvedPolygon.setY(polygon.getY)
 
-    println("poly anchorcnt "+polygon.getAnchors.size)
-    println("curved anchorcnt "+curvedPolygon.getAnchors.size)
-
-    drawPanel.getChildren.remove(polygon)
-    drawPanel.getChildren.removeAll(polygon.getAnchors:_*)
-    drawPanel.getChildren.add(curvedPolygon)
-    drawPanel.getChildren.addAll(curvedPolygon.getAnchors:_*)
+    changeLike.removeShape(polygon)
+    changeLike.addShape(curvedPolygon)
+    changeLike.addShape(curvedPolygon.getAnchors:_*)
   }
 }
