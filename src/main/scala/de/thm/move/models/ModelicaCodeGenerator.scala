@@ -11,7 +11,7 @@ import javafx.scene.shape.{LineTo, MoveTo}
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
-import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
+import de.thm.move.util.PointUtils._
 import de.thm.move.util.ResourceUtils
 
 import de.thm.move.views.shapes._
@@ -37,7 +37,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
   private def genStrokeWidth(elem:ColorizableShape, key:String="lineThickness"): String =
     s"$key = ${elem.getStrokeWidth}"
 
-  private def genPoint(p:Point):String = s"{${p._1.toInt},${p._2.toInt}}"
+  private def genPoint(p:Point):String = s"{${p.x.toInt},${p.y.toInt}}"
 
   def generateShape[A <: Node](shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
     case rectangle:ResizableRectangle =>
@@ -47,7 +47,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
 
       val newY = paneHeight - rectangle.getY
       val endY = newY - rectangle.getHeight
-      val endBottom = genPoint(rectangle.getBottomRight._1, endY)
+      val endBottom = genPoint(rectangle.getBottomRight.x, endY)
       val start = genPoint(rectangle.getX, newY)
 
       implicit val newIndentIdx = indentIdx + 2
