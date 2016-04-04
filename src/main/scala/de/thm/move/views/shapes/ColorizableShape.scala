@@ -15,7 +15,7 @@ import de.thm.move.history.History.Command
 trait ColorizableShape {
   self: Shape =>
 
-  def colorizeShape(fillColor:Color, strokeColor:Color): Unit = {
+  def colorizeShape(fillColor:Paint, strokeColor:Paint): Unit = {
     self.setFillColor(fillColor)
     self.setStrokeColor(strokeColor)
   }
