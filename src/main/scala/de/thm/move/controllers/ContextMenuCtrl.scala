@@ -23,6 +23,10 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
         val becierItem = new MenuItem("Smooth")
         becierItem.setOnAction{ ae:ActionEvent => onBecierPressed(ae, polygon) }
         menu.getItems.addAll(new SeparatorMenuItem(), becierItem)
+      case curved:QuadCurvePolygon =>
+        val polygonItem = new MenuItem("Unsmooth")
+        polygonItem.setOnAction { ae:ActionEvent => onUnsmoothPressed(ae, curved) }
+        menu.getItems.addAll(new SeparatorMenuItem(), polygonItem)
       case _ => //ignore
     }
 
@@ -64,11 +68,16 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
 
   private def onBecierPressed(ae:ActionEvent, polygon:ResizablePolygon): Unit = {
     val curvedPolygon = QuadCurvePolygon(polygon)
-    curvedPolygon.setX(polygon.getX)
-    curvedPolygon.setY(polygon.getY)
 
     changeLike.removeShape(polygon)
     changeLike.addShape(curvedPolygon)
     changeLike.addShape(curvedPolygon.getAnchors:_*)
+  }
+
+  private def onUnsmoothPressed(ae:ActionEvent, curved:QuadCurvePolygon): Unit = {
+    val polygon = ResizablePolygon(curved)
+    changeLike.removeShape(curved)
+    changeLike.addShape(polygon)
+    changeLike.addShape(polygon.getAnchors:_*)
   }
 }

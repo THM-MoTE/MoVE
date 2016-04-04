@@ -47,8 +47,17 @@ class ResizablePolygon(val points:List[Double]) extends Polygon(points:_*) with 
 }
 
 object ResizablePolygon {
-  def apply(points:List[Point]) = {
+  def apply(points:List[Point]):ResizablePolygon = {
     val singlePoints= points.flatMap { case (x,y) => List(x,y) }
     new ResizablePolygon(singlePoints)
+  }
+
+  def apply(cubed:QuadCurvePolygon):ResizablePolygon = {
+    val polygon = ResizablePolygon(cubed.points)
+    polygon.colorizeShape(cubed.getFillColor, cubed.getStrokeColor)
+    polygon.setStrokeWidth(cubed.getStrokeWidth)
+    polygon.setX(cubed.getX)
+    polygon.setY(cubed.getY)
+    polygon
   }
 }

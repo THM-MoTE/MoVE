@@ -8,7 +8,7 @@ import de.thm.move.views.Anchor
 /**
  * A polygon with quadratic Bezier curves as edge points.
  */
-class QuadCurvePolygon(points:List[Point]) extends Path with ResizableShape with ColorizableShape {
+class QuadCurvePolygon(val points:List[Point]) extends Path with ResizableShape with ColorizableShape {
 
 
   /**Implementation nodes:
@@ -70,6 +70,8 @@ object QuadCurvePolygon {
     val curvedPolygon = QuadCurvePolygon(polygon.points)
     curvedPolygon.colorizeShape(polygon.getFillColor, polygon.getStrokeColor)
     curvedPolygon.setStrokeWidth(polygon.getStrokeWidth)
+    curvedPolygon.setX(polygon.getX)
+    curvedPolygon.setY(polygon.getY)
     curvedPolygon
   }
 }
