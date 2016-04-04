@@ -47,7 +47,6 @@ class QuadCurvePolygon(points:List[Point]) extends Path with ResizableShape with
   this.getElements.addAll(curveTos:_*)
   this.getElements.addAll(end)
 
-
   override val getAnchors: List[Anchor] = for(p <- points) yield {
     new Anchor(p)
   }
@@ -62,7 +61,17 @@ class QuadCurvePolygon(points:List[Point]) extends Path with ResizableShape with
 }
 
 object QuadCurvePolygon {
-  def apply(points:List[Double]) = {
-    val singlePoints= for(idx <- 0 until points.size-1) yield ( points(idx),points(idx+1) )
+  def apply(points:List[Double]):QuadCurvePolygon = {
+    val singlePoints= for(idx <- 0 until points.size by 2) yield ( points(idx),points(idx+1) )
+    new QuadCurvePolygon(singlePoints.toList)
+  }
+
+  def apply(polygon:ResizablePolygon):QuadCurvePolygon = {
+    println("poly points "+polygon.points)
+    val curvedPolygon = QuadCurvePolygon(polygon.points)
+    println("curv anchors: "+curvedPolygon.getAnchors)
+    curvedPolygon.colorizeShape(polygon.getFillColor, polygon.getStrokeColor)
+    curvedPolygon.setStrokeWidth(polygon.getStrokeWidth)
+    curvedPolygon
   }
 }
