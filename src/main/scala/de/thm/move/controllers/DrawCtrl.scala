@@ -23,13 +23,13 @@ import de.thm.move.models.SelectedShape._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.PointUtils._
 import de.thm.move.views.shapes._
-import de.thm.move.views.{Anchor, DrawPanel}
-
+import de.thm.move.views.{ShapeContextMenu, Anchor, DrawPanel}
 import scala.collection.JavaConversions._
 
 class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
 
   private val tmpShapeId = "temporary-shape"
+  private val contextMenuCtrl = new ContextMenuCtrl(drawPanel)
 
   val drawConstraintProperty = new SimpleBooleanProperty()
 
@@ -196,6 +196,7 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) {
         override def handle(event: InputEvent): Unit = shapeInputHandler(event)
       })
       drawPanel.drawShape(x)
+      contextMenuCtrl.setupContextMenu(x)
     }
   }
 
