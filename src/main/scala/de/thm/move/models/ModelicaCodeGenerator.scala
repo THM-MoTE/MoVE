@@ -37,7 +37,8 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
   private def genStrokeWidth(elem:ColorizableShape, key:String="lineThickness"): String =
     s"$key = ${elem.getStrokeWidth}"
 
-  private def genPoint(p:Point):String = s"{${p.x.toInt},${p.y.toInt}}"
+  private def genPoint(p:Point):String = s"{${p._1.toInt},${p._2.toInt}}"
+  private def genPoint(x:Double,y:Double):String = genPoint((x,y))
 
   def generateShape[A <: Node](shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
     case rectangle:ResizableRectangle =>
