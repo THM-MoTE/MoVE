@@ -7,7 +7,7 @@ import javafx.scene.input.MouseButton
 import javafx.scene.control.{SeparatorMenuItem, Separator, MenuItem}
 import javafx.scene.input.{InputEvent, MouseEvent}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
-import de.thm.move.views.shapes.{QuadCurvePolygon, ResizablePolygon}
+import de.thm.move.views.shapes.{QuadCurveTransformable, QuadCurvePolygon, ResizablePolygon, AbstractQuadCurveShape}
 import de.thm.move.views.{DrawPanel, ShapeContextMenu}
 import de.thm.move.Global._
 
@@ -20,11 +20,11 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     menu.inForegroundItem.setOnAction { ae:ActionEvent => onForegroundPressed (ae, underlyingElement) }
 
     underlyingElement match {
-      case polygon:ResizablePolygon =>
+      case polygon:QuadCurveTransformable =>
         val becierItem = new MenuItem("Smooth")
         becierItem.setOnAction{ ae:ActionEvent => onBecierPressed(ae, polygon) }
         menu.getItems.addAll(new SeparatorMenuItem(), becierItem)
-      case curved:QuadCurvePolygon =>
+      case curved:AbstractQuadCurveShape =>
         val polygonItem = new MenuItem("Unsmooth")
         polygonItem.setOnAction { ae:ActionEvent => onUnsmoothPressed(ae, curved) }
         menu.getItems.addAll(new SeparatorMenuItem(), polygonItem)
@@ -68,18 +68,17 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     }
   }
 
-  private def onBecierPressed(ae:ActionEvent, polygon:ResizablePolygon): Unit = {
-    val curvedPolygon = QuadCurvePolygon(polygon)
-
+  private def onBecierPressed(ae:ActionEvent, polygon:QuadCurveTransformable): Unit = {
+    val curvedShape = polygon.toCurvedShape
     changeLike.removeShape(polygon)
-    changeLike.addShape(curvedPolygon)
-    changeLike.addShape(curvedPolygon.getAnchors:_*)
+    changeLike.addShape(curvedShape)
+    changeLike.addShape(curvedShape.getAnchors:_*)
   }
 
-  private def onUnsmoothPressed(ae:ActionEvent, curved:QuadCurvePolygon): Unit = {
-    val polygon = ResizablePolygon(curved)
+  private def onUnsmoothPressed(ae:ActionEvent, curved:AbstractQuadCurveShape): Unit = {
+    val uncurvedShape = curved.toUncurvedShape
     changeLike.removeShape(curved)
-    changeLike.addShape(polygon)
-    changeLike.addShape(polygon.getAnchors:_*)
+    changeLike.addShape(uncurvedShape)
+    changeLike.addShape(uncurvedShape.getAnchors:_*)
   }
 }
