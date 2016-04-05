@@ -13,10 +13,10 @@ import de.thm.move.util.PointUtils._
 
 class ResizablePath(startPoint: MoveTo, elements:List[LineTo]) extends Path(startPoint :: elements) with ResizableShape with ColorizableShape with QuadCurveTransformable {
 
-  val alElements = startPoint :: elements
+  val allElements = startPoint :: elements
 
   override val getAnchors: List[Anchor] =
-    alElements.flatMap {
+    allElements.flatMap {
       case move:MoveTo =>
         val anchor = new Anchor(move.getX,move.getY) with MovableAnchor
         move.xProperty.bind(anchor.centerXProperty)
@@ -32,7 +32,7 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo]) extends Path(star
 
   BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 
-  def getPoints:List[Point] = alElements.flatMap {
+  def getPoints:List[Point] = allElements.flatMap {
     case move:MoveTo => List((move.getX, move.getY))
     case line:LineTo => List((line.getX,line.getY))
   }
