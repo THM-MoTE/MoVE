@@ -14,7 +14,7 @@ import de.thm.move.views.{MovableAnchor, Anchor}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes.Point
 
-class ResizablePolygon(val points:List[Double]) extends Polygon(points:_*) with ResizableShape with ColorizableShape {
+class ResizablePolygon(val points:List[Double]) extends Polygon(points:_*) with ResizableShape with ColorizableShape with QuadCurveTransformable {
 
   private val observablePoints = getPoints
   val getAnchors: List[Anchor] =
@@ -43,6 +43,7 @@ class ResizablePolygon(val points:List[Double]) extends Polygon(points:_*) with 
   override def setY(y: Double): Unit = setLayoutY(y)
   override def getY: Double = getLayoutY()
   override def setX(x: Double): Unit = setLayoutX(x)
+  override def toCurvedShape = QuadCurvePolygon(this)
 }
 
 object ResizablePolygon {
