@@ -53,7 +53,7 @@ object ResizablePath {
   }
 
   def apply(curved:QuadCurvePath): ResizablePath = {
-    val path = ResizablePath(curved.points)
+    val path = ResizablePath(curved.getUnderlyingPolygonPoints)
     path.copyColors(curved)
     path.setX(curved.getX)
     path.setY(curved.getY)

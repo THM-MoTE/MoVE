@@ -149,7 +149,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
     case curve:QuadCurvePolygon =>
       val offsetX = curve.getLayoutX
       val offsetY = curve.getLayoutY
-      val edgePoints = for(point <- curve.points)
+      val edgePoints = for(point <- curve.getUnderlyingPolygonPoints)
         yield (point.x+offsetX, paneHeight - (point.y+offsetY))
       val points = genPoints(edgePoints)
 
@@ -165,7 +165,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
     case curvedL:QuadCurvePath =>
       val offsetX = curvedL.getLayoutX
       val offsetY = curvedL.getLayoutY
-      val edgePoints = for(point <- curvedL.points)
+      val edgePoints = for(point <- curvedL.getUnderlyingPolygonPoints)
         yield (point.x+offsetX, paneHeight - (point.y+offsetY))
       val points = genPoints(edgePoints)
       val color = genColor("color", curvedL.getStrokeColor)

@@ -4,7 +4,7 @@ import javafx.scene.shape.{QuadCurveTo, MoveTo, LineTo}
 import de.thm.move.models.CommonTypes.Point
 import javafx.scene.paint.Paint
 
-class QuadCurvePath(override val points:List[Point]) extends AbstractQuadCurveShape(points, false) {
+class QuadCurvePath(points:List[Point]) extends AbstractQuadCurveShape(points, false) {
   override def getFillColor:Paint = null /*Path has no fill*/
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
 

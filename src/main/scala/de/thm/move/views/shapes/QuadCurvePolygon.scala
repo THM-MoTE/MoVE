@@ -9,7 +9,7 @@ import scala.collection.JavaConverters._
 /**
  * A polygon with quadratic Bezier curves as edge points.
  */
-class QuadCurvePolygon(override val points:List[Point]) extends AbstractQuadCurveShape(points, true) {
+class QuadCurvePolygon(points:List[Point]) extends AbstractQuadCurveShape(points, true) {
   override def toUncurvedShape: ResizableShape = ResizablePolygon(this)
 }
 

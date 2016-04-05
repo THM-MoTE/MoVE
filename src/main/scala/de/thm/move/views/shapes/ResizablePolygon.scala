@@ -53,7 +53,7 @@ object ResizablePolygon {
   }
 
   def apply(cubed:QuadCurvePolygon):ResizablePolygon = {
-    val polygon = ResizablePolygon(cubed.points)
+    val polygon = ResizablePolygon(cubed.getUnderlyingPolygonPoints)
     polygon.colorizeShape(cubed.getFillColor, cubed.getStrokeColor)
     polygon.setStrokeWidth(cubed.getStrokeWidth)
     polygon.setX(cubed.getX)

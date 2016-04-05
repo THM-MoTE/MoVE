@@ -8,7 +8,7 @@ import de.thm.move.views.Anchor
 import de.thm.move.views.MovableAnchor
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
-abstract class AbstractQuadCurveShape(val points:List[Point], closedShape:Boolean) extends Path with ResizableShape with ColorizableShape {
+abstract class AbstractQuadCurveShape(points:List[Point], closedShape:Boolean) extends Path with ResizableShape with ColorizableShape {
 
   /**Implementation nodes:
     * The given points represent the normal polygon/path!
@@ -69,6 +69,8 @@ abstract class AbstractQuadCurveShape(val points:List[Point], closedShape:Boolea
   }
 
   private val underlyingPolygonPoints = reversedP.toArray
+
+  def getUnderlyingPolygonPoints:List[Point] = underlyingPolygonPoints.toList
 
   override val getAnchors: List[Anchor] =
     (for(
