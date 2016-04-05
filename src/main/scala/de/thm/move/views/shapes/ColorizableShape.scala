@@ -15,6 +15,13 @@ import de.thm.move.history.History.Command
 trait ColorizableShape {
   self: Shape =>
 
+  /** Copies the style from other to this element */
+  def copyColors(other:ColorizableShape): Unit = {
+    setFillColor(other.getFillColor)
+    setStrokeColor(other.getStrokeColor)
+    setStrokeWidth(other.getStrokeWidth)
+  }
+
   def colorizeShape(fillColor:Paint, strokeColor:Paint): Unit = {
     self.setFillColor(fillColor)
     self.setStrokeColor(strokeColor)
