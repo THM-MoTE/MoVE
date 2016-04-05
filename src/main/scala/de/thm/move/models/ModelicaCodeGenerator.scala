@@ -40,31 +40,33 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
   private def genPoint(p:Point):String = s"{${p._1.toInt},${p._2.toInt}}"
   private def genPoint(x:Double,y:Double):String = genPoint((x,y))
 
+  private def genFillAndStroke(shape:ColorizableShape)(implicit indentIdx:Int):String = {
+    val strokeColor = genColor("lineColor", shape.getStrokeColor)
+    val fillColor = genColor("fillColor", shape.getFillColor)
+    val thickness = genStrokeWidth(shape)
+
+    s"""${spaces}${strokeColor},
+    |${spaces}${fillColor},
+    |${spaces}${thickness}""".stripMargin.replaceAll("\n", linebreak)
+  }
+
   def generateShape[A <: Node](shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
     case rectangle:ResizableRectangle =>
-      val strokeColor = genColor("lineColor", rectangle.getStrokeColor)
-      val fillColor = genColor("fillColor", rectangle.getFillColor)
-      val thickness = genStrokeWidth(rectangle)
-
       val newY = paneHeight - rectangle.getY
       val endY = newY - rectangle.getHeight
       val endBottom = genPoint(rectangle.getBottomRight.x, endY)
       val start = genPoint(rectangle.getX, newY)
 
       implicit val newIndentIdx = indentIdx + 2
+      val colors = genFillAndStroke(rectangle)
 
       s"""${spaces(indentIdx)}Rectangle(
-         |${spaces}${strokeColor},
-         |${spaces}${fillColor},
+         |${colors},
          |${spaces}fillPattern = FillPattern.Solid,
-         |${spaces}${thickness},
          |${spaces}extent = {$start, $endBottom}
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
     case circle:ResizableCircle =>
       val angle = "endAngle = 360"
-      val strokeColor = genColor("lineColor", circle.getStrokeColor)
-      val fillColor = genColor("fillColor", circle.getFillColor)
-      val thickness = genStrokeWidth(circle)
 
       val bounding = circle.getBoundsInLocal
       val newY = paneHeight - bounding.getMinY
@@ -73,12 +75,11 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       val end = genPoint(bounding.getMaxX, endY)
 
       implicit val newIndentIdx = indentIdx + 2
+      val colors = genFillAndStroke(circle)
 
       s"""${spaces(indentIdx)}Ellipse(
-          |${spaces}${strokeColor},
-          |${spaces}${fillColor},
+          |${colors},
           |${spaces}fillPattern = FillPattern.Solid,
-          |${spaces}${thickness},
           |${spaces}extent = {$start,$end},
           |${spaces}$angle
           |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
@@ -135,18 +136,14 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       } yield (x+offsetX,paneHeight-(y+offsetY))
 
       val points = genPoints(edgePoints)
-      val strokeColor = genColor("lineColor", polygon.getStrokeColor)
-      val fillColor = genColor("fillColor", polygon.getFillColor)
-      val thickness = genStrokeWidth(polygon)
 
       implicit val newIndentIdx = indentIdx + 2
+      val colors = genFillAndStroke(polygon)
 
       s"""${spaces(indentIdx)}Polygon(
          |${spaces}${points},
-         |${spaces}${strokeColor},
-         |${spaces}${fillColor},
-         |${spaces}fillPattern = FillPattern.Solid,
-         |${spaces}${thickness}
+         |${spaces}${colors},
+         |${spaces}fillPattern = FillPattern.Solid
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
 
     case curve:QuadCurvePolygon =>
@@ -155,18 +152,14 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       val edgePoints = for(point <- curve.points)
         yield (point.x+offsetX, paneHeight - (point.y+offsetY))
       val points = genPoints(edgePoints)
-      val strokeColor = genColor("lineColor", curve.getStrokeColor)
-      val fillColor = genColor("fillColor", curve.getFillColor)
-      val thickness = genStrokeWidth(curve)
 
       implicit val newIndentIdx = indentIdx + 2
+      val colors = genFillAndStroke(curve)
 
       s"""${spaces(indentIdx)}Polygon(
          |${spaces}${points},
-         |${spaces}${strokeColor},
-         |${spaces}${fillColor},
+         ${colors},
          |${spaces}fillPattern = FillPattern.Solid,
-         |${spaces}${thickness},
          |${spaces}smooth = Smooth.Bezier
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
     case img:ResizableImage =>
