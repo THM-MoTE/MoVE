@@ -4,7 +4,7 @@ import javafx.scene.shape.{QuadCurveTo, MoveTo, Path}
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.util.{BindingUtils, GeometryUtils}
 import de.thm.move.views.Anchor
-
+import de.thm.move.views.MovableAnchor
 
 abstract class AbstractQuadCurveShape(val points:List[Point], closedShape:Boolean) extends Path with ResizableShape with ColorizableShape {
 

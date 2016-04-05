@@ -162,6 +162,24 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
          |${spaces}fillPattern = FillPattern.Solid,
          |${spaces}smooth = Smooth.Bezier
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+    case curvedL:QuadCurvePath =>
+      val offsetX = curvedL.getLayoutX
+      val offsetY = curvedL.getLayoutY
+      val edgePoints = for(point <- curvedL.points)
+        yield (point.x+offsetX, paneHeight - (point.y+offsetY))
+      val points = genPoints(edgePoints)
+      val color = genColor("color", curvedL.getStrokeColor)
+      val thickness = genStrokeWidth(curvedL, "thickness")
+
+      implicit val newIndentIdx = indentIdx + 2
+
+      s"""${spaces(indentIdx)}Line(
+         |${spaces}${points},
+         |${spaces}${color},
+         |${spaces}${thickness},
+         |${spaces}smooth = Smooth.Bezier
+         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+
     case img:ResizableImage =>
       copyImg(img.uri, target)
       val filename = ResourceUtils.getFilename(img.uri)
