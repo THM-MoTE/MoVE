@@ -43,7 +43,6 @@ abstract class AbstractQuadCurveShape(val points:List[Point], closedShape:Boolea
   this.getElements.addAll(start)
   this.getElements.addAll(curveTos:_*)
   if(closedShape) {
-    println("closed shape")
     this.getElements.addAll(end)
   }
 

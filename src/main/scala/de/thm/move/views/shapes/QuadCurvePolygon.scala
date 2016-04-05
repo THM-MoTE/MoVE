@@ -4,6 +4,7 @@ import javafx.scene.shape.{QuadCurveTo, MoveTo, Path, QuadCurve}
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.util.{BindingUtils, GeometryUtils}
 import de.thm.move.views.Anchor
+import scala.collection.JavaConverters._
 
 /**
  * A polygon with quadratic Bezier curves as edge points.
@@ -19,7 +20,7 @@ object QuadCurvePolygon {
   }
 
   def apply(polygon:ResizablePolygon):QuadCurvePolygon = {
-    val curvedPolygon = QuadCurvePolygon(polygon.points)
+    val curvedPolygon = QuadCurvePolygon(polygon.getPoints.asScala.map(_.doubleValue).toList)
     curvedPolygon.copyColors(polygon)
     curvedPolygon.setX(polygon.getX)
     curvedPolygon.setY(polygon.getY)
