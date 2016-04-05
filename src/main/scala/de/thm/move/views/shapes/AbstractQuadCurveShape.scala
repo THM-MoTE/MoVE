@@ -10,7 +10,7 @@ import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
 abstract class AbstractQuadCurveShape(points:List[Point], closedShape:Boolean) extends Path with ResizableShape with ColorizableShape {
 
-  /**Implementation nodes:
+  /** Implementation nodes:
     * The given points represent the normal polygon/path!
     * - Each point represent a control-point of the becier curve
     * - the start and end points of the becier curve is the middle point
@@ -25,6 +25,11 @@ abstract class AbstractQuadCurveShape(points:List[Point], closedShape:Boolean) e
     */
 
   val reversedP = points.reverse
+  /*the path behind this element; the points gets adjusted whenever someone
+   *resizes this element
+   */
+  private val underlyingPolygonPoints = reversedP.toArray
+
   val curves = adjustPath(reversedP.toArray)
   this.getElements.addAll(curves:_*)
 
@@ -50,26 +55,6 @@ abstract class AbstractQuadCurveShape(points:List[Point], closedShape:Boolean) e
     else xs
   }
 
-  private def getPathXY:PartialFunction[PathElement, Point] = {
-    case move:MoveTo => (move.getX,move.getY)
-    case line:LineTo => (line.getX,line.getY)
-    case cubic:QuadCurveTo => (cubic.getX,cubic.getY)
-  }
-
-  private def setPathXY(elem:PathElement, ctrlP:Point) = {
-    elem match {
-      case cubic:QuadCurveTo =>
-        cubic.setControlX(ctrlP.x)
-        cubic.setControlY(ctrlP.y)
-      case move:MoveTo =>
-        move.setX(ctrlP.x)
-        move.setY(ctrlP.y)
-      case _ => throw new IllegalStateException("Can'T set XY for non cubicCurveTo values")
-    }
-  }
-
-  private val underlyingPolygonPoints = reversedP.toArray
-
   def getUnderlyingPolygonPoints:List[Point] = underlyingPolygonPoints.toList
 
   override val getAnchors: List[Anchor] =
@@ -78,7 +63,9 @@ abstract class AbstractQuadCurveShape(points:List[Point], closedShape:Boolean) e
       ctrlP = underlyingPolygonPoints(idx)
     ) yield {
       val anchor = new Anchor(ctrlP) with MovableAnchor
-
+      /* Everytime this shape get's resized the path get's replaced
+       * by a new path
+       */
       anchor.centerXProperty.addListener { (_:Number, newV:Number) =>
         underlyingPolygonPoints(idx) = (newV.doubleValue,underlyingPolygonPoints(idx).y)
         this.getElements.clear()

@@ -14,6 +14,9 @@ import de.thm.move.Global
 class SelectionRectangle(selectedShape:ResizableShape) extends Rectangle {
   import SelectionRectangle._
 
+  /* If underlying element (selectedShape) gets adjusted,
+   * adjust the selection too.
+   */
   val xProp = new SimpleDoubleProperty(selectedShape.getBoundsInLocal().getMinX)
   val yProp = new SimpleDoubleProperty(selectedShape.getBoundsInLocal().getMinY)
   val widthProp = new SimpleDoubleProperty(selectedShape.getBoundsInLocal().getWidth)

@@ -5,12 +5,8 @@
 
 package de.thm.move.views.shapes
 
-import javafx.scene.paint.{Paint, Color}
+import javafx.scene.paint.Paint
 import javafx.scene.shape.Shape
-
-import de.thm.move.Global
-import de.thm.move.history.History
-import de.thm.move.history.History.Command
 
 trait ColorizableShape {
   self: Shape =>

@@ -1,6 +1,5 @@
 package de.thm.move.views.shapes
 
-import javafx.scene.shape.{QuadCurveTo, MoveTo, LineTo}
 import de.thm.move.models.CommonTypes.Point
 import javafx.scene.paint.Paint
 

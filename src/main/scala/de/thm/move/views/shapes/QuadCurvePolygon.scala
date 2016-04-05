@@ -1,6 +1,5 @@
 package de.thm.move.views.shapes
 
-import javafx.scene.shape.{QuadCurveTo, MoveTo, Path, QuadCurve}
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.util.{BindingUtils, GeometryUtils}
 import de.thm.move.views.Anchor

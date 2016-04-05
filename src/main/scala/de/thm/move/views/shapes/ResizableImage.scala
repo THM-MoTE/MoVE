@@ -7,12 +7,6 @@ package de.thm.move.views.shapes
 
 import java.net.URI
 import javafx.scene.image.{ImageView, Image}
-import javafx.scene.input.MouseEvent
-
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
-import de.thm.move.util.BindingUtils
-import de.thm.move.models.CommonTypes._
-import de.thm.move.views.Anchor
 
 class ResizableImage(val uri:URI, val img:Image) extends ImageView(img) with ResizableShape with BoundedAnchors {
   setPreserveRatio(true)

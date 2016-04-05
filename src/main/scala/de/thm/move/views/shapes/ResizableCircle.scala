@@ -6,13 +6,9 @@
 package de.thm.move.views.shapes
 
 import javafx.scene.shape.Ellipse
-import javafx.geometry.Bounds
 
 import de.thm.move.models.CommonTypes._
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
-import de.thm.move.util.{GeometryUtils, BindingUtils}
-import de.thm.move.views.Anchor
-import javafx.scene.input.MouseEvent
+import de.thm.move.util.GeometryUtils
 
 /** A circle represented by it's '''middle-point''' and it's width + height */
 class ResizableCircle(
