@@ -1,10 +1,12 @@
 package de.thm.move.views.shapes
 
-import javafx.scene.shape.{QuadCurveTo, MoveTo, Path}
+import javafx.scene.shape.{QuadCurveTo, MoveTo, LineTo, Path, PathElement}
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.util.{BindingUtils, GeometryUtils}
+import de.thm.move.util.PointUtils._
 import de.thm.move.views.Anchor
 import de.thm.move.views.MovableAnchor
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
 abstract class AbstractQuadCurveShape(val points:List[Point], closedShape:Boolean) extends Path with ResizableShape with ColorizableShape {
 
@@ -23,32 +25,72 @@ abstract class AbstractQuadCurveShape(val points:List[Point], closedShape:Boolea
     */
 
   val reversedP = points.reverse
-  val curveTos = for(idx <- 1 until reversedP.size) yield {
-    //(startPoint for this becier curve = last added point of the path)
-    val (ctrlX, ctrlY) = reversedP(idx) //ctrlPoint := this point
-    //endPoint := middleOf(thisPoint, nextPoint)
-    val (endX, endY) =
-      if(idx+1 < reversedP.size) GeometryUtils.middleOfLine(reversedP(idx), reversedP(idx + 1))
-      else GeometryUtils.middleOfLine(reversedP(idx), reversedP.head)
+  val curves = adjustPath(reversedP.toArray)
+  this.getElements.addAll(curves:_*)
 
-    val curve = new QuadCurveTo(ctrlX,ctrlY, endX,endY)
-    curve
+  private def adjustPath(points:Array[Point]): List[PathElement] = {
+    val (stX,stY) = points.head
+    val (tmpX,tmpY) = GeometryUtils.middleOfLine(points.head, points(1)) //point between head & points(1)
+    val start = new MoveTo(tmpX,tmpY) //shfit path to starting-point
+    val end = new QuadCurveTo(stX,stY, tmpX,tmpY)
+
+    val xs = start::(for(idx <- 1 until points.size) yield {
+      //(startPoint for this becier curve = last added point of the path)
+      val (ctrlX, ctrlY) = points(idx) //ctrlPoint := this point
+      //endPoint := middleOf(thisPoint, nextPoint)
+      val (endX, endY) =
+        if(idx+1 < points.size) GeometryUtils.middleOfLine(points(idx), points(idx + 1))
+        else GeometryUtils.middleOfLine(points(idx), points.head)
+
+      val curve = new QuadCurveTo(ctrlX,ctrlY, endX,endY)
+      curve
+    }).toList
+
+    if(closedShape) xs ::: List(end)
+    else xs
   }
 
-  private val (stX,stY) = reversedP.head
-  private val (tmpX,tmpY) = GeometryUtils.middleOfLine(reversedP.head, reversedP(1)) //point between head & reversedP(1)
-  private val start = new MoveTo(tmpX,tmpY) //shfit path to starting-point
-  private val end = new QuadCurveTo(stX,stY, tmpX,tmpY)
-
-  this.getElements.addAll(start)
-  this.getElements.addAll(curveTos:_*)
-  if(closedShape) {
-    this.getElements.addAll(end)
+  private def getPathXY:PartialFunction[PathElement, Point] = {
+    case move:MoveTo => (move.getX,move.getY)
+    case line:LineTo => (line.getX,line.getY)
+    case cubic:QuadCurveTo => (cubic.getX,cubic.getY)
   }
 
-  override val getAnchors: List[Anchor] = for(p <- points) yield {
-    new Anchor(p)
+  private def setPathXY(elem:PathElement, ctrlP:Point) = {
+    elem match {
+      case cubic:QuadCurveTo =>
+        cubic.setControlX(ctrlP.x)
+        cubic.setControlY(ctrlP.y)
+      case move:MoveTo =>
+        move.setX(ctrlP.x)
+        move.setY(ctrlP.y)
+      case _ => throw new IllegalStateException("Can'T set XY for non cubicCurveTo values")
+    }
   }
+
+  private val underlyingPolygonPoints = reversedP.toArray
+
+  override val getAnchors: List[Anchor] =
+    (for(
+      idx <- 0 until underlyingPolygonPoints.size;
+      ctrlP = underlyingPolygonPoints(idx)
+    ) yield {
+      val anchor = new Anchor(ctrlP) with MovableAnchor
+
+      anchor.centerXProperty.addListener { (_:Number, newV:Number) =>
+        underlyingPolygonPoints(idx) = (newV.doubleValue,underlyingPolygonPoints(idx).y)
+        this.getElements.clear()
+        this.getElements.addAll(adjustPath(underlyingPolygonPoints):_*)
+        ()
+      }
+      anchor.centerYProperty.addListener{ (_:Number, newV:Number) =>
+        underlyingPolygonPoints(idx) = (underlyingPolygonPoints(idx).x, newV.doubleValue)
+        this.getElements.clear()
+        this.getElements.addAll(adjustPath(underlyingPolygonPoints):_*)
+        ()
+      }
+      anchor
+    }).toList
 
   BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
   override def setY(y: Double): Unit = setLayoutY(y)
