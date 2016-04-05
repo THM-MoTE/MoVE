@@ -150,25 +150,25 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
 
     case curve:QuadCurvePolygon =>
-    val offsetX = curve.getLayoutX
-    val offsetY = curve.getLayoutY
-    val edgePoints = for(point <- curve.points)
-      yield (point.x+offsetX, paneHeight - (point.y+offsetY))
-    val points = genPoints(edgePoints)
-    val strokeColor = genColor("lineColor", curve.getStrokeColor)
-    val fillColor = genColor("fillColor", curve.getFillColor)
-    val thickness = genStrokeWidth(curve)
+      val offsetX = curve.getLayoutX
+      val offsetY = curve.getLayoutY
+      val edgePoints = for(point <- curve.points)
+        yield (point.x+offsetX, paneHeight - (point.y+offsetY))
+      val points = genPoints(edgePoints)
+      val strokeColor = genColor("lineColor", curve.getStrokeColor)
+      val fillColor = genColor("fillColor", curve.getFillColor)
+      val thickness = genStrokeWidth(curve)
 
-    implicit val newIndentIdx = indentIdx + 2
+      implicit val newIndentIdx = indentIdx + 2
 
-    s"""${spaces(indentIdx)}Polygon(
-       |${spaces}${points},
-       |${spaces}${strokeColor},
-       |${spaces}${fillColor},
-       |${spaces}fillPattern = FillPattern.Solid,
-       |${spaces}${thickness},
-       |${spaces}smooth = Smooth.Bezier
-       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+      s"""${spaces(indentIdx)}Polygon(
+         |${spaces}${points},
+         |${spaces}${strokeColor},
+         |${spaces}${fillColor},
+         |${spaces}fillPattern = FillPattern.Solid,
+         |${spaces}${thickness},
+         |${spaces}smooth = Smooth.Bezier
+         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
     case img:ResizableImage =>
       copyImg(img.uri, target)
       val filename = ResourceUtils.getFilename(img.uri)
