@@ -7,9 +7,14 @@ package de.thm.move.views.shapes
 
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Shape
+import de.thm.move.models.LinePattern
 
 trait ColorizableShape {
   self: Shape =>
+
+  private var linePattern:LinePattern.Value = LinePattern.Solid
+  def setLinePattern(lp:LinePattern.LinePattern) = linePattern = lp
+  def getLinePattern: LinePattern.LinePattern = linePattern
 
   /** Copies the style from other to this element */
   def copyColors(other:ColorizableShape): Unit = {
