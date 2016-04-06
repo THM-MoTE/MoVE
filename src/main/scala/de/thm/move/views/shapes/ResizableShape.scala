@@ -25,4 +25,7 @@ trait ResizableShape extends Node {
     setX(p._1)
     setY(p._2)
   }
+
+  /** Creates a '''exact copy''' of this element. */
+  def copy: ResizableShape
 }
