@@ -88,12 +88,16 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
   }
 
   def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
-    selectedShape.zip(linePatternToCssClass.get(linePattern)) foreach {
+    selectedShape.flatMap {
+      //filter non-colrizable shapes; they have no linepattern
+      case colorizable:ColorizableShape => Some(colorizable)
+    }.zip(linePatternToCssClass.get(linePattern)) foreach {
       case (shape, cssClass) =>
       //remove old stroke style
       shape.getStyleClass().removeIf(new Predicate[String]() {
           override def test(str:String): Boolean = str.`matches`(".*-stroke")
         })
       shape.getStyleClass().add(cssClass)
+      shape.setLinePattern(linePattern)
     }
 }
