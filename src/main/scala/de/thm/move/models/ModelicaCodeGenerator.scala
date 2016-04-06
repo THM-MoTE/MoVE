@@ -106,7 +106,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
     case path:ResizablePath =>
       val offsetX = path.getLayoutX
       val offsetY = path.getLayoutY
-      val points = genPoints(path.alElements.flatMap {
+      val points = genPoints(path.allElements.flatMap {
         case move:MoveTo =>
           val point = ( move.getX+offsetX, paneHeight-(move.getY+offsetY) )
           List( point )
