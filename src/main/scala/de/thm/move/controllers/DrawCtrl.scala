@@ -190,7 +190,7 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) e
     moveElement
   }
 
-  override def addShape[T <: Node](shape:T*): Unit = {
+  override def addShape(shape: ResizableShape*): Unit = {
     shape foreach { x =>
       x.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
         override def handle(event: InputEvent): Unit = shapeInputHandler(event)
@@ -199,6 +199,8 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) e
       drawPanel.drawShape(x)
     }
   }
+
+  override def addNode(node:Node*): Unit = node foreach drawPanel.drawShape
 
   def drawAnchor(p:Point): Unit = {
     val anchor = ShapeFactory.newAnchor(p)
@@ -209,20 +211,20 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) e
     val polygon = ShapeFactory.newPolygon(points)(fillColor, strokeColor, selectedThickness)
     removeDrawnAnchors(points.size)
     addShape(polygon)
-    addShape(polygon.getAnchors:_*)
+    addNode(polygon.getAnchors)
   }
 
   def drawPath(points:List[Point])(fillColor:Color, strokeColor:Color, selectedThickness: Int) = {
     val path = ShapeFactory.newPath(points)(fillColor, strokeColor, selectedThickness)
     removeDrawnAnchors(points.size)
     addShape(path)
-    addShape(path.getAnchors:_*)
+    addNode(path.getAnchors)
   }
 
   def drawImage(imgUri:URI): Unit = {
     val imgview = ShapeFactory.newImage(imgUri)
     addShape(imgview)
-    addShape(imgview.getAnchors:_*)
+    addNode(imgview.getAnchors)
   }
 
   def drawCustomShape(shape:SelectedShape, start:Point, end:Point, drawConstraint:Boolean)(fillColor:Color, strokeColor:Color, selectedThickness:Int) = {
@@ -256,7 +258,7 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) e
 
     newShapeOpt foreach { x =>
       addShape(x)
-      addShape(x.getAnchors:_*)
+      addNode(x.getAnchors)
     }
   }
 
