@@ -7,12 +7,23 @@ import de.thm.move.Global._
 import de.thm.move.views.DrawPanel
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 import de.thm.move.models.LinePattern
+import java.util.function.Predicate
+
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.
  */
 class SelectedShapeCtrl(drawPanel:DrawPanel) {
 
   private var selectedShape:Option[ResizableShape] = None
+
+  private val linePatternToCssClass: Map[LinePattern.LinePattern, String] =
+    Map(
+      LinePattern.Solid -> "solid-stroke",
+      LinePattern.Dash -> "dash-stroke",
+      LinePattern.Dot -> "dotted-stroke",
+      LinePattern.DashDot -> "dash-dotted-stroke",
+      LinePattern.DashDotDot -> "dash-dotted-dotted-stroke"
+      )
 
   def setSelectedShape(shape:ResizableShape): Unit = {
     selectedShape match {
@@ -76,7 +87,13 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     }
   }
 
-  def setStrokePattern(linePattern:LinePattern.LinePattern): Unit = {
-    println(s"selected linepattern $linePattern")
-  }
+  def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
+    selectedShape.zip(linePatternToCssClass.get(linePattern)) foreach {
+      case (shape, cssClass) =>
+      //remove old stroke style
+      shape.getStyleClass().removeIf(new Predicate[String]() {
+          override def test(str:String): Boolean = str.`matches`(".*-stroke")
+        })
+      shape.getStyleClass().add(cssClass)
+    }
 }

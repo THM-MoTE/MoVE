@@ -32,3 +32,19 @@
 .msg-label {
 
 }
+
+.solid-stroke {
+  -fx-stroke-dash-array: null;
+}
+.dash-stroke {
+  -fx-stroke-dash-array: 15 15 15;
+}
+.dotted-stroke {
+  -fx-stroke-dash-array: 8 15;
+}
+.dash-dotted-stroke {
+  -fx-stroke-dash-array: 15 15 8 15;
+}
+.dash-dotted-dotted-stroke {
+  -fx-stroke-dash-array: 15 15 8 15 8 15;
+}
