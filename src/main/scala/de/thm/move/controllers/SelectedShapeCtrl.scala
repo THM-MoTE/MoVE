@@ -6,7 +6,7 @@ import de.thm.move.Global
 import de.thm.move.Global._
 import de.thm.move.views.DrawPanel
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
-
+import de.thm.move.models.LinePattern
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.
  */
@@ -74,5 +74,9 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
       val oldWidth = x.getStrokeWidth
       history.execute(x.setStrokeWidth(width))(x.setStrokeWidth(oldWidth))
     }
+  }
+
+  def setStrokePattern(linePattern:LinePattern.LinePattern): Unit = {
+    println(s"selected linepattern $linePattern")
   }
 }

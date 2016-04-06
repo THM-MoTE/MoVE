@@ -62,6 +62,8 @@
                   <ColorPicker fx:id="fillColorPicker" />
                   <Label styleClass="toolbar-button" text="%fa.square-o" />
                   <ColorPicker fx:id="strokeColorPicker" />
+                  <Label text="LinePattern" />
+                  <ChoiceBox fx:id="linePatternChooser" prefWidth="150.0" />
                </items>
             </ToolBar>
          </children>

@@ -18,6 +18,7 @@ import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.stage.{Stage, FileChooser}
 import de.thm.move.Global
+import de.thm.move.util.JFxUtils._
 import de.thm.move.views.{SaveDialog, DrawPanel, Anchor}
 import de.thm.move.views.shapes.ResizableShape
 
@@ -26,6 +27,8 @@ import collection.JavaConversions._
 import de.thm.move.models.{ModelicaCodeGenerator, SelectedShape}
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.SelectedShape.SelectedShape
+import de.thm.move.models.LinePattern._
+import de.thm.move.models.LinePattern
 import implicits.FxHandlerImplicits._
 import implicits.ConcurrentImplicits._
 import implicits.MonadImplicits._
@@ -57,7 +60,8 @@ class MoveCtrl extends Initializable {
   var fillColorPicker: ColorPicker = _
   @FXML
   var strokeColorPicker: ColorPicker = _
-
+  @FXML
+  var linePatternChooser: ChoiceBox[LinePattern] = _
   @FXML
   var borderThicknessChooser: ChoiceBox[Int] = _
 
@@ -156,6 +160,10 @@ class MoveCtrl extends Initializable {
     borderThicknessChooser.setItems(FXCollections.observableArrayList(sizesList))
     setupDefaultColors()
 
+    val linePatterns = LinePattern.values.toList
+    linePatternChooser.setItems(FXCollections.observableList(linePatterns))
+    linePatternChooser.setValue(LinePattern.Solid)
+
     val handler = drawCtrl.getDrawHandler
 
     val drawHandler = { mouseEvent:MouseEvent =>
@@ -171,10 +179,10 @@ class MoveCtrl extends Initializable {
     fillColorPicker.setOnAction(colorPickerChanged _)
     strokeColorPicker.setOnAction(colorPickerChanged _)
 
-    borderThicknessChooser.getSelectionModel.
-      selectedItemProperty.addListener { (_:Int, newX:Int) =>
-        selectionCtrl.setStrokeWidthForSelectedShape(newX)
-      }
+    onChoiceboxChanged(borderThicknessChooser)(
+      selectionCtrl.setStrokeWidthForSelectedShape)
+    onChoiceboxChanged(linePatternChooser)(
+      selectionCtrl.setStrokePattern)
 
     drawPanel.setOnMousePressed(drawHandler)
     drawPanel.setOnMouseDragged(drawHandler)
