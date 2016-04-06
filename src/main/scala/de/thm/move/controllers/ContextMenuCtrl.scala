@@ -18,6 +18,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     val menu = new ShapeContextMenu
     menu.inBackgroundItem.setOnAction { ae:ActionEvent => onBackgroundPressed(ae, underlyingElement) }
     menu.inForegroundItem.setOnAction { ae:ActionEvent => onForegroundPressed (ae, underlyingElement) }
+    menu.duplicateElementItem.setOnAction { ae:ActionEvent => onDuplicateElementPressed(ae, underlyingElement) }
 
     underlyingElement match {
       case polygon:QuadCurveTransformable =>
@@ -72,13 +73,17 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     val curvedShape = polygon.toCurvedShape
     changeLike.removeShape(polygon)
     changeLike.addShape(curvedShape)
-    changeLike.addShape(curvedShape.getAnchors:_*)
+    changeLike.addNode(curvedShape.getAnchors)
   }
 
   private def onUnsmoothPressed(ae:ActionEvent, curved:AbstractQuadCurveShape): Unit = {
     val uncurvedShape = curved.toUncurvedShape
     changeLike.removeShape(curved)
     changeLike.addShape(uncurvedShape)
-    changeLike.addShape(uncurvedShape.getAnchors:_*)
+    changeLike.addNode(uncurvedShape.getAnchors)
+  }
+
+  private def onDuplicateElementPressed(ae:ActionEvent, node:Node): Unit = {
+    println("duplicate pressed")
   }
 }
