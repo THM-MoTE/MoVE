@@ -85,7 +85,11 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
 
   private def onDuplicateElementPressed(ae:ActionEvent, shape:ResizableShape): Unit = {
     val duplicate = shape.copy
-    changeLike.addShape(duplicate)
-    changeLike.addNode(duplicate.getAnchors)
+    history.execute {
+      changeLike.addShape(duplicate)
+      changeLike.addNode(duplicate.getAnchors)
+    } {
+      changeLike.removeShape(duplicate)
+    }
   }
 }
