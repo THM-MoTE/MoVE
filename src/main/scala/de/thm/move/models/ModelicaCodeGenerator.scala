@@ -13,7 +13,6 @@ import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
 import de.thm.move.util.PointUtils._
 import de.thm.move.util.ResourceUtils
-
 import de.thm.move.views.shapes._
 
 class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Double) {
@@ -44,10 +43,17 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
     val strokeColor = genColor("lineColor", shape.getStrokeColor)
     val fillColor = genColor("fillColor", shape.getFillColor)
     val thickness = genStrokeWidth(shape)
+    val linePattern = genLinePattern(shape)
 
     s"""${spaces}${strokeColor},
     |${spaces}${fillColor},
-    |${spaces}${thickness}""".stripMargin.replaceAll("\n", linebreak)
+    |${spaces}${thickness},
+    |${spaces}${linePattern}""".stripMargin.replaceAll("\n", linebreak)
+  }
+
+  private def genLinePattern(shape:ColorizableShape):String = {
+    val linePattern = LinePattern.toString + "." + shape.getLinePattern.toString
+    s"pattern = ${linePattern}"
   }
 
   def generateShape[A <: Node](shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
@@ -73,7 +79,6 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       val endY = newY - bounding.getHeight
       val start = genPoint(bounding.getMinX, newY)
       val end = genPoint(bounding.getMaxX, endY)
-
       implicit val newIndentIdx = indentIdx + 2
       val colors = genFillAndStroke(circle)
 
@@ -94,12 +99,14 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       val points = genPoints( pointList )
       val color = genColor("color", line.getStrokeColor)
       val thickness = genStrokeWidth(line, "thickness")
+      val linePattern = genLinePattern(line)
 
       implicit val newIndentIdx = indentIdx + 2
 
       s"""${spaces(indentIdx)}Line(
          |${spaces}${points},
          |${spaces}${color},
+         |${spaces}${linePattern},
          |${spaces}${thickness}
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
 
@@ -117,11 +124,13 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
 
       val color = genColor("color", path.getStrokeColor)
       val thickness = genStrokeWidth(path, "thickness")
+      val linePattern = genLinePattern(path)
 
       implicit val newIndentIdx = indentIdx + 2
 
       s"""${spaces(indentIdx)}Line(
          |${spaces}${points},
+         |${spaces}${linePattern},
          |${spaces}${color},
          |${spaces}${thickness}
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
@@ -170,12 +179,14 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       val points = genPoints(edgePoints)
       val color = genColor("color", curvedL.getStrokeColor)
       val thickness = genStrokeWidth(curvedL, "thickness")
+      val linePattern = genLinePattern(curvedL)
 
       implicit val newIndentIdx = indentIdx + 2
 
       s"""${spaces(indentIdx)}Line(
          |${spaces}${points},
          |${spaces}${color},
+         |${spaces}${linePattern},
          |${spaces}${thickness},
          |${spaces}smooth = Smooth.Bezier
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
