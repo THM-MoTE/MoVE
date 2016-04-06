@@ -13,6 +13,7 @@ import de.thm.move.views.{MovableAnchor, Anchor}
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes.Point
+import scala.collection.JavaConversions._
 
 class ResizablePolygon(val points:List[Double]) extends Polygon(points:_*) with ResizableShape with ColorizableShape with QuadCurveTransformable {
 
@@ -44,6 +45,11 @@ class ResizablePolygon(val points:List[Double]) extends Polygon(points:_*) with 
   override def getY: Double = getLayoutY()
   override def setX(x: Double): Unit = setLayoutX(x)
   override def toCurvedShape = QuadCurvePolygon(this)
+  override def copy: ResizableShape = {
+    val duplicate = new ResizablePolygon(getPoints.map(_.doubleValue).toList)
+    duplicate.copyColors(this)
+    duplicate
+  }
 }
 
 object ResizablePolygon {

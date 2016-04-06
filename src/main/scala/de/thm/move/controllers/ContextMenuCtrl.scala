@@ -7,14 +7,14 @@ import javafx.scene.input.MouseButton
 import javafx.scene.control.{SeparatorMenuItem, Separator, MenuItem}
 import javafx.scene.input.{InputEvent, MouseEvent}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
-import de.thm.move.views.shapes.{QuadCurveTransformable, QuadCurvePolygon, ResizablePolygon, AbstractQuadCurveShape}
+import de.thm.move.views.shapes._
 import de.thm.move.views.{DrawPanel, ShapeContextMenu}
 import de.thm.move.Global._
 
 /** Controller for context-menus of shapes */
 class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
 
-  private def newContextMenu(underlyingElement:Node):ShapeContextMenu = {
+  private def newContextMenu(underlyingElement:ResizableShape):ShapeContextMenu = {
     val menu = new ShapeContextMenu
     menu.inBackgroundItem.setOnAction { ae:ActionEvent => onBackgroundPressed(ae, underlyingElement) }
     menu.inForegroundItem.setOnAction { ae:ActionEvent => onForegroundPressed (ae, underlyingElement) }
@@ -36,7 +36,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
   }
 
   /** Sets up a new context-menu for the given node */
-  def setupContextMenu(node:Node): Unit = {
+  def setupContextMenu(node:ResizableShape): Unit = {
     val contextMenu = newContextMenu(node)
     node.setOnMouseClicked { me: MouseEvent =>
       if (me.getButton == MouseButton.SECONDARY) {
@@ -83,7 +83,9 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     changeLike.addNode(uncurvedShape.getAnchors)
   }
 
-  private def onDuplicateElementPressed(ae:ActionEvent, node:Node): Unit = {
-    println("duplicate pressed")
+  private def onDuplicateElementPressed(ae:ActionEvent, shape:ResizableShape): Unit = {
+    val duplicate = shape.copy
+    changeLike.addShape(duplicate)
+    changeLike.addNode(duplicate.getAnchors)
   }
 }

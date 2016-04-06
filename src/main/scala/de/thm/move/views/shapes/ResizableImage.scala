@@ -17,4 +17,10 @@ class ResizableImage(val uri:URI, val img:Image) extends ImageView(img) with Res
 
   override def setWidth(w:Double): Unit = setFitWidth(w)
   override def setHeight(h:Double): Unit = setFitHeight(h)
+
+  override def copy: ResizableShape = {
+    val duplicate = new ResizableImage(uri, img)
+    duplicate.copyPosition(this)
+    duplicate
+  }
 }

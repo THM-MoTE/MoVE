@@ -8,6 +8,11 @@ class QuadCurvePath(points:List[Point]) extends AbstractQuadCurveShape(points, f
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
 
   override def toUncurvedShape: ResizableShape = ResizablePath(this)
+  override def copy: ResizableShape = {
+    val duplicate = new QuadCurvePath(getUnderlyingPolygonPoints)
+    duplicate.copyColors(this)
+    duplicate
+  }
 }
 
 object QuadCurvePath {

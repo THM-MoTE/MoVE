@@ -33,5 +33,10 @@ class ResizableCircle(
 
   override def getWidth: Double = getBoundsInLocal.getWidth
   override def getHeight: Double = getBoundsInLocal.getHeight
-
+  override def copy: ResizableShape = {
+    val duplicate = new ResizableCircle(point, getRadiusX, getRadiusY)
+    duplicate.copyPosition(this)
+    duplicate.copyColors(this)
+    duplicate
+  }
 }

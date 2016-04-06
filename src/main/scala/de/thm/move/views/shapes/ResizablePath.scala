@@ -43,6 +43,11 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo]) extends Path(star
   override def getFillColor:Paint = null /*Path has no fill*/
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
   override def toCurvedShape = QuadCurvePath(this)
+  override def copy: ResizableShape = {
+    val duplicate = ResizablePath(getPoints)
+    duplicate.copyColors(this)
+    duplicate
+  }
 }
 
 object ResizablePath {

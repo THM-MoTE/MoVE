@@ -82,4 +82,12 @@ class ResizableLine(
   override def setY(y: Double): Unit = setLayoutY(y)
   override def getY: Double = getLayoutY
   override def setX(x: Double): Unit = setLayoutX(x)
+  override def copy: ResizableShape = {
+    val duplicate = new ResizableLine(
+      (getStartX,getStartY),
+      (getEndX,getEndY),
+      strokeSize)
+    duplicate.copyColors(this)
+    duplicate
+  }
 }
