@@ -40,6 +40,13 @@ trait BoundedAnchors {
     e.setCenterY(y)
   }
 
+  /** Copies the position of '''other''' onto this element */
+  def copyPosition( other:BoundedAnchors with ResizableShape ): Unit = {
+      this.setXY(other.getXY)
+      this.setWidth(other.getWidth)
+      this.setHeight(other.getHeight)
+  }
+
   def getWidth: Double
   def getHeight: Double
   def setWidth(w:Double): Unit
