@@ -62,6 +62,8 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
         new LinearGradient(0,0,1,0,true,CycleMethod.REFLECT, linearStops:_*)
       case FillPattern.Sphere =>
         new RadialGradient(0,0,0.5,0.5,1,true,CycleMethod.NO_CYCLE, radialStops:_*)
+      case FillPattern.Solid => fillC
+      case FillPattern.None => null //None = null = transparent color
       case _ => println("WARNING: not implemented yet!"); null
     }
   }
