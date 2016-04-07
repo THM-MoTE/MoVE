@@ -29,6 +29,8 @@ import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.SelectedShape.SelectedShape
 import de.thm.move.models.LinePattern._
 import de.thm.move.models.LinePattern
+import de.thm.move.models.FillPattern._
+import de.thm.move.models.FillPattern
 import implicits.FxHandlerImplicits._
 import implicits.ConcurrentImplicits._
 import implicits.MonadImplicits._
@@ -62,6 +64,8 @@ class MoveCtrl extends Initializable {
   var strokeColorPicker: ColorPicker = _
   @FXML
   var linePatternChooser: ChoiceBox[LinePattern] = _
+  @FXML
+  var fillPatternChooser: ChoiceBox[FillPattern] = _
   @FXML
   var borderThicknessChooser: ChoiceBox[Int] = _
 
@@ -164,6 +168,10 @@ class MoveCtrl extends Initializable {
     linePatternChooser.setItems(FXCollections.observableList(linePatterns))
     linePatternChooser.setValue(LinePattern.Solid)
 
+    val fillPatterns = FillPattern.values.toList
+    fillPatternChooser.setItems(FXCollections.observableList(fillPatterns))
+    fillPatternChooser.setValue(FillPattern.Solid)
+
     val handler = drawCtrl.getDrawHandler
 
     val drawHandler = { mouseEvent:MouseEvent =>
@@ -183,6 +191,7 @@ class MoveCtrl extends Initializable {
       selectionCtrl.setStrokeWidthForSelectedShape)
     onChoiceboxChanged(linePatternChooser)(
       selectionCtrl.setStrokePattern)
+    onChoiceboxChanged(fillPatternChooser)(selectionCtrl.setFillPattern)
 
     drawPanel.setOnMousePressed(drawHandler)
     drawPanel.setOnMouseDragged(drawHandler)
