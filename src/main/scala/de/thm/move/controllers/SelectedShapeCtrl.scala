@@ -7,6 +7,7 @@ import de.thm.move.Global._
 import de.thm.move.views.DrawPanel
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 import de.thm.move.models.LinePattern
+import de.thm.move.models.FillPattern
 import java.util.function.Predicate
 
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
@@ -15,6 +16,12 @@ import java.util.function.Predicate
 class SelectedShapeCtrl(drawPanel:DrawPanel) {
 
   private var selectedShape:Option[ResizableShape] = None
+
+  private def coloredSelectedShape: Option[ResizableShape with ColorizableShape] =
+    selectedShape.flatMap {
+      //filter non-colrizable shapes; they have no linepattern
+      case colorizable:ColorizableShape => Some(colorizable)
+    }
 
   private val linePatternToCssClass: Map[LinePattern.LinePattern, String] =
     Map(
@@ -88,10 +95,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
   }
 
   def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
-    selectedShape.flatMap {
-      //filter non-colrizable shapes; they have no linepattern
-      case colorizable:ColorizableShape => Some(colorizable)
-    }.zip(linePatternToCssClass.get(linePattern)) foreach {
+    coloredSelectedShape.zip(linePatternToCssClass.get(linePattern)) foreach {
       case (shape, cssClass) =>
       //remove old stroke style
       shape.getStyleClass().removeIf(new Predicate[String]() {
@@ -99,5 +103,11 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
         })
       shape.getStyleClass().add(cssClass)
       shape.setLinePattern(linePattern)
+    }
+  def setFillPattern(fillPattern:FillPattern.FillPattern): Unit =
+    coloredSelectedShape map { shape =>
+      (shape.getFillColor, shape.getStrokeColor)
+    } foreach { case (fillColor, strokeColor) =>
+      println("set fill: "+fillPattern)
     }
 }
