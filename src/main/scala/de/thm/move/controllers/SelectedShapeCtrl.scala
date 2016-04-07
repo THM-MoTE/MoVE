@@ -138,11 +138,12 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
       shape.getStyleClass().add(cssClass)
       shape.setLinePattern(linePattern)
     }
+
   def setFillPattern(fillPattern:FillPattern.FillPattern): Unit =
     coloredSelectedShape map { shape =>
-      (shape, shape.getFillColor, shape.getStrokeColor)
+      (shape, shape.oldFillColorProperty.get, shape.getStrokeColor)
     } flatMap {
-      case (shape, c1:Color,c2:Color) => Some((shape,c1,c2))
+      case (shape, c1,c2:Color) => Some((shape,c1,c2))
       case _ => None
       } foreach { case (shape, fillColor, strokeColor) =>
       println("set fill: "+fillPattern)
