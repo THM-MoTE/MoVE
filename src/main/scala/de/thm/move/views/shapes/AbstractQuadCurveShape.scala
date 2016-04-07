@@ -2,7 +2,7 @@ package de.thm.move.views.shapes
 
 import javafx.scene.shape.{QuadCurveTo, MoveTo, LineTo, Path, PathElement}
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.util.{BindingUtils, GeometryUtils}
+import de.thm.move.util.{JFxUtils, GeometryUtils}
 import de.thm.move.util.PointUtils._
 import de.thm.move.views.Anchor
 import de.thm.move.views.MovableAnchor
@@ -93,7 +93,7 @@ abstract class AbstractQuadCurveShape(points: List[Point], closedShape: Boolean)
       anchor
     }).toList
 
-  BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors: _*)
+  JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors: _*)
   override def setY(y: Double): Unit = setLayoutY(y)
   override def getY: Double = getLayoutY
   override def setX(x: Double): Unit = setLayoutX(x)

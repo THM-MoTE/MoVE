@@ -1,8 +1,6 @@
 package de.thm.move.views.shapes
 
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.util.{BindingUtils, GeometryUtils}
-import de.thm.move.views.Anchor
 import scala.collection.JavaConverters._
 
 /**

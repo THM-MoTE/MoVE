@@ -1,9 +1,8 @@
 package de.thm.move.views.shapes
 
 import javafx.scene.paint.Paint
-import javafx.scene.shape.{MoveTo, LineTo, PathElement, Path}
-import de.thm.move.util.BindingUtils
-import javafx.scene.paint.Color
+import javafx.scene.shape.{MoveTo, LineTo, Path}
+import de.thm.move.util.JFxUtils
 
 import collection.JavaConversions._
 
@@ -30,7 +29,7 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo]) extends Path(star
         List(anchor)
     }
 
-  BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
+  JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 
   def getPoints:List[Point] = allElements.flatMap {
     case move:MoveTo => List((move.getX, move.getY))

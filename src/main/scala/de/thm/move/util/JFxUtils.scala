@@ -6,7 +6,9 @@
 package de.thm.move.util
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import javafx.scene.Node
 import javafx.scene.control.ChoiceBox
+import de.thm.move.views.Anchor
 
 /** General utils for working with JavaFx. */
 object JFxUtils {
@@ -18,5 +20,12 @@ object JFxUtils {
       selectedItemProperty.addListener { (_:A, newA:A) =>
         eventHandler(newA)
       }
+  }
+
+  def binAnchorsLayoutToNodeLayout(node:Node)(anchors:Anchor*): Unit = {
+    anchors.foreach { anchor =>
+      anchor.layoutXProperty().bind(node.layoutXProperty())
+      anchor.layoutYProperty().bind(node.layoutYProperty())
+    }
   }
 }

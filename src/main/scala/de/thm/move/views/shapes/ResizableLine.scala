@@ -12,7 +12,7 @@ import de.thm.move.Global._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.util.BindingUtils
+import de.thm.move.util.JFxUtils
 import de.thm.move.views.{MovableAnchor, Anchor}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
@@ -76,7 +76,7 @@ class ResizableLine(
     })
   }
 
-  BindingUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
+  JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 
   override def getX: Double = getLayoutX
   override def setY(y: Double): Unit = setLayoutY(y)
