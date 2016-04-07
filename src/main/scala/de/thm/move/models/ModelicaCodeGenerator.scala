@@ -41,7 +41,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
 
   private def genFillAndStroke(shape:ColorizableShape)(implicit indentIdx:Int):String = {
     val strokeColor = genColor("lineColor", shape.getStrokeColor)
-    val fillColor = genColor("fillColor", shape.getFillColor)
+    val fillColor = genColor("fillColor", shape.oldFillColorProperty.get)
     val thickness = genStrokeWidth(shape)
     val linePattern = genLinePattern(shape)
 
@@ -56,19 +56,25 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
     s"pattern = ${linePattern}"
   }
 
+  private def genFillPattern(shape:ColorizableShape):String = {
+    val fillPattern = FillPattern.toString + "." + shape.fillPatternProperty.get
+    s"fillPattern = ${fillPattern}"
+  }
+
   def generateShape[A <: Node](shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
     case rectangle:ResizableRectangle =>
       val newY = paneHeight - rectangle.getY
       val endY = newY - rectangle.getHeight
       val endBottom = genPoint(rectangle.getBottomRight.x, endY)
       val start = genPoint(rectangle.getX, newY)
+      val fillPattern = genFillPattern(rectangle)
 
       implicit val newIndentIdx = indentIdx + 2
       val colors = genFillAndStroke(rectangle)
 
       s"""${spaces(indentIdx)}Rectangle(
          |${colors},
-         |${spaces}fillPattern = FillPattern.Solid,
+         |${spaces}${fillPattern},
          |${spaces}extent = {$start, $endBottom}
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
     case circle:ResizableCircle =>
@@ -79,12 +85,14 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       val endY = newY - bounding.getHeight
       val start = genPoint(bounding.getMinX, newY)
       val end = genPoint(bounding.getMaxX, endY)
+      val fillPattern = genFillPattern(circle)
       implicit val newIndentIdx = indentIdx + 2
       val colors = genFillAndStroke(circle)
 
+
       s"""${spaces(indentIdx)}Ellipse(
           |${colors},
-          |${spaces}fillPattern = FillPattern.Solid,
+          |${spaces}${fillPattern},
           |${spaces}extent = {$start,$end},
           |${spaces}$angle
           |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
@@ -145,6 +153,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       } yield (x+offsetX,paneHeight-(y+offsetY))
 
       val points = genPoints(edgePoints)
+      val fillPattern = genFillPattern(polygon)
 
       implicit val newIndentIdx = indentIdx + 2
       val colors = genFillAndStroke(polygon)
@@ -152,7 +161,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       s"""${spaces(indentIdx)}Polygon(
          |${spaces}${points},
          |${spaces}${colors},
-         |${spaces}fillPattern = FillPattern.Solid
+         |${spaces}${fillPattern}
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
 
     case curve:QuadCurvePolygon =>
@@ -161,6 +170,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       val edgePoints = for(point <- curve.getUnderlyingPolygonPoints)
         yield (point.x+offsetX, paneHeight - (point.y+offsetY))
       val points = genPoints(edgePoints)
+      val fillPattern = genFillPattern(curve)
 
       implicit val newIndentIdx = indentIdx + 2
       val colors = genFillAndStroke(curve)
@@ -168,7 +178,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
       s"""${spaces(indentIdx)}Polygon(
          |${spaces}${points},
          ${colors},
-         |${spaces}fillPattern = FillPattern.Solid,
+         |${spaces}${fillPattern},
          |${spaces}smooth = Smooth.Bezier
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
     case curvedL:QuadCurvePath =>

@@ -64,7 +64,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
         new RadialGradient(0,0,0.5,0.5,1,true,CycleMethod.NO_CYCLE, radialStops:_*)
       case FillPattern.Solid => fillC
       case FillPattern.None => null //None = null = transparent color
-      case _ => println("WARNING: not implemented yet!"); null
+      case _ => fillC
     }
   }
 
@@ -151,5 +151,6 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
       println("set fill: "+fillPattern)
       val newFillColor = getFillColor(fillPattern, fillColor, strokeColor)
       shape.setFillColor(newFillColor)
+      shape.fillPatternProperty.set(fillPattern)
     }
 }
