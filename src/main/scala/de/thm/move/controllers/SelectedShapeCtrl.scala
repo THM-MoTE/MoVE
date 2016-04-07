@@ -9,6 +9,10 @@ import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 import de.thm.move.models.LinePattern
 import de.thm.move.models.FillPattern
 import java.util.function.Predicate
+import javafx.scene.paint.Paint
+import javafx.scene.paint.LinearGradient
+import javafx.scene.paint.CycleMethod
+import javafx.scene.paint.Stop
 
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.
@@ -31,6 +35,32 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
       LinePattern.DashDot -> "dash-dotted-stroke",
       LinePattern.DashDotDot -> "dash-dotted-dotted-stroke"
       )
+
+  private def getFillColor(fillPattern:FillPattern.FillPattern, fillC:Color, strokeC:Color):Paint = {
+    /**
+      * Implementation Nodes:
+      * LinearGradients - Horizontal:
+      *   create gradient from (bottom to middle); reflect them on
+      *    (middle to top)
+      * LinearGradients - Vertical:
+      *   create gradient from (left to middle); reflect them on
+      *    (middle to right)
+      */
+    val stops = List(
+      new Stop(0,strokeC), //start with strokeColor
+      //create a gentle transition to fillColor
+      new Stop(0.45,fillC),
+      new Stop(0.55,fillC),
+      new Stop(1, strokeC) //end with strokeColor
+      )
+    fillPattern match {
+      case FillPattern.HorizontalCylinder =>
+        new LinearGradient(0,0,0,1,true,CycleMethod.REFLECT, stops:_*)
+      case FillPattern.VerticalCylinder =>
+        new LinearGradient(0,0,1,0,true,CycleMethod.REFLECT, stops:_*)
+      case _ => println("WARNING: not implemented yet!"); null
+    }
+  }
 
   def setSelectedShape(shape:ResizableShape): Unit = {
     selectedShape match {
@@ -106,8 +136,13 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     }
   def setFillPattern(fillPattern:FillPattern.FillPattern): Unit =
     coloredSelectedShape map { shape =>
-      (shape.getFillColor, shape.getStrokeColor)
-    } foreach { case (fillColor, strokeColor) =>
+      (shape, shape.getFillColor, shape.getStrokeColor)
+    } flatMap {
+      case (shape, c1:Color,c2:Color) => Some((shape,c1,c2))
+      case _ => None
+      } foreach { case (shape, fillColor, strokeColor) =>
       println("set fill: "+fillPattern)
+      val newFillColor = getFillColor(fillPattern, fillColor, strokeColor)
+      shape.setFillColor(newFillColor)
     }
 }
