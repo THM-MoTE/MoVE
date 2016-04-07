@@ -9,10 +9,7 @@ import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 import de.thm.move.models.LinePattern
 import de.thm.move.models.FillPattern
 import java.util.function.Predicate
-import javafx.scene.paint.Paint
-import javafx.scene.paint.LinearGradient
-import javafx.scene.paint.CycleMethod
-import javafx.scene.paint.Stop
+import javafx.scene.paint._
 
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.
@@ -46,18 +43,25 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
       *   create gradient from (left to middle); reflect them on
       *    (middle to right)
       */
-    val stops = List(
+    val linearStops = List(
       new Stop(0,strokeC), //start with strokeColor
       //create a gentle transition to fillColor
       new Stop(0.45,fillC),
       new Stop(0.55,fillC),
       new Stop(1, strokeC) //end with strokeColor
       )
+    val radialStops = List(
+        new Stop(0.0, fillC),
+        new Stop(0.20, fillC),
+        new Stop(1, strokeC)
+      )
     fillPattern match {
       case FillPattern.HorizontalCylinder =>
-        new LinearGradient(0,0,0,1,true,CycleMethod.REFLECT, stops:_*)
+        new LinearGradient(0,0,0,1,true,CycleMethod.REFLECT, linearStops:_*)
       case FillPattern.VerticalCylinder =>
-        new LinearGradient(0,0,1,0,true,CycleMethod.REFLECT, stops:_*)
+        new LinearGradient(0,0,1,0,true,CycleMethod.REFLECT, linearStops:_*)
+      case FillPattern.Sphere =>
+        new RadialGradient(0,0,0.5,0.5,1,true,CycleMethod.NO_CYCLE, radialStops:_*)
       case _ => println("WARNING: not implemented yet!"); null
     }
   }
