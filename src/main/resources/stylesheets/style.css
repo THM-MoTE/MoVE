@@ -33,6 +33,9 @@
 
 }
 
+.none-stroke {
+  -fx-stroke: null;
+}
 .solid-stroke {
   -fx-stroke-dash-array: null;
 }

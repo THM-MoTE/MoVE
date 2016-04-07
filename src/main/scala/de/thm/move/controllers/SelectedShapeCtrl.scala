@@ -26,6 +26,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
 
   private val linePatternToCssClass: Map[LinePattern.LinePattern, String] =
     Map(
+      LinePattern.None -> "none-stroke",
       LinePattern.Solid -> "solid-stroke",
       LinePattern.Dash -> "dash-stroke",
       LinePattern.Dot -> "dotted-stroke",
