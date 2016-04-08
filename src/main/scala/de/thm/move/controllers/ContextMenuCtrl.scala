@@ -71,16 +71,28 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
 
   private def onBecierPressed(ae:ActionEvent, polygon:QuadCurveTransformable): Unit = {
     val curvedShape = polygon.toCurvedShape
-    changeLike.removeShape(polygon)
-    changeLike.addShape(curvedShape)
-    changeLike.addNode(curvedShape.getAnchors)
+    history.execute {
+      changeLike.removeShape(polygon)
+      changeLike.addShape(curvedShape)
+      changeLike.addNode(curvedShape.getAnchors)
+    } {
+      changeLike.removeShape(curvedShape)
+      changeLike.addShape(polygon)
+      changeLike.addNode(polygon.getAnchors)
+    }
   }
 
   private def onUnsmoothPressed(ae:ActionEvent, curved:AbstractQuadCurveShape): Unit = {
     val uncurvedShape = curved.toUncurvedShape
-    changeLike.removeShape(curved)
-    changeLike.addShape(uncurvedShape)
-    changeLike.addNode(uncurvedShape.getAnchors)
+    history.execute {
+      changeLike.removeShape(curved)
+      changeLike.addShape(uncurvedShape)
+      changeLike.addNode(uncurvedShape.getAnchors)
+    } {
+      changeLike.removeShape(uncurvedShape)
+      changeLike.addShape(curved)
+      changeLike.addNode(curved.getAnchors)
+    }
   }
 
   private def onDuplicateElementPressed(ae:ActionEvent, shape:ResizableShape): Unit = {
