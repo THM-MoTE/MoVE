@@ -25,7 +25,17 @@ package object parser {
        |model $modelname
        | annotation(
        |  $content
-       | )
+       | );
        |end $modelname;
      """.stripMargin
+
+  def graphicModel(modelname:String, content:String):String = {
+    annotationModel(modelname,
+    s"""
+       |Icon( graphics = {
+       |$content
+       |})
+     """.stripMargin
+    )
+  }
 }
