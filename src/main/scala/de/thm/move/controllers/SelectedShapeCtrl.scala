@@ -11,6 +11,8 @@ import de.thm.move.models.FillPattern
 import java.util.function.Predicate
 import javafx.scene.paint._
 
+import scala.collection.JavaConversions._
+
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.
  */
@@ -135,11 +137,27 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     coloredSelectedShape.zip(linePatternToCssClass.get(linePattern)) foreach {
       case (shape, cssClass) =>
       //remove old stroke style
-      shape.getStyleClass().removeIf(new Predicate[String]() {
-          override def test(str:String): Boolean = str.`matches`(".*-stroke")
-        })
-      shape.getStyleClass().add(cssClass)
-      shape.linePattern.set(linePattern)
+      val removeOldCss: (String) => Unit = { regex =>
+        shape.getStyleClass().removeIf(new Predicate[String]() {
+            override def test(str:String): Boolean = str.`matches`(regex)
+          })
+      }
+      val cssRegex = ".*-stroke"
+
+      val oldCss = shape.getStyleClass().find(_.`matches`(cssRegex))
+      val oldLinePattern = shape.linePattern.get
+
+      history.execute {
+        removeOldCss(cssRegex)
+        shape.getStyleClass().add(cssClass)
+        shape.linePattern.set(linePattern)
+      } {
+        oldCss foreach { css =>
+          removeOldCss(cssRegex)
+          shape.getStyleClass().add(css)
+          shape.linePattern.set(oldLinePattern)
+        }
+      }
     }
 
   def setFillPattern(fillPattern:FillPattern.FillPattern): Unit =
