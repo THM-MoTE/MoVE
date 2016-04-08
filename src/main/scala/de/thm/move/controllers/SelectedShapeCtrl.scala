@@ -151,7 +151,14 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
       } foreach { case (shape, fillColor, strokeColor) =>
       println("set fill: "+fillPattern)
       val newFillColor = getFillColor(fillPattern, fillColor, strokeColor)
-      shape.setFillColor(newFillColor)
-      shape.fillPatternProperty.set(fillPattern)
+      val oldFillProperty = shape.fillPatternProperty.get
+      val oldFillGradient = shape.getFillColor
+      history.execute {
+        shape.setFillColor(newFillColor)
+        shape.fillPatternProperty.set(fillPattern)
+      } {
+        shape.setFillColor(oldFillGradient)
+        shape.fillPatternProperty.set(oldFillProperty)
+      }
     }
 }
