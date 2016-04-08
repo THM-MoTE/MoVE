@@ -105,7 +105,7 @@ class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) e
                 c.setWidth(deltaX)
                 c.setHeight(deltaY)
               }
-            case ba: BoundedAnchors =>
+            case ba: RectangleLike =>
               if(drawConstraintProperty.get) {
                 val tmpDelta = deltaX min deltaY
                 ba.setWidth(tmpDelta)

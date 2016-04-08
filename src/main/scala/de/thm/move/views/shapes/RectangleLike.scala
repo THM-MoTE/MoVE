@@ -17,7 +17,7 @@ import de.thm.move.models.CommonTypes._
 import de.thm.move.views.Anchor
 import de.thm.move.Global._
 
-trait BoundedAnchors {
+trait RectangleLike {
   self: ResizableShape =>
 
   protected val adjustCoordinates:Boolean = true
@@ -41,7 +41,7 @@ trait BoundedAnchors {
   }
 
   /** Copies the position of '''other''' onto this element */
-  def copyPosition( other:BoundedAnchors with ResizableShape ): Unit = {
+  def copyPosition( other:RectangleLike with ResizableShape ): Unit = {
       this.setXY(other.getXY)
       this.setWidth(other.getWidth)
       this.setHeight(other.getHeight)

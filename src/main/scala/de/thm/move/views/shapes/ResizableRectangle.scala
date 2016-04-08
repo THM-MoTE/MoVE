@@ -20,7 +20,7 @@ import de.thm.move.Global
 class ResizableRectangle(
             startPoint:Point,
             width:Double,
-            height:Double) extends Rectangle(startPoint._1, startPoint._2, width, height) with ResizableShape with BoundedAnchors with ColorizableShape {
+            height:Double) extends Rectangle(startPoint._1, startPoint._2, width, height) with ResizableShape with RectangleLike with ColorizableShape {
   private val (x,y) = startPoint
 
   override def getTopLeft:Point = (getX, getY)
