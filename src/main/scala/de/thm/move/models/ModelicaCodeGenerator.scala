@@ -218,6 +218,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
          |${spaces}extent = {${start}, ${end}},
          |${spaces}fileName = "$uri"
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+    case _ => throw new IllegalArgumentException(s"Can't generate mdoelica code for: $shape")
   }
 
 
