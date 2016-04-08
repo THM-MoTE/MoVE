@@ -15,6 +15,7 @@ abstract class ShapeElement() extends ModelicaAst
 abstract class ColoredShapeElement(fillColor:Color,
                                    fillPattern: String,
                                    strokeColor:Color,
+                                   strokeSize: Double,
                                    strokePattern: String) extends ShapeElement
 case class RectangleElement(start:Point,
                             width:Double,
@@ -22,5 +23,6 @@ case class RectangleElement(start:Point,
                             fillColor:Color,
                             fillPattern: String,
                             strokeColor:Color,
+                            strokeSize: Double,
                             strokePattern: String
-                            ) extends ColoredShapeElement(fillColor, fillPattern, strokeColor, strokePattern)
+                            ) extends ColoredShapeElement(fillColor, fillPattern, strokeColor, strokeSize, strokePattern)
