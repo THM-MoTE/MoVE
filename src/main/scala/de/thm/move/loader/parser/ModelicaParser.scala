@@ -43,7 +43,7 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
     "coordinateSystem" ~>"(" ~> extension <~ ")" ^^ CoordinateSystem
 
   def extension:Parser[(Point,Point)] =
-    ("{"~> point <~ ",") ~ point <~ "}" ^^ { case p1 ~ p2 => (p1,p2) }
+    "extent" ~> "=" ~> ("{"~> point <~ ",") ~ point <~ "}" ^^ { case p1 ~ p2 => (p1,p2) }
 
   def point:Parser[Point] =
     ("{" ~> numberParser <~ ",") ~ numberParser <~ "}" ^^ {
@@ -70,7 +70,7 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
         val endP = ext.tail.head
         val w = endP.x
         val h = endP.y
-        RectangleElement(start,w,h,fCol,fp, lCol,lp)
+        RectangleElement(start,w,h,fCol,fp, lCol,lThik, lp)
     }
 
   val lineColor = "lineColor" ~> "=" ~> color
