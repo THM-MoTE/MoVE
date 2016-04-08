@@ -139,7 +139,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
           override def test(str:String): Boolean = str.`matches`(".*-stroke")
         })
       shape.getStyleClass().add(cssClass)
-      shape.setLinePattern(linePattern)
+      shape.linePattern.set(linePattern)
     }
 
   def setFillPattern(fillPattern:FillPattern.FillPattern): Unit =

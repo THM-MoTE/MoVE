@@ -16,10 +16,8 @@ import javafx.beans.property.ObjectProperty
 trait ColorizableShape {
   self: Shape =>
 
-  //TODO change into object property
-  private var linePattern:LinePattern.Value = LinePattern.Solid
-  def setLinePattern(lp:LinePattern.LinePattern) = linePattern = lp
-  def getLinePattern: LinePattern.LinePattern = linePattern
+  val linePattern:ObjectProperty[LinePattern.Value] =
+    new SimpleObjectProperty(LinePattern.Solid)
 
   val fillPatternProperty:ObjectProperty[FillPattern.Value] =
     new SimpleObjectProperty(FillPattern.Solid)

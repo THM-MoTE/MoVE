@@ -52,7 +52,7 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
   }
 
   private def genLinePattern(shape:ColorizableShape):String = {
-    val linePattern = LinePattern.toString + "." + shape.getLinePattern.toString
+    val linePattern = LinePattern.toString + "." + shape.linePattern.get.toString
     s"pattern = ${linePattern}"
   }
 
