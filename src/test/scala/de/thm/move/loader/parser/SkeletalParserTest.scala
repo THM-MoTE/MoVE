@@ -129,6 +129,61 @@ class SkeletalParserTest {
     println(erg33)
   }
 
+  @Test
+  def orderDontMatter: Unit = {
+    val rect =
+      """
+        |model abc
+        | annotation(
+        |   Icon(
+        |    coordinateSystem (
+        |      extent = {{0,0},{756,504}}
+        |    ),
+        |   graphics = {
+        |Rectangle(
+        |extent = {{100,300}, {400,100}},
+        |        lineColor = {50,45,20},
+        |
+        |        pattern = LinePattern.DashDot,
+        |        lineThickness = 3.0,
+        |
+        |        fillColor = {255,30,100},
+        |        fillPattern = FillPattern.VerticalCylinder
+        |      )
+        |    })
+        |    );
+        |end abc;
+      """.stripMargin
+
+    val erg = withParseSuccess(rect)
+    println(erg)
+
+    val rect2 =
+      """
+        |model abc
+        | annotation(
+        |   Icon(
+        |    coordinateSystem (
+        |      extent = {{0,0},{756,504}}
+        |    ),
+        |   graphics = {
+        |Rectangle(
+        |extent = {{100,300}, {400,100}},
+        |        lineColor = {50,45,20,
+        |
+        |        pattern = LinePattern.DashDot,
+        |        lineThickness = 3.0,
+        |
+        |        fillColor = {255,30,100},
+        |        fillPattern = FillPattern.VerticalCylinder
+        |      )
+        |    })
+        |    );
+        |end abc;
+      """.stripMargin
+
+    withException(rect2)
+  }
 
   @Test
   def ellipseTest:Unit = {
