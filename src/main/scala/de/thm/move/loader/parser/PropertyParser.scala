@@ -32,6 +32,12 @@ trait PropertyParser {
       case NoSuccess(msg,_) => throw new ParsingError(msg)
     }.getOrElse(default)
 
+  def getPropertyValue[A](map:Map[String,String], key:String)(parser:Parser[A]): A =
+    map.get(key).map(parse(parser,_)).map {
+      case Success(v,_) => v
+      case NoSuccess(msg,_) => throw new ParsingError(msg)
+    }.getOrElse(throw new ParsingError("property $key has to be defined!"))
+  
   val value:Parser[String] = ".+".r
 /*
   val lineColor = "lineColor" ~> "=" ~> color
