@@ -15,10 +15,19 @@ trait PropertyParser {
   protected val identRegex = "[a-zA-Z_][a-zA-Z0-9_\\.]*".r
   protected val numberRegex = "-?[0-9]+".r
 
+  @annotation.tailrec
+  private def containsDuplicates[A](xs:List[A], seen:Set[A] = Set[A]()): Boolean = xs match {
+    case hd::tl if seen.contains(hd) => true
+    case hd::tl => containsDuplicates(tl, seen + hd)
+  }
+
   def properties(parsers:Parser[(String, String)]*):Parser[Map[String,String]] = {
     val oredParser = parsers.tail.foldLeft(parsers.head)(_|_)
     val propertiesListParser = rep(oredParser)
-    propertiesListParser.map(_.toMap)
+    propertiesListParser.map { tuples =>
+      if(containsDuplicates(tuples)) throw new ParsingError("Duplicate definitions of properties!")
+      else tuples.toMap
+    }
   }
 
   def propertyKeys(keys:String*):Parser[Map[String,String]] = properties(keys.map(property):_*)
@@ -37,7 +46,7 @@ trait PropertyParser {
       case Success(v,_) => v
       case NoSuccess(msg,_) => throw new ParsingError(msg)
     }.getOrElse(throw new ParsingError("property $key has to be defined!"))
-  
+
   val value:Parser[String] = ".+".r
 /*
   val lineColor = "lineColor" ~> "=" ~> color
