@@ -5,6 +5,8 @@ import java.nio.charset.StandardCharsets
 
 import scala.util._
 
+import de.thm.move.loader.parser.ast._
+
 package object parser {
   private  val parser:ModelicaParserLike = new ModelicaParser
   def parse(str:String): Try[Model] =
