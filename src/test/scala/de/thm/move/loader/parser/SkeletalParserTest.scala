@@ -295,7 +295,7 @@ class SkeletalParserTest {
       |      )
       """.stripMargin
 
-      val expEllipse = 
+      val expEllipse =
         Model("ellipse",
         List(Icon(
           None,
@@ -314,7 +314,91 @@ class SkeletalParserTest {
         ))
         )
 
-        assertEquals(expEllipse, withParseSuccess(graphicModel("ellipse", str)))
+      assertEquals(expEllipse, withParseSuccess(graphicModel("ellipse", str)))
+
+      val errorStr =
+        """
+        |      Ellipse(
+        |        lineColor = {0,0,0},
+        |        fillColor = {255,0,0},
+        |        lineThickness = 4.0,
+        |        pattern = LinePattern.DashDot,
+        |        fillPattern = FillPattern.VerticalCylinder
+        |      )
+        """.stripMargin
+
+      withException(errorStr)
+
+
+      val str2 =
+        """
+        |      Ellipse(
+        |        fillColor = {255,0,0},
+        |        extent = {{100,239},{342,25}}
+        |        lineThickness = 4.0,
+        |        lineColor = {0,0,0},
+        |        fillPattern = FillPattern.VerticalCylinder
+        |        pattern = LinePattern.DashDot,
+        |      )
+        """.stripMargin
+
+        assertEquals(expEllipse, withParseSuccess(graphicModel("ellipse", str2)))
+  }
+
+  @Test
+  def lineTest: Unit = {
+    val lineStr =
+      """
+      |      Line(
+      |        color = {0,255,0},
+      |        lineThickness = 2.0,
+      |        pattern = LinePattern.None,
+      |        points = {{100,239},{342,25}, {50,50}},
+      |        smooth = Smooth.Bezier
+      |      )
+      """.stripMargin
+
+      val lineExp =
+        Model("Lines",
+        List(Icon(
+          None,
+          List(PathElement(
+            GraphicItem(),
+            List( (100,239),(342,25),(50,50) ),
+            new Color(0,1,0, 1), //= rgb(0,255,0) = lightest green
+            2.0,
+            "LinePattern.None",
+            "Smooth.Bezier"
+          )
+        )
+      ))
+    )
+    assertEquals(lineExp, withParseSuccess(graphicModel("Lines", lineStr)))
+
+    val lineStr2 =
+      """
+      |      Line(
+      |        color = {0,255,0},
+      |        lineThickness = 2.0,
+      |        pattern = LinePattern.None,
+      |        points = {},
+      |        smooth = Smooth.Bezier
+      |      )
+      """.stripMargin
+
+      withException(graphicModel("Lines", lineStr2))
+
+      val lineStr3 =
+        """
+        |      Line(
+        |        color = {0,255,0},
+        |        lineThickness = 2.0,
+        |        pattern = LinePattern.None,
+        |        smooth = Smooth.Bezier
+        |      )
+        """.stripMargin
+
+        withException(graphicModel("Lines", lineStr3))
 
   }
 
