@@ -41,7 +41,10 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
         ")" ^^  { case coord ~ graphics => Icon(coord, graphics) }
 
   def coordinateSys: Parser[CoordinateSystem] =
-    "coordinateSystem" ~>"(" ~> extension <~ ")" ^^ CoordinateSystem
+    "coordinateSystem" ~>"(" ~> extensionParser <~ ")" ^^ CoordinateSystem
+
+  def extensionParser:Parser[Extent] =
+    "extent" ~> "=" ~> extension
 
   def graphic:Parser[List[ShapeElement]] =
    "graphics" ~>  "=" ~> "{" ~> repsep(graphics, ",") <~ "}"
