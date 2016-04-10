@@ -35,7 +35,7 @@ trait PropertyParser {
   def property(key:String):Parser[(String,String)] =
     (key <~ "=") ~ value ^^ { case k ~ v => (k,v) }
 
-  def getPropertyValue[A](map:Map[String,String], key:String)(parser:Parser[A], default: => A): A =
+  def getPropertyValue[A](map:Map[String,String], key:String, default: => A)(parser:Parser[A]): A =
     map.get(key).map(parse(parser,_)).map {
       case Success(v,_) => v
       case NoSuccess(msg,_) => throw new ParsingError(msg)
@@ -57,8 +57,7 @@ trait PropertyParser {
   val lineThickness = "lineThickness" ~> "=" ~> decimalNo
 */
   def extension:Parser[(Point,Point)] =
-    "extent" ~> "=" ~> ("{"~> point <~ ",") ~ point <~ "}" ^^ { case p1 ~ p2 => (p1,p2) }
-
+    ("{"~> point <~ ",") ~ point <~ "}" ^^ { case p1 ~ p2 => (p1,p2) }
 
   def point:Parser[Point] =
     ("{" ~> numberParser <~ ",") ~ numberParser <~ "}" ^^ {
@@ -74,21 +73,31 @@ trait PropertyParser {
 
   def numberParser:Parser[Double] = numberRegex ^^ { _.toDouble }
   val decimalNo:Parser[Double]
+  val bool:Parser[Boolean] = ("true" | "false") ^^ {
+    case "true" => true
+    case "false" => false
+  }
 }
 
 object PropertyParser {
   //property keys
+  val visible = "visible"
+  val origin = "origin"
   val lineCol = "lineColor"
   val linePatt = "pattern"
   val fillCol = "fillColor"
   val fillPatt = "fillPattern"
   val extent = "extent"
   val lineThick = "lineThickness"
+  val radius = "radius"
 
   //default values
+  val defaultVisible = true
+  val defaultOrigin = (0.0,0.0)
   val defaultCol = Color.BLACK
   val defaultLinePatt = "LinePattern.Solid"
   val defaultFillPatt = "FillPattern.Solid"
   val defaultLineThick = 1.0
   val defaultRectangleExtent = List( (0.0,0.0), (0.0,0.0) )
+  val defaultRadius = 0.0
 }
