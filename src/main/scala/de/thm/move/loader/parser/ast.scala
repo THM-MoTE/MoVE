@@ -39,7 +39,8 @@ object ast {
 
   abstract class PathLikeElement(points:List[Point]) extends ShapeElement
 
-  case class PathElement(points:List[Point],
+  case class PathElement(gItem:GraphicItem,
+                        points:List[Point],
                         color:Color = Color.BLACK,
                         strokeSize: Double = 1.0,
                         strokePattern: String = "LinePattern.Solid",
