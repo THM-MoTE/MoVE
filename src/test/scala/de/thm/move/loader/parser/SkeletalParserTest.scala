@@ -285,18 +285,37 @@ class SkeletalParserTest {
   def ellipseTest:Unit = {
     val str =
       """
-      |graphics = {
       |      Ellipse(
       |        lineColor = {0,0,0},
       |        fillColor = {255,0,0},
       |        lineThickness = 4.0,
       |        pattern = LinePattern.DashDot,
       |        fillPattern = FillPattern.VerticalCylinder,
-      |        extent = {{100,239},{342,25}},
-      |        endAngle = 360
+      |        extent = {{100,239},{342,25}}
       |      )
-      |}
       """.stripMargin
+
+      val expEllipse = 
+        Model("ellipse",
+        List(Icon(
+          None,
+          List(
+            Ellipse(
+              GraphicItem(defaultVisible, defaultOrigin, Rotation()),
+              FilledShape(
+                Color.RED,
+                "FillPattern.VerticalCylinder",
+                Color.BLACK,
+                4.0,
+                "LinePattern.DashDot"
+              ),
+              ( (100,239),(342,25) )
+            ))
+        ))
+        )
+
+        assertEquals(expEllipse, withParseSuccess(graphicModel("ellipse", str)))
+
   }
 
   @Test
