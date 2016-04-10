@@ -51,22 +51,9 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
 
   def graphics:Parser[ShapeElement] = (
     "Rectangle" ~> "(" ~> rectangleFields <~ ")"
+    | "Ellipse" ~> "(" ~> ellipseFields <~ ")"
+    | "Line" ~> "(" ~> lineFields <~ ")"
     )
-
-  /*def rectangleFields:Parser[RectangleElement] =
-    (lineColor  <~ ",") ~
-    (fillColor <~ ",") ~
-    (lineThickness <~ ",") ~
-    (linePattern <~ ",") ~
-    (fillPattern <~ ",") ~
-    extent ^^ {
-      case lCol ~ fCol ~ lThik ~ lp ~ fp ~ ext =>
-        val start = ext.head
-        val endP = ext.tail.head
-        val w = endP.x
-        val h = endP.y
-        RectangleElement(start,w,h,fCol,fp, lCol,lThik, lp)
-    }*/
 
   def rectangleFields:Parser[RectangleElement] =
     propertyKeys(visible, origin, lineCol,linePatt,fillCol,
@@ -77,6 +64,30 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
         RectangleElement(gi,fs, extent=ext)
     }
 
+
+  def lineFields:Parser[PathElement] =
+    propertyKeys(visible,origin,pointsKey,colorKey,linePatt,lineThick,arrowKey,smooth) ^^ {
+      map =>
+        PathElement(getGraphicItem(map),
+                    getPropertyValue(map, pointsKey)(points),
+                    getPropertyValue(map, colorKey, defaultCol)(color),
+                    getPropertyValue(map, lineThick, defaultLineThick)(numberParser),
+                    getPropertyValue(map, linePatt, defaultLinePatt)(ident),
+                    getPropertyValue(map, smooth, defaultSmooth)(ident),
+                    getPropertyValue(map, arrowKey, defaultArrow)(arrow),
+                    getPropertyValue(map, arrowSize, defaultArrowSize)(numberParser)
+                  )
+
+    }
+
+  def ellipseFields:Parser[Ellipse] =
+    propertyKeys(visible,origin,lineCol,linePatt,fillCol,
+      fillPatt,extent,lineThick) ^^ { map =>
+        val gi = getGraphicItem(map)
+        val fs = getFilledShape(map)
+        val ext = getPropertyValue(map, extent)(extension)
+        Ellipse(gi,fs, extent=ext)
+      }
 /*
   def rotation:Parser[Rotation] =
     ("rotation" ~> "(" ~> "quantity" ~> "=" ~> "\"") ~> ident <~ ("\"" <~ "," <~

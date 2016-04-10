@@ -65,6 +65,9 @@ trait PropertyParser {
       case x ~ y => (x,y)
     }
 
+  def arrow:Parser[(String, String)] =
+    ("{"~> ident <~ ",") ~ ident <~ "}" ^^ { case a1 ~ a2 => (a1,a2) }
+
   def points:Parser[List[Point]] = "{" ~> rep1sep(point, ",") <~ "}"
 
   def color:Parser[Color] =
@@ -74,6 +77,7 @@ trait PropertyParser {
 
   def numberParser:Parser[Double] = numberRegex ^^ { _.toDouble }
   val decimalNo:Parser[Double]
+  val ident:Parser[String]
   val bool:Parser[Boolean] = ("true" | "false") ^^ {
     case "true" => true
     case "false" => false
@@ -91,6 +95,11 @@ object PropertyParser {
   val extent = "extent"
   val lineThick = "lineThickness"
   val radius = "radius"
+  val colorKey = "color"
+  val arrowKey = "arrow"
+  val arrowSize = "arrowSize"
+  val smooth = "smooth"
+  val pointsKey = "points"
 
   //default values
   val defaultVisible = true
@@ -101,4 +110,7 @@ object PropertyParser {
   val defaultLineThick = 1.0
   val defaultRectangleExtent = List( (0.0,0.0), (0.0,0.0) )
   val defaultRadius = 0.0
+  val defaultArrow = ("Arrow.None", "Arrow.None")
+  val defaultArrowSize = 3.0
+  val defaultSmooth = "Smooth.None"
 }
