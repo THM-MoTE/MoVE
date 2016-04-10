@@ -2,6 +2,7 @@ package de.thm.move.loader.parser
 
 import javafx.scene.paint.Color
 
+import de.thm.move.loader.parser.ast._
 import de.thm.move.loader.parser.ModelicaParserLike.ParsingError
 import de.thm.move.loader.parser.PropertyParser._
 
@@ -14,7 +15,6 @@ import java.io.InputStream
 
 import de.thm.move.models.CommonTypes._
 import de.thm.move.util.PointUtils._
-
 
 class ModelicaParser extends JavaTokenParsers with ImplicitConversions with ModelicaParserLike with PropertyParser {
   val decimalNo = decimalNumber ^^ { _.toDouble }
@@ -66,20 +66,33 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
     }*/
 
   def rectangleFields:Parser[RectangleElement] =
-    propertyKeys(lineCol,linePatt,fillCol,
-      fillPatt,extent,lineThick) ^^ { map =>
-      val lCol = getPropertyValue(map, lineCol)(color, defaultCol)
-      val fCol = getPropertyValue(map, fillCol)(color, defaultCol)
-      val lPatt = getPropertyValue(map, linePatt)(ident, defaultLinePatt)
-      val fPatt = getPropertyValue(map, fillPatt)(ident, defaultFillPatt)
-      val lThick = getPropertyValue(map, lineThick)(numberParser, defaultLineThick)
-      val ext = getPropertyValue(map, extent)(points, defaultRectangleExtent)
-      val start = ext.head
-      val end = ext.tail.head
-      val w = end.x
-      val h = end.y
-      RectangleElement(start,w,h,fCol,fPatt,lCol, lThick, lPatt)
+    propertyKeys(visible, origin, lineCol,linePatt,fillCol,
+      fillPatt,extent,lineThick, radius) ^^ { map =>
+        val gi = getGraphicItem(map)
+        val fs = getFilledShape(map)
+        val ext = getPropertyValue(map, extent)(extension)
+        RectangleElement(gi,fs, extent=ext)
     }
+
+/*
+  def rotation:Parser[Rotation] =
+    ("rotation" ~> "(" ~> "quantity" ~> "=" ~> "\"") ~> ident <~ ("\"" <~ "," <~
+    "unit" ~> "=" "\"") ~> ident <~ ("\"" <~ ")" ~ "=" ~ decimalNo ^^ {
+      case quantity ~ unit ~ deg => Rotation(quantity,unit,deg)
+    }*/
+
+  def getGraphicItem(map:Map[String,String]):GraphicItem = {
+    GraphicItem(getPropertyValue(map, visible, defaultVisible)(bool),
+                getPropertyValue(map, origin, defaultOrigin)(point)
+                )
+  }
+
+  def getFilledShape(map:Map[String,String]):FilledShape =
+    FilledShape(getPropertyValue(map, fillCol, defaultCol)(color),
+                getPropertyValue(map, fillPatt, defaultFillPatt)(ident),
+                getPropertyValue(map, lineCol, defaultCol)(color),
+                getPropertyValue(map, lineThick, defaultLineThick)(numberParser),
+                getPropertyValue(map, linePatt, defaultLinePatt)(ident))
 
   def parse(stream:InputStream): Try[Model] = Try {
     parseAll(start, new InputStreamReader(new BufferedInputStream(stream))) match {
