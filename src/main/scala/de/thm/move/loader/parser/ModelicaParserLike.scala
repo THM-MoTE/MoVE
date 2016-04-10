@@ -5,6 +5,8 @@ import java.nio.file.Path
 import java.nio.file.Files
 import scala.util._
 
+import de.thm.move.loader.parser.ast._
+
 trait ModelicaParserLike {
 
   def parse(path:Path): Try[Model] = {
