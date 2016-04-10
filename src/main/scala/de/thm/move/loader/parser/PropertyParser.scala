@@ -19,6 +19,7 @@ trait PropertyParser {
   private def containsDuplicates[A](xs:List[A], seen:Set[A] = Set[A]()): Boolean = xs match {
     case hd::tl if seen.contains(hd) => true
     case hd::tl => containsDuplicates(tl, seen + hd)
+    case Nil => false
   }
 
   def properties(parsers:Parser[(String, String)]*):Parser[Map[String,String]] = {
