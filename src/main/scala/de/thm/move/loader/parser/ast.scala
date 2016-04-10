@@ -37,5 +37,38 @@ object ast {
                               radius:Double = 0.0
                               ) extends ShapeElement
 
-  //case class PathElement extends ShapeElement
+  abstract class PathLikeElement(points:List[Point]) extends ShapeElement
+
+  case class PathElement(points:List[Point],
+                        color:Color = Color.BLACK,
+                        strokeSize: Double = 1.0,
+                        strokePattern: String = "LinePattern.Solid",
+                        smooth:String = "Smooth.None",
+                        arrow:(String,String) = ("Arrow.None", "Arrow.None"),
+                        arrowSize:Double = 3.0
+                      ) extends PathLikeElement(points)
+
+  case class Polygon(gItem:GraphicItem,
+                    filledShape:FilledShape,
+                    points:List[Point],
+                    smooth:String = "Smooth.None"
+                  ) extends PathLikeElement(points)
+
+  case class Ellipse(gItem:GraphicItem,
+                    filledShape:FilledShape,
+                    extent:Extent,
+                    startAngle:Rotation = Rotation(),
+                    endAngle:Rotation = Rotation()
+                    ) extends ShapeElement
+
+  abstract class AbstractImage(gItem:GraphicItem,
+                              extent:Extent) extends ShapeElement
+  case class ImageURI(gItem:GraphicItem,
+                      extent:Extent,
+                      fileName:String) extends AbstractImage(gItem, extent)
+
+  case class ImageBase64(gItem:GraphicItem,
+                          extent:Extent,
+                          imageSource:String
+                          ) extends AbstractImage(gItem, extent)
 }
