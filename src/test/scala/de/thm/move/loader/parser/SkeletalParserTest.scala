@@ -2,9 +2,13 @@ package de.thm.move.loader.parser
 
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
+import javafx.scene.paint.Color
 
 import org.junit.Assert._
 import org.junit.Test
+
+import de.thm.move.loader.parser.PropertyParser._
+import de.thm.move.loader.parser.ast._
 
 class SkeletalParserTest {
 
@@ -21,7 +25,13 @@ class SkeletalParserTest {
         |end test;
       """.stripMargin
 
-    withParseSuccess(modelTest)
+    val modelTestErg = withParseSuccess(modelTest)
+    val modelTestExpec =
+      Model("test",
+        List(
+          Icon(None, Nil)
+        ))
+    assertEquals(modelTestExpec, modelTestErg)
 
     val rect =
       """
@@ -41,7 +51,34 @@ class SkeletalParserTest {
         |end abc;
       """.stripMargin
     val erg = withParseSuccess(rect)
-    println(erg)
+
+    val expectedRect =
+      RectangleElement(
+        GraphicItem(defaultVisible, defaultOrigin, Rotation()),
+        FilledShape(
+          Color.RED,
+          "FillPattern.HorizontalCylinder",
+          Color.BLACK,
+          4.0,
+          "LinePattern.Solid"
+        ),
+        "BorderPattern.None",
+        ( (51,471),(400,299) )
+      )
+
+    val rectExp =
+      Model("abc",
+        List(
+          Icon(
+            None,
+            List(
+              expectedRect
+            )
+          )
+        )
+      )
+
+    assertEquals(rectExp, erg)
 
     val rectRect =
       """
@@ -86,8 +123,16 @@ class SkeletalParserTest {
       """.stripMargin
 
     val erg2 = withParseSuccess(rectRect)
-
-    println(erg2)
+    val rectangles = List.fill(4)(expectedRect)
+    val expErg2 =
+      Model("abc",
+        List(
+          Icon(
+            None,
+            rectangles
+          )
+        )
+      )
 
     val rect2 =
       s"""
@@ -101,7 +146,28 @@ class SkeletalParserTest {
          |      )
        """.stripMargin
     val erg3 = withParseSuccess(graphicModel("rect2", rect2))
-    println(erg3)
+    val exp3 =
+      Model("rect2",
+        List(
+          Icon(
+            None,
+            List(RectangleElement(
+              GraphicItem(defaultVisible, defaultOrigin, Rotation()),
+              FilledShape(
+                new Color(255.0/255.0, 30.0/255.0, 100.0/255.0, 1.0),
+                "FillPattern.VerticalCylinder",
+                new Color(50.0/255.0, 45.0/255.0, 20.0/255.0, 1.0),
+                3.0,
+                "LinePattern.DashDot"
+              ),
+              "BorderPattern.None",
+              ( (100,300),(400,100) )
+            ))
+          )
+        )
+      )
+
+      assertEquals(exp3, erg3)
 
     val rect3 =
       s"""
@@ -126,7 +192,17 @@ class SkeletalParserTest {
        """.stripMargin
 
     val erg33 = withParseSuccess(rect3)
-    println(erg33)
+    val exp33 =
+      Model("abc",
+        List(
+          Icon(
+            Some(CoordinateSystem(
+              ( (0,0),(756,504) )
+            )),
+            List(expectedRect)
+          )
+        )
+      )
   }
 
   @Test
@@ -141,6 +217,7 @@ class SkeletalParserTest {
         |    ),
         |   graphics = {
         |Rectangle(
+        |origin = {5,20},
         |extent = {{100,300}, {400,100}},
         |        lineColor = {50,45,20},
         |
@@ -156,7 +233,26 @@ class SkeletalParserTest {
       """.stripMargin
 
     val erg = withParseSuccess(rect)
-    println(erg)
+    val expErg =
+      Model("abc",
+        List(Icon(
+          Some(CoordinateSystem(((0.0,0.0),(756.0,504.0)))),
+          List(
+            RectangleElement(
+              GraphicItem(defaultVisible, (5.0,20.0), Rotation()),
+              FilledShape(
+                new Color(255.0/255.0, 30.0/255.0, 100.0/255.0, 1.0),
+                "FillPattern.VerticalCylinder",
+                new Color(50.0/255.0, 45.0/255.0, 20.0/255.0, 1.0),
+                3.0,
+                "LinePattern.DashDot"
+              ),
+              "BorderPattern.None",
+              ( (100,300),(400,100) )
+            ))
+        ))
+        )
+    assertEquals(expErg, erg)
 
     val rect2 =
       """
