@@ -180,7 +180,7 @@ class ConverterTest {
         ))
       )
 
-    val  conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head)
-    conv.getShapes(ast).head.asInstanceOf[ResizableImage]
+    //val  conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head)
+    //conv.getShapes(ast).head.asInstanceOf[ResizableImage]
   }
 }

@@ -40,6 +40,14 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
     (p.x, h-p.y)
   }
 
+  private def rectangleLikeDimensions(ext:Extent):(Point,Double,Double) = {
+    //TODO what happens if origin is defined? (extent = relative to origin)
+    val (p1,p2) = ext
+    val convStart = convertPoint(p1)
+    val (w,h) = (p2 - p1).abs
+    (convStart, w,h)
+  }
+
   def getShapes(ast:ModelicaAst):List[ResizableShape] = ast match {
     case Model(_,xs) => xs flatMap getShapes
     case Icon(_,graphics) => graphics map getShape
@@ -48,19 +56,14 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
 
   def getShape(ast:ShapeElement): ResizableShape = ast match {
     case RectangleElement(gi,fs,bp,ext,rad) =>
-      //TODO what happens if origin is defined? (extent = relative to origin)
-      val (p1,p2) = ext
-      val convStart = convertPoint(p1)
-      val (w,h) = (p2 - p1).abs
-      val rect = new ResizableRectangle(convStart, w,h)
+      val (start,w,h) = rectangleLikeDimensions(ext)
+      val rect = new ResizableRectangle(start, w,h)
       applyColor(rect, fs)
       rect.setVisible(gi.visible)
       rect
     case Ellipse(gi, fs, ext, _,_) =>
-      val (p1,p2) = ext
-      val convStart = convertPoint(p1)
-      val (w,h) = (p2 - p1).abs.map(asRadius)
-      val ellipse = new ResizableCircle(convStart, w,h)
+      val (start,w,h) = rectangleLikeDimensions(ext)
+      val ellipse = new ResizableCircle(start, asRadius(w),asRadius(h))
       applyColor(ellipse, fs)
       ellipse.setVisible(gi.visible)
       ellipse
@@ -74,8 +77,6 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
     case pe:PathElement =>
       val points = pe.points.map(convertPoint)
       val path = ResizablePath(points)
-      path.setStrokeColor(pe.color)
-      path.setStrokeWidth(pe.strokeSize)
       path.setVisible(pe.gItem.visible)
       applyLineColor(path, pe.color, pe.strokePattern, pe.strokeSize)
 
@@ -86,6 +87,8 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
       val polygon = ResizablePolygon(points)
       applyColor(polygon, fs)
       polygon.setVisible(gi.visible)
+
+      if(smooth == "Smooth.Bezier") QuadCurvePolygon(polygon)
       polygon
     case ImageURI(gi, ext, uriStr) =>
       val imageName = uriStr.substring(uriStr.lastIndexOf("/")+1, uriStr.length)
@@ -93,10 +96,8 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
       println(uri)
       val img = ShapeFactory.newImage(uri)
 
-      val (p1,p2) = ext
-      val convStart = convertPoint(p1)
-      val (w,h) = (p2 - p1).abs
-      img.setXY(convStart)
+      val (start,w,h) = rectangleLikeDimensions(ext)
+      img.setXY(start)
       img.setWidth(w)
       img.setHeight(h)
       img.setVisible(gi.visible)
