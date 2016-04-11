@@ -94,11 +94,12 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
 
   def ellipseFields:Parser[Ellipse] =
     propertyKeys(visible,origin,lineCol,linePatt,fillCol,
-      fillPatt,extent,lineThick) ^^ { map =>
+      fillPatt,extent,lineThick, endAngle) ^^ { map =>
         val gi = getGraphicItem(map)
         val fs = getFilledShape(map)
         val ext = getPropertyValue(map, extent)(extension)
-        Ellipse(gi,fs, extent=ext)
+        val endAng = getPropertyValue(map, endAngle, defaultEndAngle)(numberParser)
+        Ellipse(gi,fs, extent=ext, endAngle = endAng)
       }
 
 
@@ -108,6 +109,7 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
       val ext = getPropertyValue(map, extent)(extension)
       val base64Opt = map.get(base64).map(identWithoutHyphens)
       val imgUriOpt = map.get(imgUri).map(identWithoutHyphens)
+
       base64Opt.map(ImageBase64(gi,ext,_)).orElse(
         imgUriOpt.map(ImageURI(gi, ext, _))).getOrElse(
           throw new ParsingError("fileName or imageSource has to be defined for Bitmaps!")

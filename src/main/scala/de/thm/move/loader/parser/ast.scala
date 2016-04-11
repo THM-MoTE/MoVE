@@ -58,8 +58,8 @@ object ast {
   case class Ellipse(gItem:GraphicItem,
                     filledShape:FilledShape,
                     extent:Extent,
-                    startAngle:Rotation = Rotation(),
-                    endAngle:Rotation = Rotation()
+                    startAngle:Double = 0.0,
+                    endAngle:Double = 360.0
                     ) extends ShapeElement
 
   abstract class AbstractImage(gItem:GraphicItem,

@@ -105,6 +105,7 @@ object PropertyParser {
   val base64 = "imageSource"
   val imgUri = "fileName"
   val thick = "thickness"
+  val endAngle = "endAngle"
 
   //default values
   val defaultVisible = true
@@ -118,4 +119,5 @@ object PropertyParser {
   val defaultArrow = ("Arrow.None", "Arrow.None")
   val defaultArrowSize = 3.0
   val defaultSmooth = "Smooth.None"
+  val defaultEndAngle = 360.0
 }
