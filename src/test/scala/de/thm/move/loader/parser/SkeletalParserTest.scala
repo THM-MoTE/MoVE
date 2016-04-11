@@ -75,7 +75,7 @@ class SkeletalParserTest {
 
     val expectedRect =
       RectangleElement(
-        GraphicItem(defaultVisible, defaultOrigin, Rotation()),
+        GraphicItem(defaultVisible, defaultOrigin, 0.0),
         FilledShape(
           Color.RED,
           "FillPattern.HorizontalCylinder",
@@ -173,7 +173,7 @@ class SkeletalParserTest {
           Icon(
             None,
             List(RectangleElement(
-              GraphicItem(defaultVisible, defaultOrigin, Rotation()),
+              GraphicItem(defaultVisible, defaultOrigin, 0.0),
               FilledShape(
                 new Color(255.0/255.0, 30.0/255.0, 100.0/255.0, 1.0),
                 "FillPattern.VerticalCylinder",
@@ -260,7 +260,7 @@ class SkeletalParserTest {
           Some(CoordinateSystem(((0.0,0.0),(756.0,504.0)))),
           List(
             RectangleElement(
-              GraphicItem(defaultVisible, (5.0,20.0), Rotation()),
+              GraphicItem(defaultVisible, (5.0,20.0), 0.0),
               FilledShape(
                 new Color(255.0/255.0, 30.0/255.0, 100.0/255.0, 1.0),
                 "FillPattern.VerticalCylinder",
@@ -322,7 +322,7 @@ class SkeletalParserTest {
           None,
           List(
             Ellipse(
-              GraphicItem(defaultVisible, defaultOrigin, Rotation()),
+              GraphicItem(defaultVisible, defaultOrigin),
               FilledShape(
                 Color.RED,
                 "FillPattern.VerticalCylinder",
@@ -407,7 +407,7 @@ class SkeletalParserTest {
           None,
           List(PathElement(
             GraphicItem(),
-            List( (100,239),(342,25),(50,50) ),
+            List( (100.0,239.0),(342.0,25.0),(50.0,50.0) ),
             new Color(0,1,0, 1), //= rgb(0,255,0) = lightest green
             2.0,
             "LinePattern.None",
@@ -479,7 +479,7 @@ class SkeletalParserTest {
             2.0,
             "LinePattern.Solid"
             ),
-            List( (5,10),(20,20),(50,50) ),
+            List( (5.0,10.0),(20.0,20.0),(50.0,50.0) ),
             "Smooth.Bezier"
         )
       )
@@ -506,7 +506,7 @@ class SkeletalParserTest {
         List(Polygon(
           GraphicItem(),
           FilledShape(),
-          List( (5,10),(20,20),(50,50) ),
+          List( (5.0,10.0),(20.0,20.0),(50.0,50.0) ),
           "Smooth.None"
         )
       )

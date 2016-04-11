@@ -17,12 +17,9 @@ object ast {
 
   sealed trait ShapeElement extends ModelicaAst
 
-  case class Rotation(quantity:String="angle",
-                      unit:String="deg",
-                      deg:Double=0.0)
   case class GraphicItem(visible:Boolean = true,
                         origin:Point = (0,0),
-                        rotation: Rotation = Rotation()
+                        rotation: Double = 0.0
                         )
   case class FilledShape(fillColor:Color = Color.BLACK,
                          fillPattern: String = "FillPattern.None",
