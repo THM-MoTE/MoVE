@@ -90,10 +90,10 @@ trait PropertyParser {
   def numberParser:Parser[Double] = numberRegex ^^ { _.toDouble }
   val decimalNo:Parser[Double]
   val ident:Parser[String]
-  val bool:Parser[Boolean] = ("true" | "false") ^^ {
-    case "true" => true
-    case "false" => false
-  }
+  val bool:Parser[Boolean] = (
+    "true" ^^^ true
+    | "false"  ^^^ false
+  )
 }
 
 object PropertyParser {
