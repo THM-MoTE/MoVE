@@ -495,6 +495,76 @@ class SkeletalParserTest {
   }
 
   @Test
+  def imageUriTest: Unit = {
+    val imgStr =
+       """
+       |Bitmap(
+       | visible = true,
+       | origin = {0,0},
+       | extent = { {0,0},{50,100} },
+       | fileName = "modelica://test/quokka.png"
+       |)
+       """.stripMargin
+
+    val expImg =
+      Model("img",
+      List(Icon(
+        None,
+        List(ImageURI(
+          GraphicItem(),
+          extent = ( (0,0),(50,100) ),
+          "modelica://test/quokka.png"
+          )
+          )
+      )))
+    assertEquals(expImg, withParseSuccess(graphicModel("img", imgStr)))
+
+    val imgStr2 =
+      """
+      |Bitmap(
+      | extent = { {0,0},{50,100} },
+      | fileName = "modelica://test/quokka.png"
+      |)
+      """.stripMargin
+
+    assertEquals(expImg, withParseSuccess(graphicModel("img", imgStr2)))
+
+    val imgStr3 =
+      """
+      |Bitmap(
+      | visible = true,
+      | origin = {0,0},
+      | extent = { {0,0},{50,100} },
+      | imageSource = "5546659985164adkcölkhas"
+      |)
+      """.stripMargin
+
+    val img3Exp =
+    Model("img",
+    List(Icon(
+      None,
+      List(ImageBase64(
+        GraphicItem(),
+        extent = ( (0,0),(50,100) ),
+        "5546659985164adkcölkhas"
+        )
+        )
+    )))
+
+    assertEquals(img3Exp, withParseSuccess(graphicModel("img", imgStr3)))
+
+    val imgStr4 =
+      """
+      |Bitmap(
+      | extent = { {0,0},{50,100} },
+      | imageSource = "5546659985164adkcölkhas"
+      |)
+      """.stripMargin
+
+    assertEquals(img3Exp, withParseSuccess(graphicModel("img", imgStr4)))
+  }
+
+  @Test
   def modelFailure: Unit = {
     val model =
       """

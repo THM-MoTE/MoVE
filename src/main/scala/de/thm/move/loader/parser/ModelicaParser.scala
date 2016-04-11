@@ -54,6 +54,7 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
     | "Ellipse" ~> "(" ~> ellipseFields <~ ")"
     | "Line" ~> "(" ~> lineFields <~ ")"
     | "Polygon" ~> "(" ~> polygonFields <~ ")"
+    | "Bitmap" ~> "(" ~> bitmapFields <~ ")"
     )
 
   def rectangleFields:Parser[RectangleElement] =
@@ -99,6 +100,19 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
         val ext = getPropertyValue(map, extent)(extension)
         Ellipse(gi,fs, extent=ext)
       }
+
+
+  def bitmapFields:Parser[AbstractImage] =
+    propertyKeys(visible, origin, extent, base64, imgUri) ^^ { map =>
+      val gi = getGraphicItem(map)
+      val ext = getPropertyValue(map, extent)(extension)
+      val base64Opt = map.get(base64).map(identWithoutHyphens)
+      val imgUriOpt = map.get(imgUri).map(identWithoutHyphens)
+      base64Opt.map(ImageBase64(gi,ext,_)).orElse(
+        imgUriOpt.map(ImageURI(gi, ext, _))).getOrElse(
+          throw new ParsingError("fileName or imageSource has to be defined for Bitmaps!")
+          )
+    }
 /*
   def rotation:Parser[Rotation] =
     ("rotation" ~> "(" ~> "quantity" ~> "=" ~> "\"") ~> ident <~ ("\"" <~ "," <~
@@ -118,6 +132,14 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
                 getPropertyValue(map, lineCol, defaultCol)(color),
                 getPropertyValue(map, lineThick, defaultLineThick)(numberParser),
                 getPropertyValue(map, linePatt, defaultLinePatt)(ident))
+
+  def identWithoutHyphens(str:String):String = {
+    val regex = "\"(.*)\"".r
+    str match {
+      case regex(inner) => inner
+      case _ =>  throw new ParsingError(s"$str doesn't match $regex")
+    }
+  }
 
   def parse(stream:InputStream): Try[Model] = Try {
     parseAll(start, new InputStreamReader(new BufferedInputStream(stream))) match {

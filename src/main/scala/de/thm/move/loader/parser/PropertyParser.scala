@@ -75,6 +75,8 @@ trait PropertyParser {
       case r ~ g ~ b => new Color(r/255,g/255,b/255, 1.0)
     }
 
+  def base64OrRsc:Parser[String] = "fileName" | "imageSource"
+
   def numberParser:Parser[Double] = numberRegex ^^ { _.toDouble }
   val decimalNo:Parser[Double]
   val ident:Parser[String]
@@ -100,6 +102,8 @@ object PropertyParser {
   val arrowSize = "arrowSize"
   val smooth = "smooth"
   val pointsKey = "points"
+  val base64 = "imageSource"
+  val imgUri = "fileName"
 
   //default values
   val defaultVisible = true
