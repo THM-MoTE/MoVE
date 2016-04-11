@@ -104,6 +104,7 @@ object PropertyParser {
   val pointsKey = "points"
   val base64 = "imageSource"
   val imgUri = "fileName"
+  val thick = "thickness"
 
   //default values
   val defaultVisible = true

@@ -372,7 +372,7 @@ class SkeletalParserTest {
       """
       |      Line(
       |        color = {0,255,0},
-      |        lineThickness = 2.0,
+      |        thickness = 2.0,
       |        pattern = LinePattern.None,
       |        points = {{100,239},{342,25}, {50,50}},
       |        smooth = Smooth.Bezier,
@@ -401,7 +401,7 @@ class SkeletalParserTest {
       """
       |      Line(
       |        color = {0,255,0},
-      |        lineThickness = 2.0,
+      |        thickness = 2.0,
       |        pattern = LinePattern.None,
       |        points = {},
       |        smooth = Smooth.Bezier
@@ -414,7 +414,7 @@ class SkeletalParserTest {
         """
         |      Line(
         |        color = {0,255,0},
-        |        lineThickness = 2.0,
+        |        thickness = 2.0,
         |        pattern = LinePattern.None,
         |        smooth = Smooth.Bezier
         |      )

@@ -78,12 +78,12 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
 
 
   def lineFields:Parser[PathElement] =
-    propertyKeys(visible,origin,pointsKey,colorKey,linePatt,lineThick,arrowKey,smooth) ^^ {
+    propertyKeys(visible,origin,pointsKey,colorKey,linePatt,thick,arrowKey,smooth) ^^ {
       map =>
         PathElement(getGraphicItem(map),
                     getPropertyValue(map, pointsKey)(points),
                     getPropertyValue(map, colorKey, defaultCol)(color),
-                    getPropertyValue(map, lineThick, defaultLineThick)(numberParser),
+                    getPropertyValue(map, thick, defaultLineThick)(numberParser),
                     getPropertyValue(map, linePatt, defaultLinePatt)(ident),
                     getPropertyValue(map, smooth, defaultSmooth)(ident),
                     getPropertyValue(map, arrowKey, defaultArrow)(arrow),
