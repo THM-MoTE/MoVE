@@ -53,6 +53,7 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
     "Rectangle" ~> "(" ~> rectangleFields <~ ")"
     | "Ellipse" ~> "(" ~> ellipseFields <~ ")"
     | "Line" ~> "(" ~> lineFields <~ ")"
+    | "Polygon" ~> "(" ~> polygonFields <~ ")"
     )
 
   def rectangleFields:Parser[RectangleElement] =
@@ -63,6 +64,16 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
         val ext = getPropertyValue(map, extent)(extension)
         RectangleElement(gi,fs, extent=ext)
     }
+
+  def polygonFields:Parser[Polygon] =
+    propertyKeys(visible, origin, pointsKey,lineCol,linePatt,fillCol,
+      fillPatt,lineThick,smooth) ^^ { map =>
+        Polygon(getGraphicItem(map),
+        getFilledShape(map),
+        getPropertyValue(map, pointsKey)(points),
+        getPropertyValue(map, smooth, defaultSmooth)(ident)
+        )
+      }
 
 
   def lineFields:Parser[PathElement] =

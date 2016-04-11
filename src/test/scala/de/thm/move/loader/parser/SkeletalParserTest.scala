@@ -424,6 +424,77 @@ class SkeletalParserTest {
   }
 
   @Test
+  def polygonTest: Unit = {
+    val polyStr =
+      """
+        |model poly
+        | annotation(
+        |   Icon( graphics = {
+        |     Polygon(
+        |        lineColor = {0,0,0},
+        |        fillColor = {0,0,255},
+        |        lineThickness = 2.0,
+        |        pattern = LinePattern.Solid,
+        |        fillPattern = FillPattern.VerticalCylinder,
+        |        points = { {5,10},{20,20},{50,50} },
+        |        smooth = Smooth.Bezier
+        |      )
+        |   })
+      |   );
+        |end poly;
+      """.stripMargin
+
+      val polyExp =
+      Model("poly",
+      List(Icon(
+        None,
+        List(Polygon(
+          GraphicItem(),
+          FilledShape(
+            new Color(0.0,0.0,1.0,1.0),
+            "FillPattern.VerticalCylinder",
+            Color.BLACK,
+            2.0,
+            "LinePattern.Solid"
+            ),
+            List( (5,10),(20,20),(50,50) ),
+            "Smooth.Bezier"
+        )
+      )
+    )))
+    assertEquals(polyExp, withParseSuccess(polyStr))
+
+    val minimalPoly =
+    """
+      |model poly
+      | annotation(
+      |   Icon( graphics = {
+      |     Polygon(
+      |        points = { {5,10},{20,20},{50,50} }
+      |      )
+      |   })
+    |   );
+      |end poly;
+    """.stripMargin
+
+    val minPolyExp =
+      Model("poly",
+      List(Icon(
+        None,
+        List(Polygon(
+          GraphicItem(),
+          FilledShape(),
+          List( (5,10),(20,20),(50,50) ),
+          "Smooth.None"
+        )
+      )
+      )))
+
+      assertEquals(minPolyExp, withParseSuccess(minimalPoly))
+
+  }
+
+  @Test
   def modelFailure: Unit = {
     val model =
       """
