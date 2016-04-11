@@ -106,7 +106,7 @@ object PropertyParser {
   val defaultOrigin = (0.0,0.0)
   val defaultCol = Color.BLACK
   val defaultLinePatt = "LinePattern.Solid"
-  val defaultFillPatt = "FillPattern.Solid"
+  val defaultFillPatt = "FillPattern.None"
   val defaultLineThick = 1.0
   val defaultRectangleExtent = List( (0.0,0.0), (0.0,0.0) )
   val defaultRadius = 0.0
