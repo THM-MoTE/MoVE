@@ -24,7 +24,7 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
     shape.setFillColor(fs.fillColor)
     shape.setStrokeColor(fs.strokeColor)
 
-    val fillPatt = FillPattern.withName(fs.fillPattern)
+    val fillPatt = FillPattern.withName(fs.fillPattern.split("\\.")(1))
     shape.fillPatternProperty.setValue(fillPatt)
 
     shape.setFillColor(FillPattern.getFillColor(fillPatt, fs.fillColor, fs.strokeColor))
@@ -44,7 +44,13 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
 
   def getShape(ast:ShapeElement): ResizableShape = ast match {
     case RectangleElement(gi,fs,bp,ext,rad) =>
-      ???
+      //TODO what happens if origin is defined? (extent = relative to origin)
+      val (p1,p2) = ext
+      val convStart = convertPoint(p1)
+      val (w,h) = (p2 - p1).abs
+      val rect = new ResizableRectangle(convStart, w,h)
+      applyColor(rect, fs)
+      rect
     case pe:PathElement if(pe.points.size == 2) =>
       val startP = convertPoint(pe.points.head)
       val endP = convertPoint(pe.points.tail.head)

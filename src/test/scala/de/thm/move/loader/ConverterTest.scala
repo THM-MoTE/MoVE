@@ -9,6 +9,7 @@ import org.junit.Test
 
 import de.thm.move.loader.parser.PropertyParser._
 import de.thm.move.loader.parser.ast._
+import de.thm.move.util.PointUtils._
 
 class ConverterTest {
 
@@ -95,5 +96,25 @@ class ConverterTest {
     convPath.getAnchors.zip(expectedPoints).foreach {
       case (p1,p2) => assertEquals((p1.getCenterX,p1.getCenterY),p2)
     }
+  }
+
+  @Test
+  def convertRectangle:Unit = {
+    val ast = Model("ölk",
+      List(Icon(None,
+        List(
+          RectangleElement(GraphicItem(),
+            FilledShape(),
+            extent = ( (205,179),(348,36) )
+          )
+        )
+      ))
+    )
+
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head)
+    val convRec = conv.getShapes(ast).head.asInstanceOf[ResizableRectangle]
+    assertEquals((205,defaultCoordinateSystemSize.y-179), convRec.getXY)
+    assertEquals(348-205, convRec.getWidth, 0.01)
+    assertEquals(179-36, convRec.getHeight, 0.01)
   }
 }
