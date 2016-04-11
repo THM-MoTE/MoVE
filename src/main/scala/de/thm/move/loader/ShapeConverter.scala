@@ -109,14 +109,13 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
 
 object ShapeConverter {
   def gettCoordinateSystemSizes(ast:ModelicaAst):List[Point] = ast match {
-    case Model(_,xs) => xs flatMap {
-      case Icon(Some(system),_) =>
-        val (p1,p2) = system.extension
-        List( (p1-p2).abs )
-      case Icon(None,_) =>
+    case Model(_,xs) => xs flatMap gettCoordinateSystemSizes
+    case Icon(Some(system),_) =>
+      val (p1,p2) = system.extension
+      List( (p1-p2).abs )
+    case Icon(None,_) =>
       val (x,y) = PropertyParser.defaultCoordinateSystemSize
       List( (x, y) )
-      case _ => Nil
-    }
+    case _ => Nil
   }
 }
