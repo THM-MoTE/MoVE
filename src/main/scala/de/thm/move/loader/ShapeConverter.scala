@@ -112,10 +112,7 @@ object ShapeConverter {
     case Model(_,xs) => xs flatMap {
       case Icon(Some(system),_) =>
         val (p1,p2) = system.extension
-        List((
-          Math.abs(p1.x - p2.x),
-          Math.abs(p1.y - p2.y)
-        ))
+        List( (p1-p2).abs )
       case Icon(None,_) =>
       val (x,y) = PropertyParser.defaultCoordinateSystemSize
       List( (x, y) )
