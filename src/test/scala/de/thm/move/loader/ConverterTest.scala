@@ -164,4 +164,23 @@ class ConverterTest {
       assertEquals(p2,p1)
     }
   }
+
+  @Test
+  def convertBitmap:Unit = {
+    val extent = ( (10.0,10.0),(200.0,100.0) )
+    val ast =
+      Model("bitmap",
+        List(Icon(None,
+          List(
+            ImageURI(GraphicItem(),
+              extent,
+              "modelica://test3/quokka.jpg"
+            )
+          )
+        ))
+      )
+
+    val  conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head)
+    conv.getShapes(ast).head.asInstanceOf[ResizableImage]
+  }
 }

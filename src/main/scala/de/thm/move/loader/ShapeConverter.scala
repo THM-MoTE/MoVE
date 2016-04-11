@@ -1,7 +1,10 @@
 package de.thm.move.loader
 
 import javafx.scene.paint.Color
+import java.net.URI
+import java.nio.file.Paths
 
+import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.{LinePattern, FillPattern}
 import de.thm.move.util.GeometryUtils._
@@ -84,6 +87,22 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
       applyColor(polygon, fs)
       polygon.setVisible(gi.visible)
       polygon
+    case ImageURI(gi, ext, uriStr) =>
+      val imageName = uriStr.substring(uriStr.lastIndexOf("/")+1, uriStr.length)
+      val uri = Paths.get(imageName).toUri
+      println(uri)
+      val img = ShapeFactory.newImage(uri)
+
+      val (p1,p2) = ext
+      val convStart = convertPoint(p1)
+      val (w,h) = (p2 - p1).abs
+      img.setXY(convStart)
+      img.setWidth(w)
+      img.setHeight(h)
+      img.setVisible(gi.visible)
+      img
+    case img:ImageBase64 => throw new IllegalArgumentException("We can't convert base64 images!")
+    case a:Any => throw new IllegalArgumentException(s"Unknown shape-ast $a")
   }
 }
 
