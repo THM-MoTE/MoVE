@@ -14,5 +14,7 @@ object PointUtils {
     final def x:Double = p._1
     @inline
     final def y:Double = p._2
+    @inline
+    final def abs:Point = (Math.abs(p._1), Math.abs(p._2))
   }
 }
