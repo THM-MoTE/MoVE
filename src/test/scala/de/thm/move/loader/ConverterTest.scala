@@ -183,6 +183,16 @@ class ConverterTest {
       val p1 = (anchor.getCenterX,anchor.getCenterY)
       assertEquals(p2,p1)
     }
+
+    val multiplier = 4
+    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast).head)
+    val conv2Polygon = conv2.getShapes(ast).head.asInstanceOf[ResizablePolygon]
+    conv2Polygon.getAnchors.zip(expPoints.map(_.map(_*multiplier))).foreach {
+      case (anchor,p2) =>
+        val p1 = (anchor.getCenterX,anchor.getCenterY)
+        assertEquals(p2,p1)
+    }
+
   }
 
   @Test
