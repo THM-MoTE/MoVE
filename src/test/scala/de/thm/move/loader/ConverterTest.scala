@@ -117,4 +117,24 @@ class ConverterTest {
     assertEquals(348-205, convRec.getWidth, 0.01)
     assertEquals(179-36, convRec.getHeight, 0.01)
   }
+
+  @Test
+  def convertCircle:Unit = {
+    val ast = Model("ölk",
+      List(Icon(None,
+        List(
+          Ellipse(GraphicItem(),
+            FilledShape(),
+            extent = ( (205,179),(348,36) )
+          )
+        )
+      ))
+    )
+
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head)
+    val convCircle = conv.getShapes(ast).head.asInstanceOf[ResizableCircle]
+    assertEquals((205,defaultCoordinateSystemSize.y-179), convCircle.getXY)
+    assertEquals(348-205, convCircle.getWidth, 1.0)
+    assertEquals(179-36, convCircle.getHeight, 1.0)
+  }
 }
