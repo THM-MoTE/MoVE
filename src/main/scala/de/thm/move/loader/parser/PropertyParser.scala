@@ -132,4 +132,5 @@ object PropertyParser {
   val defaultSmooth = "Smooth.None"
   val defaultEndAngle = 360.0
   val defaultRotation = 0.0
+  val defaultCoordinateSystemSize = (200.0,200.0)
 }
