@@ -37,15 +37,16 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
 
   private def convertPoint(p:Point):Point = {
     val (_,h) = system
-    (p.x, h-p.y)
+    (pxPerMm * p.x, pxPerMm*(h-p.y))
   }
 
   private def rectangleLikeDimensions(ext:Extent):(Point,Double,Double) = {
     //TODO what happens if origin is defined? (extent = relative to origin)
     val (p1,p2) = ext
-    val convStart = convertPoint(p1)
-    val (w,h) = (p2 - p1).abs
-    (convStart, w,h)
+    val convP1 = convertPoint(p1)
+    val convP2 = convertPoint(p2)
+    val (w,h) = (convP2 - convP1).abs
+    (convP1, w,h)
   }
 
   def getShapes(ast:ModelicaAst):List[ResizableShape] = ast match {

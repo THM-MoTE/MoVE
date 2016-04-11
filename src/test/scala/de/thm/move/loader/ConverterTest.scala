@@ -96,6 +96,12 @@ class ConverterTest {
     convPath.getAnchors.zip(expectedPoints).foreach {
       case (p1,p2) => assertEquals((p1.getCenterX,p1.getCenterY),p2)
     }
+
+    val converter = new ShapeConverter(5, ShapeConverter.gettCoordinateSystemSizes(ast2).head)
+    val convPath2 = converter.getShapes(ast2).head.asInstanceOf[ResizablePath]
+    convPath2.getAnchors.zip(expectedPoints.map(_.map(_*5))).foreach {
+      case (p1,p2) => assertEquals(p2, (p1.getCenterX,p1.getCenterY))
+    }
   }
 
   @Test
@@ -116,6 +122,13 @@ class ConverterTest {
     assertEquals((205,defaultCoordinateSystemSize.y-179), convRec.getXY)
     assertEquals(348-205, convRec.getWidth, 0.01)
     assertEquals(179-36, convRec.getHeight, 0.01)
+
+    val multiplier = 5
+    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast).head)
+    val convRec2 = conv2.getShapes(ast).head.asInstanceOf[ResizableRectangle]
+    assertEquals((205*multiplier,(defaultCoordinateSystemSize.y-179)*multiplier), convRec2.getXY)
+    assertEquals((348-205)*multiplier, convRec2.getWidth, 0.01)
+    assertEquals((179-36)*multiplier, convRec2.getHeight, 0.01)
   }
 
   @Test
@@ -136,6 +149,13 @@ class ConverterTest {
     assertEquals((205,defaultCoordinateSystemSize.y-179), convCircle.getXY)
     assertEquals(348-205, convCircle.getWidth, 1.0)
     assertEquals(179-36, convCircle.getHeight, 1.0)
+
+    val multiplier = 2
+    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast).head)
+    val conv2Circle = conv2.getShapes(ast).head.asInstanceOf[ResizableCircle]
+    assertEquals((205*multiplier,(defaultCoordinateSystemSize.y-179)*multiplier), conv2Circle.getXY)
+    assertEquals((348-205)*multiplier, conv2Circle.getWidth, 1.0)
+    assertEquals((179-36)*multiplier, conv2Circle.getHeight, 1.0)
   }
 
   @Test
