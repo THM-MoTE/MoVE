@@ -14,6 +14,7 @@ trait PropertyParser {
   override val whiteSpace = """(\s|//.*|(?m)/\*(\*(?!/)|[^*])*\*/)+""".r
   protected val identRegex = "[a-zA-Z_][a-zA-Z0-9_\\.]*".r
   protected val numberRegex = "-?[0-9]+".r
+  protected val javaLikeStrRegex = "\"(.*)\"".r
 
   @annotation.tailrec
   private def containsDuplicates[A](xs:List[A], seen:Set[A] = Set[A]()): Boolean = xs match {
@@ -24,7 +25,8 @@ trait PropertyParser {
 
   def properties(parsers:Parser[(String, String)]*):Parser[Map[String,String]] = {
     val oredParser = parsers.tail.foldLeft(parsers.head)(_|_)
-    val propertiesListParser = rep(oredParser)
+
+    val propertiesListParser = repsep(oredParser, ",")
     propertiesListParser.map { tuples =>
       if(containsDuplicates(tuples)) throw new ParsingError("Duplicate definitions of properties!")
       else tuples.toMap
@@ -39,7 +41,8 @@ trait PropertyParser {
   def getPropertyValue[A](map:Map[String,String], key:String, default: => A)(parser:Parser[A]): A =
     map.get(key).map(parse(parser,_)).map {
       case Success(v,_) => v
-      case NoSuccess(msg,_) => throw new ParsingError(msg)
+      case NoSuccess(msg,_) =>
+        throw new ParsingError(msg)
     }.getOrElse(default)
 
   def getPropertyValue[A](map:Map[String,String], key:String)(parser:Parser[A]): A =
@@ -48,7 +51,14 @@ trait PropertyParser {
       case NoSuccess(msg,_) => throw new ParsingError(msg)
     }.getOrElse(throw new ParsingError(s"""property "$key" has to be defined!"""))
 
-  val value:Parser[String] = ".+".r
+  val value:Parser[String] = (
+    identRegex
+    | javaLikeStrRegex
+    | numberRegex ~ "." ~ numberRegex ^^ { case n1~comma~n2 => n1+comma+n2 }
+    | numberRegex
+    | "{" ~ repsep(numberRegex|identRegex, ",") ~ "}" ^^ { case lp~inner~rp => lp+inner.mkString(",")+rp }
+    | "{" ~ repsep(value, ",") ~ "}" ^^ { case lp~inner~rp => lp+inner.mkString(",")+rp }
+  )
 /*
   val lineColor = "lineColor" ~> "=" ~> color
   val linePattern = "pattern" ~> "=" ~> identRegex
