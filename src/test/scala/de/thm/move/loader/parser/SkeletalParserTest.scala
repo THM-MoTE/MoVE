@@ -13,6 +13,27 @@ import de.thm.move.loader.parser.ast._
 class SkeletalParserTest {
 
   @Test
+  def minimalRect: Unit = {
+    val rect =
+      """
+        |model abc
+        | annotation(
+        |   Icon( graphics = {
+        |     Rectangle(
+        |        pattern = LinePattern.Solid,
+        |        fillPattern = FillPattern.HorizontalCylinder,
+        |        lineColor = {0,0,0},
+        |        fillColor = {255,0,0},
+        |        extent = {{51,471}, {400,299}}
+        |      )
+        |   })
+        |   );
+        |end abc;
+      """.stripMargin
+    val erg = withParseSuccess(rect)
+  }
+
+  @Test
   def baseTest:Unit = {
     val modelTest =
       """
