@@ -58,7 +58,7 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
     )
 
   def rectangleFields:Parser[RectangleElement] =
-    propertyKeys(visible, origin, lineCol,linePatt,fillCol,
+    propertyKeys(visible, origin, rotation,lineCol,linePatt,fillCol,
       fillPatt,extent,lineThick, radius) ^^ { map =>
         val gi = getGraphicItem(map)
         val fs = getFilledShape(map)
@@ -67,7 +67,7 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
     }
 
   def polygonFields:Parser[Polygon] =
-    propertyKeys(visible, origin, pointsKey,lineCol,linePatt,fillCol,
+    propertyKeys(visible, origin, rotation,pointsKey,lineCol,linePatt,fillCol,
       fillPatt,lineThick,smooth) ^^ { map =>
         Polygon(getGraphicItem(map),
         getFilledShape(map),
@@ -78,7 +78,7 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
 
 
   def lineFields:Parser[PathElement] =
-    propertyKeys(visible,origin,pointsKey,colorKey,linePatt,thick,arrowKey,smooth) ^^ {
+    propertyKeys(visible,origin,rotation,pointsKey,colorKey,linePatt,thick,arrowKey,smooth) ^^ {
       map =>
         PathElement(getGraphicItem(map),
                     getPropertyValue(map, pointsKey)(points),
@@ -93,7 +93,7 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
     }
 
   def ellipseFields:Parser[Ellipse] =
-    propertyKeys(visible,origin,lineCol,linePatt,fillCol,
+    propertyKeys(visible,origin,rotation,lineCol,linePatt,fillCol,
       fillPatt,extent,lineThick, endAngle) ^^ { map =>
         val gi = getGraphicItem(map)
         val fs = getFilledShape(map)
@@ -104,7 +104,7 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
 
 
   def bitmapFields:Parser[AbstractImage] =
-    propertyKeys(visible, origin, extent, base64, imgUri) ^^ { map =>
+    propertyKeys(visible, origin, extent, rotation, base64, imgUri) ^^ { map =>
       val gi = getGraphicItem(map)
       val ext = getPropertyValue(map, extent)(extension)
       val base64Opt = map.get(base64).map(identWithoutHyphens)
@@ -124,7 +124,8 @@ class ModelicaParser extends JavaTokenParsers with ImplicitConversions with Mode
 
   def getGraphicItem(map:Map[String,String]):GraphicItem = {
     GraphicItem(getPropertyValue(map, visible, defaultVisible)(bool),
-                getPropertyValue(map, origin, defaultOrigin)(point)
+                getPropertyValue(map, origin, defaultOrigin)(point),
+                getPropertyValue(map, rotation, defaultRotation)(numberParser)
                 )
   }
 

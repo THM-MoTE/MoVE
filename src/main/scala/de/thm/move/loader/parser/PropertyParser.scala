@@ -116,6 +116,7 @@ object PropertyParser {
   val imgUri = "fileName"
   val thick = "thickness"
   val endAngle = "endAngle"
+  val rotation = "rotation"
 
   //default values
   val defaultVisible = true
@@ -130,4 +131,5 @@ object PropertyParser {
   val defaultArrowSize = 3.0
   val defaultSmooth = "Smooth.None"
   val defaultEndAngle = 360.0
+  val defaultRotation = 0.0
 }

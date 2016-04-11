@@ -636,4 +636,49 @@ class SkeletalParserTest {
 
     withException(model3)
   }
+
+  @Test
+  def rotationRect: Unit = {
+    val rect =
+      """
+        |model abc
+        | annotation(
+        |   Icon( graphics = {
+        |     Rectangle(
+        |        pattern = LinePattern.Solid,
+        |        fillPattern = FillPattern.HorizontalCylinder,
+        |        lineColor = {0,0,0},
+        |        fillColor = {255,0,0},
+        |        extent = {{51,471}, {400,299}},
+        |        rotation = 45.0
+        |      )
+        |   })
+        |   );
+        |end abc;
+      """.stripMargin
+    val erg = withParseSuccess(rect)
+
+    val exp =
+      Model("abc",
+        List(
+          Icon(None,
+            List(
+              RectangleElement(
+                GraphicItem(rotation=45.0),
+                FilledShape(Color.RED,
+                  "FillPattern.HorizontalCylinder",
+                  Color.BLACK,
+                  1.0,
+                  "LinePattern.Solid"
+                  ),
+                  "BorderPattern.None",
+                  ( (51,471),(400,299))
+                )
+              )
+            )
+          )
+      )
+
+      assertEquals(exp, withParseSuccess(rect))
+  }
 }
