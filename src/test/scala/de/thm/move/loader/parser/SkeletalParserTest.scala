@@ -334,15 +334,36 @@ class SkeletalParserTest {
         """
         |      Ellipse(
         |        fillColor = {255,0,0},
-        |        extent = {{100,239},{342,25}}
+        |        extent = {{100,239},{342,25}},
         |        lineThickness = 4.0,
         |        lineColor = {0,0,0},
-        |        fillPattern = FillPattern.VerticalCylinder
-        |        pattern = LinePattern.DashDot,
+        |        fillPattern = FillPattern.VerticalCylinder,
+        |        pattern = LinePattern.DashDot
         |      )
         """.stripMargin
 
-        assertEquals(expEllipse, withParseSuccess(graphicModel("ellipse", str2)))
+      assertEquals(expEllipse, withParseSuccess(graphicModel("ellipse", str2)))
+
+      val minimalEllipse =
+        """
+        |      Ellipse(
+        |        extent = {{100,239},{342,25}}
+        |      )
+        """.stripMargin
+
+      val minimalExp =
+      Model("ellipse2",
+      List(Icon(
+        None,
+        List(Ellipse(
+            GraphicItem(),
+            FilledShape(),
+            ( (100,239),(342,25) )
+          ))
+        )
+      ))
+
+      assertEquals(minimalExp, withParseSuccess(graphicModel("ellipse2", minimalEllipse)))
   }
 
   @Test
