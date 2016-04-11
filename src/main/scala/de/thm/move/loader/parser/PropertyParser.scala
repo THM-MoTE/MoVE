@@ -45,11 +45,10 @@ trait PropertyParser {
         throw new ParsingError(msg)
     }.getOrElse(default)
 
-  def getPropertyValue[A](map:Map[String,String], key:String)(parser:Parser[A]): A =
-    map.get(key).map(parse(parser,_)).map {
-      case Success(v,_) => v
-      case NoSuccess(msg,_) => throw new ParsingError(msg)
-    }.getOrElse(throw new ParsingError(s"""property "$key" has to be defined!"""))
+    def getPropertyValue[A](map:Map[String,String], key:String)(parser:Parser[A]): A =
+      getPropertyValue(map,
+        key, throw new ParsingError(
+          s"""property "$key" has to be defined!"""))(parser)
 
   val value:Parser[String] = (
     identRegex
