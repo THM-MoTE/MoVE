@@ -137,4 +137,31 @@ class ConverterTest {
     assertEquals(348-205, convCircle.getWidth, 1.0)
     assertEquals(179-36, convCircle.getHeight, 1.0)
   }
+
+  @Test
+  def convertPolygon:Unit = {
+    val points = List( (205.0,179.0),(348.0,36.0),(420.0,50.0) )
+    val ast = Model("ölk",
+      List(Icon(None,
+        List(
+          Polygon(GraphicItem(),
+            FilledShape(),
+            points
+          )
+        )
+      ))
+    )
+
+    val expPoints = points.map {
+      case (x,y) => (x, defaultCoordinateSystemSize.y-y)
+    }
+
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head)
+    val convPolygon = conv.getShapes(ast).head.asInstanceOf[ResizablePolygon]
+    convPolygon.getAnchors.zip(expPoints).foreach {
+      case (anchor,p2) =>
+      val p1 = (anchor.getCenterX,anchor.getCenterY)
+      assertEquals(p2,p1)
+    }
+  }
 }

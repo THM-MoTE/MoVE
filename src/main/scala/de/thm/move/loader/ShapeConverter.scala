@@ -78,6 +78,12 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
 
       if(pe.smooth == "Smooth.Bezier") QuadCurvePath(path)
       else path
+    case Polygon(gi,fs,ps,smooth) =>
+      val points = ps.map(convertPoint)
+      val polygon = ResizablePolygon(points)
+      applyColor(polygon, fs)
+      polygon.setVisible(gi.visible)
+      polygon
   }
 }
 
