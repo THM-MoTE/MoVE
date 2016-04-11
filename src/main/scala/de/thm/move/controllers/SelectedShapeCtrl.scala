@@ -27,49 +27,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     }
 
   private val linePatternToCssClass: Map[LinePattern.LinePattern, String] =
-    Map(
-      LinePattern.None -> "none-stroke",
-      LinePattern.Solid -> "solid-stroke",
-      LinePattern.Dash -> "dash-stroke",
-      LinePattern.Dot -> "dotted-stroke",
-      LinePattern.DashDot -> "dash-dotted-stroke",
-      LinePattern.DashDotDot -> "dash-dotted-dotted-stroke"
-      )
-
-  private def getFillColor(fillPattern:FillPattern.FillPattern, fillC:Color, strokeC:Color):Paint = {
-    /**
-      * Implementation Nodes:
-      * LinearGradients - Horizontal:
-      *   create gradient from (bottom to middle); reflect them on
-      *    (middle to top)
-      * LinearGradients - Vertical:
-      *   create gradient from (left to middle); reflect them on
-      *    (middle to right)
-      */
-    val linearStops = List(
-      new Stop(0,strokeC), //start with strokeColor
-      //create a gentle transition to fillColor
-      new Stop(0.45,fillC),
-      new Stop(0.55,fillC),
-      new Stop(1, strokeC) //end with strokeColor
-      )
-    val radialStops = List(
-        new Stop(0.0, fillC),
-        new Stop(0.20, fillC),
-        new Stop(1, strokeC)
-      )
-    fillPattern match {
-      case FillPattern.HorizontalCylinder =>
-        new LinearGradient(0,0,0,1,true,CycleMethod.REFLECT, linearStops:_*)
-      case FillPattern.VerticalCylinder =>
-        new LinearGradient(0,0,1,0,true,CycleMethod.REFLECT, linearStops:_*)
-      case FillPattern.Sphere =>
-        new RadialGradient(0,0,0.5,0.5,1,true,CycleMethod.NO_CYCLE, radialStops:_*)
-      case FillPattern.Solid => fillC
-      case FillPattern.None => null //None = null = transparent color
-      case _ => fillC
-    }
-  }
+    LinePattern.linePatternToCssClass
 
   def setSelectedShape(shape:ResizableShape): Unit = {
     selectedShape match {
@@ -136,24 +94,15 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
   def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
     coloredSelectedShape.zip(linePatternToCssClass.get(linePattern)) foreach {
       case (shape, cssClass) =>
-      //remove old stroke style
-      val removeOldCss: (String) => Unit = { regex =>
-        shape.getStyleClass().removeIf(new Predicate[String]() {
-            override def test(str:String): Boolean = str.`matches`(regex)
-          })
-      }
-      val cssRegex = ".*-stroke"
-
-      val oldCss = shape.getStyleClass().find(_.`matches`(cssRegex))
+      val oldCss = shape.getStyleClass().find(_.`matches`(LinePattern.cssRegex))
       val oldLinePattern = shape.linePattern.get
 
       history.execute {
-        removeOldCss(cssRegex)
         shape.getStyleClass().add(cssClass)
         shape.linePattern.set(linePattern)
       } {
         oldCss foreach { css =>
-          removeOldCss(cssRegex)
+          LinePattern.removeOldCss(shape)
           shape.getStyleClass().add(css)
           shape.linePattern.set(oldLinePattern)
         }
@@ -167,8 +116,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
       case (shape, c1,c2:Color) => Some((shape,c1,c2))
       case _ => None
       } foreach { case (shape, fillColor, strokeColor) =>
-      println("set fill: "+fillPattern)
-      val newFillColor = getFillColor(fillPattern, fillColor, strokeColor)
+      val newFillColor = FillPattern.getFillColor(fillPattern, fillColor, strokeColor)
       val oldFillProperty = shape.fillPatternProperty.get
       val oldFillGradient = shape.getFillColor
       history.execute {
