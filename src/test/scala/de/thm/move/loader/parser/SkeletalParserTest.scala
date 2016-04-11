@@ -375,7 +375,8 @@ class SkeletalParserTest {
       |        lineThickness = 2.0,
       |        pattern = LinePattern.None,
       |        points = {{100,239},{342,25}, {50,50}},
-      |        smooth = Smooth.Bezier
+      |        smooth = Smooth.Bezier,
+      |        arrow = { Arrow.None, Arrow.None}
       |      )
       """.stripMargin
 
