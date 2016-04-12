@@ -13,6 +13,7 @@ import de.thm.move.views.shapes._
 import de.thm.move.loader.parser.PropertyParser
 import de.thm.move.loader.parser.ast._
 import java.nio.file.Path
+import de.thm.move.util.GeometryUtils
 
 class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
 
@@ -67,7 +68,8 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       rect
     case Ellipse(gi, fs, ext, _,_) =>
       val (start,w,h) = rectangleLikeDimensions(gi.origin, ext)
-      val ellipse = new ResizableCircle(start, asRadius(w),asRadius(h))
+      val middle = GeometryUtils.middleOfLine(start, (w+start.x,h+start.y) )
+      val ellipse = new ResizableCircle(middle, asRadius(w),asRadius(h))
       applyColor(ellipse, fs)
       ellipse.setVisible(gi.visible)
       ellipse
