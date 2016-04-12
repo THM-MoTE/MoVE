@@ -20,4 +20,6 @@ trait ModelicaParserLike {
 
 object ModelicaParserLike {
   class ParsingError(msg:String) extends IllegalArgumentException(msg)
+
+  def apply(): ModelicaParserLike = new ModelicaParser
 }
