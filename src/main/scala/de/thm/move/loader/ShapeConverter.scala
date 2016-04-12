@@ -40,7 +40,7 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
     (pxPerMm * p.x, pxPerMm*(h-p.y))
   }
 
-  private def rectangleLikeDimensions(ext:Extent):(Point,Double,Double) = {
+  private def rectangleLikeDimensions(origin:Point, ext:Extent):(Point,Double,Double) = {
     //TODO what happens if origin is defined? (extent = relative to origin)
     val (p1,p2) = ext
     val convP1 = convertPoint(p1)
@@ -57,13 +57,13 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
 
   def getShape(ast:ShapeElement): ResizableShape = ast match {
     case RectangleElement(gi,fs,bp,ext,rad) =>
-      val (start,w,h) = rectangleLikeDimensions(ext)
+      val (start,w,h) = rectangleLikeDimensions(gi.origin, ext)
       val rect = new ResizableRectangle(start, w,h)
       applyColor(rect, fs)
       rect.setVisible(gi.visible)
       rect
     case Ellipse(gi, fs, ext, _,_) =>
-      val (start,w,h) = rectangleLikeDimensions(ext)
+      val (start,w,h) = rectangleLikeDimensions(gi.origin, ext)
       val ellipse = new ResizableCircle(start, asRadius(w),asRadius(h))
       applyColor(ellipse, fs)
       ellipse.setVisible(gi.visible)
@@ -97,7 +97,7 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
       println(uri)
       val img = ShapeFactory.newImage(uri)
 
-      val (start,w,h) = rectangleLikeDimensions(ext)
+      val (start,w,h) = rectangleLikeDimensions(gi.origin, ext)
       img.setXY(start)
       img.setWidth(w)
       img.setHeight(h)
