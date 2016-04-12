@@ -11,6 +11,7 @@ import java.util.ResourceBundle
 import javafx.collections.FXCollections
 import javafx.event.ActionEvent
 import javafx.fxml.{FXMLLoader, Initializable, FXML}
+import javafx.scene.control.Alert.AlertType
 import javafx.scene.{Scene, Parent, Cursor}
 import javafx.scene.control._
 import javafx.scene.input._
@@ -285,7 +286,7 @@ class MoveCtrl extends Initializable {
     for {
       file <- fileOp
       path = Paths.get(file.toURI)
-      scaleFactor = 1
+      scaleFactor <- showScaleDialog()
     } {
       val parser = ModelicaParserLike()
       parser.parse(path) match {

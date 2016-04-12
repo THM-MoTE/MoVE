@@ -49,7 +49,7 @@ object Dialogs {
   }
 
   def newScaleDialog(): TextInputDialog = {
-    val dialog = new TextInputDialog("walter")
+    val dialog = new TextInputDialog("1")
     dialog.setTitle("Scale factor");
     dialog.setHeaderText("Give a scale factor")
     dialog.setContentText("Please enter a valid scale factor (default=1):")
