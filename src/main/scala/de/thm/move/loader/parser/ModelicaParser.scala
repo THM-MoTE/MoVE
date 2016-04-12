@@ -17,7 +17,7 @@ import de.thm.move.models.CommonTypes._
 import de.thm.move.util.PointUtils._
 
 class ModelicaParser extends JavaTokenParsers with ImplicitConversions with ModelicaParserLike with PropertyParser {
-  val decimalNo = decimalNumber ^^ { _.toDouble }
+  val decimalNo = floatingPointNumber ^^ { _.toDouble }
 
   override val ident:Parser[String] = identRegex
 
