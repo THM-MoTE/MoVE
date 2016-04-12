@@ -276,12 +276,15 @@ class MoveCtrl extends Initializable {
     val fileOp = Option(chooser.showOpenDialog(getWindow))
     for {
       file <- fileOp
-      is = new FileInputStream(file)
+      path = Paths.get(file.toURI)
     } {
       val parser = ModelicaParserLike()
-      parser.parse(is) match {
+      parser.parse(path) match {
         case Success(ast) =>
-          val converter = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head)
+          val converter = new ShapeConverter(1,
+            ShapeConverter.gettCoordinateSystemSizes(ast).head,
+            path
+            )
           val shapes = converter.getShapes(ast)
           shapes.foreach { s =>
             drawCtrl.addShape(s)

@@ -12,8 +12,11 @@ import de.thm.move.util.PointUtils._
 import de.thm.move.views.shapes._
 import de.thm.move.loader.parser.PropertyParser
 import de.thm.move.loader.parser.ast._
+import java.nio.file.Path
 
-class ShapeConverter(pxPerMm:Int, system:Point) {
+class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
+
+  val parentPath = srcFilePath.getParent
 
   private def applyLineColor(shape:ResizableShape with ColorizableShape, color:Color, linePattern:String, strWidth:Double): Unit = {
     val lp = linePattern.split("\\.")(1)
@@ -93,8 +96,7 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
       polygon
     case ImageURI(gi, ext, uriStr) =>
       val imageName = uriStr.substring(uriStr.lastIndexOf("/")+1, uriStr.length)
-      val uri = Paths.get(imageName).toUri
-      println(uri)
+      val uri = parentPath.resolve(imageName).toUri
       val img = ShapeFactory.newImage(uri)
 
       val (start,w,h) = rectangleLikeDimensions(gi.origin, ext)
