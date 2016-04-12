@@ -77,19 +77,19 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
       line
     case pe:PathElement =>
       val points = pe.points.map(convertPoint)
-      val path = ResizablePath(points)
+      val path =
+        if(pe.smooth == "Smooth.Bezier") QuadCurvePath(points)
+        else ResizablePath(points)
       path.setVisible(pe.gItem.visible)
       applyLineColor(path, pe.color, pe.strokePattern, pe.strokeSize)
-
-      if(pe.smooth == "Smooth.Bezier") QuadCurvePath(path)
-      else path
+      path
     case Polygon(gi,fs,ps,smooth) =>
       val points = ps.map(convertPoint)
-      val polygon = ResizablePolygon(points)
+      val polygon =
+        if(smooth == "Smooth.Bezier") new QuadCurvePolygon(points)
+        else ResizablePolygon(points)
       applyColor(polygon, fs)
       polygon.setVisible(gi.visible)
-
-      if(smooth == "Smooth.Bezier") QuadCurvePolygon(polygon)
       polygon
     case ImageURI(gi, ext, uriStr) =>
       val imageName = uriStr.substring(uriStr.lastIndexOf("/")+1, uriStr.length)

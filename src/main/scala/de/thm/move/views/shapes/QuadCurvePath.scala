@@ -24,4 +24,5 @@ object QuadCurvePath {
     path.setY(rePath.getY)
     path
   }
+  def apply(points:List[Point]) = new QuadCurvePath(points)
 }
