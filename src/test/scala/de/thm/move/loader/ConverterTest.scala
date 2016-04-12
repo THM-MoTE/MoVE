@@ -263,14 +263,17 @@ class ConverterTest {
       ))
       )
 
-      val rect2 = conv.getShapes(ast2).head.asInstanceOf[ResizableRectangle]
+      val multiplier = 2
+      val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+
+      val rect2 = conv2.getShapes(ast2).head.asInstanceOf[ResizableRectangle]
       val expXY2:Point = (50-5,defaultCoordinateSystemSize.y-(30+70))
       val expW2 = 15
       val expH2 = 70+20
 
-      assertEquals(expXY2, rect2.getXY)
-      assertEquals(expW2, rect2.getWidth, 0.01)
-      assertEquals(expH2, rect2.getHeight, 0.01)
+      assertEquals(expXY2.map(_*multiplier), rect2.getXY)
+      assertEquals(expW2*multiplier, rect2.getWidth, 0.01)
+      assertEquals(expH2*multiplier, rect2.getHeight, 0.01)
   }
 
   @Test
