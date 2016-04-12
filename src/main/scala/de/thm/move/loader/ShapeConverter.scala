@@ -17,7 +17,7 @@ import de.thm.move.util.GeometryUtils
 
 class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
 
-  val parentPath = srcFilePath.getParent
+  lazy val parentPath = srcFilePath.getParent
 
   private def applyLineColor(shape:ResizableShape with ColorizableShape, color:Color, linePattern:String, strWidth:Double): Unit = {
     val lp = linePattern.split("\\.")(1)
@@ -47,8 +47,8 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
   private def rectangleLikeDimensions(origin:Point, ext:Extent):(Point,Double,Double) = {
     //TODO what happens if origin is defined? (extent = relative to origin)
     val (p1,p2) = ext
-    val convP1 = convertPoint(p1)
-    val convP2 = convertPoint(p2)
+    val convP1 = convertPoint(p1+origin)
+    val convP2 = convertPoint(p2+origin)
     val (w,h) = (convP2 - convP1).abs
     (convP1, w,h)
   }
