@@ -74,14 +74,14 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       ellipse.setVisible(gi.visible)
       ellipse
     case pe:PathElement if(pe.points.size == 2) =>
-      val startP = convertPoint(pe.points.head)
-      val endP = convertPoint(pe.points.tail.head)
+      val startP = convertPoint(pe.points.head+pe.gItem.origin)
+      val endP = convertPoint(pe.points.tail.head+pe.gItem.origin)
       val line = new ResizableLine(startP,endP, pe.strokeSize.toInt)
       applyLineColor(line, pe.color, pe.strokePattern, pe.strokeSize)
       line.setVisible(pe.gItem.visible)
       line
     case pe:PathElement =>
-      val points = pe.points.map(convertPoint)
+      val points = pe.points.map(x => convertPoint(x+pe.gItem.origin))
       val path =
         if(pe.smooth == "Smooth.Bezier") QuadCurvePath(points)
         else ResizablePath(points)
@@ -89,7 +89,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       applyLineColor(path, pe.color, pe.strokePattern, pe.strokeSize)
       path
     case Polygon(gi,fs,ps,smooth) =>
-      val points = ps.map(convertPoint)
+      val points = ps.map(x => convertPoint(x+gi.origin))
       val polygon =
         if(smooth == "Smooth.Bezier") new QuadCurvePolygon(points)
         else ResizablePolygon(points)
