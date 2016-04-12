@@ -21,6 +21,7 @@ import de.thm.move.Global
 import de.thm.move.util.JFxUtils._
 import de.thm.move.views.{SaveDialog, DrawPanel, Anchor}
 import de.thm.move.views.shapes.ResizableShape
+import de.thm.move.views.Dialogs
 
 import collection.JavaConversions._
 
@@ -290,7 +291,9 @@ class MoveCtrl extends Initializable {
             drawCtrl.addShape(s)
             drawCtrl.addNode(s.getAnchors)
           }
-        case Failure(ex) => println(s"WARNING parsing error: ${ex.getMessage}")
+        case Failure(ex) =>
+          val excDialog = Dialogs.newExceptionDialog(ex)
+          excDialog.showAndWait()
       }
 
     }
