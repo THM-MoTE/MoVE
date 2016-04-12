@@ -11,6 +11,8 @@ import de.thm.move.loader.parser.PropertyParser._
 import de.thm.move.loader.parser.ast._
 import de.thm.move.util.PointUtils._
 import de.thm.move.util.GeometryUtils
+import de.thm.move.util.GeometryUtils._
+import de.thm.move.models.CommonTypes._
 
 class ConverterTest {
 
@@ -222,5 +224,80 @@ class ConverterTest {
 
     //val  conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head)
     //conv.getShapes(ast).head.asInstanceOf[ResizableImage]
+  }
+
+  @Test
+  def rectangleWithorigin: Unit = {
+    val origin:Point = (10,10)
+    val ast = Model("ölk",
+      List(Icon(None,
+        List(
+          RectangleElement(GraphicItem(origin = origin),
+            FilledShape(),
+            extent = ( (-10,50),(30,-40) )
+          )
+        )
+      ))
+    )
+
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    val rect = conv.getShapes(ast).head.asInstanceOf[ResizableRectangle]
+
+    val expXY:Point = (10-10,defaultCoordinateSystemSize.y-(10+50))
+    val expW = 10+30
+    val expH = 50+40
+
+    assertEquals(expXY, rect.getXY)
+    assertEquals(expW, rect.getWidth, 0.01)
+    assertEquals(expH, rect.getHeight, 0.01)
+
+    val origin2:Point = (50,30)
+    val ast2 = Model("ölk",
+      List(Icon(None,
+        List(
+          RectangleElement(GraphicItem(origin = origin2),
+            FilledShape(),
+            extent = ( (-5,70),(10,-20) )
+          )
+        )
+      ))
+      )
+
+      val rect2 = conv.getShapes(ast2).head.asInstanceOf[ResizableRectangle]
+      val expXY2:Point = (50-5,defaultCoordinateSystemSize.y-(30+70))
+      val expW2 = 15
+      val expH2 = 70+20
+
+      assertEquals(expXY2, rect2.getXY)
+      assertEquals(expW2, rect2.getWidth, 0.01)
+      assertEquals(expH2, rect2.getHeight, 0.01)
+  }
+
+  @Test
+  def circleWithOrigin:Unit = {
+    val origin:Point = (50,100)
+    val ast = Model("ölk",
+      List(Icon(None,
+        List(
+          Ellipse(GraphicItem(origin = origin),
+            FilledShape(),
+            extent = ( (-10,50),(30,-40) )
+          )
+        )
+      ))
+    )
+
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    val circ = conv.getShapes(ast).head.asInstanceOf[ResizableCircle]
+
+    val expCenterXY = (origin.x, defaultCoordinateSystemSize.y-origin.y)
+    val expWRadius = asRadius(10+30)
+    val expHRadius = asRadius(50+40)
+
+    assertEquals(expWRadius, circ.getRadiusX, 0.01)
+    assertEquals(expHRadius, circ.getRadiusY, 0.01)
+    assertEquals(40, circ.getBoundsInLocal.getMinX, 1.0)
+    assertEquals(defaultCoordinateSystemSize.y - 150, circ.getBoundsInLocal.getMinY, 1.0)
+    assertEquals(80, circ.getBoundsInLocal.getMaxX, 1.0)
   }
 }
