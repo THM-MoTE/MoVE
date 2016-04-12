@@ -6,6 +6,7 @@
 package de.thm.move.views
 
 import javafx.scene.control.Alert.AlertType
+import javafx.scene.control.TextInputDialog
 import javafx.scene.control.Alert
 import java.io.StringWriter
 import java.io.PrintWriter
@@ -45,5 +46,13 @@ object Dialogs {
     // Set expandable Exception into the dialog pane.
     alert.getDialogPane().setExpandableContent(expContent);
     alert
+  }
+
+  def newScaleDialog(): TextInputDialog = {
+    val dialog = new TextInputDialog("walter")
+    dialog.setTitle("Scale factor");
+    dialog.setHeaderText("Give a scale factor")
+    dialog.setContentText("Please enter a valid scale factor (default=1):")
+    dialog
   }
 }

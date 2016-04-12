@@ -266,12 +266,18 @@ class MoveCtrl extends Initializable {
     }
   }
 
+  private def showScaleDialog(): Option[Int] = {
+    val dialog = Dialogs.newScaleDialog()
+    val scaleOp:Option[String] = dialog.showAndWait()
+    println(scaleOp)
+    scaleOp.map(_.toInt)
+  }
+
   val moFileFilter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo")
 
   @FXML
   def onOpenClicked(e:ActionEvent): Unit = {
     val chooser = new FileChooser()
-    val scaleFactor = 1
 
     chooser.setTitle("Save as..")
     chooser.setSelectedExtensionFilter(moFileFilter)
@@ -279,6 +285,7 @@ class MoveCtrl extends Initializable {
     for {
       file <- fileOp
       path = Paths.get(file.toURI)
+      scaleFactor = 1
     } {
       val parser = ModelicaParserLike()
       parser.parse(path) match {
@@ -296,7 +303,6 @@ class MoveCtrl extends Initializable {
           val excDialog = Dialogs.newExceptionDialog(ex)
           excDialog.showAndWait()
       }
-
     }
   }
 
