@@ -70,7 +70,7 @@ trait PropertyParser {
     ("{"~> point <~ ",") ~ point <~ "}" ^^ { case p1 ~ p2 => (p1,p2) }
 
   def point:Parser[Point] =
-    ("{" ~> numberParser <~ ",") ~ numberParser <~ "}" ^^ {
+    ("{" ~> decimalNo <~ ",") ~ decimalNo <~ "}" ^^ {
       case x ~ y => (x,y)
     }
 
