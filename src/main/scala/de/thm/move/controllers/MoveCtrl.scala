@@ -283,7 +283,6 @@ class MoveCtrl extends Initializable {
         case Success(ast) =>
           val converter = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head)
           val shapes = converter.getShapes(ast)
-          println(shapes.mkString("\n"))
           shapes.foreach { s =>
             drawCtrl.addShape(s)
             drawCtrl.addNode(s.getAnchors)

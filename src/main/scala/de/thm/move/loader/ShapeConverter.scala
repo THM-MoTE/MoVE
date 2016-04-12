@@ -21,12 +21,12 @@ class ShapeConverter(pxPerMm:Int, system:Point) {
     val cssClass = LinePattern.linePatternToCssClass(linePatt)
     shape.linePattern.setValue(linePatt)
     shape.getStyleClass().add(cssClass)
+    shape.setStrokeColor(color)
     shape.setStrokeWidth(strWidth)
   }
 
   private def applyColor(shape:ResizableShape with ColorizableShape, fs:FilledShape): Unit = {
     shape.setFillColor(fs.fillColor)
-    shape.setStrokeColor(fs.strokeColor)
 
     val fillPatt = FillPattern.withName(fs.fillPattern.split("\\.")(1))
     shape.fillPatternProperty.setValue(fillPatt)
