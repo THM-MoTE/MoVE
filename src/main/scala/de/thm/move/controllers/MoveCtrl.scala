@@ -31,9 +31,14 @@ import de.thm.move.models.LinePattern._
 import de.thm.move.models.LinePattern
 import de.thm.move.models.FillPattern._
 import de.thm.move.models.FillPattern
+import de.thm.move.loader.parser.ModelicaParserLike
+import de.thm.move.loader.ShapeConverter
 import implicits.FxHandlerImplicits._
 import implicits.ConcurrentImplicits._
 import implicits.MonadImplicits._
+
+import scala.util._
+import java.io.FileInputStream
 
 class MoveCtrl extends Initializable {
 
@@ -41,6 +46,8 @@ class MoveCtrl extends Initializable {
 
   @FXML
   var saveAsMenuItem: MenuItem = _
+  @FXML
+  var openMenuItem: MenuItem = _
 
   @FXML
   var undoMenuItem: MenuItem = _
@@ -258,12 +265,41 @@ class MoveCtrl extends Initializable {
     }
   }
 
+  val moFileFilter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo")
+
+  @FXML
+  def onOpenClicked(e:ActionEvent): Unit = {
+    val chooser = new FileChooser()
+
+    chooser.setTitle("Save as..")
+    chooser.setSelectedExtensionFilter(moFileFilter)
+    val fileOp = Option(chooser.showOpenDialog(getWindow))
+    for {
+      file <- fileOp
+      is = new FileInputStream(file)
+    } {
+      val parser = ModelicaParserLike()
+      parser.parse(is) match {
+        case Success(ast) =>
+          val converter = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head)
+          val shapes = converter.getShapes(ast)
+          println(shapes.mkString("\n"))
+          shapes.foreach { s =>
+            drawCtrl.addShape(s)
+            drawCtrl.addNode(s.getAnchors)
+          }
+        case Failure(ex) => println(s"WARNING parsing error: ${ex.getMessage}")
+      }
+
+    }
+  }
+
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
     val chooser = new FileChooser()
-    val filter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo")
+
     chooser.setTitle("Save as..")
-    chooser.setSelectedExtensionFilter(filter)
+    chooser.setSelectedExtensionFilter(moFileFilter)
     val fileOp = Option(chooser.showSaveDialog(getWindow))
 
     for (
