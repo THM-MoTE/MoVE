@@ -271,6 +271,7 @@ class MoveCtrl extends Initializable {
   @FXML
   def onOpenClicked(e:ActionEvent): Unit = {
     val chooser = new FileChooser()
+    val scaleFactor = 1
 
     chooser.setTitle("Save as..")
     chooser.setSelectedExtensionFilter(moFileFilter)
@@ -282,7 +283,7 @@ class MoveCtrl extends Initializable {
       val parser = ModelicaParserLike()
       parser.parse(path) match {
         case Success(ast) =>
-          val converter = new ShapeConverter(1,
+          val converter = new ShapeConverter(scaleFactor,
             ShapeConverter.gettCoordinateSystemSizes(ast).head,
             path
             )
