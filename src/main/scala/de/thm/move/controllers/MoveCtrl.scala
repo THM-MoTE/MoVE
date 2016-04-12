@@ -163,8 +163,8 @@ class MoveCtrl extends Initializable {
   }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    setupShortcuts("save-as", "undo", "redo", "delete-item", "load-image",
-      "show-anchors")(saveAsMenuItem, undoMenuItem, redoMenuItem, deleteMenuItem,
+    setupShortcuts("open", "save-as", "undo", "redo", "delete-item", "load-image",
+      "show-anchors")(openMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, deleteMenuItem,
         loadImgMenuItem, showAnchorsItem)
     drawStub.getChildren.add(drawPanel)
 
