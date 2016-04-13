@@ -93,21 +93,21 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
   def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
     linePatternToCssClass.get(linePattern) foreach { cssClass =>
       coloredSelectedShape foreach { shape =>
-      val oldCss = shape.getStyleClass().find(_.`matches`(LinePattern.cssRegex))
-      val oldLinePattern = shape.linePattern.get
+        val oldCss = shape.getStyleClass().find(_.`matches`(LinePattern.cssRegex))
+        val oldLinePattern = shape.linePattern.get
 
-      history.execute {
-        shape.getStyleClass().add(cssClass)
-        shape.linePattern.set(linePattern)
-      } {
-        oldCss foreach { css =>
-          LinePattern.removeOldCss(shape)
-          shape.getStyleClass().add(css)
-          shape.linePattern.set(oldLinePattern)
+        history.execute {
+          shape.getStyleClass().add(cssClass)
+          shape.linePattern.set(linePattern)
+        } {
+          oldCss foreach { css =>
+            LinePattern.removeOldCss(shape)
+            shape.getStyleClass().add(css)
+            shape.linePattern.set(oldLinePattern)
+          }
         }
       }
     }
-  }
 
   def setFillPattern(fillPattern:FillPattern.FillPattern): Unit =
     coloredSelectedShape map { shape =>
