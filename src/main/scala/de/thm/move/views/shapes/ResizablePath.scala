@@ -10,7 +10,11 @@ import de.thm.move.models.CommonTypes.Point
 import de.thm.move.views.{MovableAnchor, Anchor}
 import de.thm.move.util.PointUtils._
 
-class ResizablePath(startPoint: MoveTo, elements:List[LineTo]) extends Path(startPoint :: elements) with ResizableShape with ColorizableShape with QuadCurveTransformable {
+class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
+  extends Path(startPoint :: elements)
+  with ResizableShape
+  with ColorizableShape
+  with QuadCurveTransformable {
 
   val allElements = startPoint :: elements
 

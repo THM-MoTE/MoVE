@@ -27,7 +27,8 @@ trait RectangleLike {
   val topRightAnchor = new Anchor(getTopRight)
   val bottomLeftAnchor = new Anchor(getBottomLeft)
   val bottomRightAnchor = new Anchor(getBottomRight)
-  override val getAnchors: List[Anchor] = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
+  override val getAnchors: List[Anchor] =
+    List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
   def getTopLeft:Point = (getBoundsInLocal.getMinX, getBoundsInLocal.getMinY)
   def getTopRight:Point = (getBoundsInLocal.getMaxX, getBoundsInLocal.getMinY)

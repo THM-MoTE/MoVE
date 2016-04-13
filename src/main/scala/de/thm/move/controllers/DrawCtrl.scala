@@ -26,7 +26,10 @@ import de.thm.move.views.shapes._
 import de.thm.move.views.{ShapeContextMenu, Anchor, DrawPanel}
 import scala.collection.JavaConversions._
 
-class DrawCtrl(val drawPanel: DrawPanel, shapeInputHandler:InputEvent => Unit) extends ChangeDrawPanelLike {
+class DrawCtrl(
+    val drawPanel: DrawPanel,
+    shapeInputHandler:InputEvent => Unit)
+  extends ChangeDrawPanelLike {
 
   private val tmpShapeId = "temporary-shape"
   private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, this)

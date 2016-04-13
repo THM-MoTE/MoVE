@@ -10,7 +10,8 @@ import javafx.scene.shape.{Ellipse, Circle}
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.Global
 
-class Anchor(x:Double, y:Double) extends Ellipse(x,y,Anchor.anchorWidth,Anchor.anchorHeight) {
+class Anchor(x:Double, y:Double)
+  extends Ellipse(x,y,Anchor.anchorWidth,Anchor.anchorHeight) {
   def this(p:Point) = this(p._1, p._2)
 
   this.getStyleClass.addAll("anchor")

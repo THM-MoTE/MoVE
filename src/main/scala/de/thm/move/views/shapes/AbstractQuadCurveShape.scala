@@ -8,7 +8,12 @@ import de.thm.move.views.Anchor
 import de.thm.move.views.MovableAnchor
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
-abstract class AbstractQuadCurveShape(points: List[Point], closedShape: Boolean) extends Path with ResizableShape with ColorizableShape {
+abstract class AbstractQuadCurveShape(
+  points: List[Point],
+  closedShape: Boolean)
+  extends Path
+  with ResizableShape
+  with ColorizableShape {
 
   /**
    * Implementation nodes:

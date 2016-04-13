@@ -15,7 +15,11 @@ import de.thm.move.util.PointUtils._
 import de.thm.move.util.ResourceUtils
 import de.thm.move.views.shapes._
 
-class ModelicaCodeGenerator(srcFormat:FormatSrc, pxPerMm:Int, paneWidth:Double, paneHeight:Double) {
+class ModelicaCodeGenerator(
+    srcFormat:FormatSrc,
+    pxPerMm:Int,
+    paneWidth:Double,
+    paneHeight:Double) {
   type Lines = List[String]
   val encoding = Charset.forName("UTF-8")
 
@@ -67,7 +71,8 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, pxPerMm:Int, paneWidth:Double, 
     s"fillPattern = ${fillPattern}"
   }
 
-  def generateShape[A <: Node](shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
+  def generateShape[A <: Node]
+    (shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
     case rectangle:ResizableRectangle =>
       val newY = paneHeight - rectangle.getY
       val endY = newY - rectangle.getHeight

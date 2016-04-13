@@ -19,7 +19,11 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
 
   lazy val parentPath = srcFilePath.getParent
 
-  private def applyLineColor(shape:ResizableShape with ColorizableShape, color:Color, linePattern:String, strWidth:Double): Unit = {
+  private def applyLineColor(
+    shape:ResizableShape with ColorizableShape,
+    color:Color,
+    linePattern:String,
+    strWidth:Double): Unit = {
     val lp = linePattern.split("\\.")(1)
     val linePatt = LinePattern.withName(lp)
     val cssClass = LinePattern.linePatternToCssClass(linePatt)

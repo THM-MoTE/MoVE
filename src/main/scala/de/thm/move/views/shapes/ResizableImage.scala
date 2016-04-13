@@ -8,7 +8,10 @@ package de.thm.move.views.shapes
 import java.net.URI
 import javafx.scene.image.{ImageView, Image}
 
-class ResizableImage(val uri:URI, val img:Image) extends ImageView(img) with ResizableShape with RectangleLike {
+class ResizableImage(val uri:URI, val img:Image)
+  extends ImageView(img)
+  with ResizableShape
+  with RectangleLike {
   setPreserveRatio(true)
   setFitWidth(200)
 
