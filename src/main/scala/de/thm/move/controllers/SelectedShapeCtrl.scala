@@ -48,86 +48,110 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
   }
 
   def deleteSelectedShape: Unit = {
-    selectedShapes foreach { shape =>
-      Global.history.execute {
-        drawPanel.remove(shape)
-        drawPanel.remove(shape.selectionRectangle)
-      } {
-        drawPanel.getChildren.add(shape)
-        drawPanel.getChildren.addAll(shape.getAnchors:_*)
+    if(!selectedShapes.isEmpty) {
+        val shapeCopy = selectedShapes
+        history.execute {
+          shapeCopy foreach { shape =>
+            drawPanel.remove(shape)
+            drawPanel.remove(shape.selectionRectangle)
+          }
+        } {
+          shapeCopy foreach { shape =>
+            drawPanel.getChildren.add(shape)
+            drawPanel.getChildren.addAll(shape.getAnchors:_*)
+          }
+        }
+      selectedShapes = List()
+    }
+  }
+
+  def setFillColorForSelectedShape(color:Color): Unit = if(!selectedShapes.isEmpty) {
+    val shapeAndColor = coloredSelectedShape zip coloredSelectedShape.map(_.getFillColor)
+    history.execute {
+      for(x <- coloredSelectedShape) {
+        x.setFillColor(color)
+      }
+    } {
+      for((x,oldColor) <- shapeAndColor) {
+        x.setFillColor(oldColor)
       }
     }
-    selectedShapes = List()
   }
 
-  def setFillColorForSelectedShape(color:Color): Unit = {
-    selectedShapes flatMap {
-      case x:ColorizableShape => List(x)
-      case _ => Nil
-    } foreach { x =>
-      val oldColor = x.getFillColor
-      history.execute(x.setFillColor(color))(x.setFillColor(oldColor))
-    }
-  }
+  def setStrokeColorForSelectedShape(color:Color): Unit = if(!selectedShapes.isEmpty) {
+    val shapeAndColor = coloredSelectedShape zip coloredSelectedShape.map(_.getStrokeColor)
 
-  def setStrokeColorForSelectedShape(color:Color): Unit = {
-    selectedShapes flatMap {
-      case x:ColorizableShape => List(x)
-      case _ => Nil
-    } foreach { x =>
-      val oldColor = x.getStrokeColor
-      history.execute(x.setStrokeColor(color))(x.setStrokeColor(oldColor))
+    history.execute {
+      for(x <- coloredSelectedShape)
+        x.setStrokeColor(color)
+    } {
+      for((x,oldColor) <- shapeAndColor)
+        x.setStrokeColor(oldColor)
     }
   }
 
   def setStrokeWidthForSelectedShape(width:Int): Unit = {
-    selectedShapes flatMap {
-      case x:ColorizableShape => List(x)
-      case _ => Nil
-    } foreach { x =>
-      val oldWidth = x.getStrokeWidth
-      history.execute(x.setStrokeWidth(width))(x.setStrokeWidth(oldWidth))
-    }
+    val shapeAndWidth = coloredSelectedShape zip coloredSelectedShape.map(_.getStrokeWidth)
+
+      history.execute {
+        for(x <- coloredSelectedShape)
+          x.setStrokeWidth(width)
+      } {
+        for((x,oldWidth) <- shapeAndWidth)
+          x.setStrokeWidth(oldWidth)
+      }
   }
 
   def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
     linePatternToCssClass.get(linePattern) foreach { cssClass =>
-      coloredSelectedShape foreach { shape =>
-        val oldCss = shape.getStyleClass().find(_.`matches`(LinePattern.cssRegex))
-        val oldLinePattern = shape.linePattern.get
+      val cssOpt = coloredSelectedShape.
+        map(_.getStyleClass().find(_.`matches`(LinePattern.cssRegex)))
+      val linePatterns = coloredSelectedShape.map(_.linePattern.get)
+      val shapeAndCss = coloredSelectedShape zip (cssOpt zip linePatterns)
 
-        history.execute {
+      history.execute {
+        for(shape <- coloredSelectedShape) {
           LinePattern.removeOldCss(shape)
           shape.getStyleClass().add(cssClass)
           shape.linePattern.set(linePattern)
+        }
+      } {
+        for {
+          (shape, (oldCssOpt, oldLinePattern)) <- shapeAndCss
+          if oldCssOpt.isDefined
+          css = oldCssOpt.get
         } {
-          oldCss foreach { css =>
             LinePattern.removeOldCss(shape)
             shape.getStyleClass().add(css)
             shape.linePattern.set(oldLinePattern)
           }
-        }
       }
     }
 
-  def setFillPattern(fillPattern:FillPattern.FillPattern): Unit =
-    coloredSelectedShape map { shape =>
+  def setFillPattern(fillPattern:FillPattern.FillPattern): Unit = {
+    val coloredShapes = coloredSelectedShape map { shape =>
       (shape, shape.oldFillColorProperty.get, shape.getStrokeColor)
     } flatMap {
-      case (shape, c1,c2:Color) => Some((shape,c1,c2))
-      case _ => None
-      } foreach { case (shape, fillColor, strokeColor) =>
-      val newFillColor = FillPattern.getFillColor(fillPattern, fillColor, strokeColor)
-      val oldFillProperty = shape.fillPatternProperty.get
-      val oldFillGradient = shape.getFillColor
-      history.execute {
+      case (shape, c1,c2:Color) => List((shape,c1,c2))
+      case _ => Nil
+    }
+
+    val shapeAndFillPattern = coloredSelectedShape zip (coloredSelectedShape.
+      map(_.fillPatternProperty.get) zip coloredSelectedShape.map(_.getFillColor))
+
+    history.execute {
+      for( (shape, fillColor, strokeColor) <- coloredShapes ) {
+        val newFillColor = FillPattern.getFillColor(fillPattern, fillColor, strokeColor)
         shape.setFillColor(newFillColor)
         shape.fillPatternProperty.set(fillPattern)
-      } {
+      }
+    } {
+      for( (shape,(oldFillProperty, oldFillGradient)) <- shapeAndFillPattern) {
         shape.setFillColor(oldFillGradient)
         shape.fillPatternProperty.set(oldFillProperty)
       }
     }
+  }
 
   def groupElements(startBounding:Point,endBounding:Point):Unit = {
     val shapesInBox = drawPanel.getChildren() filter {
