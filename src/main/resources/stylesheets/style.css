@@ -8,7 +8,11 @@
     -fx-font-size: 10pt;
 }
 
-.draw-canvas {
+.draw-stub {
+  -fx-background-color: rgb(191, 191, 191);
+}
+.draw-pane {
+  -fx-background-color: white;
 }
 
 .anchor {
