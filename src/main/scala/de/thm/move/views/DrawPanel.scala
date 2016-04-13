@@ -25,6 +25,8 @@ import de.thm.move.views.shapes._
 class DrawPanel() extends Pane {
   private var shapes = List[Node]()
 
+  getStyleClass().add("draw-pane")
+
   def drawShape[T <: Node](n:T):Unit = {
     super.getChildren.add(n)
 
