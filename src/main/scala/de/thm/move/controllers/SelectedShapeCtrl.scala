@@ -6,6 +6,7 @@ import de.thm.move.Global
 import de.thm.move.Global._
 import de.thm.move.views.DrawPanel
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
+import de.thm.move.views.SelectionGroup
 import de.thm.move.models.LinePattern
 import de.thm.move.models.FillPattern
 import de.thm.move.models.CommonTypes._
@@ -166,9 +167,14 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     } map(_.asInstanceOf[ResizableShape])
 
     removeSelectedShape
-    for(shape <- shapesInBox) {
+    /*for(shape <- shapesInBox) {
         drawPanel.getChildren.add(shape.selectionRectangle)
     }
+    */
+
+    val selectedGroup = new SelectionGroup(shapesInBox.toList)
+    drawPanel.getChildren().add(selectedGroup)
+    drawPanel.getChildren().add(selectedGroup.selectionRectangle)
 
     selectedShapes = shapesInBox.toList
   }
