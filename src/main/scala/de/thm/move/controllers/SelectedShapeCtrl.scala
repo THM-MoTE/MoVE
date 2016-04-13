@@ -23,53 +23,47 @@ import de.thm.move.controllers.factorys.ShapeFactory
  */
 class SelectedShapeCtrl(drawPanel:DrawPanel) {
 
-  private var selectedShape:Option[ResizableShape] = None
+  private var selectedShapes:List[ResizableShape] = Nil
 
-  private def coloredSelectedShape: Option[ResizableShape with ColorizableShape] =
-    selectedShape.flatMap {
+  private def coloredSelectedShape: List[ResizableShape with ColorizableShape] =
+    selectedShapes flatMap {
       //filter non-colrizable shapes; they have no linepattern
-      case colorizable:ColorizableShape => Some(colorizable)
+      case colorizable:ColorizableShape => List(colorizable)
     }
 
   private val linePatternToCssClass: Map[LinePattern.LinePattern, String] =
     LinePattern.linePatternToCssClass
 
   def setSelectedShape(shape:ResizableShape): Unit = {
-    selectedShape match {
-      case Some(oldShape) =>
-        drawPanel.getChildren.remove(oldShape.selectionRectangle)
-        drawPanel.getChildren.add(shape.selectionRectangle)
-        selectedShape = Some(shape)
-      case _ =>
-        selectedShape = Some(shape)
-        drawPanel.getChildren.add(shape.selectionRectangle)
-    }
+    removeSelectedShape
+    selectedShapes = List(shape)
+    drawPanel.getChildren.add(shape.selectionRectangle)
   }
 
   def removeSelectedShape: Unit = {
-    selectedShape foreach { shape =>
+    for(shape <- selectedShapes) {
       drawPanel.remove(shape.selectionRectangle)
-      selectedShape = None
     }
+    selectedShapes = Nil
   }
 
   def deleteSelectedShape: Unit = {
-    selectedShape foreach { shape =>
+    selectedShapes foreach { shape =>
       Global.history.execute {
         drawPanel.remove(shape)
         drawPanel.remove(shape.selectionRectangle)
-        selectedShape = None
       } {
         drawPanel.getChildren.add(shape)
         drawPanel.getChildren.addAll(shape.getAnchors:_*)
       }
     }
+    selectedShapes = List()
   }
 
   def setFillColorForSelectedShape(color:Color): Unit = {
-    selectedShape flatMap {
-      case x:ColorizableShape => Some(x)
-      case _ => None
+    selectedShapes flatMap {
+      case x:ColorizableShape => List(x)
+      case _ => Nil
     } foreach { x =>
       val oldColor = x.getFillColor
       history.execute(x.setFillColor(color))(x.setFillColor(oldColor))
@@ -77,9 +71,9 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
   }
 
   def setStrokeColorForSelectedShape(color:Color): Unit = {
-    selectedShape flatMap {
-      case x:ColorizableShape => Some(x)
-      case _ => None
+    selectedShapes flatMap {
+      case x:ColorizableShape => List(x)
+      case _ => Nil
     } foreach { x =>
       val oldColor = x.getStrokeColor
       history.execute(x.setStrokeColor(color))(x.setStrokeColor(oldColor))
@@ -87,9 +81,9 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
   }
 
   def setStrokeWidthForSelectedShape(width:Int): Unit = {
-    selectedShape flatMap {
-      case x:ColorizableShape => Some(x)
-      case _ => None
+    selectedShapes flatMap {
+      case x:ColorizableShape => List(x)
+      case _ => Nil
     } foreach { x =>
       val oldWidth = x.getStrokeWidth
       history.execute(x.setStrokeWidth(width))(x.setStrokeWidth(oldWidth))
@@ -97,8 +91,8 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
   }
 
   def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
-    coloredSelectedShape.zip(linePatternToCssClass.get(linePattern)) foreach {
-      case (shape, cssClass) =>
+    linePatternToCssClass.get(linePattern) foreach { cssClass =>
+      coloredSelectedShape foreach { shape =>
       val oldCss = shape.getStyleClass().find(_.`matches`(LinePattern.cssRegex))
       val oldLinePattern = shape.linePattern.get
 
@@ -113,6 +107,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
         }
       }
     }
+  }
 
   def setFillPattern(fillPattern:FillPattern.FillPattern): Unit =
     coloredSelectedShape map { shape =>
@@ -134,19 +129,23 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     }
 
   def groupElements(startBounding:Point,endBounding:Point):Unit = {
-    println("sb: "+startBounding)
-    println("eb: "+endBounding)
-    val shapesInBox = drawPanel.getChildren().filter {
+    val shapesInBox = drawPanel.getChildren() filter {
       case shape:ResizableShape =>
+        //only the elements thar are ResizableShapes and placed inside the bounding
         val shapeBounds = shape.getBoundsInLocal
-        println(shape)
-        println("shBounds: "+shapeBounds)
         shapeBounds.getMinX > startBounding.x &&
         shapeBounds.getMaxX < endBounding.x &&
         shapeBounds.getMinY > startBounding.y &&
         shapeBounds.getMaxY < endBounding.y
       case _ => false
+    } map(_.asInstanceOf[ResizableShape])
+
+    removeSelectedShape
+    for(shape <- shapesInBox) {
+        drawPanel.getChildren.add(shape.selectionRectangle)
     }
+
+    selectedShapes = shapesInBox.toList
   }
 
   def getGroupSelectionHandler: MouseEvent => Unit = {
