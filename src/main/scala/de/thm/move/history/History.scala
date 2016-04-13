@@ -5,8 +5,6 @@
 
 package de.thm.move.history
 
-import de.thm.move.Global
-
 class History(cacheSize: Int) {
   import History._
 
@@ -29,7 +27,7 @@ class History(cacheSize: Int) {
   }
 
   def undo(): Unit = {
-    (memory headOption) foreach { x =>
+    memory.headOption foreach { x =>
       x.undo()
       memory = memory.tail
       revertedCmds = addWithFixedSize(revertedCmds, x, cacheSize)
@@ -37,7 +35,7 @@ class History(cacheSize: Int) {
   }
 
   def redo(): Unit = {
-    (revertedCmds headOption) foreach { x =>
+    revertedCmds.headOption foreach { x =>
       x.exec()
       revertedCmds = revertedCmds.tail
       memory = addWithFixedSize(memory, x, cacheSize)

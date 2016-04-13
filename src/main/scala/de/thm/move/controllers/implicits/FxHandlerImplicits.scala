@@ -8,6 +8,7 @@ package de.thm.move.controllers.implicits
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.event.{ActionEvent, EventHandler}
 import javafx.scene.input.{InputEvent, MouseEvent, KeyEvent}
+import scala.language.implicitConversions
 
 object FxHandlerImplicits {
   implicit def mouseEventHandler[T >: MouseEvent](fn: T => Unit): EventHandler[MouseEvent] = new EventHandler[MouseEvent]() {
