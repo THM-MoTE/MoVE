@@ -183,13 +183,14 @@ class MoveCtrl extends Initializable {
     fillPatternChooser.setValue(FillPattern.Solid)
 
     val handler = drawCtrl.getDrawHandler
+    val groupHandler = selectionCtrl.getGroupSelectionHandler
 
     val drawHandler = { mouseEvent:MouseEvent =>
       selectedShape match {
         case Some(shape) =>
           selectionCtrl.removeSelectedShape
           handler(shape, mouseEvent)(getFillColor, getStrokeColor, selectedThickness)
-        case _ => //ignore
+        case _ => groupHandler(mouseEvent)
       }
     }
 

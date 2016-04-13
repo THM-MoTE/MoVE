@@ -8,10 +8,13 @@ import de.thm.move.views.DrawPanel
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 import de.thm.move.models.LinePattern
 import de.thm.move.models.FillPattern
+import de.thm.move.util.PointUtils._
 import java.util.function.Predicate
 import javafx.scene.paint._
+import javafx.scene.input.MouseEvent
 
 import scala.collection.JavaConversions._
+import de.thm.move.controllers.factorys.ShapeFactory
 
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.
@@ -127,4 +130,34 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
         shape.fillPatternProperty.set(oldFillProperty)
       }
     }
+
+  def getGroupSelectionHandler: MouseEvent => Unit = {
+    var mouseP = (0.0,0.0)
+    //highlight the currently selection-space
+    var groupRectangle = ShapeFactory.newRectangle((0,0), 0.0, 0.0)(Color.BLACK,Color.BLACK, 1)
+    groupRectangle.getStyleClass.addAll("selection-rectangle")
+    groupRectangle.setVisible(false)
+    drawPanel.getChildren.add(groupRectangle)
+
+    def groupHandler(mv:MouseEvent):Unit = mv.getEventType match {
+      case MouseEvent.MOUSE_PRESSED =>
+        mouseP = (mv.getX,mv.getY)
+        groupRectangle.setVisible(true)
+        groupRectangle.setXY(mouseP)
+      case MouseEvent.MOUSE_DRAGGED =>
+        val w = mv.getX - mouseP.x
+        val h = mv.getY - mouseP.y
+
+        groupRectangle.setWidth(w)
+        groupRectangle.setHeight(h)
+      case MouseEvent.MOUSE_RELEASED =>
+        val delta = (mv.getX,mv.getY) - mouseP
+        val start = mouseP
+        val end = start + delta
+        groupRectangle.setVisible(false)
+      case _ => //ignore other events
+    }
+
+    groupHandler
+  }
 }
