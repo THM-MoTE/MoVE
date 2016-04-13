@@ -8,8 +8,10 @@ import de.thm.move.views.DrawPanel
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 import de.thm.move.models.LinePattern
 import de.thm.move.models.FillPattern
+import de.thm.move.models.CommonTypes._
 import de.thm.move.util.PointUtils._
 import java.util.function.Predicate
+import javafx.scene.Node
 import javafx.scene.paint._
 import javafx.scene.input.MouseEvent
 
@@ -131,6 +133,22 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
       }
     }
 
+  def groupElements(startBounding:Point,endBounding:Point):Unit = {
+    println("sb: "+startBounding)
+    println("eb: "+endBounding)
+    val shapesInBox = drawPanel.getChildren().filter {
+      case shape:ResizableShape =>
+        val shapeBounds = shape.getBoundsInLocal
+        println(shape)
+        println("shBounds: "+shapeBounds)
+        shapeBounds.getMinX > startBounding.x &&
+        shapeBounds.getMaxX < endBounding.x &&
+        shapeBounds.getMinY > startBounding.y &&
+        shapeBounds.getMaxY < endBounding.y
+      case _ => false
+    }
+  }
+
   def getGroupSelectionHandler: MouseEvent => Unit = {
     var mouseP = (0.0,0.0)
     //highlight the currently selection-space
@@ -145,6 +163,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
         groupRectangle.setVisible(true)
         groupRectangle.setXY(mouseP)
       case MouseEvent.MOUSE_DRAGGED =>
+        //adjust selection highlighting
         val w = mv.getX - mouseP.x
         val h = mv.getY - mouseP.y
 
@@ -155,6 +174,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
         val start = mouseP
         val end = start + delta
         groupRectangle.setVisible(false)
+        groupElements(start,end)
       case _ => //ignore other events
     }
 
