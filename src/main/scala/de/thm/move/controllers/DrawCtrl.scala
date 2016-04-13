@@ -161,7 +161,7 @@ class DrawCtrl(
   }
 
   def getMoveHandler: (MouseEvent => Unit) = {
-    var delta = (-1.0,-1.0)
+    var mouseP = (0.0,0.0)
 
     var command: (=> Unit) => Command = x => { History.emptyAction }
 
@@ -170,22 +170,22 @@ class DrawCtrl(
         case (MouseEvent.MOUSE_PRESSED, shape: ResizableShape) =>
           //save old coordinates for undo
           val old = shape.getXY
-
           command = History.partialAction {
             shape.setXY(old)
           }
-
-          delta = old - (mv.getSceneX,mv.getSceneY)
+          mouseP = (mv.getSceneX,mv.getSceneY)
         case (MouseEvent.MOUSE_DRAGGED, shape: ResizableShape) =>
           //translate from original to new position
-          shape.setXY(delta + (mv.getSceneX, mv.getSceneY))
+          val delta = (mv.getSceneX - mouseP.x, mv.getSceneY - mouseP.y)
+          shape.move(delta)
+          //don't forget to use the new mouse-point as starting-point
+          mouseP = (mv.getSceneX,mv.getSceneY)
         case (MouseEvent.MOUSE_RELEASED, shape: ResizableShape) =>
           //save coordinates for redo
           val newP = shape.getXY
           val cmd = command {
             shape.setXY(newP)
           }
-
           Global.history.save(cmd)
         case _ => //unknown event
       }

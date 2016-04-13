@@ -7,6 +7,7 @@ package de.thm.move.views.shapes
 
 import javafx.scene.Node
 import de.thm.move.views.Anchor
+import de.thm.move.util.PointUtils._
 import de.thm.move.models.CommonTypes._
 
 trait ResizableShape extends Node {
@@ -19,6 +20,7 @@ trait ResizableShape extends Node {
   def getY: Double
   final def getXY: Point = (getX, getY)
 
+  def move(delta:Point):Unit = setXY(delta+getXY)
   def setX(x:Double): Unit
   def setY(y:Double): Unit
   final def setXY(p:Point): Unit = {
