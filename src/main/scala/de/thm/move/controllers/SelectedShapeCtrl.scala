@@ -97,6 +97,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
         val oldLinePattern = shape.linePattern.get
 
         history.execute {
+          LinePattern.removeOldCss(shape)
           shape.getStyleClass().add(cssClass)
           shape.linePattern.set(linePattern)
         } {
