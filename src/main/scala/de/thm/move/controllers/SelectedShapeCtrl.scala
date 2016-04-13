@@ -176,7 +176,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
   def getGroupSelectionHandler: MouseEvent => Unit = {
     var mouseP = (0.0,0.0)
     //highlight the currently selection-space
-    var groupRectangle = ShapeFactory.newRectangle((0,0), 0.0, 0.0)(Color.BLACK,Color.BLACK, 1)
+    val groupRectangle = ShapeFactory.newRectangle((0,0), 0.0, 0.0)(Color.BLACK,Color.BLACK, 1)
     groupRectangle.getStyleClass.addAll("selection-rectangle")
     groupRectangle.setVisible(false)
     drawPanel.getChildren.add(groupRectangle)
@@ -184,8 +184,8 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     def groupHandler(mv:MouseEvent):Unit = mv.getEventType match {
       case MouseEvent.MOUSE_PRESSED =>
         mouseP = (mv.getX,mv.getY)
-        groupRectangle.setVisible(true)
         groupRectangle.setXY(mouseP)
+        groupRectangle.setVisible(true)
       case MouseEvent.MOUSE_DRAGGED =>
         //adjust selection highlighting
         val w = mv.getX - mouseP.x
