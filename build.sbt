@@ -6,7 +6,9 @@ unmanagedResourceDirectories in Compile += baseDirectory.value / "conf"
 
 scalacOptions ++= Seq(
     "-unchecked",
-    "-deprecation")
+    "-deprecation",
+    "-feature"
+    )
 
 lazy val copyRscs = taskKey[Unit]("Copies needed resources to resource-directory.")
 
