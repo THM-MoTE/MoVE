@@ -323,12 +323,13 @@ class MoveCtrl extends Initializable {
     for (
       file <- fileOp;
       uri = file.toURI;
-      srcFormat <- showSrcCodeDialog()
+      srcFormat <- showSrcCodeDialog();
+      pxPerMm <- showScaleDialog()
     ) {
       val shapes = drawPanel.getShapes.filterNot(_.isInstanceOf[Anchor])
       val width = drawPanel.getWidth
       val height = drawPanel.getHeight
-      val generator = new ModelicaCodeGenerator(srcFormat, width, height)
+      val generator = new ModelicaCodeGenerator(srcFormat, pxPerMm, width, height)
 
       val filenamestr = Paths.get(uri).getFileName.toString
       val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr

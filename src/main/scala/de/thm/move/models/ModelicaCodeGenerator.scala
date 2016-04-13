@@ -15,12 +15,15 @@ import de.thm.move.util.PointUtils._
 import de.thm.move.util.ResourceUtils
 import de.thm.move.views.shapes._
 
-class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Double) {
+class ModelicaCodeGenerator(srcFormat:FormatSrc, pxPerMm:Int, paneWidth:Double, paneHeight:Double) {
   type Lines = List[String]
   val encoding = Charset.forName("UTF-8")
 
+  private def convertVal(v:Double):Double = v/pxPerMm
+  private def convertPoint(p:Point):Point = p.map(convertVal)
+
   private def genOrigin(x:Double, y:Double): String =
-    s"""origin={${x.toInt}, ${y.toInt}}"""
+    s"""origin=${genPoint(x,y)}"""
 
   private def genPoints(ps: Seq[Point]):String = {
     val psStrings = ps.map (genPoint(_)+",").mkString.dropRight(1)
@@ -36,7 +39,10 @@ class ModelicaCodeGenerator(srcFormat:FormatSrc, paneWidth:Double, paneHeight:Do
   private def genStrokeWidth(elem:ColorizableShape, key:String="lineThickness"): String =
     s"$key = ${elem.getStrokeWidth}"
 
-  private def genPoint(p:Point):String = s"{${p._1.toInt},${p._2.toInt}}"
+  private def genPoint(p:Point):String = {
+    val convP = convertPoint(p)
+    s"{${convP.x.toInt},${convP.y.toInt}}"
+  }
   private def genPoint(x:Double,y:Double):String = genPoint((x,y))
 
   private def genFillAndStroke(shape:ColorizableShape)(implicit indentIdx:Int):String = {
