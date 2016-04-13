@@ -73,6 +73,10 @@
       </VBox>
    </top>
    <center>
-      <StackPane fx:id="drawStub" styleClass="draw-stub"  prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="326.0" prefViewportWidth="445.0">
+         <content>
+            <StackPane fx:id="drawStub" prefHeight="150.0" prefWidth="200.0" styleClass="draw-stub" BorderPane.alignment="CENTER" />
+         </content>
+      </ScrollPane>
    </center>
 </BorderPane>
