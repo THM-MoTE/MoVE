@@ -10,7 +10,7 @@ import de.thm.move.views.Anchor
 import de.thm.move.util.PointUtils._
 import de.thm.move.models.CommonTypes._
 
-trait ResizableShape extends Node {
+trait ResizableShape extends Node with MovableShape {
 
   val selectionRectangle = new SelectionRectangle(this)
 
