@@ -35,6 +35,7 @@ import de.thm.move.models.FillPattern._
 import de.thm.move.models.FillPattern
 import de.thm.move.loader.parser.ModelicaParserLike
 import de.thm.move.loader.ShapeConverter
+import de.thm.move.util.PointUtils._
 import implicits.FxHandlerImplicits._
 import implicits.ConcurrentImplicits._
 import implicits.MonadImplicits._
@@ -270,7 +271,6 @@ class MoveCtrl extends Initializable {
   private def showScaleDialog(): Option[Int] = {
     val dialog = Dialogs.newScaleDialog()
     val scaleOp:Option[String] = dialog.showAndWait()
-    println(scaleOp)
     scaleOp.map(_.toInt)
   }
 
@@ -291,12 +291,17 @@ class MoveCtrl extends Initializable {
       val parser = ModelicaParserLike()
       parser.parse(path) match {
         case Success(ast) =>
+          val systemSize = ShapeConverter.gettCoordinateSystemSizes(ast).head
           val converter = new ShapeConverter(scaleFactor,
-            ShapeConverter.gettCoordinateSystemSizes(ast).head,
-            path
-            )
+            systemSize,
+            path)
           val shapes = converter.getShapes(ast)
+          val scaledSystem = systemSize.map(_*scaleFactor)
           shapes.foreach { s =>
+            drawPanel.setPrefSize(scaledSystem.x, scaledSystem.y)
+            drawPanel.setMinSize(scaledSystem.x, scaledSystem.y)
+            drawPanel.setMaxSize(scaledSystem.x, scaledSystem.y)
+
             drawCtrl.addShape(s)
             drawCtrl.addNode(s.getAnchors)
           }
