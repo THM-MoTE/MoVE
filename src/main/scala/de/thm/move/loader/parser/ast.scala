@@ -13,7 +13,10 @@ object ast {
 
   case class Icon(coordinationSystem:Option[CoordinateSystem],
                   grapchics:List[ShapeElement]) extends Annotation
-  case class CoordinateSystem(extension:Extent) extends ModelicaAst
+  case class CoordinateSystem(extension:Extent,
+                        preserveRatio:Boolean = true,
+                        initScale:Double = 0.1
+                        ) extends ModelicaAst
 
   sealed trait ShapeElement extends ModelicaAst
 

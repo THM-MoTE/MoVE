@@ -44,7 +44,15 @@ class ModelicaParser extends JavaTokenParsers
         ")" ^^  { case coord ~ graphics => Icon(coord, graphics) }
 
   def coordinateSys: Parser[CoordinateSystem] =
-    "coordinateSystem" ~>"(" ~> extensionParser <~ ")" ^^ CoordinateSystem
+    "coordinateSystem" ~>"(" ~> coordinateSysFields <~ ")"
+
+  def coordinateSysFields:Parser[CoordinateSystem] =
+    propertyKeys(extent, preserveRatio, initScale) ^^ { map =>
+    val ext = getPropertyValue(map, extent)(extension)
+    val aspectRatio = getPropertyValue(map, preserveRatio, defaultPreserveRatio)(bool)
+    val scale = getPropertyValue(map, initScale, defaultinitScale)(decimalNo)
+    CoordinateSystem(ext,aspectRatio,scale)
+  }
 
   def extensionParser:Parser[Extent] =
     "extent" ~> "=" ~> extension

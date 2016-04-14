@@ -116,6 +116,8 @@ object PropertyParser {
   val thick = "thickness"
   val endAngle = "endAngle"
   val rotation = "rotation"
+  val preserveRatio = "preserveAspectRatio"
+  val initScale = "initialScale"
 
   //default values
   val defaultVisible = true
@@ -132,4 +134,6 @@ object PropertyParser {
   val defaultEndAngle = 360.0
   val defaultRotation = 0.0
   val defaultCoordinateSystemSize = (200.0,200.0)
+  val defaultPreserveRatio = true
+  val defaultinitScale = 0.1
 }
