@@ -22,13 +22,6 @@ class SelectionGroup(children:List[ResizableShape])
   def setY(y:Double): Unit = throw new UnsupportedOperationException()
   def copy: ResizableShape = ???
 
-  private def coloredSelectedShape: List[ResizableShape with ColorizableShape] =
-    children flatMap {
-      //filter non-colrizable shapes
-      case colorizable:ColorizableShape => List(colorizable)
-      case _ => Nil
-    }
-
   override def move(delta:Point):Unit = children.foreach(_.move(delta))
   override def childrens: List[ResizableShape] = children
 }
