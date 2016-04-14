@@ -11,6 +11,7 @@ import javafx.scene.shape.Ellipse
 
 import de.thm.move.Global
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.util.JFxUtils._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._
@@ -81,7 +82,7 @@ trait RectangleLike {
     }
   }
 
-  topLeftAnchor.setOnMousePressed { _: MouseEvent =>
+  topLeftAnchor.setOnMousePressed(withConsumedEvent { _: MouseEvent =>
     val (oldX, oldY) = getTopLeft
     val oldHeight = getHeight
     val oldWidth = getWidth
@@ -94,9 +95,9 @@ trait RectangleLike {
       setWidth(oldWidth)
       setHeight(oldHeight)
     }
-  }
+  })
 
-  topLeftAnchor.setOnMouseDragged { me: MouseEvent =>
+  topLeftAnchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
     val (oldX, oldY) = getTopLeft
     val (newX, newY) = (me.getX, me.getY)
     val boundWidth = getWidth
@@ -111,9 +112,9 @@ trait RectangleLike {
     }
     setWidth(deltaX)
     setHeight(deltaY)
-  }
+  })
 
-  topRightAnchor.setOnMousePressed { _: MouseEvent =>
+  topRightAnchor.setOnMousePressed(withConsumedEvent { _: MouseEvent =>
     val (oldX, oldY) = getTopLeft
     val oldHeight = getHeight
     val oldWidth = getWidth
@@ -125,9 +126,9 @@ trait RectangleLike {
       setWidth(oldWidth)
       setHeight(oldHeight)
     }
-  }
+  })
 
-  topRightAnchor.setOnMouseDragged { me: MouseEvent =>
+  topRightAnchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
     val (oldX, oldY) = getTopRight
     val (newX, newY) = (me.getX, me.getY)
 
@@ -141,9 +142,9 @@ trait RectangleLike {
     }
     setWidth(deltaX)
     setHeight(deltaY)
-  }
+  })
 
-  bottomRightAnchor.setOnMousePressed { _: MouseEvent =>
+  bottomRightAnchor.setOnMousePressed(withConsumedEvent { _: MouseEvent =>
     val oldHeight = getHeight
     val oldWidth = getWidth
 
@@ -151,9 +152,9 @@ trait RectangleLike {
       setWidth(oldWidth)
       setHeight(oldHeight)
     }
-  }
+  })
 
-  bottomRightAnchor.setOnMouseDragged { me: MouseEvent =>
+  bottomRightAnchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
     val (oldX, oldY) = getBottomRight
     val (newX, newY) = (me.getX, me.getY)
 
@@ -165,23 +166,23 @@ trait RectangleLike {
 
     setWidth(deltaX)
     setHeight(deltaY)
-  }
+  })
 
-  bottomLeftAnchor.setOnMousePressed { _: MouseEvent =>
+  bottomLeftAnchor.setOnMousePressed(withConsumedEvent { me: MouseEvent =>
     val (oldX, oldY) = getTopLeft
     val oldHeight = getHeight
     val oldWidth = getWidth
 
     command = History.partialAction {
-      if(adjustCoordinates) {
+      if (adjustCoordinates) {
         setX(oldX)
       }
       setWidth(oldWidth)
       setHeight(oldHeight)
     }
-  }
+  })
 
-  bottomLeftAnchor.setOnMouseDragged { me: MouseEvent =>
+  bottomLeftAnchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
     val (oldX, oldY) = getBottomLeft
     val (newX, newY) = (me.getX, me.getY)
 
@@ -196,5 +197,5 @@ trait RectangleLike {
     }
     setWidth(deltaX)
     setHeight(deltaY)
-  }
+  })
 }
