@@ -1,5 +1,6 @@
 package de.thm.move.controllers
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.paint.Color
 
 import de.thm.move.Global
@@ -22,6 +23,8 @@ import de.thm.move.controllers.factorys.ShapeFactory
  * black border around the bounding-box.
  */
 class SelectedShapeCtrl(drawPanel:DrawPanel) {
+
+  val addSelectedShapeProperty = new SimpleBooleanProperty(false)
 
   private var selectedShapes:List[ResizableShape] = Nil
 
@@ -52,8 +55,18 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     LinePattern.linePatternToCssClass
 
   def setSelectedShape(shape:ResizableShape): Unit = {
+    if(addSelectedShapeProperty.get) addToSelectedShapes(shape)
+    else replaceSelectedShape(shape)
+  }
+
+  private def replaceSelectedShape(shape:ResizableShape): Unit = {
     removeSelectedShape
     selectedShapes = List(shape)
+    drawPanel.getChildren.add(shape.selectionRectangle)
+  }
+
+  private def addToSelectedShapes(shape:ResizableShape): Unit = {
+    selectedShapes = shape :: selectedShapes
     drawPanel.getChildren.add(shape.selectionRectangle)
   }
 

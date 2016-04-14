@@ -238,6 +238,16 @@ class MoveCtrl extends Initializable {
           drawCtrl.drawConstraintProperty.set(false)
       }
     }
+    shortcuts.getKeyCode("select-constraint").foreach { code =>
+      drawStub.getScene.setOnKeyPressed { ke: KeyEvent =>
+        if(ke.getCode == code)
+          selectionCtrl.addSelectedShapeProperty.set(true)
+      }
+      drawStub.getScene.setOnKeyReleased { ke: KeyEvent =>
+        if(ke.getCode == code)
+          selectionCtrl.addSelectedShapeProperty.set(false)
+      }
+    }
 
     drawStub.getScene.getAccelerators.putAll(combinationsToRunnable)
 
