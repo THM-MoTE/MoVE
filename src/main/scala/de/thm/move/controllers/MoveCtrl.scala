@@ -91,7 +91,7 @@ class MoveCtrl extends Initializable {
   private val selectionCtrl = new SelectedShapeCtrl(drawPanel)
   private val aboutCtrl = new AboutCtrl()
 
-  private val moveHandler = drawCtrl.getMoveHandler
+  private val moveHandler = selectionCtrl.getMoveHandler
 
   private val shapeBtnsToSelectedShapes = Map(
       "rectangle_btn" -> SelectedShape.Rectangle,

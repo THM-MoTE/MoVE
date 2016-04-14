@@ -5,6 +5,9 @@ import javafx.scene.paint.Color
 
 import de.thm.move.Global
 import de.thm.move.Global._
+import de.thm.move.history.History
+import de.thm.move.history.History.Command
+import de.thm.move.util.JFxUtils._
 import de.thm.move.views.{GroupLike, DrawPanel, SelectionGroup}
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 import de.thm.move.models.LinePattern
@@ -59,15 +62,56 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     else replaceSelectedShape(shape)
   }
 
+  private def addSelectionRectangle(shape:ResizableShape): Unit = {
+    if(!drawPanel.getChildren.contains(shape.selectionRectangle))
+      drawPanel.getChildren.add(shape.selectionRectangle)
+  }
+
   private def replaceSelectedShape(shape:ResizableShape): Unit = {
     removeSelectedShape
     selectedShapes = List(shape)
-    drawPanel.getChildren.add(shape.selectionRectangle)
+    addSelectionRectangle(shape)
   }
 
   private def addToSelectedShapes(shape:ResizableShape): Unit = {
     selectedShapes = shape :: selectedShapes
-    drawPanel.getChildren.add(shape.selectionRectangle)
+    addSelectionRectangle(shape)
+  }
+
+  def getMoveHandler: (MouseEvent => Unit) = {
+    var mouseP = (0.0,0.0)
+    var command: (=> Unit) => Command = x => { History.emptyAction }
+
+    def moveElement(mv: MouseEvent): Unit =
+      (mv.getEventType, mv.getSource) match {
+        case (MouseEvent.MOUSE_PRESSED, shape: ResizableShape) =>
+          //save old coordinates for undo
+
+          //TODO fix un-/redo so that it only uses move()
+          val old = shape.getXY
+          command = History.partialAction {
+            shape.setXY(old)
+          }
+          mouseP = (mv.getSceneX,mv.getSceneY)
+        case (MouseEvent.MOUSE_DRAGGED, shape: ResizableShape) =>
+          //translate from original to new position
+          val delta = (mv.getSceneX - mouseP.x, mv.getSceneY - mouseP.y)
+
+          selectedShapes.foreach(_.move(delta))
+
+          //don't forget to use the new mouse-point as starting-point
+          mouseP = (mv.getSceneX,mv.getSceneY)
+        case (MouseEvent.MOUSE_RELEASED, shape: ResizableShape) =>
+          //save coordinates for redo
+          val newP = shape.getXY
+          val cmd = command {
+            shape.setXY(newP)
+          }
+          Global.history.save(cmd)
+        case _ => //unknown event
+      }
+
+    moveElement
   }
 
   def removeSelectedShape: Unit = {

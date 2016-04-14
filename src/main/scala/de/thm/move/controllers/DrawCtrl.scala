@@ -162,42 +162,6 @@ class DrawCtrl(
     node.getChildren.removeAll(removingNodes)
   }
 
-  def getMoveHandler: (MouseEvent => Unit) = {
-    var mouseP = (0.0,0.0)
-    var command: (=> Unit) => Command = x => { History.emptyAction }
-
-    def moveElement(mv: MouseEvent): Unit =
-      (mv.getEventType, mv.getSource) match {
-        case (MouseEvent.MOUSE_PRESSED, shape: ResizableShape) =>
-          //save old coordinates for undo
-
-          //TODO fix un-/redo so that it only uses move()
-          val old = shape.getXY
-          command = History.partialAction {
-            shape.setXY(old)
-          }
-          mouseP = (mv.getSceneX,mv.getSceneY)
-        case (MouseEvent.MOUSE_DRAGGED, shape: ResizableShape) =>
-          //translate from original to new position
-          val delta = (mv.getSceneX - mouseP.x, mv.getSceneY - mouseP.y)
-          withMovableElement(shape) { movable =>
-            movable.move(delta)
-          }
-          //don't forget to use the new mouse-point as starting-point
-          mouseP = (mv.getSceneX,mv.getSceneY)
-        case (MouseEvent.MOUSE_RELEASED, shape: ResizableShape) =>
-          //save coordinates for redo
-          val newP = shape.getXY
-          val cmd = command {
-            shape.setXY(newP)
-          }
-          Global.history.save(cmd)
-        case _ => //unknown event
-      }
-
-    moveElement
-  }
-
   override def addShape(shape: ResizableShape*): Unit = {
     shape foreach { x =>
       x.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
