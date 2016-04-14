@@ -12,7 +12,7 @@ import de.thm.move.Global._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.util.JFxUtils
+import de.thm.move.util.JFxUtils._
 import de.thm.move.views.{MovableAnchor, Anchor}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
@@ -37,49 +37,49 @@ class ResizableLine(
   //undo-/redo command
   private var command: (=> Unit) => Command = x => { History.emptyAction }
 
-  startAnchor.setOnMousePressed { _:MouseEvent =>
+  startAnchor.setOnMousePressed(withConsumedEvent { _:MouseEvent =>
     val (oldX,oldY) = (getStartX, getStartY)
     command = History.partialAction {
       setStartX(oldX)
       setStartY(oldY)
     }
-  }
+  })
 
-  startAnchor.setOnMouseDragged { me:MouseEvent =>
+  startAnchor.setOnMouseDragged(withConsumedEvent { me:MouseEvent =>
       setStartX(me.getX)
       setStartY(me.getY)
-  }
+  })
 
-  startAnchor.setOnMouseReleased { _:MouseEvent =>
+  startAnchor.setOnMouseReleased(withConsumedEvent { _:MouseEvent =>
     val (oldX,oldY) = (getStartX,getStartY)
     history.save(command {
       setStartX(oldX)
       setStartY(oldY)
     })
-  }
+  })
 
-  endAnchor.setOnMousePressed { _:MouseEvent =>
+  endAnchor.setOnMousePressed(withConsumedEvent { _:MouseEvent =>
     val (oldX,oldY) = (getEndX, getEndY)
     command = History.partialAction {
       setEndX(oldX)
       setEndY(oldY)
     }
-  }
+  })
 
-  endAnchor.setOnMouseDragged { me:MouseEvent =>
+  endAnchor.setOnMouseDragged(withConsumedEvent { me:MouseEvent =>
       setEndX(me.getX)
       setEndY(me.getY)
-  }
+  })
 
-  endAnchor.setOnMouseReleased { _:MouseEvent =>
+  endAnchor.setOnMouseReleased(withConsumedEvent { _:MouseEvent =>
     val (oldX,oldY) = (getEndX, getEndY)
     history.save(command {
       setEndX(oldX)
       setEndY(oldY)
     })
-  }
+  })
 
-  JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
+  binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 
   override def getX: Double = getLayoutX
   override def setY(y: Double): Unit = setLayoutY(y)

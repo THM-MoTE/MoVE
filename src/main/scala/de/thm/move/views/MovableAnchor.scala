@@ -11,6 +11,7 @@ import javafx.scene.shape.Ellipse
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
+import de.thm.move.util.JFxUtils._
 import de.thm.move.Global._
 
 trait MovableAnchor {
@@ -22,7 +23,7 @@ trait MovableAnchor {
   //undo-/redo command
   private var command: (=> Unit) => Command = x => { History.emptyAction }
 
-  self.setOnMousePressed { me: MouseEvent =>
+  self.setOnMousePressed(withConsumedEvent { me: MouseEvent =>
     val oldX = self.getCenterX
     val oldY = self.getCenterY
 
@@ -33,19 +34,19 @@ trait MovableAnchor {
       self.setCenterX(oldX)
       self.setCenterY(oldY)
     }
-  }
+  })
 
-  self.setOnMouseReleased { _: MouseEvent =>
+  self.setOnMouseReleased(withConsumedEvent { _: MouseEvent =>
     val x = self.getCenterX
     val y = self.getCenterY
     history.save(command {
       self.setCenterX(x)
       self.setCenterY(y)
     })
-  }
+  })
 
-  self.setOnMouseDragged { me: MouseEvent =>
+  self.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
     self.setCenterX(deltaX + me.getX)
     self.setCenterY(deltaY + me.getY)
-  }
+  })
 }
