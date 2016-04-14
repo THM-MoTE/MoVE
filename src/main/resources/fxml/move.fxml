@@ -40,6 +40,9 @@
                         <MenuItem fx:id="undoMenuItem" mnemonicParsing="false" onAction="#onUndoClicked" text="Undo" />
                         <MenuItem fx:id="redoMenuItem" mnemonicParsing="false" onAction="#onRedoClicked" text="Redo" />
                         <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#onDeleteClicked" text="Delete" />
+                        <MenuItem fx:id="groupMenuItem" mnemonicParsing="false" onAction="#onGroupPressed" text="Group Elements" />
+                        <MenuItem fx:id="ungroupMenuItem" mnemonicParsing="false" onAction="#onUngroupPressed" text="Ungroup Elements" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                       <MenuItem fx:id="loadImgMenuItem" mnemonicParsing="false" onAction="#onLoadBitmap" text="Insert Bitmap" />
                   </items>
                 </Menu>

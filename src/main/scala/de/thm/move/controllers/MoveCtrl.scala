@@ -61,6 +61,11 @@ class MoveCtrl extends Initializable {
   var deleteMenuItem: MenuItem = _
 
   @FXML
+  var groupMenuItem: MenuItem = _
+  @FXML
+  var ungroupMenuItem: MenuItem = _
+
+  @FXML
   var loadImgMenuItem: MenuItem = _
 
   @FXML
@@ -190,7 +195,9 @@ class MoveCtrl extends Initializable {
         case Some(shape) =>
           selectionCtrl.removeSelectedShape
           handler(shape, mouseEvent)(getFillColor, getStrokeColor, selectedThickness)
-        case _ => groupHandler(mouseEvent)
+        case _ if mouseEvent.getSource == drawPanel =>
+          groupHandler(mouseEvent)
+        case _ => //ignore
       }
     }
 
@@ -250,13 +257,16 @@ class MoveCtrl extends Initializable {
       ev match {
         case mv:MouseEvent if mv.getEventType == MouseEvent.MOUSE_CLICKED =>
           mv.getSource() match {
-            case s:ResizableShape => selectionCtrl.setSelectedShape(s)
+            case s:ResizableShape =>
+              withResizableElement(s) { resizable =>
+                selectionCtrl.setSelectedShape(resizable)
+              }
             case _:Anchor => //ignore can't change
           }
-
         case mv: MouseEvent => moveHandler(mv)
         case _ => //not mapped event
       }
+      ev.consume //!!! prevent drawPanel from act on this event
     }
   }
 
@@ -368,6 +378,12 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onDeleteClicked(e:ActionEvent): Unit = selectionCtrl.deleteSelectedShape
+
+  @FXML
+  def onGroupPressed(e:ActionEvent): Unit = selectionCtrl.groupSelectedElements()
+
+  @FXML
+  def onUngroupPressed(e:ActionEvent): Unit = selectionCtrl.ungroupSelectedElements()
 
   @FXML
   def onPointerClicked(e:ActionEvent): Unit = {
