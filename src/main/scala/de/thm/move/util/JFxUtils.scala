@@ -5,6 +5,8 @@
 
 package de.thm.move.util
 
+import javafx.event.{EventHandler, Event}
+
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import javafx.scene.Node
 import javafx.scene.control.ChoiceBox
@@ -40,5 +42,12 @@ object JFxUtils {
     case (_,ms:ResizableShape) => fn(ms)
     case (ms:ResizableShape,_) => fn(ms)
     case _ => throw new IllegalArgumentException(s"that's not a resizableShape: $n")
+  }
+
+  def withConsumedEvent[A <: Event](fn: A => Unit): EventHandler[A] = new EventHandler[A]() {
+    override def handle(event: A): Unit = {
+      fn(event)
+      event.consume
+    }
   }
 }
