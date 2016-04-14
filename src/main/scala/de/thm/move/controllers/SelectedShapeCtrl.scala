@@ -4,9 +4,8 @@ import javafx.scene.paint.Color
 
 import de.thm.move.Global
 import de.thm.move.Global._
-import de.thm.move.views.DrawPanel
+import de.thm.move.views.{GroupLike, DrawPanel, SelectionGroup}
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
-import de.thm.move.views.SelectionGroup
 import de.thm.move.models.LinePattern
 import de.thm.move.models.FillPattern
 import de.thm.move.models.CommonTypes._
@@ -26,11 +25,28 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
 
   private var selectedShapes:List[ResizableShape] = Nil
 
-  private def coloredSelectedShape: List[ResizableShape with ColorizableShape] =
-    selectedShapes flatMap {
-      //filter non-colrizable shapes; they have no linepattern
-      case colorizable:ColorizableShape => List(colorizable)
-    }
+  /** Gets all shapes that are colorizable and removes groups if they exist */
+  private def coloredSelectedShape: List[ResizableShape with ColorizableShape] = {
+    def findColorizables(xs:List[ResizableShape]): List[ResizableShape with ColorizableShape] =
+      xs flatMap {
+        //filter non-colrizable shapes; they have no linepattern
+        case colorizable:ColorizableShape => List(colorizable)
+        case g:GroupLike => findColorizables(g.childrens)
+        case _ => Nil
+      }
+
+    findColorizables(selectedShapes)
+  }
+
+  private def getSelectionGroups: List[GroupLike] = {
+    def findGroups(xs:List[ResizableShape]): List[GroupLike] =
+      xs flatMap {
+        case g:GroupLike => g :: findGroups(g.childrens)
+        case _ => Nil
+      }
+
+    findGroups(selectedShapes)
+  }
 
   private val linePatternToCssClass: Map[LinePattern.LinePattern, String] =
     LinePattern.linePatternToCssClass
@@ -154,11 +170,34 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     }
   }
 
-  def groupElements(startBounding:Point,endBounding:Point):Unit = {
+  def groupSelectedElements(): Unit = {
+    selectedShapes foreach { x =>
+      drawPanel.getChildren.remove(x.selectionRectangle)
+    }
+
+    val group = new SelectionGroup(selectedShapes)
+    drawPanel.getChildren.add(group)
+    drawPanel.getChildren.add(group.selectionRectangle)
+
+    selectedShapes = List(group)
+  }
+
+  def ungroupSelectedElements(): Unit = {
+    getSelectionGroups foreach { group =>
+      drawPanel.remove(group)
+      drawPanel.remove(group.selectionRectangle)
+      group.childrens.foreach { shape =>
+        drawPanel.drawShape(shape)
+        drawPanel.getChildren.addAll(shape.getAnchors:_*)
+      }
+    }
+  }
+
+  private def highlightGroupedElements(startBounding:Point,endBounding:Point):Unit = {
     val shapesInBox = drawPanel.getChildren() filter {
       case shape:ResizableShape =>
         //only the elements thar are ResizableShapes and placed inside the bounding
-        val shapeBounds = shape.getBoundsInLocal
+        val shapeBounds = shape.getBoundsInParent
         shapeBounds.getMinX > startBounding.x &&
         shapeBounds.getMaxX < endBounding.x &&
         shapeBounds.getMinY > startBounding.y &&
@@ -167,14 +206,9 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     } map(_.asInstanceOf[ResizableShape])
 
     removeSelectedShape
-    /*for(shape <- shapesInBox) {
+    for(shape <- shapesInBox) {
         drawPanel.getChildren.add(shape.selectionRectangle)
     }
-    */
-
-    val selectedGroup = new SelectionGroup(shapesInBox.toList)
-    drawPanel.getChildren().add(selectedGroup)
-    drawPanel.getChildren().add(selectedGroup.selectionRectangle)
 
     selectedShapes = shapesInBox.toList
   }
@@ -191,6 +225,8 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
       case MouseEvent.MOUSE_PRESSED =>
         mouseP = (mv.getX,mv.getY)
         groupRectangle.setXY(mouseP)
+        groupRectangle.setWidth(0)
+        groupRectangle.setHeight(0)
         groupRectangle.setVisible(true)
       case MouseEvent.MOUSE_DRAGGED =>
         //adjust selection highlighting
@@ -204,7 +240,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
         val start = mouseP
         val end = start + delta
         groupRectangle.setVisible(false)
-        groupElements(start,end)
+        highlightGroupedElements(start,end)
       case _ => //ignore other events
     }
 
