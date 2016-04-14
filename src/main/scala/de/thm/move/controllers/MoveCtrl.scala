@@ -18,7 +18,7 @@ import javafx.scene.input._
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.stage.{Stage, FileChooser}
-import de.thm.move.Global
+import de.thm.move.Global._
 import de.thm.move.util.JFxUtils._
 import de.thm.move.views.{SaveDialog, DrawPanel, Anchor}
 import de.thm.move.views.shapes.ResizableShape
@@ -112,12 +112,12 @@ class MoveCtrl extends Initializable {
     }
 
     val keyCodeOpts = List(
-      Global.shortcuts.getShortcut("move-elements") -> getButtonById("line_pointer"),
-      Global.shortcuts.getShortcut("draw-rectangle") -> getButtonById("rectangle_btn"),
-      Global.shortcuts.getShortcut("draw-line") -> getButtonById("line_btn"),
-      Global.shortcuts.getShortcut("draw-polygon") -> getButtonById("polygon_btn"),
-      Global.shortcuts.getShortcut("draw-path") -> getButtonById("path_btn"),
-      Global.shortcuts.getShortcut("draw-circle") -> getButtonById("circle_btn")
+      shortcuts.getShortcut("move-elements") -> getButtonById("line_pointer"),
+      shortcuts.getShortcut("draw-rectangle") -> getButtonById("rectangle_btn"),
+      shortcuts.getShortcut("draw-line") -> getButtonById("line_btn"),
+      shortcuts.getShortcut("draw-polygon") -> getButtonById("polygon_btn"),
+      shortcuts.getShortcut("draw-path") -> getButtonById("path_btn"),
+      shortcuts.getShortcut("draw-circle") -> getButtonById("circle_btn")
       )
 
     val codes = keyCodeOpts flatMap {
@@ -134,18 +134,18 @@ class MoveCtrl extends Initializable {
       for (
         (key, menu) <- keys zip menues
       ) {
-        Global.shortcuts.getShortcut(key) foreach menu.setAccelerator
+        shortcuts.getShortcut(key) foreach menu.setAccelerator
       }
     }
 
     /*Setup default colors for fill-,strokeChooser & strokeWidth*/
     private def setupDefaultColors(): Unit = {
       def asColor(key:String): Option[Color] =
-        Global.config.getString(key).map(Color.web)
+        config.getString(key).map(Color.web)
 
       val fillColor = asColor("colorChooser.fillColor").getOrElse(Color.BLACK)
       val strokeColor = asColor("colorChooser.strokeColor").getOrElse(Color.BLACK)
-      val width = Global.config.getInt("colorChooser.strokeWidth").getOrElse(1)
+      val width = config.getInt("colorChooser.strokeWidth").getOrElse(1)
 
       fillColorPicker.setValue(fillColor)
       strokeColorPicker.setValue(strokeColor)
@@ -154,16 +154,16 @@ class MoveCtrl extends Initializable {
 
   private def setupAboutDialog(): Unit = {
     //=== setup about dialog
-    val aboutWindowWidth = Global.config.getDouble("window.about.width").getOrElse(200.0)
-    val aboutWindowHeight = Global.config.getDouble("window.about.height").getOrElse(200.0)
+    val aboutWindowWidth = config.getDouble("window.about.width").getOrElse(200.0)
+    val aboutWindowHeight = config.getDouble("window.about.height").getOrElse(200.0)
     val fxmlLoader = new FXMLLoader(getClass.getResource("/fxml/about.fxml"))
     fxmlLoader.setController(aboutCtrl)
     val aboutViewRoot: Parent = fxmlLoader.load()
     aboutStage.initOwner(getWindow)
     val scene = new Scene(aboutViewRoot)
-    scene.getStylesheets.add(Global.styleSheetUrl)
+    scene.getStylesheets.add(styleSheetUrl)
 
-    aboutStage.setTitle(Global.config.getString("window.title").map(_+" - About").getOrElse(""))
+    aboutStage.setTitle(config.getString("window.title").map(_+" - About").getOrElse(""))
     aboutStage.setScene(scene)
     aboutStage.setWidth(aboutWindowWidth)
     aboutStage.setHeight(aboutWindowHeight)
@@ -228,7 +228,7 @@ class MoveCtrl extends Initializable {
     }
 
     //shortcuts that aren't mapped to buttons
-    Global.shortcuts.getKeyCode("draw-constraint").foreach { code =>
+    shortcuts.getKeyCode("draw-constraint").foreach { code =>
       drawStub.getScene.setOnKeyPressed { ke: KeyEvent =>
         if(ke.getCode == code)
           drawCtrl.drawConstraintProperty.set(true)
@@ -382,9 +382,9 @@ class MoveCtrl extends Initializable {
   @FXML
   def onShowAnchorsClicked(e:ActionEvent): Unit = drawCtrl.setVisibilityOfAnchors(showAnchorsSelected)
   @FXML
-  def onUndoClicked(e:ActionEvent): Unit = Global.history.undo()
+  def onUndoClicked(e:ActionEvent): Unit = history.undo()
   @FXML
-  def onRedoClicked(e:ActionEvent): Unit = Global.history.redo()
+  def onRedoClicked(e:ActionEvent): Unit = history.redo()
 
   @FXML
   def onDeleteClicked(e:ActionEvent): Unit = selectionCtrl.deleteSelectedShape
