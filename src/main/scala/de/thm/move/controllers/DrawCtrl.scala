@@ -22,9 +22,11 @@ import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.PointUtils._
+import de.thm.move.util.JFxUtils._
 import de.thm.move.views.shapes._
-import de.thm.move.views.{ShapeContextMenu, Anchor, DrawPanel}
+import de.thm.move.views._
 import scala.collection.JavaConversions._
+import javafx.scene.Parent
 
 class DrawCtrl(
     val drawPanel: DrawPanel,
@@ -162,13 +164,14 @@ class DrawCtrl(
 
   def getMoveHandler: (MouseEvent => Unit) = {
     var mouseP = (0.0,0.0)
-
     var command: (=> Unit) => Command = x => { History.emptyAction }
 
     def moveElement(mv: MouseEvent): Unit =
       (mv.getEventType, mv.getSource) match {
         case (MouseEvent.MOUSE_PRESSED, shape: ResizableShape) =>
           //save old coordinates for undo
+
+          //TODO fix un-/redo so that it only uses move()
           val old = shape.getXY
           command = History.partialAction {
             shape.setXY(old)
@@ -177,7 +180,9 @@ class DrawCtrl(
         case (MouseEvent.MOUSE_DRAGGED, shape: ResizableShape) =>
           //translate from original to new position
           val delta = (mv.getSceneX - mouseP.x, mv.getSceneY - mouseP.y)
-          shape.move(delta)
+          withMovableElement(shape) { movable =>
+            movable.move(delta)
+          }
           //don't forget to use the new mouse-point as starting-point
           mouseP = (mv.getSceneX,mv.getSceneY)
         case (MouseEvent.MOUSE_RELEASED, shape: ResizableShape) =>
