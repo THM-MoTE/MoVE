@@ -31,4 +31,7 @@ object Global {
     Option( getClass.getResource(licenseFile) ).map { file =>
       scala.io.Source.fromURL(file,  "UTF-8").getLines.mkString("\n")
     }.getOrElse("Can't load license!")
+
+  lazy val minScaleFactor = 1
+  lazy val maxScaleFactor = 100
 }

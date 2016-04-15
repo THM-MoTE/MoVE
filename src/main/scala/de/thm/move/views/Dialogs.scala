@@ -51,8 +51,16 @@ object Dialogs {
   def newScaleDialog(): TextInputDialog = {
     val dialog = new TextInputDialog("1")
     dialog.setTitle("Scale factor");
-    dialog.setHeaderText("Give a scale factor")
-    dialog.setContentText("Please enter a valid scale factor (default=1):")
+    dialog.setHeaderText("Give a scale factor in px/mm")
+    dialog.setContentText("Please enter a valid scale factor between 1 and 100 (default=1):")
+    dialog
+  }
+
+  def newErrorDialog(msg:String): Alert = {
+    val dialog = new Alert(AlertType.ERROR)
+    dialog.setTitle("An error occured")
+    dialog.setHeaderText("Ouh something didn't work!")
+    dialog.setContentText(msg)
     dialog
   }
 }

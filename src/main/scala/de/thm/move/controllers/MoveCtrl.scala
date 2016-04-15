@@ -294,7 +294,7 @@ class MoveCtrl extends Initializable {
   private def showScaleDialog(): Option[Int] = {
     val dialog = Dialogs.newScaleDialog()
     val scaleOp:Option[String] = dialog.showAndWait()
-    scaleOp.map(_.toInt)
+    scaleOp.map(_.toInt).filter(x => x>=minScaleFactor && x<=maxScaleFactor)
   }
 
   val moFileFilter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo")
@@ -306,11 +306,11 @@ class MoveCtrl extends Initializable {
     chooser.setTitle("Save as..")
     chooser.setSelectedExtensionFilter(moFileFilter)
     val fileOp = Option(chooser.showOpenDialog(getWindow))
-    for {
+    (for {
       file <- fileOp
       path = Paths.get(file.toURI)
       scaleFactor <- showScaleDialog()
-    } {
+    } yield {
       val parser = ModelicaParserLike()
       parser.parse(path) match {
         case Success(ast) =>
@@ -332,6 +332,11 @@ class MoveCtrl extends Initializable {
           val excDialog = Dialogs.newExceptionDialog(ex)
           excDialog.showAndWait()
       }
+      Some(())
+    }) getOrElse {
+      val dialog = Dialogs.newErrorDialog("Can't load the given file or scale the icons." +
+      "\nPlease try again with a valid file and scale factor!")
+      dialog.showAndWait()
     }
   }
 
@@ -343,12 +348,12 @@ class MoveCtrl extends Initializable {
     chooser.setSelectedExtensionFilter(moFileFilter)
     val fileOp = Option(chooser.showSaveDialog(getWindow))
 
-    for (
+    (for (
       file <- fileOp;
       uri = file.toURI;
       srcFormat <- showSrcCodeDialog();
       pxPerMm <- showScaleDialog()
-    ) {
+    ) yield {
       val shapes = drawPanel.getChildren.filterNot(_.isInstanceOf[Anchor]).toList
       val width = drawPanel.getWidth
       val height = drawPanel.getHeight
@@ -358,6 +363,11 @@ class MoveCtrl extends Initializable {
       val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
       val lines = generator.generate(modelName, uri, shapes)
       generator.writeToFile(lines)(uri)
+      Some(())
+    }) getOrElse {
+      val dialog = Dialogs.newErrorDialog("Can't save to the given path or scale the icons." +
+      "\nPlease try again with a valid path and scale factor!")
+      dialog.showAndWait()
     }
   }
 
