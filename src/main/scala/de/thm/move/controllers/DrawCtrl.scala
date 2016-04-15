@@ -28,6 +28,7 @@ import de.thm.move.views._
 import scala.collection.JavaConversions._
 import javafx.scene.Parent
 
+/** Controller for drawing new shapes or adding existing shapes to the drawPanel. */
 class DrawCtrl(
     val drawPanel: DrawPanel,
     shapeInputHandler:InputEvent => Unit)

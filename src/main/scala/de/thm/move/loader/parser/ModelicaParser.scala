@@ -126,12 +126,6 @@ class ModelicaParser extends JavaTokenParsers
           throw new ParsingError("fileName or imageSource has to be defined for Bitmaps!")
           )
     }
-/*
-  def rotation:Parser[Rotation] =
-    ("rotation" ~> "(" ~> "quantity" ~> "=" ~> "\"") ~> ident <~ ("\"" <~ "," <~
-    "unit" ~> "=" "\"") ~> ident <~ ("\"" <~ ")" ~ "=" ~ decimalNo ^^ {
-      case quantity ~ unit ~ deg => Rotation(quantity,unit,deg)
-    }*/
 
   def getGraphicItem(map:Map[String,String]):GraphicItem = {
     GraphicItem(getPropertyValue(map, visible, defaultVisible)(bool),

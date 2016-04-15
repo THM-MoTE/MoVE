@@ -15,6 +15,12 @@ import de.thm.move.loader.parser.ast._
 import java.nio.file.Path
 import de.thm.move.util.GeometryUtils
 
+/** Converts the parsed AST into "real" ResizableShapes.
+  * @param pxPerMm describes how many px are 1 unit from modelica
+  *                Example: pxPerMm = 2 => every unit gets doubled
+  * @param system (width,height) from the coordinate system in which the shapes get loaded/displayed
+  * @param srcFilePath the path to the parsed modelica-file
+  */
 class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
 
   lazy val parentPath = srcFilePath.getParent
@@ -49,7 +55,6 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
   }
 
   private def rectangleLikeDimensions(origin:Point, ext:Extent):(Point,Double,Double) = {
-    //TODO what happens if origin is defined? (extent = relative to origin)
     val (p1,p2) = ext
     val convP1 = convertPoint(p1+origin)
     val convP2 = convertPoint(p2+origin)

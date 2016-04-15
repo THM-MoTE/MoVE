@@ -7,6 +7,7 @@ import de.thm.move.models.CommonTypes._
 
 import scala.util.parsing.combinator.RegexParsers
 
+/** Defines parsers for all properties/fields that a modelica primitive can have. */
 trait PropertyParser {
   self: RegexParsers =>
 
@@ -58,14 +59,7 @@ trait PropertyParser {
     | "{" ~ repsep(numberRegex|identRegex, ",") ~ "}" ^^ { case lp~inner~rp => lp+inner.mkString(",")+rp }
     | "{" ~ repsep(value, ",") ~ "}" ^^ { case lp~inner~rp => lp+inner.mkString(",")+rp }
   )
-/*
-  val lineColor = "lineColor" ~> "=" ~> color
-  val linePattern = "pattern" ~> "=" ~> identRegex
-  val fillColor = "fillColor" ~> "=" ~> color
-  val fillPattern = "fillPattern" ~> "=" ~> identRegex
-  val extent = "extent" ~> "=" ~> "{" ~> rep1sep(point, ",") <~ "}"
-  val lineThickness = "lineThickness" ~> "=" ~> decimalNo
-*/
+
   def extension:Parser[(Point,Point)] =
     ("{"~> point <~ ",") ~ point <~ "}" ^^ { case p1 ~ p2 => (p1,p2) }
 

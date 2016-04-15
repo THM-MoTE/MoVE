@@ -43,6 +43,7 @@ import implicits.MonadImplicits._
 import scala.util._
 import java.io.FileInputStream
 
+/** Main-Controller for all menus,buttons, etc. */
 class MoveCtrl extends Initializable {
 
   private val aboutStage = new Stage()
