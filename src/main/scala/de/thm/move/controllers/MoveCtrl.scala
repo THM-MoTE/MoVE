@@ -230,24 +230,24 @@ class MoveCtrl extends Initializable {
 
     //shortcuts that aren't mapped to buttons
     shortcuts.getKeyCode("draw-constraint").foreach { code =>
-      drawStub.getScene.setOnKeyPressed { ke: KeyEvent =>
+      drawStub.getScene.addEventHandler(KeyEvent.KEY_PRESSED, { ke:KeyEvent =>
         if(ke.getCode == code)
           drawCtrl.drawConstraintProperty.set(true)
-      }
-      drawStub.getScene.setOnKeyReleased { ke: KeyEvent =>
+        })
+      drawStub.getScene.addEventHandler(KeyEvent.KEY_RELEASED, { ke:KeyEvent =>
         if(ke.getCode == code)
           drawCtrl.drawConstraintProperty.set(false)
-      }
+      })
     }
     shortcuts.getKeyCode("select-constraint").foreach { code =>
-      drawStub.getScene.setOnKeyPressed { ke: KeyEvent =>
+      drawStub.getScene.addEventHandler(KeyEvent.KEY_PRESSED, { ke:KeyEvent =>
         if(ke.getCode == code)
           selectionCtrl.addSelectedShapeProperty.set(true)
-      }
-      drawStub.getScene.setOnKeyReleased { ke: KeyEvent =>
+      })
+      drawStub.getScene.addEventHandler(KeyEvent.KEY_RELEASED, { ke:KeyEvent =>
         if(ke.getCode == code)
           selectionCtrl.addSelectedShapeProperty.set(false)
-      }
+      })
     }
 
     drawStub.getScene.getAccelerators.putAll(combinationsToRunnable)
