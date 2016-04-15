@@ -74,8 +74,11 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
   }
 
   private def addToSelectedShapes(shape:ResizableShape): Unit = {
-    selectedShapes = shape :: selectedShapes
-    addSelectionRectangle(shape)
+    //each item only 1 time in the selection
+    if(!selectedShapes.contains(shape)) {
+      selectedShapes = shape :: selectedShapes
+      addSelectionRectangle(shape)
+    }
   }
 
   def getMoveHandler: (MouseEvent => Unit) = {
