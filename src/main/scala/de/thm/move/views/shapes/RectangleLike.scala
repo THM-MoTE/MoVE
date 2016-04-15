@@ -54,6 +54,18 @@ trait RectangleLike {
   def setWidth(w:Double): Unit
   def setHeight(h:Double): Unit
 
+  private val checkValue = 5.0
+
+  /** Only sets the width if it's > a specific value */
+  private def setCheckedWidth(w:Double): Unit = {
+    if(w>checkValue)
+      setWidth(w)
+  }
+  private def setCheckedHeight(h:Double):Unit = {
+    if(h>checkValue)
+      setHeight(h)
+  }
+
   //adjust the anchors to the bounding-box
   boundsInLocalProperty().addListener { (_:Bounds, _:Bounds) =>
     adjustCenter(topLeftAnchor, getTopLeft)
@@ -110,8 +122,8 @@ trait RectangleLike {
       setX(newX)
       setY(newY)
     }
-    setWidth(deltaX)
-    setHeight(deltaY)
+    setCheckedWidth(deltaX)
+    setCheckedHeight(deltaY)
   })
 
   topRightAnchor.setOnMousePressed(withConsumedEvent { _: MouseEvent =>
@@ -140,8 +152,8 @@ trait RectangleLike {
     if (adjustCoordinates) {
       setY(newY)
     }
-    setWidth(deltaX)
-    setHeight(deltaY)
+    setCheckedWidth(deltaX)
+    setCheckedHeight(deltaY)
   })
 
   bottomRightAnchor.setOnMousePressed(withConsumedEvent { _: MouseEvent =>
@@ -164,8 +176,8 @@ trait RectangleLike {
     val deltaX = newX - oldX + boundWidth
     val deltaY = newY - oldY + boundHeight
 
-    setWidth(deltaX)
-    setHeight(deltaY)
+    setCheckedWidth(deltaX)
+    setCheckedHeight(deltaY)
   })
 
   bottomLeftAnchor.setOnMousePressed(withConsumedEvent { me: MouseEvent =>
@@ -195,7 +207,7 @@ trait RectangleLike {
     if (adjustCoordinates) {
       setX(newX)
     }
-    setWidth(deltaX)
-    setHeight(deltaY)
+    setCheckedWidth(deltaX)
+    setCheckedHeight(deltaY)
   })
 }
