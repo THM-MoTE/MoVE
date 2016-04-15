@@ -165,9 +165,9 @@ class DrawCtrl(
 
   /**Removes all temporary shapes (identified by temporaryId) from the given node.*/
   private def removeTmpShapes(node:Pane, temporaryId:String): Unit = {
-    val removingNodes = node.getChildren.zipWithIndex.filter {
-      case (n,_) => n.getId == temporaryId
-    }.map(_._1)
+    val removingNodes = node.getChildren.filter {
+      n => n.getId == temporaryId
+    }
 
     node.getChildren.removeAll(removingNodes)
   }
