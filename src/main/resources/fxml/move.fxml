@@ -19,6 +19,7 @@
             <ToggleButton fx:id="rectangle_btn" mnemonicParsing="false" onAction="#onRectangleClicked" styleClass="toolbar-button" text="%fa.square-o" toggleGroup="$btnGroup" />
             <ToggleButton fx:id="polygon_btn" mnemonicParsing="false" onAction="#onPolygonClicked" styleClass="toolbar-button" text="%fa.pencil-square-o" toggleGroup="$btnGroup" />
             <ToggleButton fx:id="circle_btn" mnemonicParsing="false" onAction="#onCircleClicked" styleClass="toolbar-button" text="%fa.circle-o" toggleGroup="$btnGroup" />
+            <ToggleButton fx:id="image_btn" layoutX="10.0" layoutY="165.0" mnemonicParsing="false" onAction="#onLoadBitmap" styleClass="toolbar-button" text="%fa.image" toggleGroup="$btnGroup" />
         </items>
       </ToolBar>
    </left>
