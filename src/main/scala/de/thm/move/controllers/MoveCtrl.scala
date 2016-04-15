@@ -372,11 +372,6 @@ class MoveCtrl extends Initializable {
     }
   }
 
-  private def onDrawShape: Unit = {
-    setDrawingCursor(Cursor.CROSSHAIR)
-    selectionCtrl.removeSelectedShape
-  }
-
   @FXML
   def onAboutClicked(e:ActionEvent): Unit = aboutStage.show()
 
@@ -396,10 +391,19 @@ class MoveCtrl extends Initializable {
   @FXML
   def onUngroupPressed(e:ActionEvent): Unit = selectionCtrl.ungroupSelectedElements()
 
+  private def drawToolChanged(c:Cursor): Unit = {
+    setDrawingCursor(c)
+    selectionCtrl.removeSelectedShape
+    drawCtrl.abortDrawingProcess()
+  }
+
+  private def onDrawShape: Unit = {
+    drawToolChanged(Cursor.CROSSHAIR)
+  }
+
   @FXML
   def onPointerClicked(e:ActionEvent): Unit = {
-    setDrawingCursor(Cursor.DEFAULT)
-    selectionCtrl.removeSelectedShape
+    drawToolChanged(Cursor.DEFAULT)
   }
   @FXML
   def onCircleClicked(e:ActionEvent): Unit = onDrawShape
