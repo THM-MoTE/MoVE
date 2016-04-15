@@ -15,6 +15,7 @@ import javafx.scene.paint.Color
 
 import de.thm.move.Global
 import de.thm.move.controllers.factorys.ShapeFactory
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._
@@ -39,11 +40,19 @@ class DrawCtrl(
 
   val drawConstraintProperty = new SimpleBooleanProperty()
 
+  /** Signals that the running drawing-process should be aborted. */
+  val abortDrawing = new SimpleBooleanProperty(false)
+
   def getDrawHandler: (SelectedShape, MouseEvent) => (Color, Color, Int) => Unit = {
     var points = List[Point]()
     var drawingShape: ResizableShape = null
 
     def drawHandler(shape:SelectedShape, mouseEvent:MouseEvent)(fillColor:Color, strokeColor:Color, selectedThickness:Int): Unit = {
+      //reset draw-infos if process should be aborted
+      if(abortDrawing.get) {
+        points = Nil
+        abortDrawing.set(false)
+      }
       (shape, mouseEvent.getEventType, (mouseEvent.getX, mouseEvent.getY)) match {
         case (SelectedShape.Polygon, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
           //test if polygon is finish by checking if last clicked position is 1st clicked point
@@ -161,6 +170,11 @@ class DrawCtrl(
     }.map(_._1)
 
     node.getChildren.removeAll(removingNodes)
+  }
+
+  def abortDrawingProcess(): Unit = {
+    removeTmpShapes(drawPanel, tmpShapeId)
+    abortDrawing.set(true)
   }
 
   override def addShape(shape: ResizableShape*): Unit = {
