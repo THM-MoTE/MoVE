@@ -41,5 +41,5 @@ object SelectionRectangle {
   val distanceToShape =
     Global.config.getInt("selection-rectangle.distance").getOrElse(5)
   //needed for width, height because of some strange boundsInLocal behaviour
-  val aditionalSpace = 8
+  val aditionalSpace = 6
 }
