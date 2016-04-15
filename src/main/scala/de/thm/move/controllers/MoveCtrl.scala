@@ -354,7 +354,7 @@ class MoveCtrl extends Initializable {
       srcFormat <- showSrcCodeDialog();
       pxPerMm <- showScaleDialog()
     ) yield {
-      val shapes = drawPanel.getChildren.filterNot(_.isInstanceOf[Anchor]).toList
+      val shapes = drawPanel.getShapes
       val width = drawPanel.getWidth
       val height = drawPanel.getHeight
       val generator = new ModelicaCodeGenerator(srcFormat, pxPerMm, width, height)

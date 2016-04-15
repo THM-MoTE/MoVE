@@ -16,10 +16,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape._
 import javafx.scene.image.{ImageView, Image}
 import javafx.scene.input.{InputEvent}
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
-import de.thm.move.models.CommonTypes._
-import javafx.beans.binding.Bindings
-
+import scala.collection.JavaConverters._
 import de.thm.move.views.shapes._
 
 class DrawPanel() extends Pane {
@@ -64,5 +61,9 @@ class DrawPanel() extends Pane {
     getChildren.removeAll(removingShapes:_*)
   }
 
-  def getShapes: List[Node] = shapes
+  def getShapes: List[Node] = getChildren.asScala.filterNot { x =>
+    x.isInstanceOf[Anchor] ||
+    x.isInstanceOf[SelectionGroup] ||
+    x.isInstanceOf[SelectionRectangle]
+  }.toList
 }
