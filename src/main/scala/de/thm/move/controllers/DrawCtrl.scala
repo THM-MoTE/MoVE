@@ -74,7 +74,7 @@ class DrawCtrl(
               drawingShape = createTmpShape(SelectedShape.Line, newP, strokeColor, drawPanel)
 
               points = newP :: points
-              drawAnchor(points.head)
+              drawTmpAnchor(points.head)
           }
         case (SelectedShape.Path, MouseEvent.MOUSE_CLICKED, _)  if mouseEvent.getClickCount == 2 =>
           /* Point of double-click already added to points because the eventhandler
@@ -97,7 +97,7 @@ class DrawCtrl(
           //create new line with this mouse point as start point
           drawingShape = createTmpShape(SelectedShape.Line, newP, strokeColor, drawPanel)
           points = newP :: points
-          drawAnchor(points.head)
+          drawTmpAnchor(points.head)
         case (SelectedShape.Path, _,_) | (SelectedShape.Polygon, _, _) => //ignore other path/polygon events
         case (_, MouseEvent.MOUSE_PRESSED, newP) =>
           //start drawing
@@ -189,8 +189,9 @@ class DrawCtrl(
 
   override def addNode(node:Node*): Unit = node foreach drawPanel.drawShape
 
-  def drawAnchor(p:Point): Unit = {
+  def drawTmpAnchor(p:Point): Unit = {
     val anchor = ShapeFactory.newAnchor(p)
+    anchor.setId(tmpShapeId)
     drawPanel.drawShape(anchor)
   }
 
