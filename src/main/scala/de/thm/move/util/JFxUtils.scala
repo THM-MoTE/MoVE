@@ -32,11 +32,15 @@ object JFxUtils {
     }
   }
 
-  def withMovableElement[A](n:Node)(fn: MovableShape => A):A = (n, n.getParent) match {
-    case (_,ms:MovableShape) => fn(ms)
-    case (ms:MovableShape,_) => fn(ms)
-    case _ => throw new IllegalArgumentException(s"that's not a movableShape: $n")
-  }
+  /** Checks if the parent of given Node n is a MovableShape and
+    * if it is the given function fn is called with the parent. If the parent
+    * isn't a MovableShape the function fn is called with the given Node n.
+    */
+  def withParentMovableElement[A](n:Node with MovableShape)(fn: MovableShape => A):A =
+    (n, n.getParent) match {
+      case (_,ms:MovableShape) => fn(ms)
+      case (ms:MovableShape,_) => fn(ms)
+    }
 
   def withResizableElement[A](n:Node)(fn: ResizableShape => A):A = (n, n.getParent) match {
     case (_,ms:ResizableShape) => fn(ms)

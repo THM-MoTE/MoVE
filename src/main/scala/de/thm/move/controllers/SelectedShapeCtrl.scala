@@ -91,32 +91,36 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
         case (MouseEvent.MOUSE_PRESSED, shape: MovableShape) =>
           mouseP = (mv.getSceneX,mv.getSceneY)
           startP = mouseP //save start-point for undo
-        case (MouseEvent.MOUSE_DRAGGED, shape: MovableShape) =>
+        case (MouseEvent.MOUSE_DRAGGED, node: Node with MovableShape) =>
           //translate from original to new position
           val delta = (mv.getSceneX - mouseP.x, mv.getSceneY - mouseP.y)
           //if clicked shape is in selection:
           // move all selected
           //else: move only clicked shape
-          val allShapes =
-            if(selectedShapes.contains(shape)) selectedShapes
-            else List(shape)
-          allShapes.foreach(_.move(delta))
-          //don't forget to use the new mouse-point as starting-point
-          mouseP = (mv.getSceneX,mv.getSceneY)
-        case (MouseEvent.MOUSE_RELEASED, shape: MovableShape) =>
-          val allShapes =
-            if(selectedShapes.contains(shape)) selectedShapes
-            else List(shape)
+          withParentMovableElement(node) { shape =>
+            val allShapes =
+              if(selectedShapes.contains(shape)) selectedShapes
+              else List(shape)
+            allShapes.foreach(_.move(delta))
+            //don't forget to use the new mouse-point as starting-point
+            mouseP = (mv.getSceneX,mv.getSceneY)
+          }
+        case (MouseEvent.MOUSE_RELEASED, node: Node with MovableShape) =>
+          withParentMovableElement(node) { shape =>
+            val allShapes =
+              if(selectedShapes.contains(shape)) selectedShapes
+              else List(shape)
 
-          //calculate delta (offset from original position) for un-/redo
-          val deltaRedo = (mv.getSceneX - startP.x, mv.getSceneY - startP.y)
-          val deltaUndo = deltaRedo.map(_*(-1))
-          val cmd = History.
-            newCommand(
-              allShapes.foreach(_.move(deltaRedo)),
-              allShapes.foreach(_.move(deltaUndo))
-            )
-          Global.history.save(cmd)
+            //calculate delta (offset from original position) for un-/redo
+            val deltaRedo = (mv.getSceneX - startP.x, mv.getSceneY - startP.y)
+            val deltaUndo = deltaRedo.map(_*(-1))
+            val cmd = History.
+              newCommand(
+                allShapes.foreach(_.move(deltaRedo)),
+                allShapes.foreach(_.move(deltaUndo))
+              )
+            Global.history.save(cmd)
+          }
         case _ => //unknown event
       }
 
