@@ -66,6 +66,14 @@ trait RectangleLike {
       setHeight(h)
   }
 
+  private def withCheckedBounds(w:Double,h:Double)(fn: => Unit): Unit = {
+    if(w>checkValue && h>checkValue) {
+      fn
+      setCheckedWidth(w)
+      setCheckedHeight(h)
+    }
+  }
+
   //adjust the anchors to the bounding-box
   boundsInLocalProperty().addListener { (_:Bounds, _:Bounds) =>
     adjustCenter(topLeftAnchor, getTopLeft)
@@ -118,12 +126,12 @@ trait RectangleLike {
     val deltaX = if(oldX > newX) (oldX-newX) + boundWidth else boundWidth - (newX-oldX)
     val deltaY = if(newY < oldY) (oldY - newY)  + boundHeight else boundHeight - (newY-oldY)
 
-    if(adjustCoordinates) {
-      setX(newX)
-      setY(newY)
+    withCheckedBounds(deltaX,deltaY) {
+      if(adjustCoordinates) {
+        setX(newX)
+        setY(newY)
+      }
     }
-    setCheckedWidth(deltaX)
-    setCheckedHeight(deltaY)
   })
 
   topRightAnchor.setOnMousePressed(withConsumedEvent { _: MouseEvent =>
@@ -149,11 +157,12 @@ trait RectangleLike {
 
     val deltaX = if (newX > oldX) (newX - oldX) + boundWidth else boundWidth - (oldX - newX)
     val deltaY = if (newY < oldY) oldY - newY + boundHeight else boundHeight - (newY - oldY)
-    if (adjustCoordinates) {
-      setY(newY)
+
+    withCheckedBounds(deltaX,deltaY) {
+      if (adjustCoordinates) {
+        setY(newY)
+      }
     }
-    setCheckedWidth(deltaX)
-    setCheckedHeight(deltaY)
   })
 
   bottomRightAnchor.setOnMousePressed(withConsumedEvent { _: MouseEvent =>
@@ -176,8 +185,7 @@ trait RectangleLike {
     val deltaX = newX - oldX + boundWidth
     val deltaY = newY - oldY + boundHeight
 
-    setCheckedWidth(deltaX)
-    setCheckedHeight(deltaY)
+    withCheckedBounds(deltaX,deltaY) {}
   })
 
   bottomLeftAnchor.setOnMousePressed(withConsumedEvent { me: MouseEvent =>
@@ -204,10 +212,9 @@ trait RectangleLike {
     val deltaX = if (newX < oldX) (oldX - newX) + boundWidth else boundWidth - (newX - oldX)
     val deltaY = if (newY > oldY) (newY - oldY) + boundHeight else boundHeight - (oldY - newY)
 
+    withCheckedBounds(deltaX,deltaY) {
     if (adjustCoordinates) {
       setX(newX)
-    }
-    setCheckedWidth(deltaX)
-    setCheckedHeight(deltaY)
+    }}
   })
 }
