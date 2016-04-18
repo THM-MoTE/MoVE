@@ -52,26 +52,24 @@ class MoveCtrl extends Initializable {
   var saveAsMenuItem: MenuItem = _
   @FXML
   var openMenuItem: MenuItem = _
-
   @FXML
   var undoMenuItem: MenuItem = _
   @FXML
   var redoMenuItem: MenuItem = _
-
   @FXML
   var deleteMenuItem: MenuItem = _
-
+  @FXML
+  var copyMenuItem: MenuItem = _
+  @FXML
+  var pasteMenuItem: MenuItem =_
   @FXML
   var groupMenuItem: MenuItem = _
   @FXML
   var ungroupMenuItem: MenuItem = _
-
   @FXML
   var loadImgMenuItem: MenuItem = _
-
   @FXML
   var showAnchorsItem: CheckMenuItem = _
-
   @FXML
   var btnGroup: ToggleGroup = _
   @FXML
@@ -172,9 +170,9 @@ class MoveCtrl extends Initializable {
   }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    setupShortcuts("open", "save-as", "undo", "redo", "delete-item", "load-image",
-      "show-anchors")(openMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, deleteMenuItem,
-        loadImgMenuItem, showAnchorsItem)
+    setupShortcuts("open", "save-as", "undo", "redo", "copy", "paste", "delete-item", "load-image",
+      "show-anchors")(openMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
+        pasteMenuItem, deleteMenuItem, loadImgMenuItem, showAnchorsItem)
     drawStub.getChildren.add(drawPanel)
 
     val sizesList:java.util.List[Int] = (1 until 20).toList
