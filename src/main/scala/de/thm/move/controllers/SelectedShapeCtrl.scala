@@ -81,6 +81,8 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
     }
   }
 
+  def getSelectedElements:List[ResizableShape] = selectedShapes
+
   def getMoveHandler: (MouseEvent => Unit) = {
     var mouseP = (0.0,0.0)
     var startP = mouseP

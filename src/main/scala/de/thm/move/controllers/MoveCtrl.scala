@@ -89,6 +89,7 @@ class MoveCtrl extends Initializable {
   private val drawCtrl = new DrawCtrl(drawPanel, shapeInputHandler)
   private val selectionCtrl = new SelectedShapeCtrl(drawPanel)
   private val aboutCtrl = new AboutCtrl()
+  private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
 
   private val moveHandler = selectionCtrl.getMoveHandler
 
@@ -394,6 +395,17 @@ class MoveCtrl extends Initializable {
   @FXML
   def onDeleteClicked(e:ActionEvent): Unit = selectionCtrl.deleteSelectedShape
 
+  @FXML
+  def onCopyClicked(e:ActionEvent): Unit = {
+    val elements = selectionCtrl.getSelectedElements
+    clipboardCtrl.setElement(elements)
+  }
+  @FXML
+  def onPasteClicked(e:ActionEvent): Unit = {
+    clipboardCtrl.getElement.map(_.map(_.copy)) foreach {
+      drawCtrl.addShape
+    }
+  }
   @FXML
   def onGroupPressed(e:ActionEvent): Unit = selectionCtrl.groupSelectedElements()
 
