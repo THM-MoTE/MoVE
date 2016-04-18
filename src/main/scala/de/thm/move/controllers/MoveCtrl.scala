@@ -8,7 +8,8 @@ package de.thm.move.controllers
 import java.net.URL
 import java.nio.file.Paths
 import java.util.ResourceBundle
-import javafx.collections.FXCollections
+import javafx.collections.{ListChangeListener, FXCollections}
+import javafx.collections.ListChangeListener.Change
 import javafx.event.ActionEvent
 import javafx.fxml.{FXMLLoader, Initializable, FXML}
 import javafx.scene.control.Alert.AlertType
@@ -19,6 +20,7 @@ import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.stage.{Stage, FileChooser}
 import de.thm.move.Global._
+import de.thm.move.config.ValueConfig
 import de.thm.move.util.JFxUtils._
 import de.thm.move.views.{SaveDialog, DrawPanel, Anchor}
 import de.thm.move.views.shapes.ResizableShape
@@ -36,12 +38,12 @@ import de.thm.move.models.FillPattern
 import de.thm.move.loader.parser.ModelicaParserLike
 import de.thm.move.loader.ShapeConverter
 import de.thm.move.util.PointUtils._
+import de.thm.move.util.Convertable._
 import implicits.FxHandlerImplicits._
 import implicits.ConcurrentImplicits._
 import implicits.MonadImplicits._
 
 import scala.util._
-import java.io.FileInputStream
 
 /** Main-Controller for all menus,buttons, etc. */
 class MoveCtrl extends Initializable {
@@ -93,6 +95,9 @@ class MoveCtrl extends Initializable {
   private val selectionCtrl = new SelectedShapeCtrl(drawPanel)
   private val aboutCtrl = new AboutCtrl()
   private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
+
+  private val fillColorConfig = new ValueConfig(fillColorConfigURI)
+  private val strokeColorConfig = new ValueConfig(strokeColorConfigURI)
 
   private val moveHandler = selectionCtrl.getMoveHandler
 
@@ -154,6 +159,24 @@ class MoveCtrl extends Initializable {
       fillColorPicker.setValue(fillColor)
       strokeColorPicker.setValue(strokeColor)
       borderThicknessChooser.setValue(width)
+
+      //setup custom colors
+      fillColorPicker.getCustomColors.addAll(fillColorConfig.getConvertedValues:_*)
+      strokeColorPicker.getCustomColors.addAll(strokeColorConfig.getConvertedValues:_*)
+
+      val colorChangedHandler: ValueConfig => ListChangeListener[Color] = conf => new ListChangeListener[Color] {
+        override def onChanged(change: Change[_ <: Color]): Unit = {
+          while(change.next) {
+            if(change.wasAdded)
+              change.getAddedSubList.foreach(x => conf.setUniqueValue(x.toString))
+            else if(change.wasRemoved)
+              change.getRemoved.foreach(x => conf.removeValue(x.toString))
+          }
+        }
+      }
+
+      fillColorPicker.getCustomColors.addListener(colorChangedHandler(fillColorConfig))
+      strokeColorPicker.getCustomColors.addListener(colorChangedHandler(strokeColorConfig))
     }
 
   private def setupAboutDialog(): Unit = {
@@ -256,6 +279,11 @@ class MoveCtrl extends Initializable {
     drawStub.getScene.getAccelerators.putAll(combinationsToRunnable)
 
     drawStub.requestFocus()
+  }
+
+  def shutdownMove(): Unit = {
+    fillColorConfig.saveConfig()
+    strokeColorConfig.saveConfig()
   }
 
   /** Checks that the color has a valid opacity and if not warns the user. */

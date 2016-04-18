@@ -7,9 +7,10 @@ package de.thm.move
 
 import java.util.ResourceBundle
 import javafx.application.Application
+import javafx.event.EventHandler
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.text.Font
-import javafx.stage.Stage
+import javafx.stage.{WindowEvent, Stage}
 import javafx.scene.{Cursor, Parent, Scene}
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.{Alert, Label}
@@ -37,7 +38,7 @@ class MoveApp extends Application {
     }
   }
 
-  def start(stage: Stage): Unit = {
+  override def start(stage: Stage): Unit = {
     checkExistingConfigs()
 
     val windowWidth = Global.config.getDouble("window.width").getOrElse(600.0)
@@ -55,7 +56,14 @@ class MoveApp extends Application {
     stage.setWidth(windowWidth)
     stage.setHeight(windowHeight)
     stage.show()
-    fxmlLoader.getController[MoveCtrl].setupMove()
+    val ctrl = fxmlLoader.getController[MoveCtrl]
+    ctrl.setupMove()
+
+    stage.setOnCloseRequest(new EventHandler[WindowEvent] {
+      override def handle(event: WindowEvent): Unit = {
+        ctrl.shutdownMove()
+      }
+    })
   }
 }
 

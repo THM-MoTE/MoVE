@@ -5,6 +5,7 @@
 
 package de.thm.move
 
+import java.net.URL
 import java.util.ResourceBundle
 
 import de.thm.move.history.History
@@ -13,6 +14,9 @@ import de.thm.move.config.ConfigLoader
 import de.thm.move.shortcuts.ShortCutHandler
 
 object Global {
+  lazy val fillColorConfigURI:URL = getClass.getResource("/fillColor.conf")
+  lazy val strokeColorConfigURI:URL = getClass.getResource("/strokeColor.conf")
+
   lazy val shortcuts = new ShortCutHandler(getClass.getResource("/shortcuts.conf"))
   lazy val config: Config = new ConfigLoader(getClass.getResource("/move.conf"))
 
