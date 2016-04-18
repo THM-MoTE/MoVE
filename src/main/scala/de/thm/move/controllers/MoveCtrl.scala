@@ -368,9 +368,7 @@ class MoveCtrl extends Initializable {
           val shapes = converter.getShapes(ast)
           val scaledSystem = systemSize.map(_*scaleFactor)
           shapes.foreach { s =>
-            drawPanel.setPrefSize(scaledSystem.x, scaledSystem.y)
-            drawPanel.setMinSize(scaledSystem.x, scaledSystem.y)
-            drawPanel.setMaxSize(scaledSystem.x, scaledSystem.y)
+            drawPanel.setSize(scaledSystem)
 
             drawCtrl.addShape(s)
             drawCtrl.addNode(s.getAnchors)
