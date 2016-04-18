@@ -258,12 +258,26 @@ class MoveCtrl extends Initializable {
     drawStub.requestFocus()
   }
 
+  /** Checks that the color has a valid opacity and if not warns the user. */
+  private def withCheckedColor(c:Color): Color = {
+    val opacity = c.getOpacity()
+    val opacityPc = opacity*100
+    if(opacity != 1.0 && opacity != 0.0) {
+      Dialogs.newWarnDialog(
+        f"The given color has a opacity of $opacityPc%2.0f which modelica can't display.\n"+
+        "Colors in modelica can have 2 opacitys: either 100% or 0%"
+      ).showAndWait()
+    }
+
+    c
+  }
+
   def colorPickerChanged(ae:ActionEvent): Unit = {
     val src = ae.getSource
     if(src == strokeColorPicker)
-      selectionCtrl.setStrokeColorForSelectedShape(strokeColorPicker.getValue)
+      selectionCtrl.setStrokeColorForSelectedShape(withCheckedColor(strokeColorPicker.getValue))
     else if(src == fillColorPicker)
-      selectionCtrl.setFillColorForSelectedShape(fillColorPicker.getValue)
+      selectionCtrl.setFillColorForSelectedShape(withCheckedColor(fillColorPicker.getValue))
   }
 
   def shapeInputHandler(ev:InputEvent): Unit = {

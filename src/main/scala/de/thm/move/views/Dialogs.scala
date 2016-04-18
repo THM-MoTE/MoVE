@@ -63,4 +63,11 @@ object Dialogs {
     dialog.setContentText(msg)
     dialog
   }
+
+  def newWarnDialog(msg:String): Alert = {
+    val dialog = new Alert(AlertType.WARNING)
+    dialog.setTitle("A warning occured")
+    dialog.setHeaderText(msg)
+    dialog
+  }
 }
