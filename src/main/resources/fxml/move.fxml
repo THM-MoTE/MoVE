@@ -64,6 +64,7 @@
                         <MenuItem fx:id="copyMenuItem" mnemonicParsing="false" onAction="#onCopyClicked" text="Copy" />
                         <MenuItem fx:id="pasteMenuItem" mnemonicParsing="false" onAction="#onPasteClicked" text="Paste" />
                         <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#onDeleteClicked" text="Delete" />
+                        <MenuItem fx:id="duplicateMenuItem" mnemonicParsing="false" onAction="#onDuplicateClicked" text="Duplicate" />
                         <MenuItem fx:id="groupMenuItem" mnemonicParsing="false" onAction="#onGroupPressed" text="Group Elements" />
                         <MenuItem fx:id="ungroupMenuItem" mnemonicParsing="false" onAction="#onUngroupPressed" text="Ungroup Elements" />
                         <SeparatorMenuItem mnemonicParsing="false" />

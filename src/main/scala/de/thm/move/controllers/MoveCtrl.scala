@@ -63,6 +63,8 @@ class MoveCtrl extends Initializable {
   @FXML
   var pasteMenuItem: MenuItem =_
   @FXML
+  var duplicateMenuItem: MenuItem = _
+  @FXML
   var groupMenuItem: MenuItem = _
   @FXML
   var ungroupMenuItem: MenuItem = _
@@ -87,6 +89,7 @@ class MoveCtrl extends Initializable {
   var drawStub: StackPane = _
   private val drawPanel = new DrawPanel()
   private val drawCtrl = new DrawCtrl(drawPanel, shapeInputHandler)
+  private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, drawCtrl)
   private val selectionCtrl = new SelectedShapeCtrl(drawPanel)
   private val aboutCtrl = new AboutCtrl()
   private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
@@ -171,9 +174,9 @@ class MoveCtrl extends Initializable {
   }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    setupShortcuts("open", "save-as", "undo", "redo", "copy", "paste", "delete-item", "load-image",
+    setupShortcuts("open", "save-as", "undo", "redo", "copy", "paste", "duplicate", "delete-item", "load-image",
       "show-anchors")(openMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
-        pasteMenuItem, deleteMenuItem, loadImgMenuItem, showAnchorsItem)
+        pasteMenuItem, duplicateMenuItem, deleteMenuItem, loadImgMenuItem, showAnchorsItem)
     drawStub.getChildren.add(drawPanel)
 
     val sizesList:java.util.List[Int] = (1 until 20).toList
@@ -402,9 +405,12 @@ class MoveCtrl extends Initializable {
   }
   @FXML
   def onPasteClicked(e:ActionEvent): Unit = {
-    clipboardCtrl.getElement.map(_.map(_.copy)) foreach {
-      drawCtrl.addShape
-    }
+    clipboardCtrl.getElement.map(_.map(_.copy)) foreach(drawCtrl.addShape)
+  }
+  @FXML
+  def onDuplicateClicked(e:ActionEvent): Unit = {
+    val elements = selectionCtrl.getSelectedElements.map(_.copy)
+    elements.foreach(contextMenuCtrl.onDuplicateElementPressed(e, _))
   }
   @FXML
   def onGroupPressed(e:ActionEvent): Unit = selectionCtrl.groupSelectedElements()
