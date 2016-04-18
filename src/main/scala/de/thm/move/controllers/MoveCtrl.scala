@@ -417,6 +417,29 @@ class MoveCtrl extends Initializable {
   }
 
   @FXML
+  def onChPaperSizeClicked(e:ActionEvent): Unit = {
+    val strOpt:Option[String] = Dialogs.newPaperSizeDialog(drawPanel.getWidth, drawPanel.getHeight).showAndWait()
+    strOpt.flatMap { x =>
+      try {
+        val ar = x.split(";")
+        val width = ar(0).toInt
+        val height = ar(1).toInt
+        Some((width,height))
+      } catch {
+        case _:NumberFormatException => None
+        case _:IndexOutOfBoundsException => None
+      }
+    } filter {
+      case (x,y) => x>0 && y>0
+    } match {
+      case Some((width, height)) => drawPanel.setSize(width, height)
+      case None =>
+        Dialogs.newErrorDialog("Given Papersize can't be used!\n" +
+        "Please specify 2 valid numbers >0")
+    }
+  }
+
+  @FXML
   def onLoadBitmap(e:ActionEvent): Unit = {
     val chooser = new FileChooser()
     chooser.setTitle("Open bitmap")
