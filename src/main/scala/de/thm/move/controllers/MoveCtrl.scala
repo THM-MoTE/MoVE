@@ -43,6 +43,7 @@ import implicits.FxHandlerImplicits._
 import implicits.ConcurrentImplicits._
 import implicits.MonadImplicits._
 
+import scala.None
 import scala.util._
 
 /** Main-Controller for all menus,buttons, etc. */
@@ -54,6 +55,8 @@ class MoveCtrl extends Initializable {
   var saveAsMenuItem: MenuItem = _
   @FXML
   var openMenuItem: MenuItem = _
+  @FXML
+  var chPaperSizeMenuItem: MenuItem = _
   @FXML
   var undoMenuItem: MenuItem = _
   @FXML

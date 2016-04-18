@@ -54,6 +54,7 @@
                         <MenuItem fx:id="openMenuItem" onAction="#onOpenClicked" text="Open file.." />
                         <MenuItem mnemonicParsing="false" text="Save" />
                         <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#onSaveAsClicked" text="Save as.." />
+                      <MenuItem fx:id="chPaperSizeMenuItem" mnemonicParsing="false" onAction="#onChPaperSizeClicked" text="Change paper size.." />
                     <MenuItem mnemonicParsing="false" text="Close" />
                   </items>
                 </Menu>
