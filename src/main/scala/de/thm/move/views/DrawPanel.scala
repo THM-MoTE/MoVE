@@ -18,6 +18,7 @@ import javafx.scene.image.{ImageView, Image}
 import javafx.scene.input.{InputEvent}
 import scala.collection.JavaConverters._
 import de.thm.move.views.shapes._
+import de.thm.move.models.CommonTypes._
 
 class DrawPanel() extends Pane {
   private var shapes = List[Node]()
@@ -60,6 +61,15 @@ class DrawPanel() extends Pane {
 
     getChildren.removeAll(removingShapes:_*)
   }
+
+  def setSize(p:Point): Unit = {
+    val (x,y) = p
+    setPrefSize(x, y)
+    setMinSize(x, y)
+    setMaxSize(x, y)
+  }
+
+  def setSize(w:Double,h:Double):Unit = setSize((w,h))
 
   def getShapes: List[Node] = getChildren.asScala.filterNot { x =>
     x.isInstanceOf[Anchor] ||
