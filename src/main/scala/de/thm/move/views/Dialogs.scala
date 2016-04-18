@@ -5,15 +5,15 @@
 
 package de.thm.move.views
 
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
+
 import javafx.scene.control.Alert.AlertType
-import javafx.scene.control.TextInputDialog
-import javafx.scene.control.Alert
+import javafx.scene.control._
 import java.io.StringWriter
 import java.io.PrintWriter
 import javafx.scene.layout.GridPane
-import javafx.scene.control.Label
-import javafx.scene.control.TextArea
 import javafx.scene.layout.Priority
+import javafx.stage.WindowEvent
 
 object Dialogs {
   def newExceptionDialog(ex:Throwable, aditionalInfo:String=""): Alert = {
@@ -53,6 +53,33 @@ object Dialogs {
     dialog.setTitle("Scale factor");
     dialog.setHeaderText("Give a scale factor in px/mm")
     dialog.setContentText("Please enter a valid scale factor between 1 and 100 (default=1):")
+    dialog
+  }
+
+  def newPaperSizeDialog(width:Double,height:Double): TextInputDialog = {
+    val dialog = new TextInputDialog()
+    dialog.setTitle("Paper size");
+    dialog.setHeaderText("Give a paper size in px")
+
+    val widthLbl = new Label("Width in px:")
+    val heightLbl= new Label("Height in px:")
+
+    val widthTxt = new TextField(width.toString)
+    val heightTxt = new TextField(height.toString)
+
+    val pane = new GridPane()
+    pane.setMaxWidth(Double.MaxValue)
+    pane.setHgap(5)
+    pane.setVgap(5)
+    pane.add(widthLbl, 0,0)
+    pane.add(widthTxt, 1,0)
+    pane.add(heightLbl, 0,1)
+    pane.add(heightTxt, 1,1)
+    dialog.getDialogPane.setContent(pane)
+    dialog.setOnCloseRequest { de:DialogEvent =>
+      val str = widthTxt.getText +";"+ heightTxt.getText
+      dialog.setResult(str)
+    }
     dialog
   }
 
