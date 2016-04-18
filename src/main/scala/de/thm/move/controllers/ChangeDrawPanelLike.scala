@@ -18,6 +18,11 @@ trait ChangeDrawPanelLike {
    */
   def addShape(shape: ResizableShape*): Unit
   val addShape: List[ResizableShape] => Unit = toListParamFn(addShape _)
+
+  def addShapeWithAnchors(shape: ResizableShape): Unit = {
+    addShape(shape)
+    addNode(shape.getAnchors)
+  }
   /** Adds a node to the panel. This method doesn't add handlers or context-menus.*/
   def addNode(node: Node*): Unit
   val addNode: List[Node] => Unit = toListParamFn(addNode _)

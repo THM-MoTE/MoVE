@@ -405,7 +405,7 @@ class MoveCtrl extends Initializable {
   }
   @FXML
   def onPasteClicked(e:ActionEvent): Unit = {
-    clipboardCtrl.getElement.map(_.map(_.copy)) foreach(drawCtrl.addShape)
+    clipboardCtrl.getElement.map(_.map(_.copy)) foreach(_.foreach(drawCtrl.addShapeWithAnchors))
   }
   @FXML
   def onDuplicateClicked(e:ActionEvent): Unit = {
