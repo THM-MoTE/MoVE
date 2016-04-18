@@ -30,4 +30,8 @@ object FxHandlerImplicits {
     implicit def changeListener[A](fn: (ObservableValue[_<:A], A, A) => Unit) = new ChangeListener[A] {
     override def changed(observable: ObservableValue[_<: A], oldValue: A, newValue: A): Unit = fn(observable, oldValue, newValue)
   }
+
+  implicit def eventHandler[E <: javafx.event.Event](fn: E => Unit):EventHandler[E] = new EventHandler[E] {
+    override def handle(event: E): Unit = fn(event)
+  }
 }
