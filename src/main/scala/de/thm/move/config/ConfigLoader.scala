@@ -19,5 +19,6 @@ class ConfigLoader(path:URL) extends Config {
       }
     }.toMap
 
+  override def getAll: List[(String,String)] = map.toList
   override def getString(key:String):Option[String] = map.get(key)
 }

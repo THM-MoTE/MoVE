@@ -6,6 +6,7 @@
 package de.thm.move.config
 
 trait Config {
+  def getAll: List[(String,String)]
   def getString(key:String):Option[String]
   def getInt(key:String):Option[Int] =
     try {
