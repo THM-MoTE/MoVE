@@ -58,4 +58,22 @@ class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane {
     line.getStyleClass.add("grid-line")
     line
   }
+
+  def getClosestXPosition(deltaX:Double): Option[Int] = {
+    val width = getWidth.toInt
+    (cellSize to  width by cellSize).foldLeft[Option[Int]](Some(-1)) {
+      case (Some(-1), e) => Some(e) //it's the start value
+      case (None, _) => None
+      case (Some(x), e) =>
+        if(Math.abs(deltaX - e) == Math.abs(deltaX - x)) None //deltaX is in the middle of 2 lines
+        else if(Math.abs(deltaX - e) < Math.abs(deltaX - x)) Some(e)
+        else if(Math.abs(deltaX - x) < Math.abs(deltaX - e)) Some(x)
+        else None
+    } filter {
+      x =>
+        println("x: "+x)
+        println("abs: "+Math.abs(deltaX-x))
+        Math.abs(deltaX-x) <= snapDistance
+    }
+  }
 }
