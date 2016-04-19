@@ -7,7 +7,7 @@ import javafx.scene.shape.Line
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
-class SnapGrid(topPane:Pane) extends Pane {
+class SnapGrid(topPane:Pane, cellSize:Int) extends Pane {
 
   val verticalLineId = "vertical-grid-line"
   val horizontalLineId = "horizontal-grid-line"
@@ -29,24 +29,24 @@ class SnapGrid(topPane:Pane) extends Pane {
   }
 
   def recalculateHorizontalLines(height:Double): Seq[Line] =
-    for(i <- 1 to (height/20).toInt) yield {
+    for(i <- 1 to (height/cellSize).toInt) yield {
       val line = newGridLine
       line.setId(horizontalLineId)
       line.setStartX(0)
       line.endXProperty().bind(widthProperty())
-      val y = i*20
+      val y = i*cellSize
       line.setStartY(y)
       line.setEndY(y)
       line
     }
 
   def recalculateVerticalLines(width:Double): Seq[Line] =
-    for(i <- 1 to (width/20).toInt) yield {
+    for(i <- 1 to (width/cellSize).toInt) yield {
       val line = newGridLine
       line.setId(verticalLineId)
       line.setStartY(0)
       line.endYProperty().bind(heightProperty())
-      val x = i*20
+      val x = i*cellSize
       line.setStartX(x)
       line.setEndX(x)
       line
