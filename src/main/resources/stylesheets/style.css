@@ -12,7 +12,15 @@
   -fx-background-color: rgb(191, 191, 191);
 }
 .draw-pane {
-  -fx-background-color: white;
+}
+
+.snap-grid-pane {
+    -fx-background-color: white;
+}
+
+.grid-line {
+    -fx-stroke: rgb(204, 204, 204);
+    -fx-stroke-width: 2px;
 }
 
 .anchor {
