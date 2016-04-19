@@ -14,8 +14,16 @@ import java.io.PrintWriter
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.Priority
 import javafx.stage.WindowEvent
+import javafx.stage.FileChooser
 
 object Dialogs {
+
+  val allFilesFilter  = new FileChooser.ExtensionFilter("All files", "*.*")
+  val moFileFilter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo")
+  val bitmapFileFilter = new FileChooser.ExtensionFilter(
+    "Image files (jpg,jpeg,png,gif,bmp)", "*.jpg",
+    "*.jpeg","*.png","*.gif", "*.bmp")
+
   def newExceptionDialog(ex:Throwable, aditionalInfo:String=""): Alert = {
     val alert = new Alert(AlertType.ERROR)
     alert.setTitle("Exception error!");
@@ -97,4 +105,19 @@ object Dialogs {
     dialog.setHeaderText(msg)
     dialog
   }
+
+  private def newFileChooser(
+    selectedFilter:FileChooser.ExtensionFilter)(
+    fileFilters:FileChooser.ExtensionFilter*): FileChooser = {
+      val chooser = new FileChooser()
+      chooser.getExtensionFilters().addAll(fileFilters:_*)
+      chooser.setSelectedExtensionFilter(selectedFilter)
+      chooser
+    }
+
+  def newModelicaFileChooser(): FileChooser =
+    newFileChooser(moFileFilter)(allFilesFilter, moFileFilter)
+
+  def newBitmapFileChooser(): FileChooser =
+    newFileChooser(bitmapFileFilter)(allFilesFilter, bitmapFileFilter)
 }

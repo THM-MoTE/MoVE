@@ -343,14 +343,11 @@ class MoveCtrl extends Initializable {
     scaleOp.map(_.toInt).filter(x => x>=minScaleFactor && x<=maxScaleFactor)
   }
 
-  val moFileFilter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo")
-
   @FXML
   def onOpenClicked(e:ActionEvent): Unit = {
-    val chooser = new FileChooser()
+    val chooser = Dialogs.newModelicaFileChooser()
+    chooser.setTitle("Open..")
 
-    chooser.setTitle("Save as..")
-    chooser.setSelectedExtensionFilter(moFileFilter)
     val fileOp = Option(chooser.showOpenDialog(getWindow))
     (for {
       file <- fileOp
@@ -386,12 +383,9 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
-    val chooser = new FileChooser()
-
+    val chooser = Dialogs.newModelicaFileChooser()
     chooser.setTitle("Save as..")
-    chooser.setSelectedExtensionFilter(moFileFilter)
     val fileOp = Option(chooser.showSaveDialog(getWindow))
-
     (for (
       file <- fileOp;
       uri = file.toURI;
@@ -440,7 +434,7 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onLoadBitmap(e:ActionEvent): Unit = {
-    val chooser = new FileChooser()
+    val chooser = Dialogs.newBitmapFileChooser()
     chooser.setTitle("Open bitmap")
     val fileOp = Option(chooser.showOpenDialog(getWindow))
     fileOp map { file =>
