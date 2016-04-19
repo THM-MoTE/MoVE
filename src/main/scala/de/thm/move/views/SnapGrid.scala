@@ -4,10 +4,11 @@ import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
+import scala.collection.JavaConversions._
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
-class SnapGrid(topPane:Pane, cellSize:Int) extends Pane {
+class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane {
 
   val verticalLineId = "vertical-grid-line"
   val horizontalLineId = "horizontal-grid-line"

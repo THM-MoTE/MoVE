@@ -92,7 +92,10 @@ class MoveCtrl extends Initializable {
   @FXML
   var drawStub: StackPane = _
   private val drawPanel = new DrawPanel()
-  private val snapGrid = new SnapGrid(drawPanel, config.getInt("grid-cell-size").getOrElse(20))
+  private val snapGrid = new SnapGrid(drawPanel,
+    config.getInt("grid-cell-size").getOrElse(20),
+    config.getInt("grid-snap-distance").getOrElse(5)
+    )
   private val drawCtrl = new DrawCtrl(drawPanel, shapeInputHandler)
   private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, drawCtrl)
   private val selectionCtrl = new SelectedShapeCtrl(drawPanel)
