@@ -22,9 +22,8 @@ import javafx.stage.{Stage, FileChooser}
 import de.thm.move.Global._
 import de.thm.move.config.ValueConfig
 import de.thm.move.util.JFxUtils._
-import de.thm.move.views.{SaveDialog, DrawPanel, Anchor}
+import de.thm.move.views._
 import de.thm.move.views.shapes.ResizableShape
-import de.thm.move.views.Dialogs
 
 import collection.JavaConversions._
 
@@ -93,6 +92,7 @@ class MoveCtrl extends Initializable {
   @FXML
   var drawStub: StackPane = _
   private val drawPanel = new DrawPanel()
+  private val snapGrid = new SnapGrid(drawPanel)
   private val drawCtrl = new DrawCtrl(drawPanel, shapeInputHandler)
   private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, drawCtrl)
   private val selectionCtrl = new SelectedShapeCtrl(drawPanel)
@@ -202,7 +202,7 @@ class MoveCtrl extends Initializable {
     setupShortcuts("open", "save-as", "undo", "redo", "copy", "paste", "duplicate", "delete-item", "load-image",
       "show-anchors")(openMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
         pasteMenuItem, duplicateMenuItem, deleteMenuItem, loadImgMenuItem, showAnchorsItem)
-    drawStub.getChildren.add(drawPanel)
+    drawStub.getChildren.addAll(snapGrid, drawPanel)
 
     val sizesList:java.util.List[Int] = (1 until 20).toList
     borderThicknessChooser.setItems(FXCollections.observableArrayList(sizesList))
