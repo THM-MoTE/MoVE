@@ -8,7 +8,7 @@ import de.thm.move.Global._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.util.JFxUtils._
-import de.thm.move.views.{GroupLike, DrawPanel, SelectionGroup}
+import de.thm.move.views.{SnapGrid, GroupLike, DrawPanel, SelectionGroup}
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape, MovableShape}
 import de.thm.move.models.LinePattern
 import de.thm.move.models.FillPattern
@@ -25,7 +25,7 @@ import de.thm.move.controllers.factorys.ShapeFactory
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.
  */
-class SelectedShapeCtrl(drawPanel:DrawPanel) {
+class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapGrid) {
 
   val addSelectedShapeProperty = new SimpleBooleanProperty(false)
 
@@ -103,15 +103,29 @@ class SelectedShapeCtrl(drawPanel:DrawPanel) {
             val allShapes =
               if(selectedShapes.contains(shape)) selectedShapes
               else List(shape)
+
             allShapes.foreach(_.move(delta))
             //don't forget to use the new mouse-point as starting-point
             mouseP = (mv.getSceneX,mv.getSceneY)
           }
-        case (MouseEvent.MOUSE_RELEASED, node: Node with MovableShape) =>
+        case (MouseEvent.MOUSE_RELEASED, node: Node with ResizableShape) =>
           withParentMovableElement(node) { shape =>
             val allShapes =
               if(selectedShapes.contains(shape)) selectedShapes
               else List(shape)
+
+
+            //TODO refactor this calculation; propably outside of this function
+            //========================== snap to grid
+            grid.getClosestXPosition(node.getBoundsInParent.getMinX).
+              map { x =>
+              val delta = x.toDouble - node.getBoundsInParent.getMinX
+              delta
+            } foreach { pointX =>
+              node.move((pointX,0))
+            }
+
+            //==========================
 
             //calculate delta (offset from original position) for un-/redo
             val deltaRedo = (mv.getSceneX - startP.x, mv.getSceneY - startP.y)
