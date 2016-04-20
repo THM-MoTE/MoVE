@@ -205,6 +205,16 @@ class MoveCtrl extends Initializable {
     setupShortcuts("open", "save-as", "undo", "redo", "copy", "paste", "duplicate", "delete-item", "load-image",
       "show-anchors")(openMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
         pasteMenuItem, duplicateMenuItem, deleteMenuItem, loadImgMenuItem, showAnchorsItem)
+
+    //only show the grid if it's enabled
+    for {
+      visibleFlag <- config.getBoolean("grid-visibility")
+      snappingFlag <- config.getBoolean("snapping-mode")
+    } {
+      snapGrid.gridVisibleProperty.set(visibleFlag)
+      snapGrid.snappingProperty.set(if(!visibleFlag) false else snappingFlag)
+    }
+
     drawStub.getChildren.addAll(snapGrid, drawPanel)
 
     val sizesList:java.util.List[Int] = (1 until 20).toList
