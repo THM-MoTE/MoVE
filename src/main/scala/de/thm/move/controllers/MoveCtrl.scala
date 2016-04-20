@@ -211,13 +211,14 @@ class MoveCtrl extends Initializable {
         pasteMenuItem, duplicateMenuItem, deleteMenuItem, loadImgMenuItem, showAnchorsItem)
 
     //only show the grid if it's enabled
-    for {
-      visibleFlag <- config.getBoolean("grid-visibility")
-      snappingFlag <- config.getBoolean("snapping-mode")
-    } {
-      snapGrid.gridVisibleProperty.set(visibleFlag)
-      snapGrid.snappingProperty.set(if(!visibleFlag) false else snappingFlag)
-    }
+    val visibleFlag = config.getBoolean("grid-visibility").getOrElse(true)
+    val snapping  = config.getBoolean("snapping-mode").getOrElse(true)
+    val snappingFlag = if(!visibleFlag) false else snapping
+    snapGrid.gridVisibleProperty.set(visibleFlag)
+    snapGrid.snappingProperty.set(snappingFlag)
+    //adjust menu-items to loaded value
+    showGridItem.setSelected(visibleFlag)
+    enableGridItem.setSelected(snappingFlag)
 
     drawStub.getChildren.addAll(snapGrid, drawPanel)
 
@@ -468,9 +469,24 @@ class MoveCtrl extends Initializable {
   def onShowAnchorsClicked(e:ActionEvent): Unit = drawCtrl.setVisibilityOfAnchors(showAnchorsSelected)
 
   @FXML
-  def onShowGridClicked(e:ActionEvent): Unit = println("show-grid")
+  def onShowGridClicked(e:ActionEvent): Unit = {
+    val flag = showGridItem.isSelected
+    snapGrid.gridVisibleProperty.set(flag)
+    if(!flag) { //not visible; disable snapping
+      enableGridItem.fire()
+    }
+  }
   @FXML
-  def onEnableGridClicked(e:ActionEvent): Unit = println("enable-grid")
+  def onEnableGridClicked(e:ActionEvent): Unit = {
+    val flag = enableGridItem.isSelected
+    if(!showGridItem.isSelected) {
+      //visible is false => disable snapping-mode
+      enableGridItem.setSelected(false)
+      snapGrid.snappingProperty.set(false)
+    } else {
+      snapGrid.snappingProperty.set(flag)
+    }
+  }
 
   @FXML
   def onUndoClicked(e:ActionEvent): Unit = history.undo()
