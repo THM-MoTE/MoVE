@@ -207,8 +207,8 @@ class MoveCtrl extends Initializable {
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     setupShortcuts("open", "save-as", "undo", "redo", "copy", "paste", "duplicate", "delete-item", "load-image",
-      "show-anchors")(openMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
-        pasteMenuItem, duplicateMenuItem, deleteMenuItem, loadImgMenuItem, showAnchorsItem)
+      "show-anchors", "show-grid", "enable-snapping")(openMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
+        pasteMenuItem, duplicateMenuItem, deleteMenuItem, loadImgMenuItem, showAnchorsItem, showGridItem, enableGridItem)
 
     //only show the grid if it's enabled
     val visibleFlag = config.getBoolean("grid-visibility").getOrElse(true)
