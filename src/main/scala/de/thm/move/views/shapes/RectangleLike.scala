@@ -68,9 +68,9 @@ trait RectangleLike {
 
   private def withCheckedBounds(w:Double,h:Double)(fn: => Unit): Unit = {
     if(w>checkValue && h>checkValue) {
-      fn
       setCheckedWidth(w)
       setCheckedHeight(h)
+      fn
     }
   }
 
@@ -128,8 +128,8 @@ trait RectangleLike {
 
     withCheckedBounds(deltaX,deltaY) {
       if(adjustCoordinates) {
-        setX(newX)
-        setY(newY)
+        setX(oldX - (getWidth-boundWidth))
+        setY(oldY - (getHeight-boundHeight))
       }
     }
   })
@@ -160,7 +160,7 @@ trait RectangleLike {
 
     withCheckedBounds(deltaX,deltaY) {
       if (adjustCoordinates) {
-        setY(newY)
+        setY(oldY - (getHeight - boundHeight))
       }
     }
   })
@@ -214,7 +214,7 @@ trait RectangleLike {
 
     withCheckedBounds(deltaX,deltaY) {
     if (adjustCoordinates) {
-      setX(newX)
+      setX(oldX - (getWidth-boundWidth))
     }}
   })
 }

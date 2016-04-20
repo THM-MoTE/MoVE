@@ -13,13 +13,29 @@ class ResizableImage(val uri:URI, val img:Image)
   with ResizableShape
   with RectangleLike {
   setPreserveRatio(true)
-  setFitWidth(200)
 
-  override def getWidth: Double = getFitWidth
-  override def getHeight: Double = getFitHeight
+  /* When preserving-ratio resize only 1 side; the other gets adjusted */
+  val resizeWidth = img.getWidth > img.getHeight
+  if(resizeWidth) setFitWidth(200)
+  else setFitHeight(200)
 
-  override def setWidth(w:Double): Unit = setFitWidth(w)
-  override def setHeight(h:Double): Unit = setFitHeight(h)
+  override def getWidth: Double = {
+    if(resizeWidth) getFitWidth //get the fitting width
+    else getBoundsInLocal.getWidth //get the calculated with
+  }
+  override def getHeight: Double = {
+    if(!resizeWidth) getFitHeight //get the fitting height
+    else getBoundsInLocal.getHeight //get the calculated height
+  }
+
+  override def setWidth(w:Double): Unit = {
+    if(resizeWidth) setFitWidth(w) //set fitting width
+    else () //don't do anything; this side gets calculated according to the height
+  }
+  override def setHeight(h:Double): Unit = {
+    if(!resizeWidth) setFitHeight(h)
+    else ()
+  }
 
   override def copy: ResizableShape = {
     val duplicate = new ResizableImage(uri, img)
