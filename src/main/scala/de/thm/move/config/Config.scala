@@ -23,4 +23,8 @@ trait Config {
     }
 
   def getFloat(key:String): Option[Float] = getDouble(key).map(_.toFloat)
+  def getBoolean(key:String): Option[Boolean] = getString(key).map {
+    case "true" => true
+    case _ => false
+  }
 }
