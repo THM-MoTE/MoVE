@@ -8,41 +8,37 @@ package de.thm.move.controllers
 import java.net.URL
 import java.nio.file.Paths
 import java.util.ResourceBundle
-import javafx.collections.{ListChangeListener, FXCollections}
 import javafx.collections.ListChangeListener.Change
+import javafx.collections.{FXCollections, ListChangeListener}
 import javafx.event.ActionEvent
-import javafx.fxml.{FXMLLoader, Initializable, FXML}
-import javafx.scene.control.Alert.AlertType
-import javafx.scene.{Scene, Parent, Cursor}
+import javafx.fxml.{FXML, FXMLLoader, Initializable}
 import javafx.scene.control._
 import javafx.scene.input._
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.stage.{Stage, FileChooser}
+import javafx.scene.{Cursor, Parent, Scene}
+import javafx.stage.Stage
+
 import de.thm.move.Global._
 import de.thm.move.config.ValueConfig
+import de.thm.move.controllers.implicits.ConcurrentImplicits._
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.controllers.implicits.MonadImplicits._
+import de.thm.move.loader.ShapeConverter
+import de.thm.move.loader.parser.ModelicaParserLike
+import de.thm.move.models.FillPattern._
+import de.thm.move.models.LinePattern._
+import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
+import de.thm.move.models.SelectedShape.SelectedShape
+import de.thm.move.models.{FillPattern, LinePattern, ModelicaCodeGenerator, SelectedShape}
+import de.thm.move.util.Convertable._
 import de.thm.move.util.JFxUtils._
+import de.thm.move.util.PointUtils._
 import de.thm.move.views._
 import de.thm.move.views.shapes.ResizableShape
 
-import collection.JavaConversions._
-
-import de.thm.move.models.{ModelicaCodeGenerator, SelectedShape}
-import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
-import de.thm.move.models.SelectedShape.SelectedShape
-import de.thm.move.models.LinePattern._
-import de.thm.move.models.LinePattern
-import de.thm.move.models.FillPattern._
-import de.thm.move.models.FillPattern
-import de.thm.move.loader.parser.ModelicaParserLike
-import de.thm.move.loader.ShapeConverter
-import de.thm.move.util.PointUtils._
-import de.thm.move.util.Convertable._
-import implicits.FxHandlerImplicits._
-import implicits.ConcurrentImplicits._
-import implicits.MonadImplicits._
-
 import scala.None
+import scala.collection.JavaConversions._
 import scala.util._
 
 /** Main-Controller for all menus,buttons, etc. */
