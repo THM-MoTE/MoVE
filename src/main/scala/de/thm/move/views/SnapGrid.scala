@@ -77,7 +77,7 @@ class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane {
   }
 
   private def withSnappingMode[A](fn: => Option[A]): Option[A] = {
-    if(snappingProperty.get) fn
+    if(gridVisibleProperty.get && snappingProperty.get) fn
     else None
   }
 
