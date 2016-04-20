@@ -83,7 +83,6 @@ class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapLike) {
   def getMoveHandler: (MouseEvent => Unit) = {
     var mouseP = (0.0,0.0)
     var startP = mouseP
-    var command: (=> Unit) => Command = x => { History.emptyAction }
 
     def moveElement(mv: MouseEvent): Unit =
       (mv.getEventType, mv.getSource) match {
