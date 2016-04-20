@@ -6,6 +6,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.shape.Line
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.util.GeometryUtils
 
 class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane with SnapLike {
 
@@ -82,15 +83,7 @@ class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane with S
   }
 
   private def getClosestPosition(maxV:Int, delta:Double): Option[Int] = withSnappingMode {
-    (cellSize to  maxV by cellSize).foldLeft[Option[Int]](Some(-1)) {
-      case (Some(-1), e) => Some(e) //it's the start value
-      case (None, _) => None
-      case (Some(x), e) =>
-        if(Math.abs(delta - e) == Math.abs(delta - x)) None //deltaX is in the middle of 2 lines
-        else if(Math.abs(delta - e) < Math.abs(delta - x)) Some(e)
-        else if(Math.abs(delta - x) < Math.abs(delta - e)) Some(x)
-        else None
-    } filter (x => Math.abs(delta-x) < snapDistance)
+    GeometryUtils.closestMultiple(cellSize, delta) map(_.toInt) filter (x => Math.abs(delta-x) < snapDistance)
   }
 
   override def getClosestXPosition(deltaX:Double): Option[Int] = {
