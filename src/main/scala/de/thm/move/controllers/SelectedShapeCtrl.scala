@@ -108,24 +108,13 @@ class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapGrid) {
             //don't forget to use the new mouse-point as starting-point
             mouseP = (mv.getSceneX,mv.getSceneY)
           }
-        case (MouseEvent.MOUSE_RELEASED, node: Node with ResizableShape) =>
+        case (MouseEvent.MOUSE_RELEASED, node: Node with MovableShape) =>
           withParentMovableElement(node) { shape =>
             val allShapes =
               if(selectedShapes.contains(shape)) selectedShapes
               else List(shape)
 
-
-            //TODO refactor this calculation; propably outside of this function
-            //========================== snap to grid
-            grid.getClosestXPosition(node.getBoundsInParent.getMinX).
-              map { x =>
-              val delta = x.toDouble - node.getBoundsInParent.getMinX
-              delta
-            } foreach { pointX =>
-              node.move((pointX,0))
-            }
-
-            //==========================
+            applySnapToGrid(node)
 
             //calculate delta (offset from original position) for un-/redo
             val deltaRedo = (mv.getSceneX - startP.x, mv.getSceneY - startP.y)
@@ -141,6 +130,23 @@ class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapGrid) {
       }
 
     moveElement
+  }
+
+  private def applySnapToGrid(node:Node with MovableShape): Unit = {
+    val delta = getSnapToGridDistance(node.getBoundsInParent.getMinX,
+      node.getBoundsInParent.getMinY)
+
+    node.move(delta)
+  }
+
+  private def getSnapToGridDistance(x:Double,y:Double):Point = {
+    val deltaX = grid.getClosestXPosition(x).
+      map (_.toDouble - x).getOrElse(0.0)
+
+    val deltaY = grid.getClosestYPosition(y).
+      map (_.toDouble - y).getOrElse(0.0)
+
+    (deltaX,deltaY)
   }
 
   def removeSelectedShape: Unit = {
