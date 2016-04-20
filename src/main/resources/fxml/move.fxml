@@ -75,6 +75,8 @@
                   <Menu mnemonicParsing="false" text="View">
                      <items>
                         <CheckMenuItem fx:id="showAnchorsItem" mnemonicParsing="false" onAction="#onShowAnchorsClicked" selected="true" text="Show Anchors" />
+                        <CheckMenuItem fx:id="showGridItem" mnemonicParsing="false" onAction="#onShowGridClicked" text="Show Grid" />
+                        <CheckMenuItem fx:id="enableGridItem" mnemonicParsing="false" onAction="#onEnableGridClicked" text="Enable snapping" />
                      </items>
                   </Menu>
                 <Menu mnemonicParsing="false" text="Help">

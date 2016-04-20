@@ -77,6 +77,10 @@ class MoveCtrl extends Initializable {
   @FXML
   var showAnchorsItem: CheckMenuItem = _
   @FXML
+  var showGridItem: CheckMenuItem = _
+  @FXML
+  var enableGridItem: CheckMenuItem = _
+  @FXML
   var btnGroup: ToggleGroup = _
   @FXML
   var fillColorPicker: ColorPicker = _
@@ -462,6 +466,12 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onShowAnchorsClicked(e:ActionEvent): Unit = drawCtrl.setVisibilityOfAnchors(showAnchorsSelected)
+
+  @FXML
+  def onShowGridClicked(e:ActionEvent): Unit = println("show-grid")
+  @FXML
+  def onEnableGridClicked(e:ActionEvent): Unit = println("enable-grid")
+
   @FXML
   def onUndoClicked(e:ActionEvent): Unit = history.undo()
   @FXML
