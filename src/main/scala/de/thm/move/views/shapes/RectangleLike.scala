@@ -128,6 +128,7 @@ trait RectangleLike {
 
     withCheckedBounds(deltaX,deltaY) {
       if(adjustCoordinates) {
+        //use the new height & width for calculating the new x/y position
         setX(oldX - (getWidth-boundWidth))
         setY(oldY - (getHeight-boundHeight))
       }
