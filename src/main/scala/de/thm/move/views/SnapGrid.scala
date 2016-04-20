@@ -1,5 +1,6 @@
 package de.thm.move.views
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Line
@@ -11,19 +12,37 @@ class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane {
   val verticalLineId = "vertical-grid-line"
   val horizontalLineId = "horizontal-grid-line"
 
+  val gridVisibleProperty = new SimpleBooleanProperty(true)
+  val snappingProperty = new SimpleBooleanProperty(true)
+
   setPickOnBounds(false)
   getStyleClass.add("snap-grid-pane")
 
+  gridVisibleProperty.addListener { (oldB:java.lang.Boolean,newB:java.lang.Boolean) =>
+    getChildren.clear()
+    if(newB) {
+      val horizontalLines = recalculateHorizontalLines(getHeight)
+      val verticalLines = recalculateVerticalLines(getWidth)
+      getChildren.addAll(horizontalLines:_*)
+      getChildren.addAll(verticalLines:_*)
+    }
+    ()
+  }
+
   heightProperty().addListener { (_:Number, newH:Number) =>
-    val newLines = recalculateHorizontalLines(newH.doubleValue())
-    getChildren.removeIf { node:Node => node.getId == horizontalLineId }
-    getChildren.addAll(newLines: _*)
+    if(gridVisibleProperty.get) {
+      val newLines = recalculateHorizontalLines(newH.doubleValue())
+      getChildren.removeIf { node:Node => node.getId == horizontalLineId }
+      getChildren.addAll(newLines: _*)
+    }
     ()
   }
   widthProperty().addListener { (_:Number, newW:Number) =>
-    val newLines = recalculateVerticalLines(newW.doubleValue())
-    getChildren.removeIf { node:Node => node.getId == verticalLineId }
-    getChildren.addAll(newLines:_*)
+    if(gridVisibleProperty.get) {
+      val newLines = recalculateVerticalLines(newW.doubleValue())
+      getChildren.removeIf { node:Node => node.getId == verticalLineId }
+      getChildren.addAll(newLines:_*)
+    }
     ()
   }
 
@@ -57,7 +76,12 @@ class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane {
     line
   }
 
-  private def getClosestPosition(maxV:Int, delta:Double): Option[Int] = {
+  private def withSnappingMode[A](fn: => Option[A]): Option[A] = {
+    if(snappingProperty.get) fn
+    else None
+  }
+
+  private def getClosestPosition(maxV:Int, delta:Double): Option[Int] = withSnappingMode {
     (cellSize to  maxV by cellSize).foldLeft[Option[Int]](Some(-1)) {
       case (Some(-1), e) => Some(e) //it's the start value
       case (None, _) => None
