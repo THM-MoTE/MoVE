@@ -265,4 +265,7 @@ class DrawCtrl(
     drawPanel.remove(shape)
     shape.getAnchors.foreach(drawPanel.remove)
   }
+
+  override def getElements: List[Node] = drawPanel.getChildren.toList
+  override def remove(n:Node): Unit = drawPanel.remove(n)
 }

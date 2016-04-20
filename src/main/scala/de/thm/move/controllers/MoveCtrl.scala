@@ -102,7 +102,7 @@ class MoveCtrl extends Initializable {
     )
   private val drawCtrl = new DrawCtrl(drawPanel, shapeInputHandler)
   private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, drawCtrl)
-  private val selectionCtrl = new SelectedShapeCtrl(drawPanel,  snapGrid)
+  private val selectionCtrl = new SelectedShapeCtrl(drawCtrl,  snapGrid)
   private val aboutCtrl = new AboutCtrl()
   private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
 

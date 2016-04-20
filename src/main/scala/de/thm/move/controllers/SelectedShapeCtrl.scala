@@ -9,7 +9,6 @@ import de.thm.move.Global
 import de.thm.move.Global._
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.history.History
-import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.{FillPattern, LinePattern}
 import de.thm.move.util.JFxUtils._
@@ -22,7 +21,7 @@ import scala.collection.JavaConversions._
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.
  */
-class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapLike) {
+class SelectedShapeCtrl(changeLike:ChangeDrawPanelLike, grid:SnapLike) {
 
   val addSelectedShapeProperty = new SimpleBooleanProperty(false)
 
@@ -60,8 +59,8 @@ class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapLike) {
   }
 
   private def addSelectionRectangle(shape:ResizableShape): Unit = {
-    if(!drawPanel.getChildren.contains(shape.selectionRectangle))
-      drawPanel.getChildren.add(shape.selectionRectangle)
+    if(!changeLike.contains(shape.selectionRectangle))
+      changeLike.addNode(shape.selectionRectangle)
   }
 
   private def replaceSelectedShape(shape:ResizableShape): Unit = {
@@ -148,7 +147,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapLike) {
 
   def removeSelectedShape: Unit = {
     for(shape <- selectedShapes) {
-      drawPanel.remove(shape.selectionRectangle)
+      changeLike.remove(shape.selectionRectangle)
     }
     selectedShapes = Nil
   }
@@ -158,13 +157,12 @@ class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapLike) {
         val shapeCopy = selectedShapes
         history.execute {
           shapeCopy foreach { shape =>
-            drawPanel.remove(shape)
-            drawPanel.remove(shape.selectionRectangle)
+            changeLike.removeShape(shape)
           }
         } {
           shapeCopy foreach { shape =>
-            drawPanel.getChildren.add(shape)
-            drawPanel.getChildren.addAll(shape.getAnchors:_*)
+            changeLike.addNode(shape)
+            changeLike.addNode(shape.getAnchors:_*)
           }
         }
       selectedShapes = List()
@@ -261,29 +259,28 @@ class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapLike) {
 
   def groupSelectedElements(): Unit = {
     selectedShapes foreach { x =>
-      drawPanel.getChildren.remove(x.selectionRectangle)
+      changeLike.remove(x.selectionRectangle)
     }
 
     val group = new SelectionGroup(selectedShapes)
-    drawPanel.getChildren.add(group)
-    drawPanel.getChildren.add(group.selectionRectangle)
+    changeLike.addShape(group)
 
     selectedShapes = List(group)
   }
 
   def ungroupSelectedElements(): Unit = {
     getSelectionGroups foreach { group =>
-      drawPanel.remove(group)
-      drawPanel.remove(group.selectionRectangle)
+      changeLike.remove(group)
+      changeLike.remove(group.selectionRectangle)
       group.childrens.foreach { shape =>
-        drawPanel.drawShape(shape)
-        drawPanel.getChildren.addAll(shape.getAnchors:_*)
+        changeLike.addNode(shape)
+        changeLike.addNode(shape.getAnchors:_*)
       }
     }
   }
 
   private def highlightGroupedElements(startBounding:Point,endBounding:Point):Unit = {
-    val shapesInBox = drawPanel.getChildren() filter {
+    val shapesInBox = changeLike.getElements filter {
       case shape:ResizableShape =>
         //only the elements thar are ResizableShapes and placed inside the bounding
         val shapeBounds = shape.getBoundsInParent
@@ -296,7 +293,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapLike) {
 
     removeSelectedShape
     for(shape <- shapesInBox) {
-        drawPanel.getChildren.add(shape.selectionRectangle)
+      changeLike.addNode(shape.selectionRectangle)
     }
 
     selectedShapes = shapesInBox.toList
@@ -308,7 +305,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapLike) {
     val groupRectangle = ShapeFactory.newRectangle((0,0), 0.0, 0.0)(Color.BLACK,Color.BLACK, 1)
     groupRectangle.getStyleClass.addAll("selection-rectangle")
     groupRectangle.setVisible(false)
-    drawPanel.getChildren.add(groupRectangle)
+    changeLike.addNode(groupRectangle)
 
     def groupHandler(mv:MouseEvent):Unit = mv.getEventType match {
       case MouseEvent.MOUSE_PRESSED =>
