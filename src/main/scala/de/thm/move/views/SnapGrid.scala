@@ -7,7 +7,7 @@ import javafx.scene.shape.Line
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
-class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane {
+class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane with SnapLike {
 
   val verticalLineId = "vertical-grid-line"
   val horizontalLineId = "horizontal-grid-line"
@@ -93,12 +93,12 @@ class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane {
     } filter (x => Math.abs(delta-x) < snapDistance)
   }
 
-  def getClosestXPosition(deltaX:Double): Option[Int] = {
+  override def getClosestXPosition(deltaX:Double): Option[Int] = {
     val width = getWidth.toInt
     getClosestPosition(width,deltaX)
   }
 
-  def getClosestYPosition(deltaY:Double): Option[Int] = {
+  override  def getClosestYPosition(deltaY:Double): Option[Int] = {
     val height = getHeight.toInt
     getClosestPosition(height,deltaY)
   }

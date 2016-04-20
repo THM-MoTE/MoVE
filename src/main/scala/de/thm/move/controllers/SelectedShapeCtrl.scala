@@ -15,14 +15,14 @@ import de.thm.move.models.{FillPattern, LinePattern}
 import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
 import de.thm.move.views.shapes.{ColorizableShape, MovableShape, ResizableShape}
-import de.thm.move.views.{DrawPanel, GroupLike, SelectionGroup, SnapGrid}
+import de.thm.move.views._
 
 import scala.collection.JavaConversions._
 
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.
  */
-class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapGrid) {
+class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapLike) {
 
   val addSelectedShapeProperty = new SimpleBooleanProperty(false)
 
