@@ -1,26 +1,23 @@
 package de.thm.move.controllers
 
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.scene.Node
+import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 
 import de.thm.move.Global
 import de.thm.move.Global._
+import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
-import de.thm.move.util.JFxUtils._
-import de.thm.move.views.{SnapGrid, GroupLike, DrawPanel, SelectionGroup}
-import de.thm.move.views.shapes.{ColorizableShape, ResizableShape, MovableShape}
-import de.thm.move.models.LinePattern
-import de.thm.move.models.FillPattern
 import de.thm.move.models.CommonTypes._
+import de.thm.move.models.{FillPattern, LinePattern}
+import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
-import java.util.function.Predicate
-import javafx.scene.Node
-import javafx.scene.paint._
-import javafx.scene.input.MouseEvent
+import de.thm.move.views.shapes.{ColorizableShape, MovableShape, ResizableShape}
+import de.thm.move.views.{DrawPanel, GroupLike, SelectionGroup, SnapGrid}
 
 import scala.collection.JavaConversions._
-import de.thm.move.controllers.factorys.ShapeFactory
 
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.

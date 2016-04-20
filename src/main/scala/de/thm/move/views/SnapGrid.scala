@@ -2,9 +2,7 @@ package de.thm.move.views
 
 import javafx.scene.Node
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
 import javafx.scene.shape.Line
-import scala.collection.JavaConversions._
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
