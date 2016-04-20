@@ -136,6 +136,7 @@ class SelectedShapeCtrl(drawPanel:DrawPanel, grid:SnapGrid) {
     node.move(delta)
   }
 
+  /** Returns the delta for snap-to-grid for the point represented by (x,y). */
   private def getSnapToGridDistance(x:Double,y:Double):Point = {
     val deltaX = grid.getClosestXPosition(x).
       map (_.toDouble - x).getOrElse(0.0)
