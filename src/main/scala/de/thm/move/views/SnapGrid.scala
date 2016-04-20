@@ -59,21 +59,25 @@ class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane {
     line
   }
 
-  def getClosestXPosition(deltaX:Double): Option[Int] = {
-    val width = getWidth.toInt
-    (cellSize to  width by cellSize).foldLeft[Option[Int]](Some(-1)) {
+  private def getClosestPosition(maxV:Int, delta:Double): Option[Int] = {
+    (cellSize to  maxV by cellSize).foldLeft[Option[Int]](Some(-1)) {
       case (Some(-1), e) => Some(e) //it's the start value
       case (None, _) => None
       case (Some(x), e) =>
-        if(Math.abs(deltaX - e) == Math.abs(deltaX - x)) None //deltaX is in the middle of 2 lines
-        else if(Math.abs(deltaX - e) < Math.abs(deltaX - x)) Some(e)
-        else if(Math.abs(deltaX - x) < Math.abs(deltaX - e)) Some(x)
+        if(Math.abs(delta - e) == Math.abs(delta - x)) None //deltaX is in the middle of 2 lines
+        else if(Math.abs(delta - e) < Math.abs(delta - x)) Some(e)
+        else if(Math.abs(delta - x) < Math.abs(delta - e)) Some(x)
         else None
-    } filter {
-      x =>
-        println("x: "+x)
-        println("abs: "+Math.abs(deltaX-x))
-        Math.abs(deltaX-x) <= snapDistance
-    }
+    } filter (x => Math.abs(delta-x) < snapDistance)
+  }
+
+  def getClosestXPosition(deltaX:Double): Option[Int] = {
+    val width = getWidth.toInt
+    getClosestPosition(width,deltaX)
+  }
+
+  def getClosestYPosition(deltaY:Double): Option[Int] = {
+    val height = getHeight.toInt
+    getClosestPosition(height,deltaY)
   }
 }
