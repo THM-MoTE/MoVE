@@ -152,7 +152,8 @@ class ModelicaParser extends JavaTokenParsers
   def parse(stream:InputStream): Try[Model] = Try {
     parseAll(start, new InputStreamReader(new BufferedInputStream(stream))) match {
       case Success(result, _)    => result
-      case NoSuccess(msg, input) => throw new ParsingError(msg)
+      case NoSuccess(msg, input) =>
+        throw new ParsingError(s"Error in line ${input.pos.line}, column ${input.pos.column}: "+msg)
     }
   }
 }
