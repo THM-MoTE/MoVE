@@ -1,5 +1,8 @@
 package de.thm.move.loader
 
+import java.io.ByteArrayInputStream
+import java.util.Base64
+import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import java.net.URI
 import java.nio.file.Paths
@@ -116,7 +119,18 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       img.setHeight(h)
       img.setVisible(gi.visible)
       img
-    case img:ImageBase64 => throw new IllegalArgumentException("We can't convert base64 images!")
+    case ImageBase64(gi,ext,encodedStr) =>
+      val decoder = Base64.getDecoder()
+      val byteArrayStream = new ByteArrayInputStream(decoder.decode(encodedStr))
+      val img = new Image(byteArrayStream)
+
+      val resizableImg = new ResizableImage(null, img)
+      val (start,w,h) = rectangleLikeDimensions(gi.origin, ext)
+      resizableImg.setXY(start)
+      resizableImg.setWidth(w)
+      resizableImg.setHeight(h)
+      resizableImg.setVisible(gi.visible)
+      resizableImg
     case a:Any => throw new IllegalArgumentException(s"Unknown shape-ast $a")
   }
 }
