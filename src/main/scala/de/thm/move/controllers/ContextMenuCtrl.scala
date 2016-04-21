@@ -1,7 +1,10 @@
 package de.thm.move.controllers
 
+import java.io.ByteArrayInputStream
+import java.nio.file.{Files, Paths}
 import javafx.event.ActionEvent
 import javafx.scene.Node
+import javafx.scene.image.Image
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.control.{SeparatorMenuItem, Separator, MenuItem}
@@ -29,6 +32,10 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
         val polygonItem = new MenuItem("Unsmooth")
         polygonItem.setOnAction { ae:ActionEvent => onUnsmoothPressed(ae, curved) }
         menu.getItems.addAll(new SeparatorMenuItem(), polygonItem)
+      case img:ResizableImage if img.srcEither.isLeft =>
+        val encodeBase64Item = new MenuItem("Encode as Base64")
+        encodeBase64Item.setOnAction { ae:ActionEvent => onEncodePressed(ae, img)}
+        menu.getItems.add(encodeBase64Item)
       case _ => //ignore
     }
 
@@ -103,5 +110,16 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     } {
       changeLike.removeShape(duplicate)
     }
+  }
+
+  def onEncodePressed(ae:ActionEvent, resImg:ResizableImage): Unit = resImg.srcEither match {
+      case Left(uri) =>
+        val bytes = Files.readAllBytes(Paths.get(uri))
+        val img = new Image(new ByteArrayInputStream(bytes))
+        val newImg = ResizableImage(bytes, img)
+        newImg.copyPosition(resImg)
+        changeLike.remove(resImg)
+        changeLike.addShapeWithAnchors(newImg)
+      case _ => //ignore
   }
 }
