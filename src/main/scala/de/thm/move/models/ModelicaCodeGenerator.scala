@@ -4,6 +4,7 @@ import java.io.PrintWriter
 import java.net.URI
 import java.nio.charset.Charset
 import java.nio.file.{Paths, Files}
+import java.util.Base64
 import javafx.scene.Node
 import javafx.scene.paint.{Paint, Color}
 import javafx.scene.shape.{LineTo, MoveTo}
@@ -212,12 +213,8 @@ class ModelicaCodeGenerator(
          |${spaces}smooth = Smooth.Bezier
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
 
-    case img:ResizableImage =>
-      copyImg(img.uri, target)
-      val filename = ResourceUtils.getFilename(img.uri)
-      val uri = s"modelica://$modelname/$filename"
-
-      val bounding = img.getBoundsInLocal
+    case resImg:ResizableImage =>
+      val bounding = resImg.getBoundsInLocal
       val newY = paneHeight - bounding.getMinY
       val endY = newY - bounding.getHeight
       val start = genPoint(bounding.getMinX, newY)
@@ -225,9 +222,21 @@ class ModelicaCodeGenerator(
 
       implicit val newIndentIdx = indentIdx + 2
 
+      val imgStr = resImg.srcEither match {
+        case Left(uri) =>
+          copyImg(uri, target)
+          val filename = ResourceUtils.getFilename(uri)
+          s"""fileName = "modelica://$modelname/$filename""""
+        case Right(bytes) =>
+          val encoder = Base64.getEncoder
+          val encodedBytes = encoder.encode(bytes)
+          val byteStr = new String(encodedBytes, "UTF-8")
+          s"""imageSource = "$byteStr""""
+      }
+
       s"""${spaces(indentIdx)}Bitmap(
          |${spaces}extent = {${start}, ${end}},
-         |${spaces}fileName = "$uri"
+         |${spaces}${imgStr}
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
     case _ => throw new IllegalArgumentException(s"Can't generate mdoelica code for: $shape")
   }

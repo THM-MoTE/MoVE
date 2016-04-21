@@ -19,7 +19,7 @@ import de.thm.move.views.shapes._
 object ShapeFactory {
   def newImage(imgUri:URI):ResizableImage = {
     val img = new Image(imgUri.toString)
-    new ResizableImage(imgUri, img)
+    ResizableImage(imgUri, img)
   }
 
   private def setDefaultColor[T <: ColorizableShape](shape:T)(fillColor:Color, strokeColor:Color, strokeWidth:Int): T = {

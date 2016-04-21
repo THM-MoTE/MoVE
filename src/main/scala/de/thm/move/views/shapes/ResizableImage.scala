@@ -8,7 +8,7 @@ package de.thm.move.views.shapes
 import java.net.URI
 import javafx.scene.image.{ImageView, Image}
 
-class ResizableImage(val uri:URI, val img:Image)
+class ResizableImage(val srcEither:Either[URI, Array[Byte]], val img:Image)
   extends ImageView(img)
   with ResizableShape
   with RectangleLike {
@@ -38,8 +38,13 @@ class ResizableImage(val uri:URI, val img:Image)
   }
 
   override def copy: ResizableShape = {
-    val duplicate = new ResizableImage(uri, img)
+    val duplicate = new ResizableImage(srcEither, img)
     duplicate.copyPosition(this)
     duplicate
   }
+}
+
+object ResizableImage {
+  def apply(uri:URI, img:Image) = new ResizableImage(Left(uri), img)
+  def apply(bytes:Array[Byte], img:Image) = new ResizableImage(Right(bytes), img)
 }

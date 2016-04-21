@@ -121,10 +121,11 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       img
     case ImageBase64(gi,ext,encodedStr) =>
       val decoder = Base64.getDecoder()
-      val byteArrayStream = new ByteArrayInputStream(decoder.decode(encodedStr))
+      val bytes = decoder.decode(encodedStr)
+      val byteArrayStream = new ByteArrayInputStream(bytes)
       val img = new Image(byteArrayStream)
 
-      val resizableImg = new ResizableImage(null, img)
+      val resizableImg = ResizableImage(bytes, img)
       val (start,w,h) = rectangleLikeDimensions(gi.origin, ext)
       resizableImg.setXY(start)
       resizableImg.setWidth(w)
