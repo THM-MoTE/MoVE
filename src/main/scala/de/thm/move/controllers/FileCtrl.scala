@@ -2,7 +2,7 @@ package de.thm.move.controllers
 
 import java.net.URI
 import java.nio.file.Paths
-import javafx.scene.control.ButtonType
+import javafx.scene.control.{ChoiceDialog, ButtonType}
 import javafx.stage.Window
 import javafx.scene.Node
 import de.thm.move.loader.ShapeConverter
@@ -19,6 +19,7 @@ import de.thm.move.views.{Dialogs, SaveDialog}
 import de.thm.move.Global._
 import de.thm.move.util.PointUtils._
 
+import scala.collection.JavaConverters._
 import scala.util.{Failure, Success}
 
 class FileCtrl(owner: => Window) {
@@ -40,6 +41,18 @@ class FileCtrl(owner: => Window) {
     scaleOp.map(_.toInt).filter(x => x>=minScaleFactor && x<=maxScaleFactor)
   }
 
+  private def chooseModelDialog(xs:List[Model]): Model = {
+    if(xs.size > 1) {
+      val names = xs.map(_.name)
+      val dialog:ChoiceDialog[String] = new ChoiceDialog(names.head, names.asJava)
+      val opt:Option[String] = dialog.showAndWait()
+      opt match {
+        case Some(name) => xs.find(_.name == name).get
+        case _ => chooseModelDialog(xs)
+      }
+    } else xs.head
+  }
+
   def openFile:Option[(Point,List[ResizableShape])] = {
     val chooser = Dialogs.newModelicaFileChooser()
     chooser.setTitle("Open..")
@@ -53,7 +66,7 @@ class FileCtrl(owner: => Window) {
         val parser = ModelicaParserLike()
         parser.parse(path) match {
           case Success(modelList) =>
-            val model = modelList.head //TODO ask user which model if list > 1
+            val model = chooseModelDialog(modelList)
 
             usedFile = Some(SrcFile(path, model))
 
