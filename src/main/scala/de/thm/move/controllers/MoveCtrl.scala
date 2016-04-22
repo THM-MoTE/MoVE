@@ -386,12 +386,7 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onLoadBitmap(e:ActionEvent): Unit = {
-    val chooser = Dialogs.newBitmapFileChooser()
-    chooser.setTitle("Open bitmap")
-    val fileOp = Option(chooser.showOpenDialog(getWindow))
-    fileOp map { file =>
-      file.toURI
-    } foreach {
+    fileCtrl.openImage foreach {
       drawCtrl.drawImage
     }
   }

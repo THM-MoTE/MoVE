@@ -108,4 +108,12 @@ class FileCtrl(owner: => Window) {
     }
   }
 
+  def openImage: Option[URI] = {
+    val chooser = Dialogs.newBitmapFileChooser()
+    chooser.setTitle("Open bitmap")
+    val fileOp = Option(chooser.showOpenDialog(owner))
+    fileOp map { file =>
+      file.toURI
+    }
+  }
 }
