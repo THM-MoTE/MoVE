@@ -66,8 +66,8 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
   }
 
   def getShapes(ast:ModelicaAst):List[ResizableShape] = ast match {
-    case Model(_,xs) => xs flatMap getShapes
-    case Icon(_,graphics) => graphics map getShape
+    case Model(_,iconOpt) => iconOpt.map(getShapes).getOrElse(Nil)
+    case Icon(_,graphics, _,_) => graphics map getShape
     case _ => List()
   }
 
@@ -137,14 +137,18 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
 }
 
 object ShapeConverter {
-  def gettCoordinateSystemSizes(ast:ModelicaAst):List[Point] = ast match {
-    case Model(_,xs) => xs flatMap gettCoordinateSystemSizes
-    case Icon(Some(system),_) =>
-      val (p1,p2) = system.extension
-      List( (p1-p2).abs )
-    case Icon(None,_) =>
-      val (x,y) = PropertyParser.defaultCoordinateSystemSize
-      List( (x, y) )
-    case _ => Nil
+
+  def getSystemSize(iconOpt:Option[Icon]):Option[Point] =
+    for {
+      icon <- iconOpt
+      system <- icon.coordinationSystem
+      (p1,p2) = system.extension
+    } yield (p1-p2).abs
+
+  def gettCoordinateSystemSizes(ast:ModelicaAst):Point = ast match {
+    case Model(name, iconOpt) =>
+      getSystemSize(iconOpt).getOrElse(PropertyParser.defaultCoordinateSystemSize)
+    case _ => throw new IllegalArgumentException("ast != Model")
   }
 }
+
