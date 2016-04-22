@@ -101,6 +101,7 @@ class MoveCtrl extends Initializable {
   private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, drawCtrl)
   private val selectionCtrl = new SelectedShapeCtrl(drawCtrl,  snapGrid)
   private val aboutCtrl = new AboutCtrl()
+  private val fileCtrl = new FileCtrl(getWindow)
   private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
 
   private var openedFile:SrcFile = _
@@ -345,60 +346,13 @@ class MoveCtrl extends Initializable {
     }
   }
 
-  private def showSrcCodeDialog():Option[FormatSrc] = {
-    val dialog = new SaveDialog
-    val selectOpt:Option[ButtonType] = dialog.showAndWait()
-    selectOpt.map {
-      case dialog.onelineBtn => Oneline
-      case dialog.prettyBtn => Pretty
-    }
-  }
-
-  private def showScaleDialog(): Option[Int] = {
-    val dialog = Dialogs.newScaleDialog()
-    val scaleOp:Option[String] = dialog.showAndWait()
-    scaleOp.map(_.toInt).filter(x => x>=minScaleFactor && x<=maxScaleFactor)
-  }
 
   @FXML
   def onOpenClicked(e:ActionEvent): Unit = {
-    val chooser = Dialogs.newModelicaFileChooser()
-    chooser.setTitle("Open..")
-
-    val fileOp = Option(chooser.showOpenDialog(getWindow))
-    (for {
-      file <- fileOp
-      path = Paths.get(file.toURI)
-      scaleFactor <- showScaleDialog()
-    } yield {
-      val parser = ModelicaParserLike()
-      parser.parse(path) match {
-        case Success(modelList) =>
-          val model = modelList.head //TODO ask user which model if list > 1
-
-          openedFile = SrcFile(path, model)
-
-          val systemSize = ShapeConverter.gettCoordinateSystemSizes(model)
-          val converter = new ShapeConverter(scaleFactor,
-            systemSize,
-            path)
-          val shapes = converter.getShapes(model)
-          val scaledSystem = systemSize.map(_*scaleFactor)
-          shapes.foreach { s =>
-            drawPanel.setSize(scaledSystem)
-
-            drawCtrl.addShape(s)
-            drawCtrl.addNode(s.getAnchors)
-          }
-        case Failure(ex) =>
-          val excDialog = Dialogs.newExceptionDialog(ex)
-          excDialog.showAndWait()
-      }
-      Some(())
-    }) getOrElse {
-      val dialog = Dialogs.newErrorDialog("Can't load the given file or scale the icons." +
-      "\nPlease try again with a valid file and scale factor!")
-      dialog.showAndWait()
+    fileCtrl.openFile foreach {
+      case (system, shapes) =>
+        drawPanel.setSize(system)
+        shapes foreach drawCtrl.addShapeWithAnchors
     }
   }
 
