@@ -27,7 +27,7 @@ class ModelicaParser extends JavaTokenParsers
   override val ident:Parser[String] = identRegex
 
   val start = model +
-  def model:Parser[Model] = positioned(
+  def model:Parser[Model] = stuffBeforeModel ~> positioned(
     ("model" ~> identRegex) ~ moSource ~ ("end" ~> identRegex <~ ";") ^^ {
       case startIdent ~ icon ~ endIdent =>
         if(startIdent == endIdent) Model(startIdent, icon)
@@ -36,11 +36,16 @@ class ModelicaParser extends JavaTokenParsers
 
   def posString(s:String) = positioned(s ^^ PositionedString)
 
-  def moSource:Parser[Icon] =
-    skipUninterestingStuff ~> icon <~ ")" <~ ";"
+  /** Icon is optional; there are models without a icon */
+  def moSource:Parser[Option[Icon]] = (
+    skipUninterestingStuff ~> icon <~ ")" <~ ";" ^^ { Some(_) }
+    | stuffAfterModel ^^ { _ => None }
+  )
 
   /** This parser skips everything that doesn't start with Icon because we are only intersted in Icon(.. */
   def skipUninterestingStuff = ((not("Icon") ~> ident ~> """([^\n]+)""".r) *)
+  def stuffBeforeModel = ((not("model") ~> ident ~> """([^\n]+)""".r) *)
+  def stuffAfterModel = ((not("end") ~> ident ~> """([^\n]+)""".r) *)
 
   def annotation:Parser[List[Annotation]] = "annotation" ~> "(" ~> annotations <~ ")" <~ ";"
   def annotations:Parser[List[Annotation]] =

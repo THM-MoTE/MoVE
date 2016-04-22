@@ -8,6 +8,7 @@ object LoadTest extends App {
 	val parser = new ModelicaParser
 	val pathes = List(
 			Paths.get("/Users/nico/Downloads/simpleModel.mo"),
+		Paths.get("/Users/nico/Downloads/model.mo"),
 	Paths.get("/Users/nico/Downloads/test.mo"),
 	Paths.get("/Users/nico/Downloads/test2.mo"),
 	Paths.get("/Users/nico/Downloads/test4.mo"),
@@ -18,8 +19,10 @@ object LoadTest extends App {
 		println(parser.parse(x).map { models =>
 			models.map { model =>
 				"model: "+ model.name +
-				" pos: "+model.icon.start +
-				" start: " +model.icon.end
+				model.icon.map(icon =>
+					" pos: "+icon.start +
+					" start: " +icon.end
+				).getOrElse("")
 			}
 		})
 	}
