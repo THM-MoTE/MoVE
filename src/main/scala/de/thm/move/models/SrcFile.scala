@@ -1,8 +1,10 @@
-package de.thm.move.controllers
+package de.thm.move.models
 
 import java.nio.file.{Files, Path}
-import scala.collection.JavaConversions._
+
 import de.thm.move.loader.parser.ast.Model
+
+import scala.collection.JavaConversions._
 
 case class SrcFile(file:Path, model:Model) {
   private lazy val lines = Files.readAllLines(file).toList

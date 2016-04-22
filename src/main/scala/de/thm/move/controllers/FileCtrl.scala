@@ -9,7 +9,7 @@ import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
 import de.thm.move.loader.parser.ast.Model
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.models.ModelicaCodeGenerator
+import de.thm.move.models.{SrcFile, ModelicaCodeGenerator}
 import de.thm.move.views.shapes.ResizableShape
 import implicits.FxHandlerImplicits._
 import implicits.MonadImplicits._

@@ -27,11 +27,13 @@ import de.thm.move.controllers.implicits.MonadImplicits._
 import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
 import de.thm.move.loader.parser.ast.Model
+import de.thm.move.models.FillPattern
 import de.thm.move.models.FillPattern._
+import de.thm.move.models.LinePattern
 import de.thm.move.models.LinePattern._
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.SelectedShape.SelectedShape
-import de.thm.move.models.{FillPattern, LinePattern, ModelicaCodeGenerator, SelectedShape}
+import de.thm.move.models._
 import de.thm.move.util.Convertable._
 import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
