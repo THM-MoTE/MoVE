@@ -15,7 +15,7 @@ object ast {
                           end:Position) extends Positional
 
   sealed trait ModelicaAst extends Positional
-  case class Model(name:String, icon:Icon) extends ModelicaAst
+  case class Model(name:String, icon:Option[Icon]) extends ModelicaAst
 
   sealed trait Annotation extends ModelicaAst
 
