@@ -16,6 +16,8 @@ import java.io.InputStream
 import de.thm.move.models.CommonTypes._
 import de.thm.move.util.PointUtils._
 
+import scala.util.parsing.input.Position
+
 class ModelicaParser extends JavaTokenParsers
   with ImplicitConversions
   with ModelicaParserLike
@@ -25,42 +27,60 @@ class ModelicaParser extends JavaTokenParsers
   override val ident:Parser[String] = identRegex
 
   val start = model
-  def model:Parser[Model] =
-    ("model" ~> identRegex) ~ annotation ~ ("end" ~> identRegex <~ ";") ^^ {
-      case startIdent ~ annot ~ endIdent =>
-        if(startIdent == endIdent) Model(startIdent, annot)
+  def model:Parser[Model] = positioned(
+    ("model" ~> identRegex) ~ moSource ~ ("end" ~> identRegex <~ ";") ^^ {
+      case startIdent ~ icon ~ endIdent =>
+        if(startIdent == endIdent) Model(startIdent, icon)
         else throw new ParsingError(s"Modelname at end of file doesn't match starting modelname! ($startIdent != $endIdent)")
-    }
+    })
+
+  def posString(s:String) = positioned(s ^^ PositionedString)
+
+  def moSource:Parser[Icon] =
+    skipUninterestingStuff ~> icon <~ ")" <~ ";"
+
+  /** This parser skips everything that doesn't start with Icon because we are only intersted in Icon(.. */
+  def skipUninterestingStuff = ((not("Icon") ~> ident ~> """([^\n]+)""".r) *)
 
   def annotation:Parser[List[Annotation]] = "annotation" ~> "(" ~> annotations <~ ")" <~ ";"
-  def annotations:Parser[List[Annotation]] = (
-    (icon +)
-    )
+  def annotations:Parser[List[Annotation]] =
+    icon +
 
   def icon:Parser[Icon] =
-    ("Icon" ~> "(") ~>
+    iconElements ^^ { elems =>
+      Icon(elems.coordinationSystem,
+        elems.grapchics,
+        elems.pos,
+        elems.end
+      )
+    }
+
+  def iconElements:Parser[IconElements] =
+    positioned(("Icon" <~ "(") ~>
       ((coordinateSys <~ ",") ?) ~
-        graphic <~
-        ")" ^^  { case coord ~ graphics => Icon(coord, graphics) }
+      graphic ~
+      posString(")") ^^ { case sys ~ graphic ~ endStr =>
+      IconElements(sys, graphic, endStr.pos)
+    })
 
   def coordinateSys: Parser[CoordinateSystem] =
-    "coordinateSystem" ~>"(" ~> coordinateSysFields <~ ")"
+    positioned("coordinateSystem" ~>"(" ~> coordinateSysFields <~ ")")
 
   def coordinateSysFields:Parser[CoordinateSystem] =
-    propertyKeys(extent, preserveRatio, initScale) ^^ { map =>
+    positioned(propertyKeys(extent, preserveRatio, initScale) ^^ { map =>
     val ext = getPropertyValue(map, extent)(extension)
     val aspectRatio = getPropertyValue(map, preserveRatio, defaultPreserveRatio)(bool)
     val scale = getPropertyValue(map, initScale, defaultinitScale)(decimalNo)
     CoordinateSystem(ext,aspectRatio,scale)
-  }
+  })
 
   def extensionParser:Parser[Extent] =
     "extent" ~> "=" ~> extension
 
   def graphic:Parser[List[ShapeElement]] =
-   "graphics" ~>  "=" ~> "{" ~> repsep(graphics, ",") <~ "}"
+    "graphics" ~>  "=" ~> "{" ~> repsep(graphics, ",") <~ "}"
 
-  def graphics:Parser[ShapeElement] = (
+  def graphics:Parser[ShapeElement] = positioned(
     "Rectangle" ~> "(" ~> rectangleFields <~ ")"
     | "Ellipse" ~> "(" ~> ellipseFields <~ ")"
     | "Line" ~> "(" ~> lineFields <~ ")"
@@ -69,27 +89,27 @@ class ModelicaParser extends JavaTokenParsers
     )
 
   def rectangleFields:Parser[RectangleElement] =
-    propertyKeys(visible, origin, rotation,lineCol,linePatt,fillCol,
+    positioned(propertyKeys(visible, origin, rotation,lineCol,linePatt,fillCol,
       fillPatt,extent,lineThick, radius) ^^ { map =>
         val gi = getGraphicItem(map)
         val fs = getFilledShape(map)
         val ext = getPropertyValue(map, extent)(extension)
         RectangleElement(gi,fs, extent=ext)
-    }
+    })
 
   def polygonFields:Parser[Polygon] =
-    propertyKeys(visible, origin, rotation,pointsKey,lineCol,linePatt,fillCol,
+    positioned(propertyKeys(visible, origin, rotation,pointsKey,lineCol,linePatt,fillCol,
       fillPatt,lineThick,smooth) ^^ { map =>
         Polygon(getGraphicItem(map),
         getFilledShape(map),
         getPropertyValue(map, pointsKey)(points),
         getPropertyValue(map, smooth, defaultSmooth)(ident)
         )
-      }
+      })
 
 
   def lineFields:Parser[PathElement] =
-    propertyKeys(visible,origin,rotation,pointsKey,colorKey,linePatt,thick,arrowKey,smooth) ^^ {
+    positioned(propertyKeys(visible,origin,rotation,pointsKey,colorKey,linePatt,thick,arrowKey,smooth) ^^ {
       map =>
         PathElement(getGraphicItem(map),
                     getPropertyValue(map, pointsKey)(points),
@@ -101,21 +121,21 @@ class ModelicaParser extends JavaTokenParsers
                     getPropertyValue(map, arrowSize, defaultArrowSize)(numberParser)
                   )
 
-    }
+    })
 
   def ellipseFields:Parser[Ellipse] =
-    propertyKeys(visible,origin,rotation,lineCol,linePatt,fillCol,
+    positioned(propertyKeys(visible,origin,rotation,lineCol,linePatt,fillCol,
       fillPatt,extent,lineThick, endAngle) ^^ { map =>
         val gi = getGraphicItem(map)
         val fs = getFilledShape(map)
         val ext = getPropertyValue(map, extent)(extension)
         val endAng = getPropertyValue(map, endAngle, defaultEndAngle)(numberParser)
         Ellipse(gi,fs, extent=ext, endAngle = endAng)
-      }
+      })
 
 
   def bitmapFields:Parser[AbstractImage] =
-    propertyKeys(visible, origin, extent, rotation, base64, imgUri) ^^ { map =>
+    positioned(propertyKeys(visible, origin, extent, rotation, base64, imgUri) ^^ { map =>
       val gi = getGraphicItem(map)
       val ext = getPropertyValue(map, extent)(extension)
       val base64Opt = map.get(base64).map(identWithoutHyphens)
@@ -125,7 +145,7 @@ class ModelicaParser extends JavaTokenParsers
         imgUriOpt.map(ImageURI(gi, ext, _))).getOrElse(
           throw new ParsingError("fileName or imageSource has to be defined for Bitmaps!")
           )
-    }
+    })
 
   def getGraphicItem(map:Map[String,String]):GraphicItem = {
     GraphicItem(getPropertyValue(map, visible, defaultVisible)(bool),

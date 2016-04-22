@@ -4,15 +4,25 @@ import javafx.scene.paint.Color
 
 import de.thm.move.models.CommonTypes._
 
+import scala.util.parsing.input.{Position, Positional}
+
 object ast {
   type Extent = (Point,Point)
 
-  sealed trait ModelicaAst
-  case class Model(name:String, annotations:List[Annotation]) extends ModelicaAst
+  case class PositionedString(s:String) extends Positional
+  case class IconElements(coordinationSystem:Option[CoordinateSystem],
+                          grapchics:List[ShapeElement],
+                          end:Position) extends Positional
+
+  sealed trait ModelicaAst extends Positional
+  case class Model(name:String, icon:Icon) extends ModelicaAst
+
   sealed trait Annotation extends ModelicaAst
 
   case class Icon(coordinationSystem:Option[CoordinateSystem],
-                  grapchics:List[ShapeElement]) extends Annotation
+                  grapchics:List[ShapeElement],
+                  start:Position,
+                  end:Position) extends Annotation
   case class CoordinateSystem(extension:Extent,
                         preserveRatio:Boolean = true,
                         initScale:Double = 0.1
