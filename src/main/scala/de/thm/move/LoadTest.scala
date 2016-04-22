@@ -15,9 +15,12 @@ object LoadTest extends App {
 	Paths.get("/Users/nico/Downloads/test6.mo")
 		)
 	pathes.foreach {x =>
-		println(parser.parse(x).map { model =>
-			"pos: "+model.icon.start +
-			" start: " +model.icon.end
+		println(parser.parse(x).map { models =>
+			models.map { model =>
+				"model: "+ model.name +
+				" pos: "+model.icon.start +
+				" start: " +model.icon.end
+			}
 		})
 	}
 }

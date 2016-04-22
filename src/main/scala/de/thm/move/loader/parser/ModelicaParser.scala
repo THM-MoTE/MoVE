@@ -26,7 +26,7 @@ class ModelicaParser extends JavaTokenParsers
 
   override val ident:Parser[String] = identRegex
 
-  val start = model
+  val start = model +
   def model:Parser[Model] = positioned(
     ("model" ~> identRegex) ~ moSource ~ ("end" ~> identRegex <~ ";") ^^ {
       case startIdent ~ icon ~ endIdent =>
@@ -169,7 +169,7 @@ class ModelicaParser extends JavaTokenParsers
     }
   }
 
-  def parse(stream:InputStream): Try[Model] = Try {
+  def parse(stream:InputStream): Try[List[Model]] = Try {
     parseAll(start, new InputStreamReader(new BufferedInputStream(stream))) match {
       case Success(result, _)    => result
       case NoSuccess(msg, input) =>

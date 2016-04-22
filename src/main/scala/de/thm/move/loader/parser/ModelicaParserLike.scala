@@ -9,13 +9,13 @@ import de.thm.move.loader.parser.ast._
 
 trait ModelicaParserLike {
 
-  def parse(path:Path): Try[Model] = {
+  def parse(path:Path): Try[List[Model]] = {
     val stream = Files.newInputStream(path)
     val erg = parse(stream)
     stream.close
     erg
   }
-  def parse(stream:InputStream): Try[Model]
+  def parse(stream:InputStream): Try[List[Model]]
 }
 
 object ModelicaParserLike {

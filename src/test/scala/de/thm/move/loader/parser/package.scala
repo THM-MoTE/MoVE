@@ -9,11 +9,11 @@ import de.thm.move.loader.parser.ast._
 
 package object parser {
   private  val parser:ModelicaParserLike = new ModelicaParser
-  def parse(str:String): Try[Model] =
+  def parse(str:String): Try[List[Model]] =
     parser.parse(new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8)))
 
   val withParseSuccess: String => Model = parse(_) match {
-    case Success(elem) => elem
+    case Success(elem) => elem.head
     case Failure(exc) => throw exc
   }
 
