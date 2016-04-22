@@ -370,12 +370,13 @@ class MoveCtrl extends Initializable {
     } yield {
       val parser = ModelicaParserLike()
       parser.parse(path) match {
-        case Success(ast) =>
-          val systemSize = ShapeConverter.gettCoordinateSystemSizes(ast).head
+        case Success(modelList) =>
+          val model = modelList.head //TODO ask user which model if list > 1
+          val systemSize = ShapeConverter.gettCoordinateSystemSizes(model)
           val converter = new ShapeConverter(scaleFactor,
             systemSize,
             path)
-          val shapes = converter.getShapes(ast)
+          val shapes = converter.getShapes(model)
           val scaledSystem = systemSize.map(_*scaleFactor)
           shapes.foreach { s =>
             drawPanel.setSize(scaledSystem)
