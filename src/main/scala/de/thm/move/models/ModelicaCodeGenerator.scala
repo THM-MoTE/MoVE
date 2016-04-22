@@ -249,18 +249,16 @@ class ModelicaCodeGenerator(
     Files.copy(srcPath, targetPath.resolve(filename))
   }
 
-  def generate[A <: Node](modelname:String, target:URI, shapes:List[A]): Lines = {
+
+  private def generateIcons[A <: Node](modelname:String, target:URI, shapes:List[A]): Lines = {
     val systemStartpoint = genPoint((0.0,0.0))
     val systemEndpoint = genPoint((paneWidth, paneHeight))
 
     val iconStr =
       s"""${spaces(2)}Icon (
-         |${spaces(4)}coordinateSystem(
-         |${spaces(6)}extent = {${systemStartpoint},$systemEndpoint}
-         |${spaces(4)}),""".stripMargin.replaceAll("\n", linebreak)
-
-    val header = generateHeader(modelname)(2)
-    val footer = generateFooter(modelname)(2)
+      |${spaces(4)}coordinateSystem(
+      |${spaces(6)}extent = {${systemStartpoint},$systemEndpoint}
+      |${spaces(4)}),""".stripMargin.replaceAll("\n", linebreak)
 
     val graphicsStart = s"${spaces(4)}graphics = {"
     val shapeStr = shapes.zipWithIndex.map {
@@ -268,17 +266,31 @@ class ModelicaCodeGenerator(
         generateShape(e, modelname, target)(6) + ","
       case (e,_) => generateShape(e, modelname, target)(6)
     }
-    val graphics = graphicsStart :: shapeStr ::: List(s"${spacesOrNothing(4)}})", footer)
-    header :: iconStr :: graphics
+    iconStr :: graphicsStart :: shapeStr ::: List(s"${spacesOrNothing(4)}})")
   }
 
-  def writeToFile(lines:Lines)(target:URI): Unit = {
+  def generate[A <: Node](modelname:String, target:URI, shapes:List[A]): Lines = {
+    val header = generateHeader(modelname)(2)
+    val footer = generateFooter(modelname)(2)
+
+    val graphics = generateIcons(modelname, target, shapes) ::: List(footer)
+    header :: graphics
+  }
+
+  def generateExistingFile[A <: Node](modelname:String, target:URI, shapes:List[A]): Lines = {
+    val graphics = generateIcons(modelname, target, shapes)
+    graphics
+  }
+
+  def writeToFile(beforeIcons:String, lines:Lines, afterIcons:String)(target:URI): Unit = {
     val path = Paths.get(target)
     val writer = Files.newBufferedWriter(path, encoding)
 
     try {
       val str = lines.mkString(linebreakOrNothing)
+      writer.write(beforeIcons + linebreakOrNothing)
       writer.write(str)
+      writer.write(afterIcons)
       writer.write("\n")
     } finally {
       writer.close()
