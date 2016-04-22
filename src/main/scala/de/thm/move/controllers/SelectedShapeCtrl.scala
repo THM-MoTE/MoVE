@@ -157,6 +157,7 @@ class SelectedShapeCtrl(changeLike:ChangeDrawPanelLike, grid:SnapLike) {
         val shapeCopy = selectedShapes
         history.execute {
           shapeCopy foreach { shape =>
+            changeLike.remove(shape.selectionRectangle)
             changeLike.removeShape(shape)
           }
         } {
