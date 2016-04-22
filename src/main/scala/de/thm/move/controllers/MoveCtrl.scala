@@ -26,6 +26,7 @@ import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.controllers.implicits.MonadImplicits._
 import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
+import de.thm.move.loader.parser.ast.Model
 import de.thm.move.models.FillPattern._
 import de.thm.move.models.LinePattern._
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
@@ -101,6 +102,8 @@ class MoveCtrl extends Initializable {
   private val selectionCtrl = new SelectedShapeCtrl(drawCtrl,  snapGrid)
   private val aboutCtrl = new AboutCtrl()
   private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
+
+  private var openedFile:SrcFile = _
 
   private val fillColorConfig = new ValueConfig(fillColorConfigURI)
   private val strokeColorConfig = new ValueConfig(strokeColorConfigURI)
@@ -372,6 +375,9 @@ class MoveCtrl extends Initializable {
       parser.parse(path) match {
         case Success(modelList) =>
           val model = modelList.head //TODO ask user which model if list > 1
+
+          openedFile = SrcFile(path, model)
+
           val systemSize = ShapeConverter.gettCoordinateSystemSizes(model)
           val converter = new ShapeConverter(scaleFactor,
             systemSize,
@@ -412,10 +418,19 @@ class MoveCtrl extends Initializable {
       val height = drawPanel.getHeight
       val generator = new ModelicaCodeGenerator(srcFormat, pxPerMm, width, height)
 
-      val filenamestr = Paths.get(uri).getFileName.toString
-      val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
-      val lines = generator.generate(modelName, uri, shapes)
-      generator.writeToFile(lines)(uri)
+      openedFile match {
+        case src@SrcFile(oldpath, Model(modelname, _)) =>
+          val lines = generator.generateExistingFile(modelname, uri, shapes)
+          val before = src.getBeforeModel.getOrElse("")
+          val after = src.getAfterModel.getOrElse("")
+          generator.writeToFile(before,lines, after)(uri)
+        case _ =>
+          val filenamestr = Paths.get(uri).getFileName.toString
+          val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
+          val lines = generator.generate(modelName, uri, shapes)
+          generator.writeToFile("",lines, "")(uri)
+      }
+
       Some(())
     }) getOrElse {
       val dialog = Dialogs.newErrorDialog("Can't save to the given path or scale the icons." +
