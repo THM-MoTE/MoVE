@@ -15,7 +15,7 @@ import de.thm.move.util.GeometryUtils._
 import de.thm.move.models.CommonTypes._
 
 class ConverterTest {
-
+/*
   @Test
   def convertCoordinationSystem: Unit = {
 
@@ -303,4 +303,5 @@ class ConverterTest {
     assertEquals(defaultCoordinateSystemSize.y - 150, circ.getBoundsInLocal.getMinY, 1.0)
     assertEquals(80, circ.getBoundsInLocal.getMaxX, 1.0)
   }
+  */
 }

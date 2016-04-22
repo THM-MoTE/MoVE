@@ -11,7 +11,7 @@ import de.thm.move.loader.parser.PropertyParser._
 import de.thm.move.loader.parser.ast._
 
 class SkeletalParserTest {
-
+/*
   @Test
   def minimalRect: Unit = {
     val rect =
@@ -681,4 +681,5 @@ class SkeletalParserTest {
 
       assertEquals(exp, withParseSuccess(rect))
   }
+  */
 }

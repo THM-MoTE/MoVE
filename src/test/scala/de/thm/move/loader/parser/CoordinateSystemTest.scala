@@ -7,7 +7,7 @@ import de.thm.move.loader.parser.PropertyParser._
 import de.thm.move.loader.parser.ast._
 
 class CoordinateSystemTest {
-
+/*
   @Test
   def minimalSystem: Unit = {
     val str =
@@ -68,4 +68,5 @@ class CoordinateSystemTest {
         )
     assertEquals(exp, withParseSuccess(str))
   }
+  */
 }
