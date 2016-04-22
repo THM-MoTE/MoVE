@@ -358,39 +358,7 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
-    val chooser = Dialogs.newModelicaFileChooser()
-    chooser.setTitle("Save as..")
-    val fileOp = Option(chooser.showSaveDialog(getWindow))
-    (for (
-      file <- fileOp;
-      uri = file.toURI;
-      srcFormat <- showSrcCodeDialog();
-      pxPerMm <- showScaleDialog()
-    ) yield {
-      val shapes = drawPanel.getShapes
-      val width = drawPanel.getWidth
-      val height = drawPanel.getHeight
-      val generator = new ModelicaCodeGenerator(srcFormat, pxPerMm, width, height)
-
-      openedFile match {
-        case src@SrcFile(oldpath, Model(modelname, _)) =>
-          val lines = generator.generateExistingFile(modelname, uri, shapes)
-          val before = src.getBeforeModel.getOrElse("")
-          val after = src.getAfterModel.getOrElse("")
-          generator.writeToFile(before,lines, after)(uri)
-        case _ =>
-          val filenamestr = Paths.get(uri).getFileName.toString
-          val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
-          val lines = generator.generate(modelName, uri, shapes)
-          generator.writeToFile("",lines, "")(uri)
-      }
-
-      Some(())
-    }) getOrElse {
-      val dialog = Dialogs.newErrorDialog("Can't save to the given path or scale the icons." +
-      "\nPlease try again with a valid path and scale factor!")
-      dialog.showAndWait()
-    }
+    fileCtrl.saveFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight)
   }
 
   @FXML

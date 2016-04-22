@@ -1,12 +1,15 @@
 package de.thm.move.controllers
 
+import java.net.URI
 import java.nio.file.Paths
 import javafx.scene.control.ButtonType
 import javafx.stage.Window
-
+import javafx.scene.Node
 import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
+import de.thm.move.loader.parser.ast.Model
 import de.thm.move.models.CommonTypes.Point
+import de.thm.move.models.ModelicaCodeGenerator
 import de.thm.move.views.shapes.ResizableShape
 import implicits.FxHandlerImplicits._
 import implicits.MonadImplicits._
@@ -71,6 +74,37 @@ class FileCtrl(owner: => Window) {
         "\nPlease try again with a valid file and scale factor!")
       dialog.showAndWait()
       None
+    }
+  }
+
+  def saveFile(shapes:List[Node], width:Double,height:Double): Unit = {
+    val chooser = Dialogs.newModelicaFileChooser()
+    chooser.setTitle("Save as..")
+    val fileOp = Option(chooser.showSaveDialog(owner))
+    (for (
+      file <- fileOp;
+      uri = file.toURI;
+      srcFormat <- showSrcCodeDialog();
+      pxPerMm <- showScaleDialog()
+    ) yield {
+        val generator = new ModelicaCodeGenerator(srcFormat, pxPerMm, width, height)
+
+        usedFile match {
+          case Some(src@SrcFile(oldpath, Model(modelname, _))) =>
+            val lines = generator.generateExistingFile(modelname, uri, shapes)
+            val before = src.getBeforeModel.getOrElse("")
+            val after = src.getAfterModel.getOrElse("")
+            generator.writeToFile(before,lines, after)(uri)
+          case _ =>
+            val filenamestr = Paths.get(uri).getFileName.toString
+            val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
+            val lines = generator.generate(modelName, uri, shapes)
+            generator.writeToFile("",lines, "")(uri)
+        }
+      }) getOrElse {
+      val dialog = Dialogs.newErrorDialog("Can't save to the given path or scale the icons." +
+        "\nPlease try again with a valid path and scale factor!")
+      dialog.showAndWait()
     }
   }
 
