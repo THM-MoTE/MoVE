@@ -1,6 +1,6 @@
 HEADER_FILE="header.txt" #where is the header?
 INCLUDE=["../src"] #to which files/directorys should be added?
-EXCLUDE=["resources"] #which files/directorys should be ignored?
+EXCLUDE=[".DS_Store", "resources"] #which files/directorys should be ignored?
 UPDATE_HEADER=True #remove old header?
 
 #which comment characters should be used?
@@ -24,7 +24,7 @@ def writeHeader(header, filePath):
                                 x.startswith(LINE_COMMENT) or
                                 x.startswith(END_COMMENT)
                         , original)
-
+        content = itertools.dropwhile(lambda x:  not x or x.isspace(), content)
         newLines = header + "\n\n" + "".join(content)
         f.write(newLines)
 
