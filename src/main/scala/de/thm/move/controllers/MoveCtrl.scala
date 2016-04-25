@@ -50,6 +50,8 @@ class MoveCtrl extends Initializable {
   private val aboutStage = new Stage()
 
   @FXML
+  var saveMenuItem: MenuItem = _
+  @FXML
   var saveAsMenuItem: MenuItem = _
   @FXML
   var openMenuItem: MenuItem = _
@@ -363,8 +365,13 @@ class MoveCtrl extends Initializable {
   }
 
   @FXML
+  def onSaveClicked(e:ActionEvent): Unit = {
+    println("save not implemented!")
+  }
+
+  @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
-    fileCtrl.saveFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight) match {
+    fileCtrl.saveNewFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight) match {
       case Failure(ex:UserInputException) =>
         Dialogs.newErrorDialog(ex.msg).showAndWait()
       case Failure(ex) =>
