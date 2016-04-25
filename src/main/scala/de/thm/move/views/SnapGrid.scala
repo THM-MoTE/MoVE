@@ -19,6 +19,13 @@ class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane with S
   setPickOnBounds(false)
   getStyleClass.add("snap-grid-pane")
 
+  prefHeightProperty.bind(topPane.prefHeightProperty)
+  prefWidthProperty.bind(topPane.widthProperty)
+  minHeightProperty.bind(topPane.minHeightProperty)
+  minWidthProperty.bind(topPane.minWidthProperty)
+  maxHeightProperty.bind(topPane.maxHeightProperty)
+  maxWidthProperty.bind(topPane.maxWidthProperty)
+
   gridVisibleProperty.addListener { (oldB:java.lang.Boolean,newB:java.lang.Boolean) =>
     getChildren.clear()
     if(newB) {

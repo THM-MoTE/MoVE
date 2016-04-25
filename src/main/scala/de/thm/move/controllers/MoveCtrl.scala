@@ -392,8 +392,8 @@ class MoveCtrl extends Initializable {
     strOpt.flatMap { x =>
       try {
         val ar = x.split(";")
-        val width = ar(0).toInt
-        val height = ar(1).toInt
+        val width = ar(0).toDouble
+        val height = ar(1).toDouble
         Some((width,height))
       } catch {
         case _:NumberFormatException => None
