@@ -210,8 +210,8 @@ class MoveCtrl extends Initializable {
   }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    setupShortcuts("open", "save-as", "undo", "redo", "copy", "paste", "duplicate", "delete-item","group-elements", "ungroup-elements","load-image",
-      "show-anchors", "show-grid", "enable-snapping")(openMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
+    setupShortcuts("open", "save", "save-as", "undo", "redo", "copy", "paste", "duplicate", "delete-item","group-elements", "ungroup-elements","load-image",
+      "show-anchors", "show-grid", "enable-snapping")(openMenuItem, saveMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
         pasteMenuItem, duplicateMenuItem, deleteMenuItem, groupMenuItem, ungroupMenuItem, loadImgMenuItem, showAnchorsItem, showGridItem, enableGridItem)
 
     //only show the grid if it's enabled
