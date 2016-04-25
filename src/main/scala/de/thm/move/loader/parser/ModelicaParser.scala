@@ -28,19 +28,28 @@ class ModelicaParser extends JavaTokenParsers
 
   val start = model +
   def model:Parser[Model] = stuffBeforeModel ~> positioned(
-    ("model" ~> identRegex) ~ moSource ~ ("end" ~> identRegex <~ ";") ^^ {
-      case startIdent ~ icon ~ endIdent =>
-        if(startIdent == endIdent) Model(startIdent, icon)
+    ("model" ~> identRegex) ~ moSource ~ posString("end") ~ identRegex <~ ";" ^^ {
+      case startIdent ~ icon ~ endPos ~ endIdent =>
+        if(startIdent == endIdent) {
+          Model(startIdent, icon getOrElse {
+            NoAnnotation(endPos.pos)
+          })
+        }
         else throw new ParsingError(s"Modelname at end of file doesn't match starting modelname! ($startIdent != $endIdent)")
     })
 
   def posString(s:String) = positioned(s ^^ PositionedString)
 
   /** Icon is optional; there are models without a icon */
-  def moSource:Parser[Option[Icon]] = (
-    skipUninterestingStuff ~> icon <~ ")" <~ ";" ^^ { Some(_) }
+  def moSource:Parser[Option[Annotation]] = (
+    skipAnnotation ~> "annotation" ~> "(" ~> skipUninterestingStuff ~> posString(")") <~ ";" ^^ {
+      paren => Some(WithoutIcon(paren.pos))
+    }
+    | skipUninterestingStuff ~> icon <~ ")" <~ ";" ^^ { Some(_) }
     | stuffAfterModel ^^ { _ => None }
   )
+
+  def skipAnnotation = ((not("annotation") ~> ident ~> """([^\n]+)""".r) *)
 
   /** This parser skips everything that doesn't start with Icon because we are only intersted in Icon(.. */
   def skipUninterestingStuff = ((not("Icon") ~> ident ~> """([^\n]+)""".r) *)
