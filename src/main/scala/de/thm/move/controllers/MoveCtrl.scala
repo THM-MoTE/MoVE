@@ -512,6 +512,8 @@ class MoveCtrl extends Initializable {
   def onPathClicked(e:ActionEvent): Unit = onDrawShape
   @FXML
   def onPolygonClicked(e:ActionEvent): Unit = onDrawShape
+  @FXML
+  def onTextClicked(e:ActionEvent): Unit = drawToolChanged(Cursor.TEXT)
 
   private def getStrokeColor: Color = strokeColorPicker.getValue
   private def getFillColor: Color = fillColorPicker.getValue

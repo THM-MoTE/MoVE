@@ -59,6 +59,7 @@ class DrawCtrl(
           text.setLayoutX(newX)
           text.setLayoutY(newY)
           drawPanel.getChildren.add(text)
+          text.requestFocus()
         case (SelectedShape.Text,_,_ ) =>
         case (SelectedShape.Polygon, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
           //test if polygon is finish by checking if last clicked position is 1st clicked point
