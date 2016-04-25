@@ -15,30 +15,36 @@ import implicits.FxHandlerImplicits._
 import implicits.MonadImplicits._
 
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
+import de.thm.move.models.UserInputException
 import de.thm.move.views.{Dialogs, SaveDialog}
 import de.thm.move.Global._
 import de.thm.move.util.PointUtils._
 
 import scala.collection.JavaConverters._
-import scala.util.{Failure, Success}
+import scala.util.{Try,Failure, Success}
 
 class FileCtrl(owner: => Window) {
 
   private var usedFile: Option[SrcFile] = None
 
-  private def showSrcCodeDialog():Option[FormatSrc] = {
+  private def showSrcCodeDialog():FormatSrc = {
     val dialog = new SaveDialog
     val selectOpt:Option[ButtonType] = dialog.showAndWait()
     selectOpt.map {
       case dialog.onelineBtn => Oneline
       case dialog.prettyBtn => Pretty
-    }
+      case _ => Pretty
+    } getOrElse(Pretty)
   }
 
-  private def showScaleDialog(): Option[Int] = {
+  private def showScaleDialog(): Try[Int] = {
     val dialog = Dialogs.newScaleDialog()
     val scaleOp:Option[String] = dialog.showAndWait()
-    scaleOp.map(_.toInt).filter(x => x>=minScaleFactor && x<=maxScaleFactor)
+    scaleOp.map(_.toInt).
+    filter(x => x>=minScaleFactor && x<=maxScaleFactor) match {
+      case Some(x) => Success(x)
+      case _ => Failure(UserInputException("Specify a valid scale-factor between 1 and 100!"))
+    }
   }
 
   private def chooseModelDialog(xs:List[Model]): Model = {
@@ -53,55 +59,49 @@ class FileCtrl(owner: => Window) {
     } else xs.head
   }
 
-  def openFile:Option[(Point,List[ResizableShape])] = {
+  def openFile:Try[(Point,List[ResizableShape])] = {
     val chooser = Dialogs.newModelicaFileChooser()
     chooser.setTitle("Open..")
 
-    val fileOp = Option(chooser.showOpenDialog(owner))
-    (for {
-      file <- fileOp
+    val fileTry = Option(chooser.showOpenDialog(owner)) match {
+      case Some(x) => Success(x)
+      case _ => Failure(UserInputException("Select a modelica file to open!"))
+    }
+    for {
+      file <- fileTry
       path = Paths.get(file.toURI)
       scaleFactor <- showScaleDialog()
+      parser = ModelicaParserLike()
+      modelList <- parser.parse(path)
     } yield {
-        val parser = ModelicaParserLike()
-        parser.parse(path) match {
-          case Success(modelList) =>
-            val model = chooseModelDialog(modelList)
+      val model = chooseModelDialog(modelList)
 
-            usedFile = Some(SrcFile(path, model))
+      usedFile = Some(SrcFile(path, model))
 
-            val systemSize = ShapeConverter.gettCoordinateSystemSizes(model)
-            val converter = new ShapeConverter(scaleFactor,
-              systemSize,
-              path)
-            val shapes = converter.getShapes(model)
-            val scaledSystem = systemSize.map(_*scaleFactor)
-            Some(scaledSystem, shapes)
-          case Failure(ex) =>
-            val excDialog = Dialogs.newExceptionDialog(ex)
-            excDialog.showAndWait()
-            None
-        }
-      }) getOrElse {
-      val dialog = Dialogs.newErrorDialog("Can't load the given file or scale the icons." +
-        "\nPlease try again with a valid file and scale factor!")
-      dialog.showAndWait()
-      None
+      val systemSize = ShapeConverter.gettCoordinateSystemSizes(model)
+      val converter = new ShapeConverter(scaleFactor,
+        systemSize,
+        path)
+      val shapes = converter.getShapes(model)
+      val scaledSystem = systemSize.map(_*scaleFactor)
+      (scaledSystem, shapes)
     }
   }
 
-  def saveFile(shapes:List[Node], width:Double,height:Double): Unit = {
+  def saveFile(shapes:List[Node], width:Double,height:Double): Try[Unit] = {
     val chooser = Dialogs.newModelicaFileChooser()
     chooser.setTitle("Save as..")
-    val fileOp = Option(chooser.showSaveDialog(owner))
-    (for (
-      file <- fileOp;
+    val fileTry = Option(chooser.showSaveDialog(owner)) match {
+      case Some(x) => Success(x)
+      case _ => Failure(UserInputException("Select a file for saving!"))
+    }
+    for (
+      file <- fileTry;
       uri = file.toURI;
-      srcFormat <- showSrcCodeDialog();
+      srcFormat = showSrcCodeDialog();
       pxPerMm <- showScaleDialog()
     ) yield {
         val generator = new ModelicaCodeGenerator(srcFormat, pxPerMm, width, height)
-
         usedFile match {
           case Some(src@SrcFile(oldpath, Model(modelname, _))) =>
             val lines = generator.generateExistingFile(modelname, uri, shapes)
@@ -114,10 +114,6 @@ class FileCtrl(owner: => Window) {
             val lines = generator.generate(modelName, uri, shapes)
             generator.writeToFile("",lines, "")(uri)
         }
-      }) getOrElse {
-      val dialog = Dialogs.newErrorDialog("Can't save to the given path or scale the icons." +
-        "\nPlease try again with a valid path and scale factor!")
-      dialog.showAndWait()
     }
   }
 

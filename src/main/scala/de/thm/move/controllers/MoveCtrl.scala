@@ -351,16 +351,26 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onOpenClicked(e:ActionEvent): Unit = {
-    fileCtrl.openFile foreach {
-      case (system, shapes) =>
+    fileCtrl.openFile match {
+      case Success((system, shapes)) =>
         drawPanel.setSize(system)
         shapes foreach drawCtrl.addShapeWithAnchors
+      case Failure(ex:UserInputException) =>
+        Dialogs.newErrorDialog(ex.msg).showAndWait()
+      case Failure(ex) =>
+        Dialogs.newExceptionDialog(ex).showAndWait()
     }
   }
 
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
-    fileCtrl.saveFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight)
+    fileCtrl.saveFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight) match {
+      case Failure(ex:UserInputException) =>
+        Dialogs.newErrorDialog(ex.msg).showAndWait()
+      case Failure(ex) =>
+        Dialogs.newExceptionDialog(ex).showAndWait()
+        case _ => //ignore successfull case
+    }
   }
 
   @FXML
