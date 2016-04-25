@@ -41,6 +41,10 @@
                <tooltip>
                   <Tooltip text="Bitmap" />
                </tooltip></ToggleButton>
+             <ToggleButton fx:id="text_btn" mnemonicParsing="false" text="T" toggleGroup="$btnGroup">
+                <tooltip>
+                   <Tooltip text="Text" />
+                </tooltip></ToggleButton>
         </items>
       </ToolBar>
    </left>

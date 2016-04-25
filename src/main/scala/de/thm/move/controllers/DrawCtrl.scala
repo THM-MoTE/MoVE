@@ -11,6 +11,7 @@ import javafx.scene.Node
 import javafx.scene.input.{InputEvent, MouseEvent}
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import javafx.scene.control.TextField
 
 import de.thm.move.Global
 import de.thm.move.controllers.factorys.ShapeFactory
@@ -53,6 +54,12 @@ class DrawCtrl(
         abortDrawing.set(false)
       }
       (shape, mouseEvent.getEventType, (mouseEvent.getX, mouseEvent.getY)) match {
+        case (SelectedShape.Text, MouseEvent.MOUSE_CLICKED, (newX,newY) ) =>
+          val text = new TextField()
+          text.setLayoutX(newX)
+          text.setLayoutY(newY)
+          drawPanel.getChildren.add(text)
+        case (SelectedShape.Text,_,_ ) =>
         case (SelectedShape.Polygon, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
           //test if polygon is finish by checking if last clicked position is 1st clicked point
           points.lastOption match {
