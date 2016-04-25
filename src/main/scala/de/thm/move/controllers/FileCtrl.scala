@@ -98,8 +98,8 @@ class FileCtrl(owner: => Window) {
     existingFile match {
       case Some(src@SrcFile(oldpath, Model(modelname, _))) =>
         val lines = generator.generateExistingFile(modelname, targetUri, shapes)
-        val before = src.getBeforeModel.getOrElse("")
-        val after = src.getAfterModel.getOrElse("")
+        val before = src.getBeforeModel
+        val after = src.getAfterModel
         generator.writeToFile(before,lines, after)(targetUri)
       case _ =>
         val filenamestr = Paths.get(targetUri).getFileName.toString
