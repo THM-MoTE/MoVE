@@ -2,7 +2,6 @@
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
  */
 
-
 package de.thm.move.views
 
 import javafx.geometry.Insets

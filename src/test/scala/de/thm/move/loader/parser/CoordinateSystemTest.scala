@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+ */
+
 package de.thm.move.loader.parser
 
 import org.junit.Assert._
