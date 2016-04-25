@@ -10,7 +10,7 @@ import org.junit.Test
 import org.junit.Assert._
 
 class ParserAndConvertTest {
-/*
+
   @Test
   def parseRectangle():Unit = {
     val str =
@@ -34,7 +34,7 @@ class ParserAndConvertTest {
     """.stripMargin
 
     val parsed = withParseSuccess(str)
-    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(parsed).head, null)
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
     val convertedRectangle = conv.getShapes(parsed).head.asInstanceOf[ResizableRectangle]
 
     assertEquals((0,(500)), convertedRectangle.getXY)
@@ -43,7 +43,7 @@ class ParserAndConvertTest {
 
 
     val multiplier = 4
-    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(parsed).head, null)
+    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
     val convertedRectangle2 = conv2.getShapes(parsed).head.asInstanceOf[ResizableRectangle]
 
     assertEquals((0,500*multiplier), convertedRectangle2.getXY)
@@ -74,12 +74,11 @@ class ParserAndConvertTest {
       """.stripMargin
 
     val parsed2 = withParseSuccess(str2)
-    val conv3 = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(parsed).head, null)
+    val conv3 = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
     val convertedRectangle3 = conv.getShapes(parsed2).head.asInstanceOf[ResizableRectangle]
 
     assertEquals((20,500-60), convertedRectangle3.getXY)
     assertEquals(100-20, convertedRectangle3.getWidth, 0.01)
     assertEquals(150-60, convertedRectangle3.getHeight, 0.01)
   }
-  */
 }

@@ -7,11 +7,14 @@ import javafx.scene.paint.Color
 import org.junit.Assert._
 import org.junit.Test
 
+import scala.util.parsing.input.Position
+import scala.util.parsing.input.NoPosition
+
 import de.thm.move.loader.parser.PropertyParser._
 import de.thm.move.loader.parser.ast._
 
 class SkeletalParserTest {
-/*
+
   @Test
   def minimalRect: Unit = {
     val rect =
@@ -49,10 +52,10 @@ class SkeletalParserTest {
     val modelTestErg = withParseSuccess(modelTest)
     val modelTestExpec =
       Model("test",
-        List(
-          Icon(None, Nil)
-        ))
-    assertEquals(modelTestExpec, modelTestErg)
+          Icon(None, Nil, NoPosition, NoPosition)
+        )
+    iconEqual(modelTestExpec, modelTestErg)
+
 
     val rect =
       """
@@ -89,17 +92,16 @@ class SkeletalParserTest {
 
     val rectExp =
       Model("abc",
-        List(
           Icon(
             None,
             List(
               expectedRect
-            )
+            ), NoPosition, NoPosition
           )
         )
-      )
 
-    assertEquals(rectExp, erg)
+    iconEqual(rectExp, erg)
+
 
     val rectRect =
       """
@@ -147,13 +149,57 @@ class SkeletalParserTest {
     val rectangles = List.fill(4)(expectedRect)
     val expErg2 =
       Model("abc",
-        List(
           Icon(
             None,
-            rectangles
+            List(RectangleElement(
+              GraphicItem(defaultVisible, defaultOrigin, 0.0),
+              FilledShape(
+                Color.RED,
+                "FillPattern.HorizontalCylinder",
+                Color.BLACK,
+                4.0,
+                "LinePattern.Solid"
+              ),
+              "BorderPattern.None",
+              ( (51,471),(400,299) )
+            ),RectangleElement(
+              GraphicItem(defaultVisible, defaultOrigin, 0.0),
+              FilledShape(
+                Color.RED,
+                "FillPattern.HorizontalCylinder",
+                Color.BLACK,
+                4.0,
+                "LinePattern.Solid"
+              ),
+              "BorderPattern.None",
+              ( (51,471),(400,299) )),
+              RectangleElement(
+                GraphicItem(defaultVisible, defaultOrigin, 0.0),
+                FilledShape(
+                  Color.RED,
+                  "FillPattern.HorizontalCylinder",
+                  Color.BLACK,
+                  4.0,
+                  "LinePattern.DashDot"
+                ),
+                "BorderPattern.None",
+                ( (51,471),(400,299) )),
+                RectangleElement(
+                  GraphicItem(defaultVisible, defaultOrigin, 0.0),
+                  FilledShape(
+                    Color.RED,
+                    "FillPattern.HorizontalCylinder",
+                    Color.BLACK,
+                    4.0,
+                    "LinePattern.Dash"
+                  ),
+                  "BorderPattern.None",
+                  ( (51,471),(400,299) ))
+
+          ),NoPosition, NoPosition
           )
-        )
       )
+      iconEqual(expErg2, erg2)
 
     val rect2 =
       s"""
@@ -169,7 +215,6 @@ class SkeletalParserTest {
     val erg3 = withParseSuccess(graphicModel("rect2", rect2))
     val exp3 =
       Model("rect2",
-        List(
           Icon(
             None,
             List(RectangleElement(
@@ -183,12 +228,11 @@ class SkeletalParserTest {
               ),
               "BorderPattern.None",
               ( (100,300),(400,100) )
-            ))
+            )),NoPosition, NoPosition
           )
-        )
       )
 
-      assertEquals(exp3, erg3)
+      iconEqual(exp3, erg3)
 
     val rect3 =
       s"""
@@ -215,15 +259,14 @@ class SkeletalParserTest {
     val erg33 = withParseSuccess(rect3)
     val exp33 =
       Model("abc",
-        List(
           Icon(
             Some(CoordinateSystem(
               ( (0,0),(756,504) )
             )),
-            List(expectedRect)
+            List(expectedRect),NoPosition, NoPosition
           )
-        )
       )
+    iconEqual(exp33,erg33)
   }
 
   @Test
@@ -256,7 +299,7 @@ class SkeletalParserTest {
     val erg = withParseSuccess(rect)
     val expErg =
       Model("abc",
-        List(Icon(
+        Icon(
           Some(CoordinateSystem(((0.0,0.0),(756.0,504.0)))),
           List(
             RectangleElement(
@@ -271,9 +314,8 @@ class SkeletalParserTest {
               "BorderPattern.None",
               ( (100,300),(400,100) )
             ))
-        ))
-        )
-    assertEquals(expErg, erg)
+        ,NoPosition,NoPosition))
+    iconEqual(expErg, erg)
 
     val rect2 =
       """
@@ -318,7 +360,7 @@ class SkeletalParserTest {
 
       val expEllipse =
         Model("ellipse",
-        List(Icon(
+        Icon(
           None,
           List(
             Ellipse(
@@ -331,11 +373,11 @@ class SkeletalParserTest {
                 "LinePattern.DashDot"
               ),
               ( (100,239),(342,25) )
-            ))
-        ))
+            )),NoPosition,NoPosition
+        )
         )
 
-      assertEquals(expEllipse, withParseSuccess(graphicModel("ellipse", str)))
+      iconEqual(expEllipse, withParseSuccess(graphicModel("ellipse", str)))
 
       val errorStr =
         """
@@ -363,7 +405,7 @@ class SkeletalParserTest {
         |      )
         """.stripMargin
 
-      assertEquals(expEllipse, withParseSuccess(graphicModel("ellipse", str2)))
+      iconEqual(expEllipse, withParseSuccess(graphicModel("ellipse", str2)))
 
       val minimalEllipse =
         """
@@ -374,17 +416,17 @@ class SkeletalParserTest {
 
       val minimalExp =
       Model("ellipse2",
-      List(Icon(
+      Icon(
         None,
         List(Ellipse(
             GraphicItem(),
             FilledShape(),
             ( (100,239),(342,25) )
-          ))
+          )),NoPosition,NoPosition
         )
-      ))
+      )
 
-      assertEquals(minimalExp, withParseSuccess(graphicModel("ellipse2", minimalEllipse)))
+      iconEqual(minimalExp, withParseSuccess(graphicModel("ellipse2", minimalEllipse)))
   }
 
   @Test
@@ -403,7 +445,7 @@ class SkeletalParserTest {
 
       val lineExp =
         Model("Lines",
-        List(Icon(
+        Icon(
           None,
           List(PathElement(
             GraphicItem(),
@@ -413,10 +455,10 @@ class SkeletalParserTest {
             "LinePattern.None",
             "Smooth.Bezier"
           )
-        )
-      ))
+        ),NoPosition,NoPosition
+      )
     )
-    assertEquals(lineExp, withParseSuccess(graphicModel("Lines", lineStr)))
+    iconEqual(lineExp, withParseSuccess(graphicModel("Lines", lineStr)))
 
     val lineStr2 =
       """
@@ -468,7 +510,7 @@ class SkeletalParserTest {
 
       val polyExp =
       Model("poly",
-      List(Icon(
+      Icon(
         None,
         List(Polygon(
           GraphicItem(),
@@ -482,9 +524,9 @@ class SkeletalParserTest {
             List( (5.0,10.0),(20.0,20.0),(50.0,50.0) ),
             "Smooth.Bezier"
         )
-      )
-    )))
-    assertEquals(polyExp, withParseSuccess(polyStr))
+      ),NoPosition,NoPosition
+    ))
+    iconEqual(polyExp, withParseSuccess(polyStr))
 
     val minimalPoly =
     """
@@ -501,7 +543,7 @@ class SkeletalParserTest {
 
     val minPolyExp =
       Model("poly",
-      List(Icon(
+      Icon(
         None,
         List(Polygon(
           GraphicItem(),
@@ -509,10 +551,10 @@ class SkeletalParserTest {
           List( (5.0,10.0),(20.0,20.0),(50.0,50.0) ),
           "Smooth.None"
         )
-      )
-      )))
+      ),NoPosition,NoPosition
+      ))
 
-      assertEquals(minPolyExp, withParseSuccess(minimalPoly))
+      iconEqual(minPolyExp, withParseSuccess(minimalPoly))
 
   }
 
@@ -530,7 +572,7 @@ class SkeletalParserTest {
 
     val expImg =
       Model("img",
-      List(Icon(
+      Icon(
         None,
         List(ImageURI(
           GraphicItem(),
@@ -538,8 +580,8 @@ class SkeletalParserTest {
           "modelica://test/quokka.png"
           )
           )
-      )))
-    assertEquals(expImg, withParseSuccess(graphicModel("img", imgStr)))
+      ,NoPosition,NoPosition))
+    iconEqual(expImg, withParseSuccess(graphicModel("img", imgStr)))
 
     val imgStr2 =
       """
@@ -549,7 +591,7 @@ class SkeletalParserTest {
       |)
       """.stripMargin
 
-    assertEquals(expImg, withParseSuccess(graphicModel("img", imgStr2)))
+    iconEqual(expImg, withParseSuccess(graphicModel("img", imgStr2)))
 
     val imgStr3 =
       """
@@ -563,7 +605,7 @@ class SkeletalParserTest {
 
     val img3Exp =
     Model("img",
-    List(Icon(
+    Icon(
       None,
       List(ImageBase64(
         GraphicItem(),
@@ -571,9 +613,9 @@ class SkeletalParserTest {
         "5546659985164adkcölkhas"
         )
         )
-    )))
+    ,NoPosition,NoPosition))
 
-    assertEquals(img3Exp, withParseSuccess(graphicModel("img", imgStr3)))
+    iconEqual(img3Exp, withParseSuccess(graphicModel("img", imgStr3)))
 
     val imgStr4 =
       """
@@ -583,7 +625,7 @@ class SkeletalParserTest {
       |)
       """.stripMargin
 
-    assertEquals(img3Exp, withParseSuccess(graphicModel("img", imgStr4)))
+    iconEqual(img3Exp, withParseSuccess(graphicModel("img", imgStr4)))
   }
 
   @Test
@@ -660,7 +702,6 @@ class SkeletalParserTest {
 
     val exp =
       Model("abc",
-        List(
           Icon(None,
             List(
               RectangleElement(
@@ -674,12 +715,10 @@ class SkeletalParserTest {
                   "BorderPattern.None",
                   ( (51,471),(400,299))
                 )
-              )
+              ),NoPosition,NoPosition
             )
-          )
       )
 
-      assertEquals(exp, withParseSuccess(rect))
+      iconEqual(exp, withParseSuccess(rect))
   }
-  */
 }

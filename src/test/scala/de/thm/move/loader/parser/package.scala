@@ -3,6 +3,9 @@ package de.thm.move.loader
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 
+import org.junit.Assert._
+import org.junit.Test
+
 import scala.util._
 
 import de.thm.move.loader.parser.ast._
@@ -20,6 +23,16 @@ package object parser {
   val withException: String => Unit = parse(_) match {
     case Success(_) => throw new IllegalStateException("Expected failure")
     case Failure(_) => //yeay
+  }
+
+  def iconEqual(icon1:Model, icon2:Model): Unit = {
+    assertEquals(icon1.name, icon2.name)
+    (icon1.annot, icon2.annot) match {
+      case (Icon(system1, shapes1, _,_),Icon(system2,shapes2,_,_)) =>
+        assertEquals(system1, system2)
+        assertEquals(shapes1,shapes2)
+      case _ => throw new AssertionError(s"Given icon1 and icon2 aren't both Icons!")
+    }
   }
 
   def annotationModel(modelname:String, content:String): String =

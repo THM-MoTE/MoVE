@@ -14,34 +14,36 @@ import de.thm.move.util.GeometryUtils
 import de.thm.move.util.GeometryUtils._
 import de.thm.move.models.CommonTypes._
 
+import scala.util.parsing.input.Position
+import scala.util.parsing.input.NoPosition
+
 class ConverterTest {
-/*
+
   @Test
   def convertCoordinationSystem: Unit = {
 
     val extent = ( ((-100.0),(-50.0)),((100.0),(50.0)) )
     val ast = Model("ölkj",
-    List(Icon(Some(CoordinateSystem(extent)), List())
-    ))
-    val conv = new ShapeConverter(4, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    Icon(Some(CoordinateSystem(extent)), List(), NoPosition, NoPosition)
+    )
+    val conv = new ShapeConverter(4, ShapeConverter.gettCoordinateSystemSizes(ast), null)
 
     val exp = (200,100)
-    assertEquals(List(exp), ShapeConverter.gettCoordinateSystemSizes(ast) )
+    assertEquals(exp, ShapeConverter.gettCoordinateSystemSizes(ast) )
 
     val ast2 = Model("ög",
-      List.fill(100)(Icon(Some(CoordinateSystem(extent)), List()))
+      Icon(Some(CoordinateSystem(extent)), List(), NoPosition, NoPosition)
     )
 
-    ShapeConverter.gettCoordinateSystemSizes(ast).foreach( x =>
-        assertEquals(exp, x)
-    )
+    val x = ShapeConverter.gettCoordinateSystemSizes(ast)
+    assertEquals(exp, x)
 
     val extent2 = ( ((-100.0),(-50.0)),((0.0),(-20.0)) )
     val ast3 = Model("ölkj",
-    List(Icon(Some(CoordinateSystem(extent2)), List())
-    ))
+    Icon(Some(CoordinateSystem(extent2)), List(), NoPosition, NoPosition)
+    )
     val exp2 = (100.0, 30)
-    assertEquals(List(exp2), ShapeConverter.gettCoordinateSystemSizes(ast3) )
+    assertEquals(exp2, ShapeConverter.gettCoordinateSystemSizes(ast3) )
   }
 
   @Test
@@ -49,7 +51,7 @@ class ConverterTest {
     //without origin
     val extent = ( ((0.0),(0.0)),((100.0),(200.0)) )
     val ast = Model("ölkj",
-    List(Icon(Some(CoordinateSystem(extent)),
+    Icon(Some(CoordinateSystem(extent)),
       List(
           PathElement(
             GraphicItem(),
@@ -58,11 +60,10 @@ class ConverterTest {
             1.0,
             "LinePattern.Dash"
             )
-        )
-    )
+        ), NoPosition, NoPosition
     ))
 
-    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
 
     val convertedLine = conv.getShapes(ast).head.asInstanceOf[ResizableLine]
     val startAnchor = convertedLine.getAnchors.head
@@ -79,7 +80,7 @@ class ConverterTest {
 
     val points2 = List( (10.0,10.0),(50.0,30.0), (60.0,80.0),(30.0,30.0) )
     val ast2 = Model("ölkj",
-      List(Icon(Some(CoordinateSystem(extent)),
+      Icon(Some(CoordinateSystem(extent)),
         List(
           PathElement(
             GraphicItem(),
@@ -88,8 +89,7 @@ class ConverterTest {
             1.0,
             "LinePattern.Dash"
           )
-        )
-      )
+        ),NoPosition, NoPosition
       ))
 
     val expectedPoints = points2.map {
@@ -100,7 +100,7 @@ class ConverterTest {
       case (p1,p2) => assertEquals((p1.getCenterX,p1.getCenterY),p2)
     }
 
-    val converter = new ShapeConverter(5, ShapeConverter.gettCoordinateSystemSizes(ast2).head, null)
+    val converter = new ShapeConverter(5, ShapeConverter.gettCoordinateSystemSizes(ast2), null)
     val convPath2 = converter.getShapes(ast2).head.asInstanceOf[ResizablePath]
     convPath2.getAnchors.zip(expectedPoints.map(_.map(_*5))).foreach {
       case (p1,p2) => assertEquals(p2, (p1.getCenterX,p1.getCenterY))
@@ -110,24 +110,24 @@ class ConverterTest {
   @Test
   def convertRectangle:Unit = {
     val ast = Model("ölk",
-      List(Icon(None,
+      Icon(None,
         List(
           RectangleElement(GraphicItem(),
             FilledShape(),
             extent = ( (205,179),(348,36) )
           )
-        )
-      ))
+        ),NoPosition, NoPosition
+      )
     )
 
-    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
     val convRec = conv.getShapes(ast).head.asInstanceOf[ResizableRectangle]
     assertEquals((205,defaultCoordinateSystemSize.y-179), convRec.getXY)
     assertEquals(348-205, convRec.getWidth, 0.01)
     assertEquals(179-36, convRec.getHeight, 0.01)
 
     val multiplier = 5
-    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast), null)
     val convRec2 = conv2.getShapes(ast).head.asInstanceOf[ResizableRectangle]
     assertEquals((205*multiplier,(defaultCoordinateSystemSize.y-179)*multiplier), convRec2.getXY)
     assertEquals((348-205)*multiplier, convRec2.getWidth, 0.01)
@@ -137,17 +137,17 @@ class ConverterTest {
   @Test
   def convertCircle:Unit = {
     val ast = Model("ölk",
-      List(Icon(None,
+      Icon(None,
         List(
           Ellipse(GraphicItem(),
             FilledShape(),
             extent = ( (205,179),(348,36) )
           )
-        )
-      ))
+        ),NoPosition, NoPosition
+      )
     )
 
-    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
     val convCircle = conv.getShapes(ast).head.asInstanceOf[ResizableCircle]
     val middleP = GeometryUtils.middleOfLine(205,
       defaultCoordinateSystemSize.y-179,
@@ -157,7 +157,7 @@ class ConverterTest {
     assertEquals(179-36, convCircle.getHeight, 1.0)
 
     val multiplier = 2
-    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast), null)
     val conv2Circle = conv2.getShapes(ast).head.asInstanceOf[ResizableCircle]
 
     val middleP2 = GeometryUtils.middleOfLine(205*multiplier,
@@ -174,21 +174,21 @@ class ConverterTest {
   def convertPolygon:Unit = {
     val points = List( (205.0,179.0),(348.0,36.0),(420.0,50.0) )
     val ast = Model("ölk",
-      List(Icon(None,
+      Icon(None,
         List(
           Polygon(GraphicItem(),
             FilledShape(),
             points
           )
-        )
-      ))
+        ),NoPosition, NoPosition
+      )
     )
 
     val expPoints = points.map {
       case (x,y) => (x, defaultCoordinateSystemSize.y-y)
     }
 
-    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
     val convPolygon = conv.getShapes(ast).head.asInstanceOf[ResizablePolygon]
     convPolygon.getAnchors.zip(expPoints).foreach {
       case (anchor,p2) =>
@@ -197,7 +197,7 @@ class ConverterTest {
     }
 
     val multiplier = 4
-    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast), null)
     val conv2Polygon = conv2.getShapes(ast).head.asInstanceOf[ResizablePolygon]
     conv2Polygon.getAnchors.zip(expPoints.map(_.map(_*multiplier))).foreach {
       case (anchor,p2) =>
@@ -212,14 +212,14 @@ class ConverterTest {
     val extent = ( (10.0,10.0),(200.0,100.0) )
     val ast =
       Model("bitmap",
-        List(Icon(None,
+        Icon(None,
           List(
             ImageURI(GraphicItem(),
               extent,
               "modelica://test3/quokka.jpg"
             )
-          )
-        ))
+          ),NoPosition, NoPosition
+        )
       )
 
     //val  conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head)
@@ -230,17 +230,17 @@ class ConverterTest {
   def rectangleWithorigin: Unit = {
     val origin:Point = (10,10)
     val ast = Model("ölk",
-      List(Icon(None,
+      Icon(None,
         List(
           RectangleElement(GraphicItem(origin = origin),
             FilledShape(),
             extent = ( (-10,50),(30,-40) )
           )
-        )
-      ))
+        ),NoPosition, NoPosition
+      )
     )
 
-    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
     val rect = conv.getShapes(ast).head.asInstanceOf[ResizableRectangle]
 
     val expXY:Point = (10-10,defaultCoordinateSystemSize.y-(10+50))
@@ -253,18 +253,18 @@ class ConverterTest {
 
     val origin2:Point = (50,30)
     val ast2 = Model("ölk",
-      List(Icon(None,
+      Icon(None,
         List(
           RectangleElement(GraphicItem(origin = origin2),
             FilledShape(),
             extent = ( (-5,70),(10,-20) )
           )
-        )
-      ))
+        ),NoPosition, NoPosition
+      )
       )
 
       val multiplier = 2
-      val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+      val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast), null)
 
       val rect2 = conv2.getShapes(ast2).head.asInstanceOf[ResizableRectangle]
       val expXY2:Point = (50-5,defaultCoordinateSystemSize.y-(30+70))
@@ -280,17 +280,17 @@ class ConverterTest {
   def circleWithOrigin:Unit = {
     val origin:Point = (50,100)
     val ast = Model("ölk",
-      List(Icon(None,
+      Icon(None,
         List(
           Ellipse(GraphicItem(origin = origin),
             FilledShape(),
             extent = ( (-10,50),(30,-40) )
           )
-        )
-      ))
+        ),NoPosition, NoPosition
+      )
     )
 
-    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast).head, null)
+    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
     val circ = conv.getShapes(ast).head.asInstanceOf[ResizableCircle]
 
     val expCenterXY = (origin.x, defaultCoordinateSystemSize.y-origin.y)
@@ -303,5 +303,4 @@ class ConverterTest {
     assertEquals(defaultCoordinateSystemSize.y - 150, circ.getBoundsInLocal.getMinY, 1.0)
     assertEquals(80, circ.getBoundsInLocal.getMaxX, 1.0)
   }
-  */
 }
