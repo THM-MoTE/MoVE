@@ -25,7 +25,10 @@ import scala.util.{Try,Failure, Success}
 
 class FileCtrl(owner: => Window) {
 
+  case class SaveInfos(targetUri:URI, pxPerMm:Int, srcFormat:FormatSrc)
+
   private var usedFile: Option[SrcFile] = None
+  private var saveInfos: Option[SaveInfos] = None
 
   private def showSrcCodeDialog():FormatSrc = {
     val dialog = new SaveDialog
@@ -88,7 +91,32 @@ class FileCtrl(owner: => Window) {
     }
   }
 
+  private def save(existingFile:Option[SrcFile], targetUri:URI, srcFormat:FormatSrc,
+    pxPerMm:Int, shapes:List[Node], width:Double,height:Double): Unit = {
+    val generator = new ModelicaCodeGenerator(srcFormat, pxPerMm, width, height)
+    existingFile match {
+      case Some(src@SrcFile(oldpath, Model(modelname, _))) =>
+        val lines = generator.generateExistingFile(modelname, targetUri, shapes)
+        val before = src.getBeforeModel.getOrElse("")
+        val after = src.getAfterModel.getOrElse("")
+        generator.writeToFile(before,lines, after)(targetUri)
+      case _ =>
+        val filenamestr = Paths.get(targetUri).getFileName.toString
+        val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
+        val lines = generator.generate(modelName, targetUri, shapes)
+        generator.writeToFile("",lines, "")(targetUri)
+    }
+  }
+
   def saveFile(shapes:List[Node], width:Double,height:Double): Try[Unit] = {
+    saveInfos match {
+      case Some(SaveInfos(target,px,format)) =>
+        Success(save(usedFile, target, format, px, shapes,width,height))
+      case _ => saveNewFile(shapes, width, height)
+    }
+  }
+
+  def saveNewFile(shapes:List[Node], width:Double,height:Double): Try[Unit] = {
     val chooser = Dialogs.newModelicaFileChooser()
     chooser.setTitle("Save as..")
     val fileTry = Option(chooser.showSaveDialog(owner)) match {
@@ -101,19 +129,8 @@ class FileCtrl(owner: => Window) {
       srcFormat = showSrcCodeDialog();
       pxPerMm <- showScaleDialog()
     ) yield {
-        val generator = new ModelicaCodeGenerator(srcFormat, pxPerMm, width, height)
-        usedFile match {
-          case Some(src@SrcFile(oldpath, Model(modelname, _))) =>
-            val lines = generator.generateExistingFile(modelname, uri, shapes)
-            val before = src.getBeforeModel.getOrElse("")
-            val after = src.getAfterModel.getOrElse("")
-            generator.writeToFile(before,lines, after)(uri)
-          case _ =>
-            val filenamestr = Paths.get(uri).getFileName.toString
-            val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
-            val lines = generator.generate(modelName, uri, shapes)
-            generator.writeToFile("",lines, "")(uri)
-        }
+      save(usedFile, uri, srcFormat, pxPerMm, shapes, width, height)
+      saveInfos = Some(SaveInfos(uri,pxPerMm, srcFormat))
     }
   }
 

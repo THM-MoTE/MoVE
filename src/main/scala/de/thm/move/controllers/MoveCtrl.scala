@@ -366,7 +366,13 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onSaveClicked(e:ActionEvent): Unit = {
-    println("save not implemented!")
+    fileCtrl.saveFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight) match {
+      case Failure(ex:UserInputException) =>
+        Dialogs.newErrorDialog(ex.msg).showAndWait()
+      case Failure(ex) =>
+        Dialogs.newExceptionDialog(ex).showAndWait()
+        case _ => //ignore successfull case
+    }
   }
 
   @FXML
