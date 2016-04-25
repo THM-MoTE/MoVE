@@ -7,6 +7,7 @@ package de.thm.move.controllers
 
 import java.net.URL
 import java.nio.file.Paths
+import java.nio.file.Path
 import java.util.ResourceBundle
 import javafx.collections.ListChangeListener.Change
 import javafx.collections.{FXCollections, ListChangeListener}
@@ -37,6 +38,7 @@ import de.thm.move.models._
 import de.thm.move.util.Convertable._
 import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
+import de.thm.move.util.ResourceUtils
 import de.thm.move.views._
 import de.thm.move.views.shapes.ResizableShape
 
@@ -48,6 +50,7 @@ import scala.util._
 class MoveCtrl extends Initializable {
 
   private val aboutStage = new Stage()
+  private var rootStage:Stage = _
 
   @FXML
   var saveMenuItem: MenuItem = _
@@ -271,8 +274,9 @@ class MoveCtrl extends Initializable {
   /** Called after the scene is fully-constructed and displayed.
     * (Used for adding a key-event listener)
     */
-  def setupMove(): Unit = {
+  def setupMove(stage:Stage): Unit = {
     setupAboutDialog()
+    rootStage = stage
 
     val combinationsToRunnable = keyCodeToButtons.map {
       case (combination, btn) => combination -> fnRunnable(btn.fire)
@@ -364,26 +368,40 @@ class MoveCtrl extends Initializable {
     }
   }
 
+  private def displayUsedFile(p:Path): Unit = {
+    val oldTitle = rootStage.getTitle
+    val newTitle = if(oldTitle.contains("-")) {
+      val titleStub = oldTitle.take(oldTitle.lastIndexOf("-"))
+      titleStub.trim + " - " + ResourceUtils.getFilename(p)
+    } else {
+      oldTitle.trim + " - " + ResourceUtils.getFilename(p)
+    }
+
+    rootStage.setTitle(newTitle)
+  }
+
   @FXML
   def onSaveClicked(e:ActionEvent): Unit = {
-    fileCtrl.saveFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight) match {
-      case Failure(ex:UserInputException) =>
-        Dialogs.newErrorDialog(ex.msg).showAndWait()
-      case Failure(ex) =>
-        Dialogs.newExceptionDialog(ex).showAndWait()
-        case _ => //ignore successfull case
-    }
+    fileCtrl.saveFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
+      map(displayUsedFile) match {
+        case Failure(ex:UserInputException) =>
+          Dialogs.newErrorDialog(ex.msg).showAndWait()
+        case Failure(ex) =>
+          Dialogs.newExceptionDialog(ex).showAndWait()
+          case _ => //ignore successfull case
+      }
   }
 
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
-    fileCtrl.saveNewFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight) match {
-      case Failure(ex:UserInputException) =>
-        Dialogs.newErrorDialog(ex.msg).showAndWait()
-      case Failure(ex) =>
-        Dialogs.newExceptionDialog(ex).showAndWait()
-        case _ => //ignore successfull case
-    }
+    fileCtrl.saveNewFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
+      map(displayUsedFile) match {
+        case Failure(ex:UserInputException) =>
+          Dialogs.newErrorDialog(ex.msg).showAndWait()
+        case Failure(ex) =>
+          Dialogs.newExceptionDialog(ex).showAndWait()
+          case _ => //ignore successfull case
+      }
   }
 
   @FXML

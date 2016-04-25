@@ -57,7 +57,7 @@ class MoveApp extends Application {
     stage.setHeight(windowHeight)
     stage.show()
     val ctrl = fxmlLoader.getController[MoveCtrl]
-    ctrl.setupMove()
+    ctrl.setupMove(stage)
 
     stage.setOnCloseRequest(new EventHandler[WindowEvent] {
       override def handle(event: WindowEvent): Unit = {

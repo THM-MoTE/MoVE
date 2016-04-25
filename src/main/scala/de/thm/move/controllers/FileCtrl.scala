@@ -1,6 +1,7 @@
 package de.thm.move.controllers
 
 import java.net.URI
+import java.nio.file.Path
 import java.nio.file.Paths
 import javafx.scene.control.{ChoiceDialog, ButtonType}
 import javafx.stage.Window
@@ -108,15 +109,16 @@ class FileCtrl(owner: => Window) {
     }
   }
 
-  def saveFile(shapes:List[Node], width:Double,height:Double): Try[Unit] = {
+  def saveFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
     saveInfos match {
       case Some(SaveInfos(target,px,format)) =>
-        Success(save(usedFile, target, format, px, shapes,width,height))
+        save(usedFile, target, format, px, shapes,width,height)
+        Success(Paths.get(target))
       case _ => saveNewFile(shapes, width, height)
     }
   }
 
-  def saveNewFile(shapes:List[Node], width:Double,height:Double): Try[Unit] = {
+  def saveNewFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
     val chooser = Dialogs.newModelicaFileChooser()
     chooser.setTitle("Save as..")
     val fileTry = Option(chooser.showSaveDialog(owner)) match {
@@ -131,6 +133,7 @@ class FileCtrl(owner: => Window) {
     ) yield {
       save(usedFile, uri, srcFormat, pxPerMm, shapes, width, height)
       saveInfos = Some(SaveInfos(uri,pxPerMm, srcFormat))
+      Paths.get(uri)
     }
   }
 
