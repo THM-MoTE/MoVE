@@ -9,6 +9,7 @@ import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import javafx.scene.text.TextAlignment
 
 import de.thm.move.Global
 import de.thm.move.Global._
@@ -371,17 +372,21 @@ class SelectedShapeCtrl(changeLike:ChangeDrawPanelLike, grid:SnapLike) {
       _.setBold _
     )
 
-  def setFontItalic(b:Boolean): Unit = {
+  def setFontItalic(b:Boolean): Unit =
     zippedUndo(getTexts)(_ => !b)(
       _.setItalic(b),
       _.setItalic _
     )
-  }
 
-  def setFontUnderline(b:Boolean): Unit = {
+  def setFontUnderline(b:Boolean): Unit =
     zippedUndo(getTexts)(_ => !b)(
       _.setUnderline(b),
       _.setUnderline _
     )
-  }
+
+  def setTextAlignment(alignment:TextAlignment): Unit =
+    zippedUndo(getTexts)(_.getTextAlignment)(
+      _.setTextAlignment(alignment),
+      _.setTextAlignment _
+    )
 }

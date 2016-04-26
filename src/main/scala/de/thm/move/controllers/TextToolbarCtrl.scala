@@ -7,6 +7,7 @@ package de.thm.move.controllers
 import java.util.ResourceBundle
 import java.net.URL
 import javafx.event.ActionEvent
+import javafx.scene.text.TextAlignment
 import javafx.scene.control._
 import javafx.scene.text.Font
 import javafx.scene.paint.Color
@@ -37,6 +38,14 @@ class TextToolbarCtrl extends Initializable {
   @FXML var boldBtn:ToggleButton = _
   @FXML var italicBtn:ToggleButton = _
   @FXML var underlineBtn:ToggleButton = _
+  @FXML var alignmentGroup:ToggleGroup = _
+
+  private def alignmentById(id:String): TextAlignment = id match {
+    case "align_left_btn" => TextAlignment.LEFT
+    case "align_center_btn" => TextAlignment.CENTER
+    case "align_right_btn" => TextAlignment.RIGHT
+    case _ => throw new IllegalArgumentException(s"No alignment for $id")
+  }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     fontColorChooser.setOnAction { _:ActionEvent =>
@@ -52,6 +61,16 @@ class TextToolbarCtrl extends Initializable {
     val sizesList = (8 until 72 by 2).asJava
     fontSizeChooser.setItems(FXCollections.observableArrayList(sizesList))
     fontSizeChooser.setValue(12)
+
+    val alignmentToggles = alignmentGroup.getToggles().asScala.map(_.asInstanceOf[ToggleButton])
+    alignmentToggles foreach { x =>
+      x.setOnAction { ae:ActionEvent =>
+        ae.getSource match {
+          case x:ToggleButton => selectedShapeCtrl.setTextAlignment(alignmentById(x.getId))
+          case _ => //ignore
+        }
+      }
+    }
   }
 
   /** Sets the controller for selected elements.
