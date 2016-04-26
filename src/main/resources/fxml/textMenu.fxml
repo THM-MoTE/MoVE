@@ -3,17 +3,20 @@
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 
-<ToolBar xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="de.thm.move.controllers.TextToolbarCtrl">
+<ToolBar xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.TextToolbarCtrl">
    <items>
-      <ChoiceBox fx:id="fontFamilyChooser"/>
-      <ChoiceBox fx:id="fontSizeChooser"/>
+      <ChoiceBox fx:id="fontFamilyChooser" />
+      <ChoiceBox fx:id="fontSizeChooser" />
       <ToggleButton fx:id="boldBtn" mnemonicParsing="false" styleClass="toolbar-button" text="%fa.bold" />
       <ToggleButton fx:id="italicBtn" mnemonicParsing="false" styleClass="toolbar-button" text="%fa.italic" />
       <ToggleButton fx:id="underlineBtn" mnemonicParsing="false" styleClass="toolbar-button" text="%fa.underline" />
-      <ToggleButton mnemonicParsing="false" styleClass="toolbar-button" text="%fa.align-left" />
-      <ToggleButton mnemonicParsing="false" styleClass="toolbar-button" text="%fa.align-center" />
-      <ToggleButton mnemonicParsing="false" styleClass="toolbar-button" text="%fa.align-right" />
-      <Label fx:id="fontColorLbl" styleClass="toolbar-button" text="%fa.font"/>
+      <ToggleButton fx:id="align_left_btn" mnemonicParsing="false" styleClass="toolbar-button" text="%fa.align-left">
+         <toggleGroup>
+            <ToggleGroup fx:id="alignmentGroup" />
+         </toggleGroup></ToggleButton>
+      <ToggleButton fx:id="align_center_btn" mnemonicParsing="false" styleClass="toolbar-button" text="%fa.align-center" toggleGroup="$alignmentGroup" />
+      <ToggleButton fx:id="align_right_btn" mnemonicParsing="false" styleClass="toolbar-button" text="%fa.align-right" toggleGroup="$alignmentGroup" />
+      <Label fx:id="fontColorLbl" styleClass="toolbar-button" text="%fa.font" />
       <ColorPicker fx:id="fontColorChooser" />
    </items>
 </ToolBar>
