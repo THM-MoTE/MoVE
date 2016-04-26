@@ -12,9 +12,14 @@ import de.thm.move.views.Anchor
 import de.thm.move.util.PointUtils._
 import de.thm.move.models.CommonTypes._
 
-class ResizableText(txt:String, x:Double, y:Double)
+class ResizableText(
+    txt:String,
+    x:Double,
+    y:Double,
+    font:Font = Font.getDefault)
   extends Text(x,y,txt)
   with ResizableShape {
+  setFont(font)
   override val getAnchors: List[Anchor] = Nil
 
   def setSize(pt:Double): Unit = {
@@ -22,9 +27,7 @@ class ResizableText(txt:String, x:Double, y:Double)
     setFont(Font.font(fontName, pt))
   }
 
-  def setFontColor(color:Paint): Unit = {
-    setStroke(color)
-  }
+  def setFontColor(color:Paint): Unit = setFill(color)
 
   /** Creates a '''exact copy''' of this element. */
   def copy: ResizableShape = ???
