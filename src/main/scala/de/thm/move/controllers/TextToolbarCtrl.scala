@@ -9,9 +9,12 @@ import java.net.URL
 import javafx.event.ActionEvent
 import javafx.scene.control._
 import javafx.scene.text.Font
+import javafx.scene.paint.Color
 import javafx.collections.FXCollections
 import javafx.fxml.{FXML, FXMLLoader, Initializable}
 import implicits.FxHandlerImplicits._
+
+import de.thm.move.util.ResourceUtils
 
 import scala.collection.JavaConverters._
 
@@ -27,6 +30,8 @@ class TextToolbarCtrl extends Initializable {
     fontColorChooser.setOnAction { _:ActionEvent =>
       fontColorLbl.setTextFill(fontColorChooser.getValue)
     }
+    val fontColor = ResourceUtils.asColor("colorChooser.strokeColor").getOrElse(Color.BLACK)
+    fontColorChooser.setValue(fontColor)
 
     val fontNames = Font.getFamilies().asScala.distinct.asJava
     fontFamilyChooser.setItems(FXCollections.observableArrayList(fontNames))
