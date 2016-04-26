@@ -5,8 +5,8 @@
 
 <ToolBar xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="de.thm.move.controllers.TextToolbarCtrl">
    <items>
-      <ChoiceBox fx:id="fontFamilyChooser" prefWidth="150.0" />
-      <ChoiceBox fx:id="fontSizeChooser" prefWidth="150.0" />
+      <ChoiceBox fx:id="fontFamilyChooser"/>
+      <ChoiceBox fx:id="fontSizeChooser"/>
       <Button mnemonicParsing="false" styleClass="toolbar-button" text="%fa.bold" />
       <Button mnemonicParsing="false" styleClass="toolbar-button" text="%fa.italic" />
       <Button mnemonicParsing="false" styleClass="toolbar-button" text="%fa.underline" />
