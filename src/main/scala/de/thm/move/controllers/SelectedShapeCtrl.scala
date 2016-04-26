@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
+import javafx.scene.text.Font
 
 import de.thm.move.Global
 import de.thm.move.Global._
@@ -17,7 +18,7 @@ import de.thm.move.models.CommonTypes._
 import de.thm.move.models.{FillPattern, LinePattern}
 import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
-import de.thm.move.views.shapes.{ColorizableShape, MovableShape, ResizableShape}
+import de.thm.move.views.shapes._
 import de.thm.move.views._
 
 import scala.collection.JavaConversions._
@@ -52,6 +53,11 @@ class SelectedShapeCtrl(changeLike:ChangeDrawPanelLike, grid:SnapLike) {
       }
 
     findGroups(selectedShapes)
+  }
+
+  private def getTexts: List[ResizableText] = selectedShapes.flatMap {
+    case x:ResizableText => List(x)
+    case _ => Nil
   }
 
   private val linePatternToCssClass: Map[LinePattern.LinePattern, String] =
@@ -337,4 +343,9 @@ class SelectedShapeCtrl(changeLike:ChangeDrawPanelLike, grid:SnapLike) {
 
     groupHandler
   }
+
+  def setFont(f:Font): Unit = getTexts.foreach(_.setFont(f))
+  def setFontSize(size:Int): Unit = getTexts.foreach(_.setSize(size))
+  def setFontColor(c:Color): Unit = getTexts.foreach(_.setFontColor(c))
+
 }

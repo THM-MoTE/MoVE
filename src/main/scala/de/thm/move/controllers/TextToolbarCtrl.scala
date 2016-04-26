@@ -56,6 +56,11 @@ class TextToolbarCtrl extends Initializable {
    */
   def setSelectedShapeCtrl(ctrl:SelectedShapeCtrl): Unit = {
     selectedShapeCtrl = ctrl
+    onChoiceboxChanged(fontFamilyChooser)((selectedShapeCtrl.setFont _) compose Font.font )
+    onChoiceboxChanged(fontSizeChooser)(selectedShapeCtrl.setFontSize)
+    fontColorChooser.setOnAction { _:ActionEvent =>
+      selectedShapeCtrl.setFontColor(fontColorChooser.getValue)
+    }
   }
 
   def getFontColor: Color = fontColorChooser.getValue
