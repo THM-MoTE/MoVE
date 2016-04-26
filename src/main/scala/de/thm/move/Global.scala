@@ -37,4 +37,30 @@ object Global {
 
   lazy val minScaleFactor = 1
   lazy val maxScaleFactor = 100
+
+
+  /** Helper function for implementing undo-/redo on a list of elements of the same type.
+    *
+    * First map the elements of xs with function fn.
+    * Then applys for each element in xs exec() in redo.
+    * Last apply for each zipped element (A,B) undo in undo.
+    *
+    * @param xs the target list of elements
+    * @param fn the function with which to map the elements inside xs
+    * @param exec the function for redo this action
+    * @param undo the function for undo this action
+    */
+  def zippedUndo[A, B](xs:List[A])(
+                              fn: A => B)(
+                              exec: A => Unit,
+                              undo: A => B => Unit): Unit = {
+    val zipped = xs zip xs.map(fn)
+    history.execute {
+      xs.foreach(exec)
+    } {
+      zipped.foreach {
+        case (a,b) => undo(a)(b)
+      }
+    }
+  }
 }
