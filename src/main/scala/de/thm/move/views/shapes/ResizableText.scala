@@ -8,6 +8,8 @@ import javafx.scene.paint.Paint
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.scene.text.Font
+import javafx.scene.text.FontPosture
+import javafx.scene.text.FontWeight
 import de.thm.move.views.Anchor
 import de.thm.move.util.PointUtils._
 import de.thm.move.models.CommonTypes._
@@ -28,6 +30,26 @@ class ResizableText(
   }
 
   def setFontColor(color:Paint): Unit = setFill(color)
+
+  def setBold(flag:Boolean):Unit = {
+    val familyName = getFont.getName
+    val size = getSize
+    val weight =
+      if(flag) FontWeight.BOLD
+      else FontWeight.NORMAL
+    setFont(Font.font(familyName, weight, size))
+    setUnderline(isUnderline)
+  }
+
+  def setItalic(flag:Boolean): Unit = {
+    val familyName = getFont.getName
+    val size = getSize
+    val italic =
+      if(flag) FontPosture.ITALIC
+      else FontPosture.REGULAR
+    setFont(Font.font(familyName, italic, size))
+    setUnderline(isUnderline)
+  }
 
   def getSize: Double = getFont.getSize
   def getFontColor: Paint = getFill

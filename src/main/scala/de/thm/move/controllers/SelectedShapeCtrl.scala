@@ -365,4 +365,23 @@ class SelectedShapeCtrl(changeLike:ChangeDrawPanelLike, grid:SnapLike) {
       _.setFontColor _
     )
 
+  def setFontBold(b:Boolean): Unit =
+    zippedUndo(getTexts)(_ => !b)(
+      _.setBold(b),
+      _.setBold _
+    )
+
+  def setFontItalic(b:Boolean): Unit = {
+    zippedUndo(getTexts)(_ => !b)(
+      _.setItalic(b),
+      _.setItalic _
+    )
+  }
+
+  def setFontUnderline(b:Boolean): Unit = {
+    zippedUndo(getTexts)(_ => !b)(
+      _.setUnderline(b),
+      _.setUnderline _
+    )
+  }
 }

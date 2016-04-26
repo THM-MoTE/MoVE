@@ -34,6 +34,10 @@ class TextToolbarCtrl extends Initializable {
   @FXML var fontColorLbl:Label = _
   @FXML var fontColorChooser:ColorPicker = _
 
+  @FXML var boldBtn:ToggleButton = _
+  @FXML var italicBtn:ToggleButton = _
+  @FXML var underlineBtn:ToggleButton = _
+
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     fontColorChooser.setOnAction { _:ActionEvent =>
       fontColorLbl.setTextFill(fontColorChooser.getValue)
@@ -60,6 +64,17 @@ class TextToolbarCtrl extends Initializable {
     onChoiceboxChanged(fontSizeChooser)(selectedShapeCtrl.setFontSize)
     fontColorChooser.setOnAction { _:ActionEvent =>
       selectedShapeCtrl.setFontColor(fontColorChooser.getValue)
+    }
+
+    //font style buttons
+    boldBtn.setOnAction { _:ActionEvent =>
+      selectedShapeCtrl.setFontBold(boldBtn.isSelected)
+    }
+    italicBtn.setOnAction { _:ActionEvent =>
+      selectedShapeCtrl.setFontItalic(italicBtn.isSelected)
+    }
+    underlineBtn.setOnAction { _:ActionEvent =>
+      selectedShapeCtrl.setFontUnderline(underlineBtn.isSelected)
     }
   }
 
