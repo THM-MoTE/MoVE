@@ -29,6 +29,9 @@ class ResizableText(
 
   def setFontColor(color:Paint): Unit = setFill(color)
 
+  def getSize: Double = getFont.getSize
+  def getFontColor: Paint = getFill
+
   /** Creates a '''exact copy''' of this element. */
   def copy: ResizableShape = ???
 }

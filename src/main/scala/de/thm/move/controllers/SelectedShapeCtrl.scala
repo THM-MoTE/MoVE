@@ -344,8 +344,25 @@ class SelectedShapeCtrl(changeLike:ChangeDrawPanelLike, grid:SnapLike) {
     groupHandler
   }
 
-  def setFont(f:Font): Unit = getTexts.foreach(_.setFont(f))
-  def setFontSize(size:Int): Unit = getTexts.foreach(_.setSize(size))
-  def setFontColor(c:Color): Unit = getTexts.foreach(_.setFontColor(c))
+  def setFont(f:Font): Unit = {
+    zippedUndo(getTexts)(
+      _.getFont)(
+      _.setFont(f),
+      _.setFont _
+    )
+  }
+  def setFontSize(size:Int): Unit =
+    zippedUndo(getTexts)(
+      _.getSize)(
+      _.setSize(size),
+      _.setSize _
+    )
+
+  def setFontColor(c:Color): Unit =
+    zippedUndo(getTexts)(
+      _.getFontColor)(
+      _.setFontColor(c),
+      _.setFontColor _
+    )
 
 }
