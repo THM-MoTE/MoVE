@@ -56,7 +56,7 @@
                 <Menu mnemonicParsing="false" text="File">
                   <items>
                         <MenuItem fx:id="openMenuItem" onAction="#onOpenClicked" text="Open file.." />
-                        <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save" onAction="#onSaveClicked" />
+                        <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#onSaveClicked" text="Save" />
                         <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#onSaveAsClicked" text="Save as.." />
                       <MenuItem fx:id="chPaperSizeMenuItem" mnemonicParsing="false" onAction="#onChPaperSizeClicked" text="Change paper size.." />
                     <MenuItem mnemonicParsing="false" text="Close" />
@@ -90,20 +90,25 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
-               <items>
-                  <Label styleClass="toolbar-button" text="%fa.minus" />
-                  <ChoiceBox fx:id="borderThicknessChooser" />
-                  <Label styleClass="toolbar-button" text="%fa.square" />
-                  <ColorPicker fx:id="fillColorPicker" />
-                  <Label styleClass="toolbar-button" text="%fa.square-o" />
-                  <ColorPicker fx:id="strokeColorPicker" />
-                  <Label text="LinePattern" />
-                  <ChoiceBox fx:id="linePatternChooser" prefWidth="150.0" />
-                  <Label text="FillPattern" />
-                  <ChoiceBox fx:id="fillPatternChooser" prefWidth="150.0" />
-               </items>
-            </ToolBar>
+            <StackPane>
+               <children>
+                  <ToolBar fx:id="shapeTopToolbar" prefHeight="40.0" prefWidth="200.0">
+                     <items>
+                        <Label styleClass="toolbar-button" text="%fa.minus" />
+                        <ChoiceBox fx:id="borderThicknessChooser" />
+                        <Label styleClass="toolbar-button" text="%fa.square" />
+                        <ColorPicker fx:id="fillColorPicker" />
+                        <Label styleClass="toolbar-button" text="%fa.square-o" />
+                        <ColorPicker fx:id="strokeColorPicker" />
+                        <Label text="LinePattern" />
+                        <ChoiceBox fx:id="linePatternChooser" prefWidth="150.0" />
+                        <Label text="FillPattern" />
+                        <ChoiceBox fx:id="fillPatternChooser" prefWidth="150.0" />
+                     </items>
+                  </ToolBar>
+                  <fx:include source="textMenu.fxml" />
+               </children>
+            </StackPane>
          </children>
       </VBox>
    </top>
