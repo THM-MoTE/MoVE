@@ -15,10 +15,18 @@ import javafx.fxml.{FXML, FXMLLoader, Initializable}
 import implicits.FxHandlerImplicits._
 
 import de.thm.move.util.ResourceUtils
+import de.thm.move.util.JFxUtils._
 
 import scala.collection.JavaConverters._
 
+/** Controller for the TopTextToolbar.
+  *
+  * Please be aware that a correct SelectedShapeCtrl is set after creating this controller and before it's
+  * first use! Invoke in parent's Controller#initizalize() method the TextToolbarCtrl#setSelectedShapeCtrl()!
+  */
 class TextToolbarCtrl extends Initializable {
+
+  private var selectedShapeCtrl: SelectedShapeCtrl = _
 
   @FXML var fontFamilyChooser:ChoiceBox[String] = _
   @FXML var fontSizeChooser:ChoiceBox[Int] = _
@@ -40,6 +48,14 @@ class TextToolbarCtrl extends Initializable {
     val sizesList = (8 until 72 by 2).asJava
     fontSizeChooser.setItems(FXCollections.observableArrayList(sizesList))
     fontSizeChooser.setValue(12)
+  }
+
+  /** Sets the controller for selected elements.
+   * Due to the fact, that the FXMLLoader can't inject object-attributes we need a way to add fields
+   * after creating the controller!
+   */
+  def setSelectedShapeCtrl(ctrl:SelectedShapeCtrl): Unit = {
+    selectedShapeCtrl = ctrl
   }
 
   def getFontColor: Color = fontColorChooser.getValue

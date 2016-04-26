@@ -223,6 +223,7 @@ class MoveCtrl extends Initializable {
     setupShortcuts("open", "save", "save-as", "undo", "redo", "copy", "paste", "duplicate", "delete-item","group-elements", "ungroup-elements","load-image",
       "show-anchors", "show-grid", "enable-snapping")(openMenuItem, saveMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
         pasteMenuItem, duplicateMenuItem, deleteMenuItem, groupMenuItem, ungroupMenuItem, loadImgMenuItem, showAnchorsItem, showGridItem, enableGridItem)
+    embeddedTextMenuController.setSelectedShapeCtrl(selectionCtrl)
 
     //only show the grid if it's enabled
     val visibleFlag = config.getBoolean("grid-visibility").getOrElse(true)
