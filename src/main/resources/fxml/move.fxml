@@ -90,7 +90,7 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <StackPane>
+            <StackPane fx:id="topToolbarStack">
                <children>
                   <ToolBar fx:id="shapeTopToolbar" prefHeight="40.0" prefWidth="200.0">
                      <items>
@@ -106,7 +106,7 @@
                         <ChoiceBox fx:id="fillPatternChooser" />
                      </items>
                   </ToolBar>
-                  <fx:include source="textMenu.fxml" />
+                  <fx:include fx:id="embeddedTextMenu" source="textMenu.fxml" />
                </children>
             </StackPane>
          </children>

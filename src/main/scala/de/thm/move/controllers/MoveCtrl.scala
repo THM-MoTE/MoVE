@@ -86,6 +86,8 @@ class MoveCtrl extends Initializable {
   @FXML
   var btnGroup: ToggleGroup = _
   @FXML
+  var topToolbarStack: StackPane = _
+  @FXML
   var fillColorPicker: ColorPicker = _
   @FXML
   var strokeColorPicker: ColorPicker = _
@@ -95,6 +97,14 @@ class MoveCtrl extends Initializable {
   var fillPatternChooser: ChoiceBox[FillPattern] = _
   @FXML
   var borderThicknessChooser: ChoiceBox[Int] = _
+
+  @FXML
+  var shapeTopToolbar: ToolBar = _
+  @FXML
+  var embeddedTextMenu: Parent = _
+
+  @FXML
+  var embeddedTextMenuController: TextToolbarCtrl = _
 
   @FXML
   var drawStub: StackPane = _
@@ -495,6 +505,7 @@ class MoveCtrl extends Initializable {
   }
 
   private def onDrawShape: Unit = {
+    shapeTopToolbar.toFront()
     drawToolChanged(Cursor.CROSSHAIR)
   }
 
@@ -513,7 +524,10 @@ class MoveCtrl extends Initializable {
   @FXML
   def onPolygonClicked(e:ActionEvent): Unit = onDrawShape
   @FXML
-  def onTextClicked(e:ActionEvent): Unit = drawToolChanged(Cursor.TEXT)
+  def onTextClicked(e:ActionEvent): Unit = {
+    embeddedTextMenu.toFront()
+    drawToolChanged(Cursor.TEXT)
+  }
 
   private def getStrokeColor: Color = strokeColorPicker.getValue
   private def getFillColor: Color = fillColorPicker.getValue
