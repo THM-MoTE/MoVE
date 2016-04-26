@@ -101,9 +101,9 @@
                         <Label styleClass="toolbar-button" text="%fa.square-o" />
                         <ColorPicker fx:id="strokeColorPicker" />
                         <Label text="LinePattern" />
-                        <ChoiceBox fx:id="linePatternChooser" prefWidth="150.0" />
+                        <ChoiceBox fx:id="linePatternChooser" />
                         <Label text="FillPattern" />
-                        <ChoiceBox fx:id="fillPatternChooser" prefWidth="150.0" />
+                        <ChoiceBox fx:id="fillPatternChooser" />
                      </items>
                   </ToolBar>
                   <fx:include source="textMenu.fxml" />
