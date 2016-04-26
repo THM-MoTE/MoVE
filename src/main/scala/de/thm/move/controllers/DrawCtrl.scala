@@ -6,9 +6,9 @@ package de.thm.move.controllers
 
 import java.net.URI
 import javafx.beans.property.SimpleBooleanProperty
-import javafx.event.EventHandler
+import javafx.event.{EventHandler, ActionEvent}
 import javafx.scene.Node
-import javafx.scene.input.{InputEvent, MouseEvent}
+import javafx.scene.input.{InputEvent, MouseEvent, KeyCode}
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.control.TextField
@@ -55,11 +55,7 @@ class DrawCtrl(
       }
       (shape, mouseEvent.getEventType, (mouseEvent.getX, mouseEvent.getY)) match {
         case (SelectedShape.Text, MouseEvent.MOUSE_CLICKED, (newX,newY) ) =>
-          val text = new TextField()
-          text.setLayoutX(newX)
-          text.setLayoutY(newY)
-          drawPanel.getChildren.add(text)
-          text.requestFocus()
+          drawText(newX,newY,strokeColor, selectedThickness)
         case (SelectedShape.Text,_,_ ) =>
         case (SelectedShape.Polygon, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
           //test if polygon is finish by checking if last clicked position is 1st clicked point
@@ -200,6 +196,21 @@ class DrawCtrl(
     val anchor = ShapeFactory.newAnchor(p)
     anchor.setId(tmpShapeId)
     drawPanel.drawShape(anchor)
+  }
+
+  def drawText(x:Double,y:Double,color:Color,pt:Double): Unit = {
+    val text = new TextField()
+    text.setOnAction { _:ActionEvent =>
+      remove(text)
+      val txt = new ResizableText(text.getText, x,y)
+      txt.setStroke(color)
+      txt.setSize(pt)
+      addShape(txt)
+    }
+    text.setLayoutX(x)
+    text.setLayoutY(y)
+    addNode(text)
+    text.requestFocus()
   }
 
   def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color, selectedThickness: Int) = {
