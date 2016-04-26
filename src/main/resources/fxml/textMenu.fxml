@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<ToolBar xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="de.thm.move.controllers.TextToolbarCtrl">
+   <items>
+      <ChoiceBox fx:id="fontFamilyChooser" prefWidth="150.0" />
+      <ChoiceBox fx:id="fontSizeChooser" prefWidth="150.0" />
+      <Button mnemonicParsing="false" styleClass="toolbar-button" text="%fa.bold" />
+      <Button mnemonicParsing="false" styleClass="toolbar-button" text="%fa.italic" />
+      <Button mnemonicParsing="false" styleClass="toolbar-button" text="%fa.underline" />
+      <Button mnemonicParsing="false" styleClass="toolbar-button" text="%fa.align-left" />
+      <Button mnemonicParsing="false" styleClass="toolbar-button" text="%fa.align-center" />
+      <Button mnemonicParsing="false" styleClass="toolbar-button" text="%fa.align-right" />
+      <Label fx:id="fontColorLbl" styleClass="toolbar-button" text="%fa.font"/>
+      <ColorPicker fx:id="fontColorChooser" />
+   </items>
+</ToolBar>
