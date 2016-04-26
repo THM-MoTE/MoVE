@@ -175,11 +175,8 @@ class MoveCtrl extends Initializable {
 
     /*Setup default colors for fill-,strokeChooser & strokeWidth*/
     private def setupDefaultColors(): Unit = {
-      def asColor(key:String): Option[Color] =
-        config.getString(key).map(Color.web)
-
-      val fillColor = asColor("colorChooser.fillColor").getOrElse(Color.BLACK)
-      val strokeColor = asColor("colorChooser.strokeColor").getOrElse(Color.BLACK)
+      val fillColor = ResourceUtils.asColor("colorChooser.fillColor").getOrElse(Color.BLACK)
+      val strokeColor = ResourceUtils.asColor("colorChooser.strokeColor").getOrElse(Color.BLACK)
       val width = config.getInt("colorChooser.strokeWidth").getOrElse(1)
 
       fillColorPicker.setValue(fillColor)

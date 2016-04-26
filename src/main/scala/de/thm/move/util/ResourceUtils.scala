@@ -6,6 +6,8 @@ package de.thm.move.util
 
 import java.net.URI
 import java.nio.file.Path
+import javafx.scene.paint.Color
+import de.thm.move.Global._
 
 object ResourceUtils {
 
@@ -17,4 +19,7 @@ object ResourceUtils {
   def getFilename(p:Path):String = {
     p.getFileName.toString
   }
+
+  def asColor(key:String): Option[Color] =
+    config.getString(key).map(Color.web)
 }
