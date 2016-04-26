@@ -41,4 +41,8 @@ class TextToolbarCtrl extends Initializable {
     fontSizeChooser.setItems(FXCollections.observableArrayList(sizesList))
     fontSizeChooser.setValue(12)
   }
+
+  def getFontColor: Color = fontColorChooser.getValue
+  def getFontSize: Int = fontSizeChooser.getValue
+  def getFont: Font = Font.font(fontFamilyChooser.getValue, getFontSize)
 }

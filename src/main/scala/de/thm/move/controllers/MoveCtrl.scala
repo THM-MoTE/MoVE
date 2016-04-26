@@ -253,6 +253,13 @@ class MoveCtrl extends Initializable {
 
     val drawHandler = { mouseEvent:MouseEvent =>
       selectedShape match {
+        case Some(SelectedShape.Text) =>
+          selectionCtrl.removeSelectedShape
+          if(mouseEvent.getEventType == MouseEvent.MOUSE_CLICKED) {
+            drawCtrl.drawText(mouseEvent.getX,mouseEvent.getY,
+              embeddedTextMenuController.getFontColor,
+              embeddedTextMenuController.getFont)
+          }
         case Some(shape) =>
           selectionCtrl.removeSelectedShape
           handler(shape, mouseEvent)(getFillColor, getStrokeColor, selectedThickness)

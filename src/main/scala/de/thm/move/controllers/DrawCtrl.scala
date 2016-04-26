@@ -12,6 +12,7 @@ import javafx.scene.input.{InputEvent, MouseEvent, KeyCode}
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.control.TextField
+import javafx.scene.text.Font
 
 import de.thm.move.Global
 import de.thm.move.controllers.factorys.ShapeFactory
@@ -54,9 +55,7 @@ class DrawCtrl(
         abortDrawing.set(false)
       }
       (shape, mouseEvent.getEventType, (mouseEvent.getX, mouseEvent.getY)) match {
-        case (SelectedShape.Text, MouseEvent.MOUSE_CLICKED, (newX,newY) ) =>
-          drawText(newX,newY,strokeColor, selectedThickness)
-        case (SelectedShape.Text,_,_ ) =>
+        case (SelectedShape.Text,_,_ ) => throw new IllegalArgumentException("DrawCtrl.drawHandler can't draw text! Use DrawCtrl.drawText() instead!")
         case (SelectedShape.Polygon, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
           //test if polygon is finish by checking if last clicked position is 1st clicked point
           points.lastOption match {
@@ -198,13 +197,12 @@ class DrawCtrl(
     drawPanel.drawShape(anchor)
   }
 
-  def drawText(x:Double,y:Double,color:Color,pt:Double): Unit = {
+  def drawText(x:Double,y:Double,color:Color,font:Font): Unit = {
     val text = new TextField()
     text.setOnAction { _:ActionEvent =>
       remove(text)
-      val txt = new ResizableText(text.getText, x,y)
-      txt.setStroke(color)
-      txt.setSize(pt)
+      val txt = new ResizableText(text.getText, x,y, font)
+      txt.setFontColor(color)
       addShape(txt)
     }
     text.setLayoutX(x)
