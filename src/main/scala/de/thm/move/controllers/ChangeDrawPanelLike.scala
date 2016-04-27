@@ -7,6 +7,7 @@ package de.thm.move.controllers
 import javafx.scene.Node
 
 import de.thm.move.views.shapes.ResizableShape
+import de.thm.move.views.Anchor
 
 trait ChangeDrawPanelLike {
 
@@ -35,4 +36,8 @@ trait ChangeDrawPanelLike {
   def remove(n:Node): Unit
   def getElements: List[Node]
   def contains(n:Node):Boolean = getElements.contains(n)
+
+  def setVisibilityOfAnchors(flag:Boolean): Unit = {
+    getElements.filter(_.isInstanceOf[Anchor]) foreach (  _.setVisible(flag) )
+  }
 }

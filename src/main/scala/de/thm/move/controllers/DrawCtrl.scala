@@ -31,13 +31,9 @@ import scala.collection.JavaConversions._
 import javafx.scene.Parent
 
 /** Controller for drawing new shapes or adding existing shapes to the drawPanel. */
-class DrawCtrl(
-    val drawPanel: DrawPanel,
-    shapeInputHandler:InputEvent => Unit)
-  extends ChangeDrawPanelLike {
+class DrawCtrl(changeLike:ChangeDrawPanelLike) {
 
   private val tmpShapeId = DrawPanel.tmpShapeId + "drawctrl"
-  private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, this)
 
   val drawConstraintProperty = new SimpleBooleanProperty()
 
@@ -62,7 +58,7 @@ class DrawCtrl(
             case Some((x, y)) if Math.abs(x - newX) <= 10 && Math.abs(y - newY) <= 10 =>
               drawPolygon(points)(fillColor, strokeColor, selectedThickness)
               points = List()
-              removeTmpShapes(drawPanel, tmpShapeId)
+              removeTmpShapes(tmpShapeId)
             case _ =>
               //draw tmp line between last anchor and mouse point
               (points, drawingShape) match {
@@ -73,7 +69,7 @@ class DrawCtrl(
                 case _ =>
               }
               //create new line with this mouse point as start point
-              drawingShape = createTmpShape(SelectedShape.Line, newP, strokeColor, drawPanel)
+              drawingShape = createTmpShape(SelectedShape.Line, newP, strokeColor)
 
               points = newP :: points
               drawTmpAnchor(points.head)
@@ -86,7 +82,7 @@ class DrawCtrl(
            */
           drawPath(points)(fillColor, strokeColor, selectedThickness)
           points = List()
-          removeTmpShapes(drawPanel, tmpShapeId)
+          removeTmpShapes(tmpShapeId)
         case (SelectedShape.Path, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
           //draw tmp line between last anchor and mouse point
           (points, drawingShape) match {
@@ -97,13 +93,13 @@ class DrawCtrl(
             case _ =>
           }
           //create new line with this mouse point as start point
-          drawingShape = createTmpShape(SelectedShape.Line, newP, strokeColor, drawPanel)
+          drawingShape = createTmpShape(SelectedShape.Line, newP, strokeColor)
           points = newP :: points
           drawTmpAnchor(points.head)
         case (SelectedShape.Path, _,_) | (SelectedShape.Polygon, _, _) => //ignore other path/polygon events
         case (_, MouseEvent.MOUSE_PRESSED, newP) =>
           //start drawing
-          drawingShape = createTmpShape(shape, newP, strokeColor, drawPanel)
+          drawingShape = createTmpShape(shape, newP, strokeColor)
           points = newP :: points
         case (_, MouseEvent.MOUSE_DRAGGED, newP@(newX, newY)) =>
           //adjust tmp-figure
@@ -145,7 +141,7 @@ class DrawCtrl(
           }
         case (_, MouseEvent.MOUSE_RELEASED, newP) =>
           //end drawing
-          removeTmpShapes(drawPanel, tmpShapeId)
+          removeTmpShapes(tmpShapeId)
           points.headOption foreach { start =>
             drawCustomShape(shape, start, newP, drawConstraintProperty.get)(fillColor, strokeColor, selectedThickness)
           }
@@ -158,77 +154,64 @@ class DrawCtrl(
   }
 
   /**Creates a temporary shape and adds it to the given node for displaying during drawing a shape.*/
-  private def createTmpShape(selectedShape:SelectedShape.SelectedShape, start:Point, stroke:Color, node:Pane, shapeId:String = tmpShapeId): ResizableShape = {
+  private def createTmpShape(selectedShape:SelectedShape.SelectedShape, start:Point, stroke:Color, shapeId:String = tmpShapeId): ResizableShape = {
     val shape = ShapeFactory.createTemporaryShape(selectedShape, start)(stroke)
     shape.setId(shapeId)
-    node.getChildren.add(shape)
+    changeLike.addNode(shape)
     shape
   }
 
   /**Removes all temporary shapes (identified by temporaryId) from the given node.*/
-  private def removeTmpShapes(node:Pane, temporaryId:String): Unit = {
-    val removingNodes = node.getChildren.filter {
+  private def removeTmpShapes(temporaryId:String): Unit = {
+    val removingNodes = changeLike.getElements.filter {
       n => n.getId == temporaryId
     }
-
-    node.getChildren.removeAll(removingNodes)
+    removingNodes foreach changeLike.remove
   }
 
   def abortDrawingProcess(): Unit = {
-    removeTmpShapes(drawPanel, tmpShapeId)
+    removeTmpShapes(tmpShapeId)
     abortDrawing.set(true)
   }
-
-  override def addShape(shape: ResizableShape*): Unit = {
-    shape foreach { x =>
-      x.addEventHandler(InputEvent.ANY, new EventHandler[InputEvent]() {
-        override def handle(event: InputEvent): Unit = shapeInputHandler(event)
-      })
-      contextMenuCtrl.setupContextMenu(x)
-      drawPanel.drawShape(x)
-    }
-  }
-
-  override def addNode(node:Node*): Unit = node foreach drawPanel.drawShape
 
   def drawTmpAnchor(p:Point): Unit = {
     val anchor = ShapeFactory.newAnchor(p)
     anchor.setId(tmpShapeId)
-    drawPanel.drawShape(anchor)
+    changeLike.addNode(anchor)
   }
 
   def drawText(x:Double,y:Double,color:Color,font:Font): Unit = {
     val text = new TextField()
     text.setOnAction { _:ActionEvent =>
-      remove(text)
+      changeLike.remove(text)
       val txt = new ResizableText(text.getText, x,y, font)
       txt.setFontColor(color)
-      addShape(txt)
+      changeLike.addShape(txt)
     }
     text.setLayoutX(x)
     text.setLayoutY(y)
-    addNode(text)
+    changeLike.addNode(text)
     text.requestFocus()
   }
 
   def drawPolygon(points:List[Point])(fillColor:Color, strokeColor:Color, selectedThickness: Int) = {
     val polygon = ShapeFactory.newPolygon(points)(fillColor, strokeColor, selectedThickness)
     removeDrawnAnchors(points.size)
-    addShape(polygon)
-    addNode(polygon.getAnchors)
+    changeLike.addShape(polygon)
+    changeLike.addNode(polygon.getAnchors)
   }
 
   def drawPath(points:List[Point])(fillColor:Color, strokeColor:Color, selectedThickness: Int) = {
     val path = ShapeFactory.newPath(points)(fillColor, strokeColor, selectedThickness)
     removeDrawnAnchors(points.size)
-    addShape(path)
-    addNode(path.getAnchors)
+    changeLike.addShape(path)
+    changeLike.addNode(path.getAnchors)
   }
 
   def drawImage(imgUri:URI): Unit = {
     val imgview = ShapeFactory.newImage(imgUri)
-    addShape(imgview)
-    addNode(imgview.getAnchors)
+    changeLike.addShape(imgview)
+    changeLike.addNode(imgview.getAnchors)
   }
 
   def drawCustomShape(shape:SelectedShape, start:Point, end:Point, drawConstraint:Boolean)(fillColor:Color, strokeColor:Color, selectedThickness:Int) = {
@@ -261,27 +244,16 @@ class DrawCtrl(
     }
 
     newShapeOpt foreach { x =>
-      addShape(x)
-      addNode(x.getAnchors)
+      changeLike.addShape(x)
+      changeLike.addNode(x.getAnchors)
     }
   }
 
-  private def removeDrawnAnchors(cnt:Int):Unit =
-    drawPanel.removeWhileIdx {
-      case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt
-    }
-
-
-  def setVisibilityOfAnchors(flag:Boolean): Unit = {
-    drawPanel.getChildren.filter(_.isInstanceOf[Anchor]) foreach (  _.setVisible(flag) )
+  private def removeDrawnAnchors(cnt:Int):Unit = {
+    val anchors = changeLike.getElements.filter(_.isInstanceOf[Anchor])
+    anchors.reverse.take(cnt) foreach changeLike.remove
+    // drawPanel.removeWhileIdx {
+    //   case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt
+    // }
   }
-
-  /** Removes the given shape with '''it's anchors''' from the DrawPanel */
-  override def removeShape(shape: ResizableShape): Unit = {
-    drawPanel.remove(shape)
-    shape.getAnchors.foreach(drawPanel.remove)
-  }
-
-  override def getElements: List[Node] = drawPanel.getChildren.toList
-  override def remove(n:Node): Unit = drawPanel.remove(n)
 }

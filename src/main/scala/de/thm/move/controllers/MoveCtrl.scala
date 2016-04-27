@@ -113,9 +113,10 @@ class MoveCtrl extends Initializable {
     config.getInt("grid-cell-size").getOrElse(20),
     config.getInt("grid-snap-distance").getOrElse(5)
     )
-  private val drawCtrl = new DrawCtrl(drawPanel, shapeInputHandler)
-  private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, drawCtrl)
-  private val selectionCtrl = new SelectedShapeCtrl(drawCtrl,  snapGrid)
+  private val drawPanelCtrl = new DrawPanelCtrl(drawPanel, shapeInputHandler)
+  private val drawCtrl = new DrawCtrl(drawPanelCtrl)
+  private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, drawPanelCtrl)
+  private val selectionCtrl = new SelectedShapeCtrl(drawPanelCtrl,  snapGrid)
   private val aboutCtrl = new AboutCtrl()
   private val fileCtrl = new FileCtrl(getWindow)
   private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
@@ -376,7 +377,7 @@ class MoveCtrl extends Initializable {
     fileCtrl.openFile match {
       case Success((system, shapes)) =>
         drawPanel.setSize(system)
-        shapes foreach drawCtrl.addShapeWithAnchors
+        shapes foreach drawPanelCtrl.addShapeWithAnchors
       case Failure(ex:UserInputException) =>
         Dialogs.newErrorDialog(ex.msg).showAndWait()
       case Failure(ex) =>
@@ -454,7 +455,7 @@ class MoveCtrl extends Initializable {
   def onAboutClicked(e:ActionEvent): Unit = aboutStage.show()
 
   @FXML
-  def onShowAnchorsClicked(e:ActionEvent): Unit = drawCtrl.setVisibilityOfAnchors(showAnchorsSelected)
+  def onShowAnchorsClicked(e:ActionEvent): Unit = drawPanelCtrl.setVisibilityOfAnchors(showAnchorsSelected)
 
   @FXML
   def onShowGridClicked(e:ActionEvent): Unit = {
@@ -491,7 +492,7 @@ class MoveCtrl extends Initializable {
   }
   @FXML
   def onPasteClicked(e:ActionEvent): Unit = {
-    clipboardCtrl.getElement.map(_.map(_.copy)) foreach(_.foreach(drawCtrl.addShapeWithAnchors))
+    clipboardCtrl.getElement.map(_.map(_.copy)) foreach(_.foreach(drawPanelCtrl.addShapeWithAnchors))
   }
   @FXML
   def onDuplicateClicked(e:ActionEvent): Unit = {
