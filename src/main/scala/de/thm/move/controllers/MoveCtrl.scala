@@ -152,7 +152,8 @@ class MoveCtrl extends Initializable {
       shortcuts.getShortcut("draw-line") -> getButtonById("line_btn"),
       shortcuts.getShortcut("draw-polygon") -> getButtonById("polygon_btn"),
       shortcuts.getShortcut("draw-path") -> getButtonById("path_btn"),
-      shortcuts.getShortcut("draw-circle") -> getButtonById("circle_btn")
+      shortcuts.getShortcut("draw-circle") -> getButtonById("circle_btn"),
+      shortcuts.getShortcut("draw-text") -> getButtonById("text_btn")
       )
 
     val codes = keyCodeOpts flatMap {
