@@ -43,10 +43,11 @@ class ResizablePolygon(val points:List[Double])
 
   JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 
-  override def getX: Double = getLayoutX()
-  override def setY(y: Double): Unit = setLayoutY(y)
-  override def getY: Double = getLayoutY()
-  override def setX(x: Double): Unit = setLayoutX(x)
+  override def move(delta:Point):Unit = {
+    val (x,y) = delta
+    setLayoutX(getLayoutX + x)
+    setLayoutY(getLayoutY + y)
+  }
   override def toCurvedShape = QuadCurvePolygon(this)
   override def copy: ResizableShape = {
     val duplicate = new ResizablePolygon(getPoints.map(_.doubleValue).toList)
@@ -65,8 +66,8 @@ object ResizablePolygon {
     val polygon = ResizablePolygon(cubed.getUnderlyingPolygonPoints)
     polygon.colorizeShape(cubed.getFillColor, cubed.getStrokeColor)
     polygon.setStrokeWidth(cubed.getStrokeWidth)
-    polygon.setX(cubed.getX)
-    polygon.setY(cubed.getY)
+    polygon.setLayoutX(cubed.getLayoutX)
+    polygon.setLayoutY(cubed.getLayoutY)
     polygon
   }
 }

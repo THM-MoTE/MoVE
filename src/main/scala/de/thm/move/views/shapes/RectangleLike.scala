@@ -11,6 +11,7 @@ import javafx.scene.shape.Ellipse
 import de.thm.move.Global
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.util.JFxUtils._
+import de.thm.move.util.PointUtils._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._
@@ -48,6 +49,17 @@ trait RectangleLike {
       this.setHeight(other.getHeight)
   }
 
+  def getX: Double
+  def getY: Double
+  final def getXY: Point = (getX, getY)
+
+  def move(delta:Point):Unit = setXY(delta+getXY)
+  def setX(x:Double): Unit
+  def setY(y:Double): Unit
+  final def setXY(p:Point): Unit = {
+    setX(p._1)
+    setY(p._2)
+  }
   def getWidth: Double
   def getHeight: Double
   def setWidth(w:Double): Unit

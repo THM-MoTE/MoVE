@@ -32,8 +32,8 @@ object QuadCurvePolygon {
     val points = polygon.getPoints.asScala.map(_.doubleValue).toList
     val curvedPolygon = QuadCurvePolygon(points)
     curvedPolygon.copyColors(polygon)
-    curvedPolygon.setX(polygon.getX)
-    curvedPolygon.setY(polygon.getY)
+    curvedPolygon.setLayoutX(polygon.getLayoutX)
+    curvedPolygon.setLayoutY(polygon.getLayoutY)
     curvedPolygon
   }
 }

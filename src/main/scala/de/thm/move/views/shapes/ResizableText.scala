@@ -66,4 +66,10 @@ class ResizableText(
     txt.setFontColor(getFontColor)
     txt
   }
+
+  override def move(delta:Point):Unit = {
+    val (x,y) = delta
+    setX(getX + x)
+    setY(getY + y)
+  }
 }
