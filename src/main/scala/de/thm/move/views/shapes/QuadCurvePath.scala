@@ -25,8 +25,8 @@ object QuadCurvePath {
     val points:List[Point] = rePath.getPoints
     val path = new QuadCurvePath(points)
     path.copyColors(rePath)
-    path.setX(rePath.getX)
-    path.setY(rePath.getY)
+    path.setLayoutX(rePath.getLayoutX)
+    path.setLayoutY(rePath.getLayoutY)
     path
   }
   def apply(points:List[Point]) = new QuadCurvePath(points)
