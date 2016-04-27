@@ -168,7 +168,6 @@ class ModelicaParser extends JavaTokenParsers
   def textFields:Parser[Text] =
     positioned(propertyKeys(visible, origin, extent, rotation, textString,
       fontSize,fontName,textStyle,textColor,hAlignment) ^^ { map =>
-        println(map.mkString("\n"))
         Text(
           getGraphicItem(map),
           getPropertyValue(map, extent)(extension),
