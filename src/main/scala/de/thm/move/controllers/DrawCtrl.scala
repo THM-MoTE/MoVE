@@ -36,7 +36,7 @@ class DrawCtrl(
     shapeInputHandler:InputEvent => Unit)
   extends ChangeDrawPanelLike {
 
-  private val tmpShapeId = DrawPanel.tmpShapeId
+  private val tmpShapeId = DrawPanel.tmpShapeId + "drawctrl"
   private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, this)
 
   val drawConstraintProperty = new SimpleBooleanProperty()
