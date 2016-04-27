@@ -316,6 +316,7 @@ class SelectedShapeCtrl(changeLike:ChangeDrawPanelLike, grid:SnapLike) {
     //highlight the currently selection-space
     val groupRectangle = ShapeFactory.newRectangle((0,0), 0.0, 0.0)(Color.BLACK,Color.BLACK, 1)
     groupRectangle.getStyleClass.addAll("selection-rectangle")
+    groupRectangle.setId(DrawPanel.tmpShapeId)
     groupRectangle.setVisible(false)
     changeLike.addNode(groupRectangle)
 
