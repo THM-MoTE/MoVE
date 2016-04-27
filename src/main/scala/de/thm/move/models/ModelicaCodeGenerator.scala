@@ -248,7 +248,7 @@ class ModelicaCodeGenerator(
       val newY = paneHeight - bounding.getMinY
       val endY = newY - bounding.getHeight
       val start = genPoint(text.getX.toInt, newY.toInt)
-      val end = (text.getX.toInt + bounding.getWidth.toInt, endY.toInt)
+      val end = genPoint(text.getX.toInt + bounding.getWidth.toInt, endY.toInt)
       val str = text.getText
       val size = text.getSize
       val font = text.getFont
