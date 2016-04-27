@@ -61,7 +61,9 @@ class ResizableText(
   def getItalic:Boolean = isItalic
   def getSize: Double = getFont.getSize
   def getFontColor: Paint = getFill
-
-  /** Creates a '''exact copy''' of this element. */
-  def copy: ResizableShape = ???
+  def copy: ResizableShape = {
+    val txt = new ResizableText(getText, getX,getY,getFont)
+    txt.setFontColor(getFontColor)
+    txt
+  }
 }
