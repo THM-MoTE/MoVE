@@ -8,6 +8,8 @@ import java.io.ByteArrayInputStream
 import java.util.Base64
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
+import javafx.scene.text.Font
+import javafx.scene.text.TextAlignment
 import java.net.URI
 import java.nio.file.Paths
 
@@ -136,6 +138,21 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       resizableImg.setHeight(h)
       resizableImg.setVisible(gi.visible)
       resizableImg
+    case txt:Text =>
+      val (x,y) = convertPoint(txt.extent._1)
+      val font = Font.font(txt.fontName, txt.size)
+      val text = new ResizableText(txt.text,x,y,font)
+      text.setFontColor(txt.color)
+      txt.style.foreach {
+        case "TextStyle.Bold" => text.setBold(true)
+        case "TextStyle.Italic" => text.setItalic(true)
+        case "TextStyle.Underline" => text.setUnderline(true)
+        case _ => //ignore
+      }
+      val txtAlign = TextAlignment.valueOf(txt.hAlignment.substring(txt.hAlignment.indexOf(".")+1).toUpperCase)
+      text.setTextAlignment(txtAlign)
+      text.setVisible(txt.gItem.visible)
+      text
     case a:Any => throw new IllegalArgumentException(s"Unknown shape-ast $a")
   }
 }

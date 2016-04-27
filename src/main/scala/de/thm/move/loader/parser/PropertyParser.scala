@@ -84,6 +84,8 @@ trait PropertyParser {
 
   def base64OrRsc:Parser[String] = "fileName" | "imageSource"
 
+  def emptySeqString:Parser[Seq[String]] = "{" ~> repsep(ident, ",") <~ "}"
+
   def numberParser:Parser[Double] = numberRegex ^^ { _.toDouble }
   val decimalNo:Parser[Double]
   val ident:Parser[String]
@@ -116,6 +118,12 @@ object PropertyParser {
   val rotation = "rotation"
   val preserveRatio = "preserveAspectRatio"
   val initScale = "initialScale"
+  val textString = "textString"
+  val fontSize = "fontSize"
+  val fontName = "fontName"
+  val textStyle = "textStyle"
+  val textColor = "textColor"
+  val hAlignment = "horizontalAlignment"
 
   //default values
   val defaultVisible = true
@@ -134,4 +142,8 @@ object PropertyParser {
   val defaultCoordinateSystemSize = (200.0,200.0)
   val defaultPreserveRatio = true
   val defaultinitScale = 0.1
+  val defaultFontSize = 12.0
+  val defaultFont = "Arial"
+  val defaultFontStyle = Seq[String]()
+  val defaultHAlignment = "TextAlignment.Center"
 }

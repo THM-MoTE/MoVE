@@ -89,4 +89,13 @@ object ast {
                           extent:Extent,
                           imageSource:String
                           ) extends AbstractImage(gItem, extent)
+  case class Text(gItem:GraphicItem,
+                  extent:Extent,
+                  text:String,
+                  size:Double,
+                  fontName:String,
+                  style: Seq[String],
+                  color: Color,
+                  hAlignment: String
+                  ) extends ShapeElement
 }

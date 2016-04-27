@@ -104,6 +104,7 @@ class ModelicaParser extends JavaTokenParsers
     | "Line" ~> "(" ~> lineFields <~ ")"
     | "Polygon" ~> "(" ~> polygonFields <~ ")"
     | "Bitmap" ~> "(" ~> bitmapFields <~ ")"
+    | "Text" ~> "(" ~> textFields <~ ")"
     )
 
   def rectangleFields:Parser[RectangleElement] =
@@ -161,8 +162,22 @@ class ModelicaParser extends JavaTokenParsers
 
       base64Opt.map(ImageBase64(gi,ext,_)).orElse(
         imgUriOpt.map(ImageURI(gi, ext, _))).getOrElse(
-          throw new ParsingError("fileName or imageSource has to be defined for Bitmaps!")
-          )
+          missingKeyError("fileName or imageSource has to be defined for Bitmaps!"))
+    })
+
+  def textFields:Parser[Text] =
+    positioned(propertyKeys(visible, origin, extent, rotation, textString,
+      fontSize,fontName,textStyle,textColor,hAlignment) ^^ { map =>
+        println(map.mkString("\n"))
+        Text(
+          getGraphicItem(map),
+          getPropertyValue(map, extent)(extension),
+          map.get(textString).map(identWithoutHyphens).getOrElse(missingKeyError(textString)),
+          getPropertyValue(map, fontSize, defaultFontSize)(decimalNo),
+          map.get(fontName).map(identWithoutHyphens).getOrElse(defaultFont),
+          getPropertyValue(map, textStyle, defaultFontStyle)(emptySeqString),
+          getPropertyValue(map, textColor, defaultCol)(color),
+          getPropertyValue(map, hAlignment, defaultHAlignment)(ident))
     })
 
   def getGraphicItem(map:Map[String,String]):GraphicItem = {
@@ -194,4 +209,6 @@ class ModelicaParser extends JavaTokenParsers
         throw new ParsingError(s"Error in line ${input.pos.line}, column ${input.pos.column}: "+msg)
     }
   }
+
+  private def missingKeyError(str:String) = throw new ParsingError(s"$str has to be defined!")
 }
