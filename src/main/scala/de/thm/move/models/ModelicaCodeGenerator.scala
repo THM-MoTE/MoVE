@@ -252,8 +252,11 @@ class ModelicaCodeGenerator(
       val str = text.getText
       val size = text.getSize
       val font = text.getFont
-      val fontName = font.getName
-      val style = ""
+      val fontName = font.getName.replace(font.getStyle, "").trim()
+      val styleList =
+        List( if(text.getBold) Some("Bold") else None,
+              if(text.getItalic) Some("Italic") else None,
+              if(text.isUnderline) Some("Underline") else None ).flatten.map("TextStyle."+_)
       val color = genColor("textColor", text.getFontColor)
       val alignment = "TextAlignment." + (text.getTextAlignment match {
         case TextAlignment.LEFT => "Left"
@@ -265,12 +268,16 @@ class ModelicaCodeGenerator(
 
       implicit val newIndentIdx = indentIdx + 2
 
+      val style =
+        if(styleList.isEmpty) ""
+        else s"${spaces}textStyle = {" + styleList.mkString(",") + "},"
+
       s"""${spaces(indentIdx)}Text(
          |${spaces}extent = {${start},${end}},
          |${spaces}textString = "${str}",
          |${spaces}fontSize = ${size},
          |${spaces}fontName = "${fontName}",
-         |${spaces}textStyle = ${style},
+         |${style}
          |${spaces}${color},
          |${spaces}horizontalAlignment = ${alignment}
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)

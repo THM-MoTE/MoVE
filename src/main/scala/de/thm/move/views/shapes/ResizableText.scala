@@ -24,33 +24,41 @@ class ResizableText(
   setFont(font)
   override val getAnchors: List[Anchor] = Nil
 
+  private var isBold = false
+  private var isItalic = false
+
+  private def createNewFont(
+    name:String,
+    size:Double,
+    isBold:Boolean,
+    isItalic:Boolean): Font = {
+    Font.font(name,
+      if(isBold) FontWeight.BOLD else FontWeight.NORMAL,
+      if(isItalic) FontPosture.ITALIC else FontPosture.REGULAR,
+      size)
+  }
+
+  def setFontName(name:String):Unit = setFont(createNewFont(name, getSize, isBold, isItalic))
+  def getFontName:String = getFont.getName
+
   def setSize(pt:Double): Unit = {
-    val fontName = getFont.getName
-    setFont(Font.font(fontName, pt))
+    setFont(createNewFont(getFontName, pt, isBold, isItalic))
   }
 
   def setFontColor(color:Paint): Unit = setFill(color)
 
   def setBold(flag:Boolean):Unit = {
-    val familyName = getFont.getName
-    val size = getSize
-    val weight =
-      if(flag) FontWeight.BOLD
-      else FontWeight.NORMAL
-    setFont(Font.font(familyName, weight, size))
-    setUnderline(isUnderline)
+    isBold = flag
+    setFont(createNewFont(getFontName, getSize, isBold, isItalic))
   }
 
   def setItalic(flag:Boolean): Unit = {
-    val familyName = getFont.getName
-    val size = getSize
-    val italic =
-      if(flag) FontPosture.ITALIC
-      else FontPosture.REGULAR
-    setFont(Font.font(familyName, italic, size))
-    setUnderline(isUnderline)
+    isItalic = flag
+    setFont(createNewFont(getFontName, getSize, isBold, isItalic))
   }
 
+  def getBold:Boolean = isBold
+  def getItalic:Boolean = isItalic
   def getSize: Double = getFont.getSize
   def getFontColor: Paint = getFill
 

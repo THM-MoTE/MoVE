@@ -345,11 +345,11 @@ class SelectedShapeCtrl(changeLike:ChangeDrawPanelLike, grid:SnapLike) {
     groupHandler
   }
 
-  def setFont(f:Font): Unit = {
+  def setFontName(name:String): Unit = {
     zippedUndo(getTexts)(
-      _.getFont)(
-      _.setFont(f),
-      _.setFont _
+      _.getFontName)(
+      _.setFontName(name),
+      _.setFontName _
     )
   }
   def setFontSize(size:Int): Unit =
