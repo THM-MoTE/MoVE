@@ -252,7 +252,7 @@ class ModelicaCodeGenerator(
       val str = text.getText
       val size = text.getSize
       val font = text.getFont
-      val fontName = font.getName.replace(font.getStyle, "").trim()
+      val fontName = font.getFamily
       val styleList =
         List( if(text.getBold) Some("Bold") else None,
               if(text.getItalic) Some("Italic") else None,

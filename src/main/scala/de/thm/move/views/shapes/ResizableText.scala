@@ -39,7 +39,7 @@ class ResizableText(
   }
 
   def setFontName(name:String):Unit = setFont(createNewFont(name, getSize, isBold, isItalic))
-  def getFontName:String = getFont.getName
+  def getFontName:String = getFont.getFamily
 
   def setSize(pt:Double): Unit = {
     setFont(createNewFont(getFontName, pt, isBold, isItalic))
