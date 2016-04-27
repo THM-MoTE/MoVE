@@ -70,14 +70,13 @@ class DrawPanel() extends Pane {
 
   def setSize(w:Double,h:Double):Unit = setSize((w,h))
 
-  def getShapes: List[Node] = getChildren.asScala.filterNot { x =>
-    x.isInstanceOf[Anchor] ||
-    x.isInstanceOf[SelectionGroup] ||
-    x.isInstanceOf[SelectionRectangle] ||
-    x.getId == DrawPanel.tmpShapeId
+  def getShapes: List[Node] = getChildren.asScala.flatMap {
+    case x:SelectionGroup => x.childrens
+    case (_:Anchor | _:SelectionRectangle) => Nil
+    case x:Node if x.getId == DrawPanel.tmpShapeId => Nil
+    case x:Node => List(x)
   }.toList
 }
-
 object DrawPanel {
   /** Identifies temporary shapes. These shapes shouldn't get included into the final Modelica-code. */
   val tmpShapeId = "temporary-shape"
