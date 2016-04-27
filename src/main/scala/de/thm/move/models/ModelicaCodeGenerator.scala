@@ -12,6 +12,7 @@ import java.util.Base64
 import javafx.scene.Node
 import javafx.scene.paint.{Paint, Color}
 import javafx.scene.shape.{LineTo, MoveTo}
+import javafx.scene.text.TextAlignment
 
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
@@ -241,6 +242,37 @@ class ModelicaCodeGenerator(
       s"""${spaces(indentIdx)}Bitmap(
          |${spaces}extent = {${start}, ${end}},
          |${spaces}${imgStr}
+         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+    case text:ResizableText =>
+      val bounding = text.getBoundsInParent
+      val newY = paneHeight - bounding.getMinY
+      val endY = newY - bounding.getHeight
+      val start = genPoint(text.getX.toInt, newY.toInt)
+      val end = (text.getX.toInt + bounding.getWidth.toInt, endY.toInt)
+      val str = text.getText
+      val size = text.getSize
+      val font = text.getFont
+      val fontName = font.getName
+      val style = ""
+      val color = genColor("textColor", text.getFontColor)
+      val alignment = "TextAlignment." + (text.getTextAlignment match {
+        case TextAlignment.LEFT => "Left"
+        case TextAlignment.CENTER => "Center"
+        case TextAlignment.RIGHT => "Right"
+        case _ => throw new IllegalArgumentException("Can't generate TextAlignment for: "+
+          text.getTextAlignment)
+      })
+
+      implicit val newIndentIdx = indentIdx + 2
+
+      s"""${spaces(indentIdx)}Text(
+         |${spaces}extent = {${start},${end}},
+         |${spaces}textString = "${str}",
+         |${spaces}fontSize = ${size},
+         |${spaces}fontName = "${fontName}",
+         |${spaces}textStyle = ${style},
+         |${spaces}${color},
+         |${spaces}horizontalAlignment = ${alignment}
          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
     case _ => throw new IllegalArgumentException(s"Can't generate mdoelica code for: $shape")
   }
