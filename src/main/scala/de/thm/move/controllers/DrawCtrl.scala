@@ -182,6 +182,7 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
 
   def drawText(x:Double,y:Double,color:Color,font:Font): Unit = {
     val text = new TextField()
+    text.setId(tmpShapeId)
     text.setOnAction { _:ActionEvent =>
       changeLike.remove(text)
       val txt = new ResizableText(text.getText, x,y, font)
