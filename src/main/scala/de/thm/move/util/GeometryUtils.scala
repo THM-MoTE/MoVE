@@ -25,8 +25,7 @@ object GeometryUtils {
 
   def closestMultiple(x:Double, v:Double): Option[Double] = {
     val rem = v / x
-    val multiple = BigDecimal(rem).setScale(0,
-      BigDecimal.RoundingMode.HALF_UP).toDouble
+    val multiple = BigDecimal(rem).setScale(0, BigDecimal.RoundingMode.HALF_UP).toDouble
     if(v % x == 0) Some(v) //v = multiple of x
     else if(rem % 0.5 == 0) None //remainder is a.5 => no nearest value
     else Some(multiple*x)

@@ -18,6 +18,9 @@ import de.thm.move.models.CommonTypes._
 import de.thm.move.views.Anchor
 import de.thm.move.Global._
 
+/** Represents shapes with rectangular boundings.
+  * For Example Rectangles, Circles, Images
+  */
 trait RectangleLike {
   self: ResizableShape =>
 
