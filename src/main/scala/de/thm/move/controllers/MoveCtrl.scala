@@ -170,9 +170,9 @@ class MoveCtrl extends Initializable {
 
 
     /*Setup given keyboard shortcuts to given item*/
-    private def setupShortcuts(keys:String*)(menues:MenuItem*) = {
+    private def setupShortcuts(keyMenus: (String,MenuItem)*) = {
       for (
-        (key, menu) <- keys zip menues
+        (key, menu) <- keyMenus
       ) {
         shortcuts.getShortcut(key) foreach menu.setAccelerator
       }
@@ -225,9 +225,25 @@ class MoveCtrl extends Initializable {
   }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    setupShortcuts("open", "save", "save-as", "ch-paper-size", "close", "undo", "redo", "copy", "paste", "duplicate", "delete-item","group-elements", "ungroup-elements","load-image",
-      "show-anchors", "show-grid", "enable-snapping")(openMenuItem, saveMenuItem, saveAsMenuItem, chPaperSizeMenuItem, closeMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
-        pasteMenuItem, duplicateMenuItem, deleteMenuItem, groupMenuItem, ungroupMenuItem, loadImgMenuItem, showAnchorsItem, showGridItem, enableGridItem)
+    setupShortcuts(
+      "open" -> openMenuItem,
+      "save" -> saveMenuItem,
+      "save-as" -> saveAsMenuItem,
+      "ch-paper-size" -> chPaperSizeMenuItem,
+      "close" -> closeMenuItem,
+      "undo" -> undoMenuItem,
+      "redo" -> redoMenuItem,
+      "copy" -> copyMenuItem,
+      "paste" -> pasteMenuItem,
+      "duplicate" -> duplicateMenuItem,
+      "delete-item" -> deleteMenuItem,
+      "group-elements" -> groupMenuItem,
+      "ungroup-elements" -> ungroupMenuItem,
+      "load-image" -> loadImgMenuItem,
+      "show-anchors" -> showAnchorsItem,
+      "show-grid" -> showGridItem,
+      "enable-snapping" -> enableGridItem)
+
     embeddedTextMenuController.setSelectedShapeCtrl(selectionCtrl)
 
     //only show the grid if it's enabled
