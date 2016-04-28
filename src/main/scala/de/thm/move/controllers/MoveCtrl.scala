@@ -8,6 +8,7 @@ import java.net.URL
 import java.nio.file.Paths
 import java.nio.file.Path
 import java.util.ResourceBundle
+import javafx.application.Platform
 import javafx.collections.ListChangeListener.Change
 import javafx.collections.{FXCollections, ListChangeListener}
 import javafx.event.ActionEvent
@@ -59,6 +60,8 @@ class MoveCtrl extends Initializable {
   var openMenuItem: MenuItem = _
   @FXML
   var chPaperSizeMenuItem: MenuItem = _
+  @FXML
+  var closeMenuItem: MenuItem = _
   @FXML
   var undoMenuItem: MenuItem = _
   @FXML
@@ -222,8 +225,8 @@ class MoveCtrl extends Initializable {
   }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    setupShortcuts("open", "save", "save-as", "ch-paper-size", "undo", "redo", "copy", "paste", "duplicate", "delete-item","group-elements", "ungroup-elements","load-image",
-      "show-anchors", "show-grid", "enable-snapping")(openMenuItem, saveMenuItem, saveAsMenuItem, chPaperSizeMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
+    setupShortcuts("open", "save", "save-as", "ch-paper-size", "close", "undo", "redo", "copy", "paste", "duplicate", "delete-item","group-elements", "ungroup-elements","load-image",
+      "show-anchors", "show-grid", "enable-snapping")(openMenuItem, saveMenuItem, saveAsMenuItem, chPaperSizeMenuItem, closeMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
         pasteMenuItem, duplicateMenuItem, deleteMenuItem, groupMenuItem, ungroupMenuItem, loadImgMenuItem, showAnchorsItem, showGridItem, enableGridItem)
     embeddedTextMenuController.setSelectedShapeCtrl(selectionCtrl)
 
@@ -451,6 +454,9 @@ class MoveCtrl extends Initializable {
   }
 
   @FXML
+  def onClosePressed(e:ActionEvent): Unit = Platform.exit()
+
+  @FXML
   def onLoadBitmap(e:ActionEvent): Unit = {
     fileCtrl.openImage foreach {
       drawCtrl.drawImage
@@ -507,7 +513,6 @@ class MoveCtrl extends Initializable {
   }
   @FXML
   def onGroupPressed(e:ActionEvent): Unit = selectionCtrl.groupSelectedElements()
-
   @FXML
   def onUngroupPressed(e:ActionEvent): Unit = selectionCtrl.ungroupSelectedElements()
 
