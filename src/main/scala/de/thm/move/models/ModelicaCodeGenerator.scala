@@ -82,211 +82,227 @@ class ModelicaCodeGenerator(
 
   def generateShape[A <: Node]
     (shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
-    case rectangle:ResizableRectangle =>
-      val newY = paneHeight - rectangle.getY
-      val endY = newY - rectangle.getHeight
-      val endBottom = genPoint(rectangle.getBottomRight.x, endY)
-      val start = genPoint(rectangle.getX, newY)
-      val fillPattern = genFillPattern(rectangle)
-
-      implicit val newIndentIdx = indentIdx + 2
-      val colors = genFillAndStroke(rectangle)
-
-      s"""${spaces(indentIdx)}Rectangle(
-         |${colors},
-         |${spaces}${fillPattern},
-         |${spaces}extent = {$start, $endBottom}
-         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
-    case circle:ResizableCircle =>
-      val angle = "endAngle = 360"
-
-      val bounding = circle.getBoundsInLocal
-      val newY = paneHeight - bounding.getMinY
-      val endY = newY - bounding.getHeight
-      val start = genPoint(bounding.getMinX, newY)
-      val end = genPoint(bounding.getMaxX, endY)
-      val fillPattern = genFillPattern(circle)
-      implicit val newIndentIdx = indentIdx + 2
-      val colors = genFillAndStroke(circle)
-
-
-      s"""${spaces(indentIdx)}Ellipse(
-          |${colors},
-          |${spaces}${fillPattern},
-          |${spaces}extent = {$start,$end},
-          |${spaces}$angle
-          |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
-    case line:ResizableLine =>
-      //offset, if element was moved (=0 if not moved)
-      val offsetX = line.getLayoutX
-      val offsetY = line.getLayoutY
-      val pointList = List(
-        (line.getStartX + offsetX, paneHeight - (line.getStartY + offsetY)),
-        (line.getEndX + offsetX, paneHeight - (line.getEndY + offsetY))
-      )
-      val points = genPoints( pointList )
-      val color = genColor("color", line.getStrokeColor)
-      val thickness = genStrokeWidth(line, "thickness")
-      val linePattern = genLinePattern(line)
-
-      implicit val newIndentIdx = indentIdx + 2
-
-      s"""${spaces(indentIdx)}Line(
-         |${spaces}${points},
-         |${spaces}${color},
-         |${spaces}${linePattern},
-         |${spaces}${thickness}
-         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
-
-    case path:ResizablePath =>
-      val offsetX = path.getLayoutX
-      val offsetY = path.getLayoutY
-      val points = genPoints(path.allElements.flatMap {
-        case move:MoveTo =>
-          val point = ( move.getX+offsetX, paneHeight-(move.getY+offsetY) )
-          List( point )
-        case line:LineTo =>
-          val point = ( line.getX+offsetX, paneHeight-(line.getY+offsetY) )
-          List( point )
-      })
-
-      val color = genColor("color", path.getStrokeColor)
-      val thickness = genStrokeWidth(path, "thickness")
-      val linePattern = genLinePattern(path)
-
-      implicit val newIndentIdx = indentIdx + 2
-
-      s"""${spaces(indentIdx)}Line(
-         |${spaces}${points},
-         |${spaces}${linePattern},
-         |${spaces}${color},
-         |${spaces}${thickness}
-         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
-    case polygon:ResizablePolygon =>
-      //offset, if element was moved (=0 if not moved)
-      val offsetX = polygon.getLayoutX
-      val offsetY = polygon.getLayoutY
-      val edgePoints = for {
-        idx <- 0 until polygon.getPoints.size by 2
-        x = polygon.getPoints.get(idx).toDouble
-        y = polygon.getPoints.get(idx+1).toDouble
-      } yield (x+offsetX,paneHeight-(y+offsetY))
-
-      val points = genPoints(edgePoints)
-      val fillPattern = genFillPattern(polygon)
-
-      implicit val newIndentIdx = indentIdx + 2
-      val colors = genFillAndStroke(polygon)
-
-      s"""${spaces(indentIdx)}Polygon(
-         |${spaces}${points},
-         |${spaces}${colors},
-         |${spaces}${fillPattern}
-         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
-
-    case curve:QuadCurvePolygon =>
-      val offsetX = curve.getLayoutX
-      val offsetY = curve.getLayoutY
-      val edgePoints = for(point <- curve.getUnderlyingPolygonPoints)
-        yield (point.x+offsetX, paneHeight - (point.y+offsetY))
-      val points = genPoints(edgePoints)
-      val fillPattern = genFillPattern(curve)
-
-      implicit val newIndentIdx = indentIdx + 2
-      val colors = genFillAndStroke(curve)
-
-      s"""${spaces(indentIdx)}Polygon(
-         |${spaces}${points},
-         ${colors},
-         |${spaces}${fillPattern},
-         |${spaces}smooth = Smooth.Bezier
-         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
-    case curvedL:QuadCurvePath =>
-      val offsetX = curvedL.getLayoutX
-      val offsetY = curvedL.getLayoutY
-      val edgePoints = for(point <- curvedL.getUnderlyingPolygonPoints)
-        yield (point.x+offsetX, paneHeight - (point.y+offsetY))
-      val points = genPoints(edgePoints)
-      val color = genColor("color", curvedL.getStrokeColor)
-      val thickness = genStrokeWidth(curvedL, "thickness")
-      val linePattern = genLinePattern(curvedL)
-
-      implicit val newIndentIdx = indentIdx + 2
-
-      s"""${spaces(indentIdx)}Line(
-         |${spaces}${points},
-         |${spaces}${color},
-         |${spaces}${linePattern},
-         |${spaces}${thickness},
-         |${spaces}smooth = Smooth.Bezier
-         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
-
-    case resImg:ResizableImage =>
-      val bounding = resImg.getBoundsInLocal
-      val newY = paneHeight - bounding.getMinY
-      val endY = newY - bounding.getHeight
-      val start = genPoint(bounding.getMinX, newY)
-      val end = genPoint(bounding.getMinX + bounding.getWidth, endY)
-
-      implicit val newIndentIdx = indentIdx + 2
-
-      val imgStr = resImg.srcEither match {
-        case Left(uri) =>
-          copyImg(uri, target)
-          val filename = ResourceUtils.getFilename(uri)
-          s"""fileName = "modelica://$modelname/$filename""""
-        case Right(bytes) =>
-          val encoder = Base64.getEncoder
-          val encodedBytes = encoder.encode(bytes)
-          val byteStr = new String(encodedBytes, "UTF-8")
-          s"""imageSource = "$byteStr""""
-      }
-
-      s"""${spaces(indentIdx)}Bitmap(
-         |${spaces}extent = {${start}, ${end}},
-         |${spaces}${imgStr}
-         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
-    case text:ResizableText =>
-      val bounding = text.getBoundsInParent
-      val newY = paneHeight - bounding.getMinY
-      val endY = newY - bounding.getHeight
-      val start = genPoint(text.getX.toInt, newY.toInt)
-      val end = genPoint(text.getX.toInt + bounding.getWidth.toInt, endY.toInt)
-      val str = text.getText
-      val size = text.getSize
-      val font = text.getFont
-      val fontName = font.getFamily
-      val styleList =
-        List( if(text.getBold) Some("Bold") else None,
-              if(text.getItalic) Some("Italic") else None,
-              if(text.isUnderline) Some("Underline") else None ).flatten.map("TextStyle."+_)
-      val color = genColor("textColor", text.getFontColor)
-      val alignment = "TextAlignment." + (text.getTextAlignment match {
-        case TextAlignment.LEFT => "Left"
-        case TextAlignment.CENTER => "Center"
-        case TextAlignment.RIGHT => "Right"
-        case _ => throw new IllegalArgumentException("Can't generate TextAlignment for: "+
-          text.getTextAlignment)
-      })
-
-      implicit val newIndentIdx = indentIdx + 2
-
-      val style =
-        if(styleList.isEmpty) ""
-        else s"${spaces}textStyle = {" + styleList.mkString(",") + "},"
-
-      s"""${spaces(indentIdx)}Text(
-         |${spaces}extent = {${start},${end}},
-         |${spaces}textString = "${str}",
-         |${spaces}fontSize = ${size},
-         |${spaces}fontName = "${fontName}",
-         |${style}
-         |${spaces}${color},
-         |${spaces}horizontalAlignment = ${alignment}
-         |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+    case rectangle:ResizableRectangle => genRectangle(rectangle)(indentIdx)
+    case circle:ResizableCircle => genCircle(circle)(indentIdx)
+    case line:ResizableLine => genLine(line)(indentIdx)
+    case path:ResizablePath => genPath(path)(indentIdx)
+    case polygon:ResizablePolygon => genPolygon(polygon)(indentIdx)
+    case curve:QuadCurvePolygon => genCurvedPolygon(curve)(indentIdx)
+    case curvedL:QuadCurvePath => genCurvedPath(curvedL)(indentIdx)
+    case resImg:ResizableImage => genImage(resImg, modelname, target)(indentIdx)
+    case text:ResizableText => genText(text)(indentIdx)
     case _ => throw new IllegalArgumentException(s"Can't generate mdoelica code for: $shape")
   }
 
+
+  private def genRectangle(rectangle:ResizableRectangle)(indentIdx:Int):String = {
+    val newY = paneHeight - rectangle.getY
+    val endY = newY - rectangle.getHeight
+    val endBottom = genPoint(rectangle.getBottomRight.x, endY)
+    val start = genPoint(rectangle.getX, newY)
+    val fillPattern = genFillPattern(rectangle)
+
+    implicit val newIndentIdx = indentIdx + 2
+    val colors = genFillAndStroke(rectangle)
+    s"""${spaces(indentIdx)}Rectangle(
+       |${colors},
+       |${spaces}${fillPattern},
+       |${spaces}extent = {$start, $endBottom}
+       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+ }
+
+ private def genCircle(circle:ResizableCircle)(indentIdx:Int):String = {
+   val angle = "endAngle = 360"
+   val bounding = circle.getBoundsInLocal
+   val newY = paneHeight - bounding.getMinY
+   val endY = newY - bounding.getHeight
+   val start = genPoint(bounding.getMinX, newY)
+   val end = genPoint(bounding.getMaxX, endY)
+   val fillPattern = genFillPattern(circle)
+   implicit val newIndentIdx = indentIdx + 2
+   val colors = genFillAndStroke(circle)
+   s"""${spaces(indentIdx)}Ellipse(
+       |${colors},
+       |${spaces}${fillPattern},
+       |${spaces}extent = {$start,$end},
+       |${spaces}$angle
+       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+ }
+
+ private def genLine(line:ResizableLine)(indentIdx:Int):String = {
+   //offset, if element was moved (=0 if not moved)
+   val offsetX = line.getLayoutX
+   val offsetY = line.getLayoutY
+   val pointList = List(
+     (line.getStartX + offsetX, paneHeight - (line.getStartY + offsetY)),
+     (line.getEndX + offsetX, paneHeight - (line.getEndY + offsetY))
+   )
+   val points = genPoints( pointList )
+   val color = genColor("color", line.getStrokeColor)
+   val thickness = genStrokeWidth(line, "thickness")
+   val linePattern = genLinePattern(line)
+
+   implicit val newIndentIdx = indentIdx + 2
+
+   s"""${spaces(indentIdx)}Line(
+      |${spaces}${points},
+      |${spaces}${color},
+      |${spaces}${linePattern},
+      |${spaces}${thickness}
+      |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+ }
+
+ private def genPath(path:ResizablePath)(indentIdx:Int):String = {
+   val offsetX = path.getLayoutX
+   val offsetY = path.getLayoutY
+   val points = genPoints(path.allElements.flatMap {
+     case move:MoveTo =>
+       val point = ( move.getX+offsetX, paneHeight-(move.getY+offsetY) )
+       List( point )
+     case line:LineTo =>
+       val point = ( line.getX+offsetX, paneHeight-(line.getY+offsetY) )
+       List( point )
+   })
+   val color = genColor("color", path.getStrokeColor)
+   val thickness = genStrokeWidth(path, "thickness")
+   val linePattern = genLinePattern(path)
+
+   implicit val newIndentIdx = indentIdx + 2
+   s"""${spaces(indentIdx)}Line(
+      |${spaces}${points},
+      |${spaces}${linePattern},
+      |${spaces}${color},
+      |${spaces}${thickness}
+      |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+ }
+
+ private def genPolygon(polygon:ResizablePolygon)(indentIdx:Int):String = {
+   //offset, if element was moved (=0 if not moved)
+   val offsetX = polygon.getLayoutX
+   val offsetY = polygon.getLayoutY
+   val edgePoints = for {
+     idx <- 0 until polygon.getPoints.size by 2
+     x = polygon.getPoints.get(idx).toDouble
+     y = polygon.getPoints.get(idx+1).toDouble
+   } yield (x+offsetX,paneHeight-(y+offsetY))
+
+   val points = genPoints(edgePoints)
+   val fillPattern = genFillPattern(polygon)
+
+   implicit val newIndentIdx = indentIdx + 2
+   val colors = genFillAndStroke(polygon)
+
+   s"""${spaces(indentIdx)}Polygon(
+      |${spaces}${points},
+      |${spaces}${colors},
+      |${spaces}${fillPattern}
+      |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+ }
+
+ private def genCurvedPolygon(curve:QuadCurvePolygon)(indentIdx:Int):String = {
+   val offsetX = curve.getLayoutX
+   val offsetY = curve.getLayoutY
+   val edgePoints = for(point <- curve.getUnderlyingPolygonPoints)
+     yield (point.x+offsetX, paneHeight - (point.y+offsetY))
+   val points = genPoints(edgePoints)
+   val fillPattern = genFillPattern(curve)
+
+   implicit val newIndentIdx = indentIdx + 2
+   val colors = genFillAndStroke(curve)
+
+   s"""${spaces(indentIdx)}Polygon(
+      |${spaces}${points},
+      ${colors},
+      |${spaces}${fillPattern},
+      |${spaces}smooth = Smooth.Bezier
+      |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+ }
+ private def genCurvedPath(curved:QuadCurvePath)(indentIdx:Int):String = {
+   val offsetX = curved.getLayoutX
+   val offsetY = curved.getLayoutY
+   val edgePoints = for(point <- curved.getUnderlyingPolygonPoints)
+     yield (point.x+offsetX, paneHeight - (point.y+offsetY))
+   val points = genPoints(edgePoints)
+   val color = genColor("color", curved.getStrokeColor)
+   val thickness = genStrokeWidth(curved, "thickness")
+   val linePattern = genLinePattern(curved)
+
+   implicit val newIndentIdx = indentIdx + 2
+
+   s"""${spaces(indentIdx)}Line(
+      |${spaces}${points},
+      |${spaces}${color},
+      |${spaces}${linePattern},
+      |${spaces}${thickness},
+      |${spaces}smooth = Smooth.Bezier
+      |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+ }
+ private def genImage(img:ResizableImage, modelname:String, target:URI)(indentIdx:Int):String = {
+   val bounding = img.getBoundsInLocal
+   val newY = paneHeight - bounding.getMinY
+   val endY = newY - bounding.getHeight
+   val start = genPoint(bounding.getMinX, newY)
+   val end = genPoint(bounding.getMinX + bounding.getWidth, endY)
+
+   implicit val newIndentIdx = indentIdx + 2
+
+   val imgStr = img.srcEither match {
+     case Left(uri) =>
+       copyImg(uri, target)
+       val filename = ResourceUtils.getFilename(uri)
+       s"""fileName = "modelica://$modelname/$filename""""
+     case Right(bytes) =>
+       val encoder = Base64.getEncoder
+       val encodedBytes = encoder.encode(bytes)
+       val byteStr = new String(encodedBytes, "UTF-8")
+       s"""imageSource = "$byteStr""""
+   }
+
+   s"""${spaces(indentIdx)}Bitmap(
+      |${spaces}extent = {${start}, ${end}},
+      |${spaces}${imgStr}
+      |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+ }
+
+ private def genText(text:ResizableText)(indentIdx:Int):String = {
+   val bounding = text.getBoundsInParent
+   val newY = paneHeight - bounding.getMinY
+   val endY = newY - bounding.getHeight
+   val start = genPoint(text.getX.toInt, newY.toInt)
+   val end = genPoint(text.getX.toInt + bounding.getWidth.toInt, endY.toInt)
+   val str = text.getText
+   val size = text.getSize
+   val font = text.getFont
+   val fontName = font.getFamily
+   val styleList =
+     List( if(text.getBold) Some("Bold") else None,
+           if(text.getItalic) Some("Italic") else None,
+           if(text.isUnderline) Some("Underline") else None ).flatten.map("TextStyle."+_)
+   val color = genColor("textColor", text.getFontColor)
+   val alignment = "TextAlignment." + (text.getTextAlignment match {
+     case TextAlignment.LEFT => "Left"
+     case TextAlignment.CENTER => "Center"
+     case TextAlignment.RIGHT => "Right"
+     case _ => throw new IllegalArgumentException("Can't generate TextAlignment for: "+
+       text.getTextAlignment)
+   })
+
+   implicit val newIndentIdx = indentIdx + 2
+
+   val style =
+     if(styleList.isEmpty) ""
+     else s"${spaces}textStyle = {" + styleList.mkString(",") + "},"
+
+   s"""${spaces(indentIdx)}Text(
+      |${spaces}extent = {${start},${end}},
+      |${spaces}textString = "${str}",
+      |${spaces}fontSize = ${size},
+      |${spaces}fontName = "${fontName}",
+      |${style}
+      |${spaces}${color},
+      |${spaces}horizontalAlignment = ${alignment}
+      |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
+ }
 
   private def copyImg(src:URI, target:URI): Unit = {
     val targetPath = Paths.get(target).getParent
