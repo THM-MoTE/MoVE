@@ -27,7 +27,9 @@ import scala.collection.JavaConversions._
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.
  */
-class SelectedShapeCtrl(changeLike:ChangeDrawPanelLike, grid:SnapLike) {
+class SelectedShapeCtrl(
+    changeLike:ChangeDrawPanelLike,
+    grid:SnapLike) {
 
   val addSelectedShapeProperty = new SimpleBooleanProperty(false)
 
