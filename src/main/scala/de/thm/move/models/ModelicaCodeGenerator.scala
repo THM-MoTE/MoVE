@@ -57,7 +57,10 @@ class ModelicaCodeGenerator(
 
   private def genFillAndStroke(shape:ColorizableShape)(implicit indentIdx:Int):String = {
     val strokeColor = genColor("lineColor", shape.getStrokeColor)
-    val fillColor = genColor("fillColor", shape.oldFillColorProperty.get)
+    val fillColor = shape.oldFillColorProperty.get match {
+      case null => genColor("fillColor", Color.WHITE)
+      case _ => genColor("fillColor", shape.oldFillColorProperty.get)
+    }
     val thickness = genStrokeWidth(shape)
     val linePattern = genLinePattern(shape)
 
