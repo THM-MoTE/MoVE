@@ -51,7 +51,8 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
         abortDrawing.set(false)
       }
       (shape, mouseEvent.getEventType, (mouseEvent.getX, mouseEvent.getY)) match {
-        case (SelectedShape.Text,_,_ ) => throw new IllegalArgumentException("DrawCtrl.drawHandler can't draw text! Use DrawCtrl.drawText() instead!")
+        case (SelectedShape.Text,_,_ ) => throw new IllegalArgumentException(
+          "DrawCtrl.drawHandler can't draw text! Use DrawCtrl.drawText() instead!")
         case (SelectedShape.Polygon, MouseEvent.MOUSE_CLICKED, newP@(newX, newY)) =>
           //test if polygon is finish by checking if last clicked position is 1st clicked point
           points.lastOption match {
@@ -109,7 +110,8 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
           //end drawing
           removeTmpShapes(tmpShapeId)
           points.headOption foreach { start =>
-            drawCustomShape(shape, start, newP, drawConstraintProperty.get)(fillColor, strokeColor, selectedThickness)
+            drawCustomShape(shape, start, newP, drawConstraintProperty.get)(
+              fillColor, strokeColor, selectedThickness)
           }
           points = List()
         case _ => //ignore all other
@@ -159,7 +161,10 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
   }
 
   /**Creates a temporary shape and adds it to the given node for displaying during drawing a shape.*/
-  private def createTmpShape(selectedShape:SelectedShape.SelectedShape, start:Point, stroke:Color, shapeId:String = tmpShapeId): ResizableShape = {
+  private def createTmpShape(selectedShape:SelectedShape.SelectedShape,
+                          start:Point,
+                          stroke:Color,
+                          shapeId:String = tmpShapeId): ResizableShape = {
     val shape = ShapeFactory.createTemporaryShape(selectedShape, start)(stroke)
     shape.setId(shapeId)
     changeLike.addNode(shape)
