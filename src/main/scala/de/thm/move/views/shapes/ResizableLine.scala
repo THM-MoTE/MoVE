@@ -12,6 +12,7 @@ import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.util.JFxUtils._
+import de.thm.move.util.PointUtils._
 import de.thm.move.views.{MovableAnchor, Anchor}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
@@ -82,8 +83,10 @@ class ResizableLine(
 
   override def move(delta:Point):Unit = {
     val (x,y) = delta
-    setLayoutX(getLayoutX + x)
-    setLayoutY(getLayoutY + y)
+    setStartX(getStartX + delta.x)
+    setStartY(getStartY + delta.y)
+    setEndX(getEndX + delta.x)
+    setEndY(getEndY + delta.y)
   }
 
   override def copy: ResizableShape = {
