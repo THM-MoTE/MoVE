@@ -104,41 +104,7 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
         case (_, MouseEvent.MOUSE_DRAGGED, newP@(newX, newY)) =>
           //adjust tmp-figure
           val startP = points.head
-          val (deltaX, deltaY) = newP - startP
-          drawingShape match {
-            case c: ResizableCircle =>
-              val (middleX, middleY) = GeometryUtils.middleOfLine(points.head, newP)
-              c.setX(middleX)
-              c.setY(middleY)
-              if(drawConstraintProperty.get) {
-                val tmpDelta = deltaX min deltaY
-                c.setWidth(tmpDelta)
-                c.setHeight(tmpDelta)
-              } else {
-                c.setWidth(deltaX)
-                c.setHeight(deltaY)
-              }
-            case ba: RectangleLike =>
-              if(drawConstraintProperty.get) {
-                val tmpDelta = deltaX min deltaY
-                ba.setWidth(tmpDelta)
-                ba.setHeight(tmpDelta)
-              } else {
-                ba.setWidth(deltaX)
-                ba.setHeight(deltaY)
-              }
-            case l: ResizableLine =>
-              if(drawConstraintProperty.get) {
-                val (startX,startY) = startP
-                val (x,y) = if(deltaX > deltaY) (newX,startY) else (startX,newY)
-                l.setEndX(x)
-                l.setEndY(y)
-              } else {
-                l.setEndX(newX)
-                l.setEndY(newY)
-              }
-            case _ => //ignore other shapes
-          }
+          adjustTmpFigure(drawingShape, startP, newP)
         case (_, MouseEvent.MOUSE_RELEASED, newP) =>
           //end drawing
           removeTmpShapes(tmpShapeId)
@@ -151,6 +117,45 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
     }
 
     drawHandler
+  }
+
+  private def adjustTmpFigure(drawingShape:ResizableShape, startP:Point, newP:Point): Unit = {
+    val (deltaX, deltaY) = newP - startP
+    val (newX,newY) = newP
+    drawingShape match {
+      case c: ResizableCircle =>
+        val (middleX, middleY) = GeometryUtils.middleOfLine(startP, newP)
+        c.setX(middleX)
+        c.setY(middleY)
+        if(drawConstraintProperty.get) {
+          val tmpDelta = deltaX min deltaY
+          c.setWidth(tmpDelta)
+          c.setHeight(tmpDelta)
+        } else {
+          c.setWidth(deltaX)
+          c.setHeight(deltaY)
+        }
+      case ba: RectangleLike =>
+        if(drawConstraintProperty.get) {
+          val tmpDelta = deltaX min deltaY
+          ba.setWidth(tmpDelta)
+          ba.setHeight(tmpDelta)
+        } else {
+          ba.setWidth(deltaX)
+          ba.setHeight(deltaY)
+        }
+      case l: ResizableLine =>
+        if(drawConstraintProperty.get) {
+          val (startX,startY) = startP
+          val (x,y) = if(deltaX > deltaY) (newX,startY) else (startX,newY)
+          l.setEndX(x)
+          l.setEndY(y)
+        } else {
+          l.setEndX(newX)
+          l.setEndY(newY)
+        }
+      case _ => //ignore other shapes
+    }
   }
 
   /**Creates a temporary shape and adds it to the given node for displaying during drawing a shape.*/
@@ -253,8 +258,5 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
   private def removeDrawnAnchors(cnt:Int):Unit = {
     val anchors = changeLike.getElements.filter(_.isInstanceOf[Anchor])
     anchors.reverse.take(cnt) foreach changeLike.remove
-    // drawPanel.removeWhileIdx {
-    //   case (shape, idx) => shape.isInstanceOf[Anchor] && idx<cnt
-    // }
   }
 }
