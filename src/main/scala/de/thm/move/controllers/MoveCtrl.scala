@@ -222,8 +222,8 @@ class MoveCtrl extends Initializable {
   }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    setupShortcuts("open", "save", "save-as", "undo", "redo", "copy", "paste", "duplicate", "delete-item","group-elements", "ungroup-elements","load-image",
-      "show-anchors", "show-grid", "enable-snapping")(openMenuItem, saveMenuItem, saveAsMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
+    setupShortcuts("open", "save", "save-as", "ch-paper-size", "undo", "redo", "copy", "paste", "duplicate", "delete-item","group-elements", "ungroup-elements","load-image",
+      "show-anchors", "show-grid", "enable-snapping")(openMenuItem, saveMenuItem, saveAsMenuItem, chPaperSizeMenuItem, undoMenuItem, redoMenuItem, copyMenuItem,
         pasteMenuItem, duplicateMenuItem, deleteMenuItem, groupMenuItem, ungroupMenuItem, loadImgMenuItem, showAnchorsItem, showGridItem, enableGridItem)
     embeddedTextMenuController.setSelectedShapeCtrl(selectionCtrl)
 
