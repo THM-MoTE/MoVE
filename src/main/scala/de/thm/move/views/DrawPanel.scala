@@ -19,10 +19,11 @@ import scala.collection.JavaConverters._
 import de.thm.move.views.shapes._
 import de.thm.move.models.CommonTypes._
 
+/** The main-panel which holds all drawn shapes */
 class DrawPanel() extends Pane {
   private var shapes = List[Node]()
 
-  getStyleClass().add("draw-pane")
+  getStyleClass.add("draw-pane")
 
   def drawShape[T <: Node](n:T):Unit = {
     super.getChildren.add(n)
@@ -70,6 +71,10 @@ class DrawPanel() extends Pane {
 
   def setSize(w:Double,h:Double):Unit = setSize((w,h))
 
+  /** Returns all shapes that should be '''converted into modelica'''-source code.
+    *
+    * This method '''doesn't include all''' shapes, use getChildren for getting all nodes.
+    */
   def getShapes: List[Node] = getChildren.asScala.flatMap {
     case x:SelectionGroup => x.childrens
     case (_:Anchor | _:SelectionRectangle) => Nil

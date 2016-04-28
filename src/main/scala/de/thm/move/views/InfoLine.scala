@@ -8,6 +8,7 @@ import javafx.geometry.Insets
 import javafx.scene.control.Label
 import javafx.scene.layout.{FlowPane, GridPane}
 
+/** Infoline used inside the about-dialog. */
 class InfoLine(key:String, msg:String = "") extends FlowPane {
   val keyLbl = new Label(key)
   val msgLbl = new Label(msg)

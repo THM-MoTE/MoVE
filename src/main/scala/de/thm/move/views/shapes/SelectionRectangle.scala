@@ -10,6 +10,7 @@ import javafx.geometry.Bounds
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.Global
 
+/** A rectangle that highlights the underlying shape by drawing a dotted-line around the underlying shape. */
 class SelectionRectangle(selectedShape:ResizableShape) extends Rectangle {
   import SelectionRectangle._
 

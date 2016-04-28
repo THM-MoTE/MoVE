@@ -12,6 +12,10 @@ import de.thm.move.views.Anchor
 import de.thm.move.views.MovableAnchor
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
+/** A shape with quadratic-bezier-curved edge-points.
+  *
+  * See Modelica Spec 3.1 - Ch. 18.6.1.2 page 226, 227
+  */
 abstract class AbstractQuadCurveShape(
   points: List[Point],
   closedShape: Boolean)
