@@ -184,40 +184,24 @@ class SelectedShapeCtrl(
   }
 
   def setFillColorForSelectedShape(color:Color): Unit = if(!selectedShapes.isEmpty) {
-    val shapeAndColor = coloredSelectedShape zip coloredSelectedShape.map(_.getFillColor)
-    history.execute {
-      for(x <- coloredSelectedShape) {
-        x.setFillColor(color)
-      }
-    } {
-      for((x,oldColor) <- shapeAndColor) {
-        x.setFillColor(oldColor)
-      }
-    }
+    zippedUndo(coloredSelectedShape)(_.getFillColor)(
+      _.setFillColor(color),
+      _.setFillColor _
+    )
   }
 
   def setStrokeColorForSelectedShape(color:Color): Unit = if(!selectedShapes.isEmpty) {
-    val shapeAndColor = coloredSelectedShape zip coloredSelectedShape.map(_.getStrokeColor)
-
-    history.execute {
-      for(x <- coloredSelectedShape)
-        x.setStrokeColor(color)
-    } {
-      for((x,oldColor) <- shapeAndColor)
-        x.setStrokeColor(oldColor)
-    }
+    zippedUndo(coloredSelectedShape)(_.getStrokeColor)(
+      _.setStrokeColor(color),
+      _.setStrokeColor _
+    )
   }
 
   def setStrokeWidthForSelectedShape(width:Int): Unit = {
-    val shapeAndWidth = coloredSelectedShape zip coloredSelectedShape.map(_.getStrokeWidth)
-
-      history.execute {
-        for(x <- coloredSelectedShape)
-          x.setStrokeWidth(width)
-      } {
-        for((x,oldWidth) <- shapeAndWidth)
-          x.setStrokeWidth(oldWidth)
-      }
+    zippedUndo(coloredSelectedShape)(_.getStrokeWidth)(
+      _.setStrokeWidth(width),
+      _.setStrokeWidth _
+    )
   }
 
   def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
