@@ -39,7 +39,7 @@ import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
 import de.thm.move.util.ResourceUtils
 import de.thm.move.views._
-import de.thm.move.views.shapes.ResizableShape
+import de.thm.move.views.shapes.{ResizableShape, ResizableText}
 
 import scala.None
 import scala.collection.JavaConversions._
@@ -359,6 +359,9 @@ class MoveCtrl extends Initializable {
         case mv:MouseEvent if mv.getEventType == MouseEvent.MOUSE_CLICKED =>
           mv.getSource() match {
             case s:ResizableShape =>
+              if(s.isInstanceOf[ResizableText]) embeddedTextMenu.toFront()
+              else shapeTopToolbar.toFront()
+
               withResizableElement(s) { resizable =>
                 selectionCtrl.setSelectedShape(resizable)
               }
