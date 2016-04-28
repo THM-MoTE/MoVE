@@ -45,8 +45,10 @@ class ResizablePolygon(val points:List[Double])
 
   override def move(delta:Point):Unit = {
     val (x,y) = delta
-    setLayoutX(getLayoutX + x)
-    setLayoutY(getLayoutY + y)
+    getAnchors.foreach { anchor =>
+      anchor.setCenterX(anchor.getCenterX+x)
+      anchor.setCenterY(anchor.getCenterY+y)
+    }
   }
   override def toCurvedShape = QuadCurvePolygon(this)
   override def copy: ResizableShape = {
@@ -66,8 +68,6 @@ object ResizablePolygon {
     val polygon = ResizablePolygon(cubed.getUnderlyingPolygonPoints)
     polygon.colorizeShape(cubed.getFillColor, cubed.getStrokeColor)
     polygon.setStrokeWidth(cubed.getStrokeWidth)
-    polygon.setLayoutX(cubed.getLayoutX)
-    polygon.setLayoutY(cubed.getLayoutY)
     polygon
   }
 }

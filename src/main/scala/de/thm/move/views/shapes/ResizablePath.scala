@@ -45,8 +45,10 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
   }
   override def move(delta:Point):Unit = {
     val (x,y) = delta
-    setLayoutX(getLayoutX + x)
-    setLayoutY(getLayoutY + y)
+    getAnchors.foreach { anchor =>
+      anchor.setCenterX(anchor.getCenterX + x)
+      anchor.setCenterY(anchor.getCenterY + y)
+    }
   }
   override def getFillColor:Paint = null /*Path has no fill*/
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
@@ -68,8 +70,6 @@ object ResizablePath {
   def apply(curved:QuadCurvePath): ResizablePath = {
     val path = ResizablePath(curved.getUnderlyingPolygonPoints)
     path.copyColors(curved)
-    path.setLayoutX(curved.getLayoutX)
-    path.setLayoutY(curved.getLayoutY)
     path
   }
 }

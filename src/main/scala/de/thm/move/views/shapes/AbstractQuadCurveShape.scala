@@ -109,8 +109,10 @@ abstract class AbstractQuadCurveShape(
   JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors: _*)
   override def move(delta:Point):Unit = {
     val (x,y) = delta
-    setLayoutX(getLayoutX + x)
-    setLayoutY(getLayoutY + y)
+    getAnchors foreach { anchor =>
+      anchor.setCenterX(anchor.getCenterX + x)
+      anchor.setCenterY(anchor.getCenterY + y)
+    }
   }
 
   def toUncurvedShape: ResizableShape
