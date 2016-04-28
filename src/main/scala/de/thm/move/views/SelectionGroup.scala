@@ -16,15 +16,11 @@ class SelectionGroup(children:List[ResizableShape])
     extends Group
     with GroupLike
     with ResizableShape {
-  getChildren().addAll(children:_*)
+  getChildren.addAll(children:_*)
 
   val getAnchors: List[Anchor] = children.flatMap(_.getAnchors)
 
-  def getX: Double = getBoundsInLocal().getMinX
-  def getY: Double = getBoundsInLocal().getMinY
-  def setX(x:Double): Unit = throw new UnsupportedOperationException()
-  def setY(y:Double): Unit = throw new UnsupportedOperationException()
-  def copy: ResizableShape = ???
+  def copy: ResizableShape = throw new UnsupportedOperationException("Not supported")
 
   override def move(delta:Point):Unit = children.foreach(_.move(delta))
   override def childrens: List[ResizableShape] = children
