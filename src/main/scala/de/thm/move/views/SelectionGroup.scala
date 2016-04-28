@@ -12,6 +12,7 @@ import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import javafx.scene.layout.Pane
 import javafx.scene.input.MouseEvent
 
+/** A group of resizable shapes used for the grouping-mechanism (Edit - Group Elements) */
 class SelectionGroup(children:List[ResizableShape])
     extends Group
     with GroupLike
