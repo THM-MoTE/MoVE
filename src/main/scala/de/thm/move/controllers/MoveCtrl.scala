@@ -377,6 +377,9 @@ class MoveCtrl extends Initializable {
     fileCtrl.openFile match {
       case Success((system, shapes)) =>
         drawPanel.setSize(system)
+        if (drawPanelCtrl.getElements.nonEmpty) {
+          drawPanelCtrl.removeAll()
+        }
         shapes foreach drawPanelCtrl.addShapeWithAnchors
       case Failure(ex:UserInputException) =>
         Dialogs.newErrorDialog(ex.msg).showAndWait()

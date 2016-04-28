@@ -34,6 +34,7 @@ trait ChangeDrawPanelLike {
   /**Removes the given shape with '''it's anchors''' from the DrawPanel*/
   def removeShape(shape: ResizableShape): Unit
   def remove(n:Node): Unit
+  def removeAll(): Unit = getElements foreach remove
   def getElements: List[Node]
   def contains(n:Node):Boolean = getElements.contains(n)
 
