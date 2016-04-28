@@ -49,7 +49,6 @@ import scala.util._
 /** Main-Controller for all menus,buttons, etc. */
 class MoveCtrl extends Initializable {
 
-  private val aboutStage = new Stage()
   private var rootStage:Stage = _
 
   @FXML
@@ -120,7 +119,7 @@ class MoveCtrl extends Initializable {
   private val drawCtrl = new DrawCtrl(drawPanelCtrl)
   private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, drawPanelCtrl)
   private val selectionCtrl = new SelectedShapeCtrl(drawPanelCtrl,  snapGrid)
-  private val aboutCtrl = new AboutCtrl()
+  private val (aboutStage, aboutCtrl) = AboutCtrl.setupAboutDialog()
   private val fileCtrl = new FileCtrl(getWindow)
   private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
 
@@ -206,23 +205,6 @@ class MoveCtrl extends Initializable {
       fillColorPicker.getCustomColors.addListener(colorChangedHandler(fillColorConfig))
       strokeColorPicker.getCustomColors.addListener(colorChangedHandler(strokeColorConfig))
     }
-
-  private def setupAboutDialog(): Unit = {
-    //=== setup about dialog
-    val aboutWindowWidth = config.getDouble("window.about.width").getOrElse(200.0)
-    val aboutWindowHeight = config.getDouble("window.about.height").getOrElse(200.0)
-    val fxmlLoader = new FXMLLoader(getClass.getResource("/fxml/about.fxml"))
-    fxmlLoader.setController(aboutCtrl)
-    val aboutViewRoot: Parent = fxmlLoader.load()
-    aboutStage.initOwner(getWindow)
-    val scene = new Scene(aboutViewRoot)
-    scene.getStylesheets.add(styleSheetUrl)
-
-    aboutStage.setTitle(config.getString("window.title").map(_+" - About").getOrElse(""))
-    aboutStage.setScene(scene)
-    aboutStage.setWidth(aboutWindowWidth)
-    aboutStage.setHeight(aboutWindowHeight)
-  }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     setupShortcuts(
@@ -311,7 +293,8 @@ class MoveCtrl extends Initializable {
     * (Used for adding a key-event listener)
     */
   def setupMove(stage:Stage): Unit = {
-    setupAboutDialog()
+    //call it after reflection calls to make sure the window isn't null
+    aboutStage.initOwner(getWindow)
     rootStage = stage
 
     val combinationsToRunnable = keyCodeToButtons.map {
