@@ -35,6 +35,8 @@ trait ChangeDrawPanelLike {
   def removeShape(shape: ResizableShape): Unit
   def remove(n:Node): Unit
   def removeAll(): Unit = getElements foreach remove
+  def removeById(id:String): Unit = getElements.filter(_.getId == id) foreach remove
+
   def getElements: List[Node]
   def contains(n:Node):Boolean = getElements.contains(n)
 
