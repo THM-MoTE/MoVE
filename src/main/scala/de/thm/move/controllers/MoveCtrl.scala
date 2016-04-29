@@ -119,11 +119,9 @@ class MoveCtrl extends Initializable {
   private val drawCtrl = new DrawCtrl(drawPanelCtrl)
   private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, drawPanelCtrl)
   private val selectionCtrl = new SelectedShapeCtrl(drawPanelCtrl,  snapGrid)
-  private val (aboutStage, aboutCtrl) = AboutCtrl.setupAboutDialog()
+  private val (aboutStage, _) = AboutCtrl.setupAboutDialog()
   private val fileCtrl = new FileCtrl(getWindow)
   private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
-
-  private var openedFile:SrcFile = _
 
   private val fillColorConfig = new ValueConfig(fillColorConfigURI)
   private val strokeColorConfig = new ValueConfig(strokeColorConfigURI)
