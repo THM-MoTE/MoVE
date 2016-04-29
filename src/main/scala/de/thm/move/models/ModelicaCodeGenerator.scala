@@ -130,12 +130,9 @@ class ModelicaCodeGenerator(
  }
 
  private def genLine(line:ResizableLine)(indentIdx:Int):String = {
-   //offset, if element was moved (=0 if not moved)
-   val offsetX = line.getLayoutX
-   val offsetY = line.getLayoutY
    val pointList = List(
-     (line.getStartX + offsetX, paneHeight - (line.getStartY + offsetY)),
-     (line.getEndX + offsetX, paneHeight - (line.getEndY + offsetY))
+     (line.getStartX, paneHeight - (line.getStartY)),
+     (line.getEndX, paneHeight - (line.getEndY))
    )
    val points = genPoints( pointList )
    val color = genColor("color", line.getStrokeColor)
@@ -153,14 +150,12 @@ class ModelicaCodeGenerator(
  }
 
  private def genPath(path:ResizablePath)(indentIdx:Int):String = {
-   val offsetX = path.getLayoutX
-   val offsetY = path.getLayoutY
    val points = genPoints(path.allElements.flatMap {
      case move:MoveTo =>
-       val point = ( move.getX+offsetX, paneHeight-(move.getY+offsetY) )
+       val point = ( move.getX, paneHeight-(move.getY) )
        List( point )
      case line:LineTo =>
-       val point = ( line.getX+offsetX, paneHeight-(line.getY+offsetY) )
+       val point = ( line.getX, paneHeight-(line.getY) )
        List( point )
    })
    val color = genColor("color", path.getStrokeColor)
@@ -177,14 +172,11 @@ class ModelicaCodeGenerator(
  }
 
  private def genPolygon(polygon:ResizablePolygon)(indentIdx:Int):String = {
-   //offset, if element was moved (=0 if not moved)
-   val offsetX = polygon.getLayoutX
-   val offsetY = polygon.getLayoutY
    val edgePoints = for {
      idx <- 0 until polygon.getPoints.size by 2
      x = polygon.getPoints.get(idx).toDouble
      y = polygon.getPoints.get(idx+1).toDouble
-   } yield (x+offsetX,paneHeight-(y+offsetY))
+   } yield (x,paneHeight-(y))
 
    val points = genPoints(edgePoints)
    val fillPattern = genFillPattern(polygon)
@@ -200,10 +192,8 @@ class ModelicaCodeGenerator(
  }
 
  private def genCurvedPolygon(curve:QuadCurvePolygon)(indentIdx:Int):String = {
-   val offsetX = curve.getLayoutX
-   val offsetY = curve.getLayoutY
    val edgePoints = for(point <- curve.getUnderlyingPolygonPoints)
-     yield (point.x+offsetX, paneHeight - (point.y+offsetY))
+     yield (point.x, paneHeight - (point.y))
    val points = genPoints(edgePoints)
    val fillPattern = genFillPattern(curve)
 
@@ -218,10 +208,8 @@ class ModelicaCodeGenerator(
       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
  }
  private def genCurvedPath(curved:QuadCurvePath)(indentIdx:Int):String = {
-   val offsetX = curved.getLayoutX
-   val offsetY = curved.getLayoutY
    val edgePoints = for(point <- curved.getUnderlyingPolygonPoints)
-     yield (point.x+offsetX, paneHeight - (point.y+offsetY))
+     yield (point.x, paneHeight - (point.y))
    val points = genPoints(edgePoints)
    val color = genColor("color", curved.getStrokeColor)
    val thickness = genStrokeWidth(curved, "thickness")
