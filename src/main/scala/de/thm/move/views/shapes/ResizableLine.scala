@@ -95,6 +95,7 @@ class ResizableLine(
       (getEndX,getEndY),
       strokeSize)
     duplicate.copyColors(this)
+    duplicate.setRotate(getRotate)
     duplicate
   }
 }

@@ -49,6 +49,7 @@ class ResizablePolygon(val points:List[Double])
   override def copy: ResizableShape = {
     val duplicate = new ResizablePolygon(getPoints.map(_.doubleValue).toList)
     duplicate.copyColors(this)
+    duplicate.setRotate(getRotate)
     duplicate
   }
 }

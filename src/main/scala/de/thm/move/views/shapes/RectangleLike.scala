@@ -50,6 +50,7 @@ trait RectangleLike {
       this.setXY(other.getXY)
       this.setWidth(other.getWidth)
       this.setHeight(other.getHeight)
+      this.setRotate(other.getRotate)
   }
 
   def getX: Double

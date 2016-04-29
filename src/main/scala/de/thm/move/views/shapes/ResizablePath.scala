@@ -50,6 +50,7 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
   override def copy: ResizableShape = {
     val duplicate = ResizablePath(getPoints)
     duplicate.copyColors(this)
+    duplicate.setRotate(getRotate)
     duplicate
   }
 }
