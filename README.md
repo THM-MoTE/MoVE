@@ -6,7 +6,8 @@ Move supports all basic editing you need or miss in similar projects:
 - Draw __straight__ lines (either horizontal or vertical),  __real__ circles, squares, polygons and much more
 - Resize the shapes in __4 regions__
 - Move shapes around
-- import your favourite bitmaps in nearly every image format (jpeg, jpg, png, bmp, gif)
+- import your favourite bitmaps in nearly every image format (jpeg, jpg, png, bmp, gif) either as URL or encoded in base64
+- Layout elements at a grid with __snap-to-grid__ (can get disabled)
 - undo and redo your last few editings
 - generate either __formatted__ or __one-line__ Modelica code
 - simple shortcuts that can be remembered or changed if you prefer others
@@ -15,7 +16,12 @@ __Move is fast!__ Nearly every feature works in real time!
 
 ## Get a taste
 ### Drawing shapes
-![Example drawings](doc/drawings.png)
+#### Version 0.1 on Ubuntu
+![Example drawings v0.1](doc/move-v0.1.png)
+
+#### Version 0.5 on Mac OS X
+![Example drawings v0.2](doc/move-v0.5.png)
+
 ### Generated formatted Modelica code
 ``` modelica
 model test
