@@ -357,6 +357,7 @@ class MoveCtrl extends Initializable {
     if(selectedShape.isEmpty) {
       ev match {
         case mv:MouseEvent if mv.getEventType == MouseEvent.MOUSE_CLICKED =>
+          //user selects an element
           mv.getSource() match {
             case s:ResizableShape =>
               if(s.isInstanceOf[ResizableText]) embeddedTextMenu.toFront()

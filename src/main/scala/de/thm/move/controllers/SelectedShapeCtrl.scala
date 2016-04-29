@@ -118,7 +118,7 @@ class SelectedShapeCtrl(
           }
         case (MouseEvent.MOUSE_RELEASED, node: Node with MovableShape) =>
           withParentMovableElement(node) { shape =>
-            val allShapes =
+            val movedShapes =
               if(selectedShapes.contains(shape)) selectedShapes
               else List(shape)
 
@@ -129,8 +129,8 @@ class SelectedShapeCtrl(
             val deltaUndo = deltaRedo.map(_*(-1))
             val cmd = History.
               newCommand(
-                allShapes.foreach(_.move(deltaRedo)),
-                allShapes.foreach(_.move(deltaUndo))
+                movedShapes.foreach(_.move(deltaRedo)),
+                movedShapes.foreach(_.move(deltaUndo))
               )
             Global.history.save(cmd)
           }
