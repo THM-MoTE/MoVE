@@ -57,7 +57,6 @@ trait RotatableShape {
       if(rotationAndY < 360) rotationAndY
       else 0
 
-    println(rotateDegree)
     setRotate(rotateDegree)
   }
 
