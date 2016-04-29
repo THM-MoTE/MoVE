@@ -8,19 +8,23 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Bounds
 import javafx.scene.input.MouseEvent
 
+import de.thm.move.Global._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.history.History
+import de.thm.move.history.History.Command
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.PointUtils._
 import de.thm.move.views.Anchor
 import de.thm.move.views.RotateAnchor
 import javafx.scene.Node
 
-/** Adds rotation drag-points and rotates the element */
+/** Turns a Node into a rotatable node by adding a anchor for rotation and rotate the element accordingly. */
 trait RotatableShape {
   this:Node =>
 
-  val xProp = new SimpleDoubleProperty(getBoundsInLocal.getMinX)
-  val yProp = new SimpleDoubleProperty(getBoundsInLocal.getMinY)
+  //show the anchor always at the top of the element
+  private val xProp = new SimpleDoubleProperty(getBoundsInLocal.getMinX)
+  private val yProp = new SimpleDoubleProperty(getBoundsInLocal.getMinY)
   boundsInLocalProperty().addListener { (_:Bounds, newB:Bounds) =>
     val (newX,newY) = GeometryUtils.middleOfLine(newB.getMinX, newB.getMinY, newB.getMaxX, newB.getMinY)
     xProp.set(newX)
@@ -32,9 +36,16 @@ trait RotatableShape {
   rotationAnchor.centerYProperty().bind(yProp)
 
 
-  var startMouse = (0.0,0.0)
+  private var startMouse = (0.0,0.0)
+  //undo-/redo command
+  private var command: (=> Unit) => Command = x => { History.emptyAction }
+
   rotationAnchor.setOnMousePressed { me:MouseEvent =>
     startMouse = (me.getSceneX,me.getSceneY)
+    val oldDegree = getRotate
+    command = History.partialAction {
+      setRotate(oldDegree)
+    }
   }
 
   rotationAnchor.setOnMouseDragged { me: MouseEvent =>
@@ -49,9 +60,11 @@ trait RotatableShape {
     println(rotateDegree)
     setRotate(rotateDegree)
   }
-}
 
-object RotatableShape {
-  /* Distance to the shape */
-  val anchorDistance = -10.0
+  rotationAnchor.setOnMouseReleased { _: MouseEvent =>
+    val newDegree = getRotate
+    history.save(command {
+      setRotate(newDegree)
+    })
+  }
 }
