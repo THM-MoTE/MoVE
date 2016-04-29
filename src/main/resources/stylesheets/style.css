@@ -28,6 +28,10 @@
     -fx-opacity: 80%;
 }
 
+.rotation-anchor {
+  -fx-fill: #990000;
+}
+
 .selection-rectangle {
   -fx-stroke: black;
   -fx-fill: null;
