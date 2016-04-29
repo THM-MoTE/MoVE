@@ -21,7 +21,7 @@ class ResizablePolygon(val points:List[Double])
   with QuadCurveTransformable {
 
   private val observablePoints = getPoints
-  val getAnchors: List[Anchor] =
+  override val getAnchors: List[Anchor with MovableAnchor] =
     (for(i <- 0 until observablePoints.size by 2) yield {
       val xIdx = i
       val yIdx = i+1
@@ -43,13 +43,8 @@ class ResizablePolygon(val points:List[Double])
 
   JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 
-  override def move(delta:Point):Unit = {
-    val (x,y) = delta
-    getAnchors.foreach { anchor =>
-      anchor.setCenterX(anchor.getCenterX+x)
-      anchor.setCenterY(anchor.getCenterY+y)
-    }
-  }
+  override def move(delta:Point):Unit = getAnchors.foreach(_.move(delta))
+
   override def toCurvedShape = QuadCurvePolygon(this)
   override def copy: ResizableShape = {
     val duplicate = new ResizablePolygon(getPoints.map(_.doubleValue).toList)

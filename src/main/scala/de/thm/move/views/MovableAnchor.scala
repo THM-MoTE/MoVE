@@ -11,6 +11,8 @@ import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.util.JFxUtils._
+import de.thm.move.util.PointUtils._
+import de.thm.move.models.CommonTypes._
 import de.thm.move.Global._
 
 trait MovableAnchor {
@@ -48,4 +50,10 @@ trait MovableAnchor {
     self.setCenterX(deltaX + me.getX)
     self.setCenterY(deltaY + me.getY)
   })
+
+  def move(delta:Point):Unit = {
+    val (x,y) = delta
+    self.setCenterX(self.getCenterX + x)
+    self.setCenterY(self.getCenterY + y)
+  }
 }

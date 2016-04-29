@@ -82,7 +82,7 @@ abstract class AbstractQuadCurveShape(
 
   def getUnderlyingPolygonPoints: List[Point] = underlyingPolygonPoints.toList
 
-  override val getAnchors: List[Anchor] =
+  override val getAnchors: List[Anchor with MovableAnchor] =
     (for (
       idx <- 0 until underlyingPolygonPoints.size;
       ctrlP = underlyingPolygonPoints(idx)
@@ -107,13 +107,7 @@ abstract class AbstractQuadCurveShape(
     }).toList
 
   JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors: _*)
-  override def move(delta:Point):Unit = {
-    val (x,y) = delta
-    getAnchors foreach { anchor =>
-      anchor.setCenterX(anchor.getCenterX + x)
-      anchor.setCenterY(anchor.getCenterY + y)
-    }
-  }
+  override def move(delta:Point):Unit = getAnchors.foreach(_.move(delta))
 
   def toUncurvedShape: ResizableShape
 }

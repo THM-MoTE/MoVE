@@ -22,7 +22,7 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
 
   val allElements = startPoint :: elements
 
-  override val getAnchors: List[Anchor] =
+  override val getAnchors: List[Anchor with MovableAnchor] =
     allElements.flatMap {
       case move:MoveTo =>
         val anchor = new Anchor(move.getX,move.getY) with MovableAnchor
@@ -43,13 +43,7 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
     case move:MoveTo => List((move.getX, move.getY))
     case line:LineTo => List((line.getX,line.getY))
   }
-  override def move(delta:Point):Unit = {
-    val (x,y) = delta
-    getAnchors.foreach { anchor =>
-      anchor.setCenterX(anchor.getCenterX + x)
-      anchor.setCenterY(anchor.getCenterY + y)
-    }
-  }
+  override def move(delta:Point):Unit = getAnchors.foreach(_.move(delta))
   override def getFillColor:Paint = null /*Path has no fill*/
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
   override def toCurvedShape = QuadCurvePath(this)
