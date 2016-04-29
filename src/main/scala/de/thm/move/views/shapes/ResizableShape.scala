@@ -10,7 +10,7 @@ import de.thm.move.util.PointUtils._
 import de.thm.move.models.CommonTypes._
 
 /** Base trait for all shapes. */
-trait ResizableShape extends Node with MovableShape {
+trait ResizableShape extends Node with MovableShape with RotatableShape {
   /** The dotted rectangle around this shape for highlighting the current selected shape. */
   val selectionRectangle = new SelectionRectangle(this)
   /** The anchors for resizing the shape at the edge-points of this shape. */
