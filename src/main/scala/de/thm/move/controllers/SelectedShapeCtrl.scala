@@ -69,6 +69,9 @@ class SelectedShapeCtrl(
   def setSelectedShape(shape:ResizableShape): Unit = {
     if(addSelectedShapeProperty.get) addToSelectedShapes(shape)
     else replaceSelectedShape(shape)
+
+    changeLike.removeById(shape.rotationAnchor.getId)
+    changeLike.addNode(shape.rotationAnchor)
   }
 
   private def addSelectionRectangle(shape:ResizableShape): Unit = {
