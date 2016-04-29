@@ -83,10 +83,10 @@ class ResizableLine(
 
   override def move(delta:Point):Unit = {
     val (x,y) = delta
-    setStartX(getStartX + delta.x)
-    setStartY(getStartY + delta.y)
-    setEndX(getEndX + delta.x)
-    setEndY(getEndY + delta.y)
+    setStartX(getStartX + x)
+    setStartY(getStartY + y)
+    setEndX(getEndX + x)
+    setEndY(getEndY + y)
   }
 
   override def copy: ResizableShape = {

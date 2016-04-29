@@ -29,6 +29,7 @@ class ModelicaCodeGenerator(
   type Lines = List[String]
   val encoding = Charset.forName("UTF-8")
 
+  /** Converts v (in pixel) to modelica "units" */
   private def convertVal(v:Double):Double = v/pxPerMm
   private def convertPoint(p:Point):Point = p.map(convertVal)
 
@@ -96,6 +97,9 @@ class ModelicaCodeGenerator(
 
 
   private def genRectangle(rectangle:ResizableRectangle)(indentIdx:Int):String = {
+    /* Because javafx y-axis go's from top (0px) to bottom (maxHeight px)
+     * and modelicas y-axis go's from bottom to top we need to convert y-coordinates
+     */
     val newY = paneHeight - rectangle.getY
     val endY = newY - rectangle.getHeight
     val endBottom = genPoint(rectangle.getBottomRight.x, endY)
@@ -311,6 +315,8 @@ class ModelicaCodeGenerator(
       |${spaces(4)}),""".stripMargin.replaceAll("\n", linebreak)
 
     val graphicsStart = s"${spaces(4)}graphics = {"
+    //generates a ,-separated list of Shapes
+    //e.g.: Rectangle(..),Circle(..)
     val shapeStr = shapes.zipWithIndex.map {
       case (e,idx) if idx < shapes.length-1 =>
         generateShape(e, modelname, target)(6) + ","
