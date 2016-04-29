@@ -4,6 +4,9 @@
 
 package de.thm.move
 
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.Files
 import java.net.URL
 import java.util.ResourceBundle
 
@@ -13,11 +16,39 @@ import de.thm.move.config.ConfigLoader
 import de.thm.move.shortcuts.ShortCutHandler
 
 object Global {
-  lazy val fillColorConfigURI:URL = getClass.getResource("/fillColor.conf")
-  lazy val strokeColorConfigURI:URL = getClass.getResource("/strokeColor.conf")
 
-  lazy val shortcuts = new ShortCutHandler(getClass.getResource("/shortcuts.conf"))
-  lazy val config: Config = new ConfigLoader(getClass.getResource("/move.conf"))
+  private val configDirectoryName = ".move"
+  private val homeDirPath = Paths.get(System.getProperty("user.home"))
+  private val configDirPath = homeDirPath.resolve(configDirectoryName)
+
+  /** Check if path exist; if not create it */
+  private def withCheckConfigDirectory[A](fn: Path => A): A = {
+    if(Files.notExists(configDirPath))
+      Files.createDirectory(configDirPath)
+    fn(configDirPath)
+  }
+
+  /** Copies the file from classpath to filePath if filePath doesn't exist */
+  private def copyIfNotExist(filePath:Path, filename:String): Unit = {
+    if(Files.notExists(filePath)) {
+      val is = getClass.getResourceAsStream("/"+filename)
+      Files.copy(is, filePath)
+    }
+  }
+
+  /** Returns the absolute config-url from relativePath */
+  private def getConfigFile(relativePath:String):URL =
+    withCheckConfigDirectory { configPath =>
+      val filePath = configPath.resolve(relativePath)
+      copyIfNotExist(filePath, relativePath)
+      filePath.toUri.toURL
+    }
+
+  lazy val fillColorConfigURI:URL = getConfigFile("fillColor.conf")
+  lazy val strokeColorConfigURI:URL = getConfigFile("strokeColor.conf")
+
+  lazy val shortcuts = new ShortCutHandler(getConfigFile("shortcuts.conf"))
+  lazy val config: Config = new ConfigLoader(getConfigFile("move.conf"))
 
   lazy val historySize = Global.config.getInt("history.cache-size").getOrElse(50)
   lazy val history = new History(historySize)
