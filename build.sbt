@@ -1,10 +1,13 @@
 import java.lang.System
 import java.io.File
 
+//include javafx-jar (from java's home directory) in classpath
 unmanagedJars in Compile += Attributed.blank(file(System.getenv("JAVA_HOME") + "/jre/lib/ext/jfxrt.jar"))
 
+//fork a process when runnign so that javafx doesn't crash
 fork := true
 
+//include ./conf in classpath
 unmanagedResourceDirectories in Compile += baseDirectory.value / "conf"
 
 scalacOptions ++= Seq(
