@@ -303,16 +303,14 @@ class SelectedShapeCtrl(
     val groupRectangle = ShapeFactory.newRectangle((0,0), 0.0, 0.0)(Color.BLACK,Color.BLACK, 1)
     groupRectangle.getStyleClass.addAll("selection-rectangle")
     groupRectangle.setId(DrawPanel.tmpShapeId)
-    groupRectangle.setVisible(false)
-    changeLike.addNode(groupRectangle)
 
     def groupHandler(mv:MouseEvent):Unit = mv.getEventType match {
       case MouseEvent.MOUSE_PRESSED =>
+        changeLike.addNode(groupRectangle)
         mouseP = (mv.getX,mv.getY)
         groupRectangle.setXY(mouseP)
         groupRectangle.setWidth(0)
         groupRectangle.setHeight(0)
-        groupRectangle.setVisible(true)
       case MouseEvent.MOUSE_DRAGGED =>
         //adjust selection highlighting
         val w = mv.getX - mouseP.x
@@ -324,7 +322,7 @@ class SelectedShapeCtrl(
         val delta = (mv.getX,mv.getY) - mouseP
         val start = mouseP
         val end = start + delta
-        groupRectangle.setVisible(false)
+        changeLike.remove(groupRectangle)
         highlightGroupedElements(start,end)
       case _ => //ignore other events
     }
