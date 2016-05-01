@@ -134,18 +134,18 @@ class ModelicaCodeGenerator(
 
  private def genCircle(circle:ResizableCircle)(indentIdx:Int):String = {
    val angle = "endAngle = 360"
-   val bounding = circle.getBoundsInLocal
-   val newY = paneHeight - bounding.getMinY
-   val endY = newY - bounding.getHeight
-   val start = genPoint(bounding.getMinX, newY)
-   val end = genPoint(bounding.getMaxX, endY)
+   val (originP, extTop,extBottom) = genPosition(circle)
+    val origin = genOrigin(originP)
+    val ext1 = genPoint(extTop)
+    val ext2 = genPoint(extBottom)
    val fillPattern = genFillPattern(circle)
    implicit val newIndentIdx = indentIdx + 2
    val colors = genFillAndStroke(circle)
    s"""${spaces(indentIdx)}Ellipse(
+       |${spaces}${origin},
        |${colors},
        |${spaces}${fillPattern},
-       |${spaces}extent = {$start,$end},
+       |${spaces}extent = {$ext1, $ext2},
        |${spaces}$angle
        |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
  }
