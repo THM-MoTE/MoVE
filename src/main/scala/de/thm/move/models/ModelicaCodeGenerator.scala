@@ -39,7 +39,7 @@ class ModelicaCodeGenerator(
     s"""origin = ${genPoint(x,y)}"""
 
   private def genPoints(ps: Seq[Point]):String = {
-    val psStrings = ps.map (genPoint(_)+",").mkString.dropRight(1)
+    val psStrings = ps.map (genPoint).mkString(",")
     s"""points = {$psStrings}"""
   }
 
