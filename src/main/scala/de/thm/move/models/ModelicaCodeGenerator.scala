@@ -19,6 +19,7 @@ import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
 import de.thm.move.util.PointUtils._
 import de.thm.move.util.ResourceUtils
+import de.thm.move.util.GeometryUtils
 import de.thm.move.views.shapes._
 
 class ModelicaCodeGenerator(
@@ -33,8 +34,9 @@ class ModelicaCodeGenerator(
   private def convertVal(v:Double):Double = v/pxPerMm
   private def convertPoint(p:Point):Point = p.map(convertVal)
 
+  private def genOrigin(p:Point): String = genOrigin(p.x,p.y)
   private def genOrigin(x:Double, y:Double): String =
-    s"""origin=${genPoint(x,y)}"""
+    s"""origin = ${genPoint(x,y)}"""
 
   private def genPoints(ps: Seq[Point]):String = {
     val psStrings = ps.map (genPoint(_)+",").mkString.dropRight(1)
@@ -81,6 +83,23 @@ class ModelicaCodeGenerator(
     s"fillPattern = ${fillPattern}"
   }
 
+  private def convertY(p:Point):Point = (p.x, paneHeight - p.y)
+  private def convertYDistance(p:Point):Point = (p.x, p.y*(-1))
+
+  private def genPosition(rectangle:RectangleLike): (Point,Point,Point) = {
+    /* Because javafx y-axis go's from top (0px) to bottom (maxHeight px)
+     * and modelicas y-axis go's from bottom to top we need to convert y-coordinates
+     */
+    val originP = GeometryUtils.middleOfLine(rectangle.getTopLeft, rectangle.getBottomRight)
+    val extTop = rectangle.getTopLeft - originP
+    val extBottom = rectangle.getBottomRight - originP
+    (
+      convertY(originP),
+      convertYDistance(extTop),
+      convertYDistance(extBottom)
+    )
+  }
+
   def generateShape[A <: Node]
     (shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
     case rectangle:ResizableRectangle => genRectangle(rectangle)(indentIdx)
@@ -97,21 +116,19 @@ class ModelicaCodeGenerator(
 
 
   private def genRectangle(rectangle:ResizableRectangle)(indentIdx:Int):String = {
-    /* Because javafx y-axis go's from top (0px) to bottom (maxHeight px)
-     * and modelicas y-axis go's from bottom to top we need to convert y-coordinates
-     */
-    val newY = paneHeight - rectangle.getY
-    val endY = newY - rectangle.getHeight
-    val endBottom = genPoint(rectangle.getBottomRight.x, endY)
-    val start = genPoint(rectangle.getX, newY)
+    val (originP, extTop,extBottom) = genPosition(rectangle)
+     val origin = genOrigin(originP)
+     val ext1 = genPoint(extTop)
+     val ext2 = genPoint(extBottom)
     val fillPattern = genFillPattern(rectangle)
 
     implicit val newIndentIdx = indentIdx + 2
     val colors = genFillAndStroke(rectangle)
     s"""${spaces(indentIdx)}Rectangle(
+       |${spaces}${origin},
        |${colors},
        |${spaces}${fillPattern},
-       |${spaces}extent = {$start, $endBottom}
+       |${spaces}extent = {$ext1, $ext2}
        |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
  }
 
