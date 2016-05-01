@@ -248,11 +248,10 @@ class ModelicaCodeGenerator(
  }
  private def genImage(img:ResizableImage, modelname:String, target:URI)(indentIdx:Int):String = {
    val bounding = img.getBoundsInLocal
-   val newY = paneHeight - bounding.getMinY
-   val endY = newY - bounding.getHeight
-   val start = genPoint(bounding.getMinX, newY)
-   val end = genPoint(bounding.getMinX + bounding.getWidth, endY)
-
+   val (originP, extTop,extBottom) = genPosition(img)
+    val origin = genOrigin(originP)
+    val ext1 = genPoint(extTop)
+    val ext2 = genPoint(extBottom)
    implicit val newIndentIdx = indentIdx + 2
 
    val imgStr = img.srcEither match {
@@ -268,7 +267,8 @@ class ModelicaCodeGenerator(
    }
 
    s"""${spaces(indentIdx)}Bitmap(
-      |${spaces}extent = {${start}, ${end}},
+      |${spaces}${origin},
+      |${spaces}extent = {${ext1}, ${ext2}},
       |${spaces}${imgStr}
       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
  }
