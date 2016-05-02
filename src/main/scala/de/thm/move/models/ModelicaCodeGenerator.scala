@@ -303,11 +303,13 @@ class ModelicaCodeGenerator(
  }
 
  private def genText(text:ResizableText)(indentIdx:Int):String = {
-   val bounding = text.getBoundsInParent
-   val newY = paneHeight - bounding.getMinY
-   val endY = newY - bounding.getHeight
-   val start = genPoint(text.getX.toInt, newY.toInt)
-   val end = genPoint(text.getX.toInt + bounding.getWidth.toInt, endY.toInt)
+   val bounding = text.getBoundsInLocal
+   val topP = (bounding.getMinX, bounding.getMinY)
+   val bottomP = (bounding.getMaxX, bounding.getMaxY)
+   val originP = GeometryUtils.middleOfLine(topP,bottomP)
+   val origin = genOrigin(convertY(originP))
+   val start = genPoint(convertYDistance(topP - originP))
+   val end = genPoint(convertYDistance(bottomP - originP))
    val str = text.getText
    val size = text.getSize
    val font = text.getFont
@@ -332,6 +334,7 @@ class ModelicaCodeGenerator(
      else s"${spaces}textStyle = {" + styleList.mkString(",") + "},"
 
    s"""${spaces(indentIdx)}Text(
+      |${spaces}${origin},
       |${spaces}extent = {${start},${end}},
       |${spaces}textString = "${str}",
       |${spaces}fontSize = ${size},
