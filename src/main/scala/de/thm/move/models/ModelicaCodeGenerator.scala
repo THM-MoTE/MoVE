@@ -13,6 +13,7 @@ import javafx.scene.Node
 import javafx.scene.paint.{Paint, Color}
 import javafx.scene.shape.{LineTo, MoveTo}
 import javafx.scene.text.TextAlignment
+import javafx.geometry.Bounds
 
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
@@ -100,6 +101,20 @@ class ModelicaCodeGenerator(
     )
   }
 
+  private def genPositionForPathLike(bounds:Bounds, ps:List[Point]): (Point, List[Point]) = {
+    val minP = (bounds.getMinX,bounds.getMinY)
+    val maxP = (bounds.getMaxX,bounds.getMaxY)
+    val originP = GeometryUtils.middleOfLine(minP,maxP)
+    val convertedPoints = ps.map { point =>
+      convertYDistance(point - originP)
+    }
+
+    (
+      convertY(originP),
+      convertedPoints
+    )
+  }
+
   def generateShape[A <: Node]
     (shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
     case rectangle:ResizableRectangle => genRectangle(rectangle)(indentIdx)
@@ -151,16 +166,12 @@ class ModelicaCodeGenerator(
  }
 
  private def genLine(line:ResizableLine)(indentIdx:Int):String = {
-   val bounds = line.getBoundsInLocal
-   val minP = (bounds.getMinX,bounds.getMinY)
-   val maxP = (bounds.getMaxX,bounds.getMaxY)
-   val originP = GeometryUtils.middleOfLine(minP,maxP)
-   val originConv = convertY(originP)
-   val origin = genOrigin(originConv)
-   val pointList = List(
-     convertYDistance((line.getStartX, line.getStartY) - originP),
-     convertYDistance((line.getEndX, line.getEndY) - originP)
+   val ps = List(
+     (line.getStartX, line.getStartY),
+     (line.getEndX, line.getEndY)
    )
+   val (originP,pointList) = genPositionForPathLike(line.getBoundsInLocal, ps)
+   val origin = genOrigin(originP)
    val points = genPoints( pointList )
    val color = genColor("color", line.getStrokeColor)
    val thickness = genStrokeWidth(line, "thickness")
