@@ -55,8 +55,8 @@ trait PathLike {
     anchor
   }
 
-  private def indexes:List[Int] = (0 until edgeCount).toList
-  private def indexWithAnchors = indexes.zip(getAnchors)
+  private lazy val indexes:List[Int] = (0 until edgeCount).toList
+  private lazy val indexWithAnchors = indexes.zip(getAnchors)
 
   private def moveAnchor(anchor:Anchor, delta:Point): Unit = {
     anchor.setCenterX(anchor.getCenterX + delta.x)
