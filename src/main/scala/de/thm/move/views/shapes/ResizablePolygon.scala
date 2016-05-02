@@ -7,9 +7,11 @@ package de.thm.move.views.shapes
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
+import javafx.geometry.Point2D
 import de.thm.move.util.JFxUtils
 import de.thm.move.views.{MovableAnchor, Anchor}
 
+import de.thm.move.util.PointUtils._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes.Point
 import scala.collection.JavaConversions._
@@ -21,12 +23,13 @@ class ResizablePolygon(val points:List[Double])
   with QuadCurveTransformable {
 
   private val observablePoints = getPoints
-  override val getAnchors: List[Anchor with MovableAnchor] =
+  override val getAnchors: List[Anchor] =
     (for(i <- 0 until observablePoints.size by 2) yield {
       val xIdx = i
       val yIdx = i+1
       val xProperty = new SimpleDoubleProperty(observablePoints.get(xIdx))
       val yProperty = new SimpleDoubleProperty(observablePoints.get(yIdx))
+      val anchor = new Anchor(xProperty.get(), yProperty.get())
 
       xProperty.addListener { (_: Number, newX: Number) =>
         val _ = observablePoints.set(xIdx, newX.doubleValue())
@@ -34,16 +37,26 @@ class ResizablePolygon(val points:List[Double])
       yProperty.addListener { (_: Number, newX: Number) =>
         val _ = observablePoints.set(yIdx, newX.doubleValue())
       }
-
-      val anchor = new Anchor(xProperty.get(), yProperty.get()) with MovableAnchor
-      xProperty.bind(anchor.centerXProperty())
-      yProperty.bind(anchor.centerYProperty())
       anchor
     }).toList
 
   JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 
-  override def move(delta:Point):Unit = getAnchors.foreach(_.move(delta))
+  override def move(delta:Point):Unit = {
+    val newAnchorPos = for(i <- 0 until observablePoints.size by 2) yield {
+      val xIdx = i
+      val yIdx = i+1
+      observablePoints.set(xIdx, observablePoints.get(xIdx)+delta.x)
+      observablePoints.set(yIdx, observablePoints.get(yIdx)+delta.y)
+
+      localToParent(observablePoints.get(xIdx)+delta.x, observablePoints.get(yIdx)+delta.y)
+    }
+    getAnchors.zip(newAnchorPos) foreach {
+      case (anchor, p:Point2D) =>
+        anchor.setCenterX(p.getX)
+        anchor.setCenterY(p.getY)
+    }
+  }
 
   override def toCurvedShape = QuadCurvePolygon(this)
   override def copy: ResizableShape = {
