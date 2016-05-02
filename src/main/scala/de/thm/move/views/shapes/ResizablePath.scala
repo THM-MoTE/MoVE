@@ -18,32 +18,18 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
   extends Path(startPoint :: elements)
   with ResizableShape
   with ColorizableShape
-  with QuadCurveTransformable {
+  with QuadCurveTransformable
+  with PathLike {
 
   val allElements = startPoint :: elements
-
-  override val getAnchors: List[Anchor with MovableAnchor] =
-    allElements.flatMap {
-      case move:MoveTo =>
-        val anchor = new Anchor(move.getX,move.getY) with MovableAnchor
-        move.xProperty.bind(anchor.centerXProperty)
-        move.yProperty.bind(anchor.centerYProperty)
-        List(anchor)
-      case line:LineTo =>
-        val anchor = new Anchor(line.getX,line.getY) with MovableAnchor
-        line.xProperty.bind(anchor.centerXProperty)
-        line.yProperty.bind(anchor.centerYProperty)
-
-        List(anchor)
-    }
-
-  JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
+  override val edgeCount: Int = allElements.size
+  val getAnchors: List[Anchor] = genAnchors
 
   def getPoints:List[Point] = allElements.flatMap {
     case move:MoveTo => List((move.getX, move.getY))
     case line:LineTo => List((line.getX,line.getY))
   }
-  override def move(delta:Point):Unit = getAnchors.foreach(_.move(delta))
+
   override def getFillColor:Paint = null /*Path has no fill*/
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
   override def toCurvedShape = QuadCurvePath(this)
@@ -52,6 +38,21 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
     duplicate.copyColors(this)
     duplicate
   }
+
+  override def resize(idx: Int, delta: (Double, Double)): Unit = {
+    val (x,y) = delta
+    allElements(idx) match {
+      case move:MoveTo =>
+        move.setX(move.getX + x)
+        move.setY(move.getY + y)
+      case line:LineTo =>
+        line.setX(line.getX + x)
+        line.setY(line.getY + y)
+      case _ => //ignore
+    }
+  }
+
+  override def getEdgePoint(idx: Int): (Double, Double) = getPoints(idx)
 }
 
 object ResizablePath {
