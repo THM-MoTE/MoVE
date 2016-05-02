@@ -13,12 +13,14 @@ import javafx.scene.Node
 import javafx.scene.paint.{Paint, Color}
 import javafx.scene.shape.{LineTo, MoveTo}
 import javafx.scene.text.TextAlignment
+import javafx.geometry.Bounds
 
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
 import de.thm.move.util.PointUtils._
 import de.thm.move.util.ResourceUtils
+import de.thm.move.util.GeometryUtils
 import de.thm.move.views.shapes._
 
 class ModelicaCodeGenerator(
@@ -33,11 +35,12 @@ class ModelicaCodeGenerator(
   private def convertVal(v:Double):Double = v/pxPerMm
   private def convertPoint(p:Point):Point = p.map(convertVal)
 
+  private def genOrigin(p:Point): String = genOrigin(p.x,p.y)
   private def genOrigin(x:Double, y:Double): String =
-    s"""origin=${genPoint(x,y)}"""
+    s"""origin = ${genPoint(x,y)}"""
 
   private def genPoints(ps: Seq[Point]):String = {
-    val psStrings = ps.map (genPoint(_)+",").mkString.dropRight(1)
+    val psStrings = ps.map (genPoint).mkString(",")
     s"""points = {$psStrings}"""
   }
 
@@ -81,6 +84,37 @@ class ModelicaCodeGenerator(
     s"fillPattern = ${fillPattern}"
   }
 
+  private def convertY(p:Point):Point = (p.x, paneHeight - p.y)
+  private def convertYDistance(p:Point):Point = (p.x, p.y*(-1))
+
+  private def genPosition(rectangle:RectangleLike): (Point,Point,Point) = {
+    /* Because javafx y-axis go's from top (0px) to bottom (maxHeight px)
+     * and modelicas y-axis go's from bottom to top we need to convert y-coordinates
+     */
+    val originP = GeometryUtils.middleOfLine(rectangle.getTopLeft, rectangle.getBottomRight)
+    val extTop = rectangle.getTopLeft - originP
+    val extBottom = rectangle.getBottomRight - originP
+    (
+      convertY(originP),
+      convertYDistance(extTop),
+      convertYDistance(extBottom)
+    )
+  }
+
+  private def genPositionForPathLike(bounds:Bounds, ps:Seq[Point]): (Point, Seq[Point]) = {
+    val minP = (bounds.getMinX,bounds.getMinY)
+    val maxP = (bounds.getMaxX,bounds.getMaxY)
+    val originP = GeometryUtils.middleOfLine(minP,maxP)
+    val convertedPoints = ps.map { point =>
+      convertYDistance(point - originP)
+    }
+
+    (
+      convertY(originP),
+      convertedPoints
+    )
+  }
+
   def generateShape[A <: Node]
     (shape:A, modelname:String, target:URI)(indentIdx:Int): String = shape match {
     case rectangle:ResizableRectangle => genRectangle(rectangle)(indentIdx)
@@ -97,47 +131,47 @@ class ModelicaCodeGenerator(
 
 
   private def genRectangle(rectangle:ResizableRectangle)(indentIdx:Int):String = {
-    /* Because javafx y-axis go's from top (0px) to bottom (maxHeight px)
-     * and modelicas y-axis go's from bottom to top we need to convert y-coordinates
-     */
-    val newY = paneHeight - rectangle.getY
-    val endY = newY - rectangle.getHeight
-    val endBottom = genPoint(rectangle.getBottomRight.x, endY)
-    val start = genPoint(rectangle.getX, newY)
+    val (originP, extTop,extBottom) = genPosition(rectangle)
+     val origin = genOrigin(originP)
+     val ext1 = genPoint(extTop)
+     val ext2 = genPoint(extBottom)
     val fillPattern = genFillPattern(rectangle)
 
     implicit val newIndentIdx = indentIdx + 2
     val colors = genFillAndStroke(rectangle)
     s"""${spaces(indentIdx)}Rectangle(
+       |${spaces}${origin},
        |${colors},
        |${spaces}${fillPattern},
-       |${spaces}extent = {$start, $endBottom}
+       |${spaces}extent = {$ext1, $ext2}
        |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
  }
 
  private def genCircle(circle:ResizableCircle)(indentIdx:Int):String = {
    val angle = "endAngle = 360"
-   val bounding = circle.getBoundsInLocal
-   val newY = paneHeight - bounding.getMinY
-   val endY = newY - bounding.getHeight
-   val start = genPoint(bounding.getMinX, newY)
-   val end = genPoint(bounding.getMaxX, endY)
+   val (originP, extTop,extBottom) = genPosition(circle)
+    val origin = genOrigin(originP)
+    val ext1 = genPoint(extTop)
+    val ext2 = genPoint(extBottom)
    val fillPattern = genFillPattern(circle)
    implicit val newIndentIdx = indentIdx + 2
    val colors = genFillAndStroke(circle)
    s"""${spaces(indentIdx)}Ellipse(
+       |${spaces}${origin},
        |${colors},
        |${spaces}${fillPattern},
-       |${spaces}extent = {$start,$end},
+       |${spaces}extent = {$ext1, $ext2},
        |${spaces}$angle
        |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
  }
 
  private def genLine(line:ResizableLine)(indentIdx:Int):String = {
-   val pointList = List(
-     (line.getStartX, paneHeight - (line.getStartY)),
-     (line.getEndX, paneHeight - (line.getEndY))
+   val ps = List(
+     (line.getStartX, line.getStartY),
+     (line.getEndX, line.getEndY)
    )
+   val (originP,pointList) = genPositionForPathLike(line.getBoundsInLocal, ps)
+   val origin = genOrigin(originP)
    val points = genPoints( pointList )
    val color = genColor("color", line.getStrokeColor)
    val thickness = genStrokeWidth(line, "thickness")
@@ -146,6 +180,7 @@ class ModelicaCodeGenerator(
    implicit val newIndentIdx = indentIdx + 2
 
    s"""${spaces(indentIdx)}Line(
+      |${spaces}${origin},
       |${spaces}${points},
       |${spaces}${color},
       |${spaces}${linePattern},
@@ -154,20 +189,24 @@ class ModelicaCodeGenerator(
  }
 
  private def genPath(path:ResizablePath)(indentIdx:Int):String = {
-   val points = genPoints(path.allElements.flatMap {
+   val ps = path.allElements.flatMap {
      case move:MoveTo =>
-       val point = ( move.getX, paneHeight-(move.getY) )
+       val point = ( move.getX, move.getY )
        List( point )
      case line:LineTo =>
-       val point = ( line.getX, paneHeight-(line.getY) )
+       val point = ( line.getX, line.getY )
        List( point )
-   })
+   }
+   val (originP, pointList) = genPositionForPathLike(path.getBoundsInLocal, ps)
+   val origin = genOrigin(originP)
+   val points = genPoints(pointList)
    val color = genColor("color", path.getStrokeColor)
    val thickness = genStrokeWidth(path, "thickness")
    val linePattern = genLinePattern(path)
 
    implicit val newIndentIdx = indentIdx + 2
    s"""${spaces(indentIdx)}Line(
+      |${spaces}${origin},
       |${spaces}${points},
       |${spaces}${linePattern},
       |${spaces}${color},
@@ -180,15 +219,17 @@ class ModelicaCodeGenerator(
      idx <- 0 until polygon.getPoints.size by 2
      x = polygon.getPoints.get(idx).toDouble
      y = polygon.getPoints.get(idx+1).toDouble
-   } yield (x,paneHeight-(y))
-
-   val points = genPoints(edgePoints)
+   } yield (x,y)
+   val (originP, pointList) = genPositionForPathLike(polygon.getBoundsInLocal, edgePoints)
+   val origin = genOrigin(originP)
+   val points = genPoints(pointList)
    val fillPattern = genFillPattern(polygon)
 
    implicit val newIndentIdx = indentIdx + 2
    val colors = genFillAndStroke(polygon)
 
    s"""${spaces(indentIdx)}Polygon(
+      |${spaces}${origin},
       |${spaces}${points},
       |${spaces}${colors},
       |${spaces}${fillPattern}
@@ -197,14 +238,17 @@ class ModelicaCodeGenerator(
 
  private def genCurvedPolygon(curve:QuadCurvePolygon)(indentIdx:Int):String = {
    val edgePoints = for(point <- curve.getUnderlyingPolygonPoints)
-     yield (point.x, paneHeight - (point.y))
-   val points = genPoints(edgePoints)
+     yield (point.x, point.y)
+   val (originP, pointList) = genPositionForPathLike(curve.getBoundsInLocal, edgePoints)
+   val origin = genOrigin(originP)
+   val points = genPoints(pointList)
    val fillPattern = genFillPattern(curve)
 
    implicit val newIndentIdx = indentIdx + 2
    val colors = genFillAndStroke(curve)
 
    s"""${spaces(indentIdx)}Polygon(
+      |${spaces}${origin},
       |${spaces}${points},
       ${colors},
       |${spaces}${fillPattern},
@@ -213,8 +257,10 @@ class ModelicaCodeGenerator(
  }
  private def genCurvedPath(curved:QuadCurvePath)(indentIdx:Int):String = {
    val edgePoints = for(point <- curved.getUnderlyingPolygonPoints)
-     yield (point.x, paneHeight - (point.y))
-   val points = genPoints(edgePoints)
+     yield (point.x, point.y)
+   val (originP, pointList) = genPositionForPathLike(curved.getBoundsInLocal, edgePoints)
+   val origin = genOrigin(originP)
+   val points = genPoints(pointList)
    val color = genColor("color", curved.getStrokeColor)
    val thickness = genStrokeWidth(curved, "thickness")
    val linePattern = genLinePattern(curved)
@@ -222,6 +268,7 @@ class ModelicaCodeGenerator(
    implicit val newIndentIdx = indentIdx + 2
 
    s"""${spaces(indentIdx)}Line(
+      |${spaces}${origin},
       |${spaces}${points},
       |${spaces}${color},
       |${spaces}${linePattern},
@@ -230,12 +277,10 @@ class ModelicaCodeGenerator(
       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
  }
  private def genImage(img:ResizableImage, modelname:String, target:URI)(indentIdx:Int):String = {
-   val bounding = img.getBoundsInLocal
-   val newY = paneHeight - bounding.getMinY
-   val endY = newY - bounding.getHeight
-   val start = genPoint(bounding.getMinX, newY)
-   val end = genPoint(bounding.getMinX + bounding.getWidth, endY)
-
+   val (originP, extTop,extBottom) = genPosition(img)
+    val origin = genOrigin(originP)
+    val ext1 = genPoint(extTop)
+    val ext2 = genPoint(extBottom)
    implicit val newIndentIdx = indentIdx + 2
 
    val imgStr = img.srcEither match {
@@ -251,17 +296,20 @@ class ModelicaCodeGenerator(
    }
 
    s"""${spaces(indentIdx)}Bitmap(
-      |${spaces}extent = {${start}, ${end}},
+      |${spaces}${origin},
+      |${spaces}extent = {${ext1}, ${ext2}},
       |${spaces}${imgStr}
       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
  }
 
  private def genText(text:ResizableText)(indentIdx:Int):String = {
-   val bounding = text.getBoundsInParent
-   val newY = paneHeight - bounding.getMinY
-   val endY = newY - bounding.getHeight
-   val start = genPoint(text.getX.toInt, newY.toInt)
-   val end = genPoint(text.getX.toInt + bounding.getWidth.toInt, endY.toInt)
+   val bounding = text.getBoundsInLocal
+   val topP = (bounding.getMinX, bounding.getMinY)
+   val bottomP = (bounding.getMaxX, bounding.getMaxY)
+   val originP = GeometryUtils.middleOfLine(topP,bottomP)
+   val origin = genOrigin(convertY(originP))
+   val start = genPoint(convertYDistance(topP - originP))
+   val end = genPoint(convertYDistance(bottomP - originP))
    val str = text.getText
    val size = text.getSize
    val font = text.getFont
@@ -286,6 +334,7 @@ class ModelicaCodeGenerator(
      else s"${spaces}textStyle = {" + styleList.mkString(",") + "},"
 
    s"""${spaces(indentIdx)}Text(
+      |${spaces}${origin},
       |${spaces}extent = {${start},${end}},
       |${spaces}textString = "${str}",
       |${spaces}fontSize = ${size},

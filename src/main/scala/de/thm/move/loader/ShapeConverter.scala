@@ -139,7 +139,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       resizableImg.setVisible(gi.visible)
       resizableImg
     case txt:Text =>
-      val (x,y) = convertPoint(txt.extent._1)
+      val (x,y) = convertPoint(txt.extent._1+txt.gItem.origin)
       val font = Font.font(txt.fontName, txt.size)
       val text = new ResizableText(txt.text,x,y,font)
       text.setFontColor(txt.color)

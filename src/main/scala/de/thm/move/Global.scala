@@ -53,7 +53,7 @@ object Global {
   lazy val historySize = Global.config.getInt("history.cache-size").getOrElse(50)
   lazy val history = new History(historySize)
 
-  lazy val copyright = "(c) 2016 Nicola Justs"
+  lazy val copyright = "(c) 2016 Nicola Justus"
   lazy val version = "0.5"
 
   lazy val licenseFile = "/LICENSE"
