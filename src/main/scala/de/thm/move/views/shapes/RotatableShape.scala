@@ -12,6 +12,7 @@ import de.thm.move.Global._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
+import de.thm.move.util.JFxUtils._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.PointUtils._
 import de.thm.move.views.Anchor
@@ -40,15 +41,15 @@ trait RotatableShape {
   //undo-/redo command
   private var command: (=> Unit) => Command = x => { History.emptyAction }
 
-  rotationAnchor.setOnMousePressed { me:MouseEvent =>
+  rotationAnchor.setOnMousePressed(withConsumedEvent { me:MouseEvent =>
     startMouse = (me.getSceneX,me.getSceneY)
     val oldDegree = getRotate
     command = History.partialAction {
       setRotate(oldDegree)
     }
-  }
+  })
 
-  rotationAnchor.setOnMouseDragged { me: MouseEvent =>
+  rotationAnchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
     val newP = (me.getSceneX,me.getSceneY)
     val delta = startMouse - newP
     startMouse = newP
@@ -58,12 +59,12 @@ trait RotatableShape {
       else 0
 
     setRotate(rotateDegree)
-  }
+  })
 
-  rotationAnchor.setOnMouseReleased { _: MouseEvent =>
+  rotationAnchor.setOnMouseReleased(withConsumedEvent { _: MouseEvent =>
     val newDegree = getRotate
     history.save(command {
       setRotate(newDegree)
     })
-  }
+  })
 }
