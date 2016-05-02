@@ -39,6 +39,12 @@ class ModelicaCodeGenerator(
   private def genOrigin(x:Double, y:Double): String =
     s"""origin = ${genPoint(x,y)}"""
 
+  private def genPoint(p:Point):String = {
+    val convP = convertPoint(p)
+    s"{${convP.x.toInt},${convP.y.toInt}}"
+  }
+  private def genPoint(x:Double,y:Double):String = genPoint((x,y))
+
   private def genPoints(ps: Seq[Point]):String = {
     val psStrings = ps.map (genPoint).mkString(",")
     s"""points = {$psStrings}"""
@@ -52,12 +58,6 @@ class ModelicaCodeGenerator(
 
   private def genStrokeWidth(elem:ColorizableShape, key:String="lineThickness"): String =
     s"$key = ${elem.getStrokeWidth}"
-
-  private def genPoint(p:Point):String = {
-    val convP = convertPoint(p)
-    s"{${convP.x.toInt},${convP.y.toInt}}"
-  }
-  private def genPoint(x:Double,y:Double):String = genPoint((x,y))
 
   private def genFillAndStroke(shape:ColorizableShape)(implicit indentIdx:Int):String = {
     val strokeColor = genColor("lineColor", shape.getStrokeColor)
