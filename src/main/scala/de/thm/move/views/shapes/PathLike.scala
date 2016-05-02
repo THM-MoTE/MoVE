@@ -2,6 +2,7 @@ package de.thm.move.views.shapes
 
 import javafx.scene.input.MouseEvent
 
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.Global
 import de.thm.move.history.History
 import de.thm.move.models.CommonTypes.Point
@@ -53,6 +54,14 @@ trait PathLike {
       Global.history.save(cmd)
     })
     anchor
+  }
+
+  rotateProperty().addListener { (_:Number, newV:Number) =>
+    indexWithAnchors.foreach { case (idx, anchor) =>
+      val (x,y) = localToParentPoint(getEdgePoint(idx))
+      anchor.setCenterX(x)
+      anchor.setCenterY(y)
+    }
   }
 
   private lazy val indexes:List[Int] = (0 until edgeCount).toList
