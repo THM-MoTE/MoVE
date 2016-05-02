@@ -29,10 +29,32 @@ class ResizableLine(
   val endAnchor = new Anchor(end)
   val getAnchors: List[Anchor] = List(startAnchor, endAnchor)
 
-  startAnchor.centerXProperty().bind(startXProperty())
-  startAnchor.centerYProperty().bind(startYProperty())
-  endAnchor.centerXProperty().bind(endXProperty())
-  endAnchor.centerYProperty().bind(endYProperty())
+  private def pointChanged():Unit = {
+    val startPoint2d = localToParent(getStartX, getStartY)
+    val endPoint2d = localToParent(getEndX, getEndY)
+    startAnchor.setCenterX(startPoint2d.getX)
+    startAnchor.setCenterY(startPoint2d.getY)
+    endAnchor.setCenterX(endPoint2d.getX)
+    endAnchor.setCenterY(endPoint2d.getY)
+  }
+
+  startXProperty().addListener { (_:Number,_:Number) =>
+    pointChanged()
+  }
+  startYProperty().addListener { (_:Number,_:Number) =>
+    pointChanged()
+  }
+  endXProperty().addListener { (_:Number,_:Number) =>
+    pointChanged()
+  }
+  endYProperty().addListener { (_:Number,_:Number) =>
+    pointChanged()
+  }
+
+  //element got rotated; adjust anchors
+  rotateProperty().addListener { (_:Number, _:Number) =>
+    pointChanged()
+  }
 
   //undo-/redo command
   private var command: (=> Unit) => Command = x => { History.emptyAction }

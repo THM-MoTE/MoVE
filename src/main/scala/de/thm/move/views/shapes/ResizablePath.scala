@@ -4,15 +4,23 @@
 
 package de.thm.move.views.shapes
 
+import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Paint
 import javafx.scene.shape.{MoveTo, LineTo, Path}
+import javafx.geometry.Point3D
+import de.thm.move.history.History
+import de.thm.move.history.History.Command
 import de.thm.move.util.JFxUtils
 
 import collection.JavaConversions._
 
+import de.thm.move.util.JFxUtils._
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.views.{MovableAnchor, Anchor}
+import de.thm.move.util.GeometryUtils
 import de.thm.move.util.PointUtils._
+import de.thm.move.Global._
 
 class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
   extends Path(startPoint :: elements)
@@ -22,17 +30,87 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
 
   val allElements = startPoint :: elements
 
-  override val getAnchors: List[Anchor with MovableAnchor] =
+  private def moveToChanged(move:MoveTo, anchor:Anchor): Unit = {
+    val point2d = localToParent(move.getX,move.getY)
+    anchor.setCenterX(point2d.getX)
+    anchor.setCenterY(point2d.getY)
+  }
+
+  private def lineToChanged(line:LineTo, anchor:Anchor): Unit = {
+    val point2d = localToParent(line.getX,line.getY)
+    anchor.setCenterX(point2d.getX)
+    anchor.setCenterY(point2d.getY)
+  }
+
+  override val getAnchors: List[Anchor] =
     allElements.flatMap {
       case move:MoveTo =>
-        val anchor = new Anchor(move.getX,move.getY) with MovableAnchor
-        move.xProperty.bind(anchor.centerXProperty)
-        move.yProperty.bind(anchor.centerYProperty)
+        val anchor = new Anchor(move.getX,move.getY)
+        rotateProperty().addListener { (_:Number,_:Number) =>
+          moveToChanged(move, anchor)
+        }
+        move.xProperty.addListener { (_:Number,_:Number) =>
+          moveToChanged(move, anchor)
+        }
+        move.yProperty.addListener { (_:Number,_:Number) =>
+          moveToChanged(move, anchor)
+        }
+        var command: (=> Unit) => Command = x => { History.emptyAction }
+          //save for un-/redo
+        anchor.setOnMousePressed(withConsumedEvent { _:MouseEvent =>
+          val x = move.getX
+          val y = move.getY
+          command = History.partialAction {
+            move.setX(x)
+            move.setY(y)
+          }
+        })
+        anchor.setOnMouseDragged(withConsumedEvent { me:MouseEvent =>
+          move.setX(me.getX)
+          move.setY(me.getY)
+        })
+        anchor.setOnMouseReleased(withConsumedEvent { me:MouseEvent =>
+          val x = me.getX
+          val y = me.getY
+          history.save(command {
+            move.setX(x)
+            move.setY(y)
+          })
+        })
         List(anchor)
       case line:LineTo =>
-        val anchor = new Anchor(line.getX,line.getY) with MovableAnchor
-        line.xProperty.bind(anchor.centerXProperty)
-        line.yProperty.bind(anchor.centerYProperty)
+        val anchor = new Anchor(line.getX,line.getY)
+        rotateProperty().addListener { (_:Number,newV:Number) =>
+          lineToChanged(line, anchor)
+        }
+        line.xProperty.addListener { (_:Number,_:Number) =>
+          lineToChanged(line, anchor)
+        }
+        line.yProperty.addListener { (_:Number,_:Number) =>
+          lineToChanged(line, anchor)
+        }
+        var command: (=> Unit) => Command = x => { History.emptyAction }
+        //save for un-/redo
+        anchor.setOnMousePressed(withConsumedEvent { _:MouseEvent =>
+          val x = line.getX
+          val y = line.getY
+          command = History.partialAction {
+            line.setX(x)
+            line.setY(y)
+          }
+        })
+        anchor.setOnMouseDragged(withConsumedEvent { me:MouseEvent =>
+          line.setX(me.getX)
+          line.setY(me.getY)
+        })
+        anchor.setOnMouseReleased(withConsumedEvent { me:MouseEvent =>
+          val x = me.getX
+          val y = me.getY
+          history.save(command {
+            line.setX(x)
+            line.setY(y)
+          })
+        })
 
         List(anchor)
     }
@@ -43,7 +121,16 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
     case move:MoveTo => List((move.getX, move.getY))
     case line:LineTo => List((line.getX,line.getY))
   }
-  override def move(delta:Point):Unit = getAnchors.foreach(_.move(delta))
+  override def move(delta:Point):Unit = {
+    allElements.foreach {
+      case move:MoveTo =>
+        move.setX(move.getX+delta.x)
+        move.setY(move.getY+delta.y)
+      case line:LineTo =>
+        line.setX(line.getX+delta.x)
+        line.setY(line.getY+delta.y)
+    }
+  }
   override def getFillColor:Paint = null /*Path has no fill*/
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
   override def toCurvedShape = QuadCurvePath(this)
