@@ -7,8 +7,11 @@ package de.thm.move.views.shapes
 import de.thm.move.models.CommonTypes.Point
 import javafx.scene.paint.Paint
 
+import de.thm.move.views.Anchor
+
 class QuadCurvePath(points:List[Point])
   extends AbstractQuadCurveShape(points, false) {
+  override val getAnchors:List[Anchor] = genAnchors
   override def getFillColor:Paint = null /*Path has no fill*/
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
 
