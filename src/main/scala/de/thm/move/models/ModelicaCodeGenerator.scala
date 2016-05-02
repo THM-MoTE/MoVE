@@ -238,7 +238,7 @@ class ModelicaCodeGenerator(
 
  private def genCurvedPolygon(curve:QuadCurvePolygon)(indentIdx:Int):String = {
    val edgePoints = for(point <- curve.getUnderlyingPolygonPoints)
-     yield (point.x, paneHeight - (point.y))
+     yield (point.x, point.y)
    val (originP, pointList) = genPositionForPathLike(curve.getBoundsInLocal, edgePoints)
    val origin = genOrigin(originP)
    val points = genPoints(pointList)
@@ -257,7 +257,7 @@ class ModelicaCodeGenerator(
  }
  private def genCurvedPath(curved:QuadCurvePath)(indentIdx:Int):String = {
    val edgePoints = for(point <- curved.getUnderlyingPolygonPoints)
-     yield (point.x, paneHeight - (point.y))
+     yield (point.x, point.y)
    val (originP, pointList) = genPositionForPathLike(curved.getBoundsInLocal, edgePoints)
    val origin = genOrigin(originP)
    val points = genPoints(pointList)
