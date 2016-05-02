@@ -9,6 +9,18 @@ import de.thm.move.views.Anchor
 import de.thm.move.util.PointUtils._
 import de.thm.move.util.JFxUtils._
 
+/** An element that is represented by a path.
+  *
+  * This trait adds moving/resizing the shape for free.
+  * Due to a initializing problem please be careful and make sure you overwrite
+  * getAnchors:List[Anchors] as follows:
+  * {{{
+  *   overwrite val getAnchors: List[Anchor] = genAnchors
+  * }}}
+  * genAnchors is already implemented, all you have to do is add the line above to your '''concrete''' class.
+  * This trait can't overwrite getAnchors, this would result in a NullPointerException or in a emptylist because
+  * edgeCount isn't proper initialized when getAnchors will be initialized!
+ */
 trait PathLike {
   self: ResizableShape =>
   val edgeCount:Int
