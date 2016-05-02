@@ -277,7 +277,6 @@ class ModelicaCodeGenerator(
       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
  }
  private def genImage(img:ResizableImage, modelname:String, target:URI)(indentIdx:Int):String = {
-   val bounding = img.getBoundsInLocal
    val (originP, extTop,extBottom) = genPosition(img)
     val origin = genOrigin(originP)
     val ext1 = genPoint(extTop)
