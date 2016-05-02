@@ -151,9 +151,15 @@ class ModelicaCodeGenerator(
  }
 
  private def genLine(line:ResizableLine)(indentIdx:Int):String = {
+   val bounds = line.getBoundsInLocal
+   val minP = (bounds.getMinX,bounds.getMinY)
+   val maxP = (bounds.getMaxX,bounds.getMaxY)
+   val originP = GeometryUtils.middleOfLine(minP,maxP)
+   val originConv = convertY(originP)
+   val origin = genOrigin(originConv)
    val pointList = List(
-     (line.getStartX, paneHeight - (line.getStartY)),
-     (line.getEndX, paneHeight - (line.getEndY))
+     convertYDistance((line.getStartX, line.getStartY) - originP),
+     convertYDistance((line.getEndX, line.getEndY) - originP)
    )
    val points = genPoints( pointList )
    val color = genColor("color", line.getStrokeColor)
@@ -163,6 +169,7 @@ class ModelicaCodeGenerator(
    implicit val newIndentIdx = indentIdx + 2
 
    s"""${spaces(indentIdx)}Line(
+      |${spaces}${origin},
       |${spaces}${points},
       |${spaces}${color},
       |${spaces}${linePattern},
