@@ -65,6 +65,9 @@ end test;
 
 # Try it
 If you like to try it follow these steps:
+- Make sure you are using JDK version >= __1.8.0_77__ by running ```java -version```
+(Because of a bug in the JavaFX lib that causes strange
+  behaviour from the JavaFX-FileChooser we need JDK version >= 1.8.0_77)
 - Install __sbt__ for building move from source
 - Clone this repository
 - Get into the target directory
