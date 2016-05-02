@@ -101,7 +101,7 @@ class ModelicaCodeGenerator(
     )
   }
 
-  private def genPositionForPathLike(bounds:Bounds, ps:List[Point]): (Point, List[Point]) = {
+  private def genPositionForPathLike(bounds:Bounds, ps:Seq[Point]): (Point, Seq[Point]) = {
     val minP = (bounds.getMinX,bounds.getMinY)
     val maxP = (bounds.getMaxX,bounds.getMaxY)
     val originP = GeometryUtils.middleOfLine(minP,maxP)
@@ -189,20 +189,24 @@ class ModelicaCodeGenerator(
  }
 
  private def genPath(path:ResizablePath)(indentIdx:Int):String = {
-   val points = genPoints(path.allElements.flatMap {
+   val ps = path.allElements.flatMap {
      case move:MoveTo =>
-       val point = ( move.getX, paneHeight-(move.getY) )
+       val point = ( move.getX, move.getY )
        List( point )
      case line:LineTo =>
-       val point = ( line.getX, paneHeight-(line.getY) )
+       val point = ( line.getX, line.getY )
        List( point )
-   })
+   }
+   val (originP, pointList) = genPositionForPathLike(path.getBoundsInLocal, ps)
+   val origin = genOrigin(originP)
+   val points = genPoints(pointList)
    val color = genColor("color", path.getStrokeColor)
    val thickness = genStrokeWidth(path, "thickness")
    val linePattern = genLinePattern(path)
 
    implicit val newIndentIdx = indentIdx + 2
    s"""${spaces(indentIdx)}Line(
+      |${spaces}${origin},
       |${spaces}${points},
       |${spaces}${linePattern},
       |${spaces}${color},
@@ -215,15 +219,17 @@ class ModelicaCodeGenerator(
      idx <- 0 until polygon.getPoints.size by 2
      x = polygon.getPoints.get(idx).toDouble
      y = polygon.getPoints.get(idx+1).toDouble
-   } yield (x,paneHeight-(y))
-
-   val points = genPoints(edgePoints)
+   } yield (x,y)
+   val (originP, pointList) = genPositionForPathLike(polygon.getBoundsInLocal, edgePoints)
+   val origin = genOrigin(originP)
+   val points = genPoints(pointList)
    val fillPattern = genFillPattern(polygon)
 
    implicit val newIndentIdx = indentIdx + 2
    val colors = genFillAndStroke(polygon)
 
    s"""${spaces(indentIdx)}Polygon(
+      |${spaces}${origin},
       |${spaces}${points},
       |${spaces}${colors},
       |${spaces}${fillPattern}
@@ -233,13 +239,16 @@ class ModelicaCodeGenerator(
  private def genCurvedPolygon(curve:QuadCurvePolygon)(indentIdx:Int):String = {
    val edgePoints = for(point <- curve.getUnderlyingPolygonPoints)
      yield (point.x, paneHeight - (point.y))
-   val points = genPoints(edgePoints)
+   val (originP, pointList) = genPositionForPathLike(curve.getBoundsInLocal, edgePoints)
+   val origin = genOrigin(originP)
+   val points = genPoints(pointList)
    val fillPattern = genFillPattern(curve)
 
    implicit val newIndentIdx = indentIdx + 2
    val colors = genFillAndStroke(curve)
 
    s"""${spaces(indentIdx)}Polygon(
+      |${spaces}${origin},
       |${spaces}${points},
       ${colors},
       |${spaces}${fillPattern},
@@ -249,7 +258,9 @@ class ModelicaCodeGenerator(
  private def genCurvedPath(curved:QuadCurvePath)(indentIdx:Int):String = {
    val edgePoints = for(point <- curved.getUnderlyingPolygonPoints)
      yield (point.x, paneHeight - (point.y))
-   val points = genPoints(edgePoints)
+   val (originP, pointList) = genPositionForPathLike(curved.getBoundsInLocal, edgePoints)
+   val origin = genOrigin(originP)
+   val points = genPoints(pointList)
    val color = genColor("color", curved.getStrokeColor)
    val thickness = genStrokeWidth(curved, "thickness")
    val linePattern = genLinePattern(curved)
@@ -257,6 +268,7 @@ class ModelicaCodeGenerator(
    implicit val newIndentIdx = indentIdx + 2
 
    s"""${spaces(indentIdx)}Line(
+      |${spaces}${origin},
       |${spaces}${points},
       |${spaces}${color},
       |${spaces}${linePattern},
