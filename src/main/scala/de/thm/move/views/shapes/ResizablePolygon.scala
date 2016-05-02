@@ -12,44 +12,36 @@ import de.thm.move.views.{MovableAnchor, Anchor}
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes.Point
+import de.thm.move.util.PointUtils._
 import scala.collection.JavaConversions._
 
 class ResizablePolygon(val points:List[Double])
   extends Polygon(points:_*)
   with ResizableShape
   with ColorizableShape
-  with QuadCurveTransformable {
+  with QuadCurveTransformable
+  with PathLike {
 
-  private val observablePoints = getPoints
-  override val getAnchors: List[Anchor with MovableAnchor] =
-    (for(i <- 0 until observablePoints.size by 2) yield {
-      val xIdx = i
-      val yIdx = i+1
-      val xProperty = new SimpleDoubleProperty(observablePoints.get(xIdx))
-      val yProperty = new SimpleDoubleProperty(observablePoints.get(yIdx))
-
-      xProperty.addListener { (_: Number, newX: Number) =>
-        val _ = observablePoints.set(xIdx, newX.doubleValue())
-      }
-      yProperty.addListener { (_: Number, newX: Number) =>
-        val _ = observablePoints.set(yIdx, newX.doubleValue())
-      }
-
-      val anchor = new Anchor(xProperty.get(), yProperty.get()) with MovableAnchor
-      xProperty.bind(anchor.centerXProperty())
-      yProperty.bind(anchor.centerYProperty())
-      anchor
-    }).toList
-
-  JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
-
-  override def move(delta:Point):Unit = getAnchors.foreach(_.move(delta))
-
+  override val edgeCount: Int = points.size / 2
+  override val getAnchors: List[Anchor] = genAnchors
   override def toCurvedShape = QuadCurvePolygon(this)
   override def copy: ResizableShape = {
     val duplicate = new ResizablePolygon(getPoints.map(_.doubleValue).toList)
     duplicate.copyColors(this)
     duplicate
+  }
+
+  private def pointIdxToListIdx(idx:Int):(Int,Int) = (idx * 2, idx * 2 +1)
+
+  override def resize(idx: Int, delta: (Double, Double)): Unit = {
+    val (xIdx,yIdx) = pointIdxToListIdx(idx)
+    getPoints.set(xIdx, getPoints.get(xIdx)+delta.x)
+    getPoints.set(yIdx, getPoints.get(yIdx)+delta.y)
+  }
+
+  override def getEdgePoint(idx: Int): (Double, Double) = {
+    val (xIdx,yIdx) = pointIdxToListIdx(idx)
+    (getPoints.get(xIdx), getPoints.get(yIdx))
   }
 }
 
