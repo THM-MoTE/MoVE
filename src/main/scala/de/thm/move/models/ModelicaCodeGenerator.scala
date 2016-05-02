@@ -39,6 +39,13 @@ class ModelicaCodeGenerator(
   private def genOrigin(x:Double, y:Double): String =
     s"""origin = ${genPoint(x,y)}"""
 
+  private def genRotate(n:Node):Option[String] = {
+    val degree = n.getRotate
+    if(degree != 0 && degree != 360) {
+      Some(s"""rotation = ${degree*(-1)}""")
+    } else None
+  }
+
   private def genPoint(p:Point):String = {
     val convP = convertPoint(p)
     s"{${convP.x.toInt},${convP.y.toInt}}"
@@ -139,8 +146,13 @@ class ModelicaCodeGenerator(
 
     implicit val newIndentIdx = indentIdx + 2
     val colors = genFillAndStroke(rectangle)
+      //only generate rotation-line if it's a some
+    val originAndRotate = (genRotate(rectangle) match {
+      case Some(str) => spaces + str + ",\n"
+      case None => ""
+    }) + spaces + origin
     s"""${spaces(indentIdx)}Rectangle(
-       |${spaces}${origin},
+       |${originAndRotate},
        |${colors},
        |${spaces}${fillPattern},
        |${spaces}extent = {$ext1, $ext2}
@@ -156,8 +168,12 @@ class ModelicaCodeGenerator(
    val fillPattern = genFillPattern(circle)
    implicit val newIndentIdx = indentIdx + 2
    val colors = genFillAndStroke(circle)
+   val originAndRotate = (genRotate(circle) match {
+     case Some(str) => spaces + str + ",\n"
+     case None => ""
+   }) + spaces + origin
    s"""${spaces(indentIdx)}Ellipse(
-       |${spaces}${origin},
+       |${originAndRotate},
        |${colors},
        |${spaces}${fillPattern},
        |${spaces}extent = {$ext1, $ext2},
@@ -178,9 +194,12 @@ class ModelicaCodeGenerator(
    val linePattern = genLinePattern(line)
 
    implicit val newIndentIdx = indentIdx + 2
-
+   val originAndRotate = (genRotate(line) match {
+     case Some(str) => spaces + str + ",\n"
+     case None => ""
+   }) + spaces + origin
    s"""${spaces(indentIdx)}Line(
-      |${spaces}${origin},
+      |${originAndRotate},
       |${spaces}${points},
       |${spaces}${color},
       |${spaces}${linePattern},
@@ -205,8 +224,12 @@ class ModelicaCodeGenerator(
    val linePattern = genLinePattern(path)
 
    implicit val newIndentIdx = indentIdx + 2
+   val originAndRotate = (genRotate(path) match {
+     case Some(str) => spaces + str + ",\n"
+     case None => ""
+   }) + spaces + origin
    s"""${spaces(indentIdx)}Line(
-      |${spaces}${origin},
+      |${originAndRotate},
       |${spaces}${points},
       |${spaces}${linePattern},
       |${spaces}${color},
@@ -227,9 +250,12 @@ class ModelicaCodeGenerator(
 
    implicit val newIndentIdx = indentIdx + 2
    val colors = genFillAndStroke(polygon)
-
+   val originAndRotate = (genRotate(polygon) match {
+     case Some(str) => spaces + str + ",\n"
+     case None => ""
+   }) + spaces + origin
    s"""${spaces(indentIdx)}Polygon(
-      |${spaces}${origin},
+      |${originAndRotate},
       |${spaces}${points},
       |${spaces}${colors},
       |${spaces}${fillPattern}
@@ -246,9 +272,12 @@ class ModelicaCodeGenerator(
 
    implicit val newIndentIdx = indentIdx + 2
    val colors = genFillAndStroke(curve)
-
+   val originAndRotate = (genRotate(curve) match {
+     case Some(str) => spaces + str + ",\n"
+     case None => ""
+   }) + spaces + origin
    s"""${spaces(indentIdx)}Polygon(
-      |${spaces}${origin},
+      |${originAndRotate},
       |${spaces}${points},
       ${colors},
       |${spaces}${fillPattern},
@@ -266,9 +295,12 @@ class ModelicaCodeGenerator(
    val linePattern = genLinePattern(curved)
 
    implicit val newIndentIdx = indentIdx + 2
-
+   val originAndRotate = (genRotate(curved) match {
+     case Some(str) => spaces + str + ",\n"
+     case None => ""
+   }) + spaces + origin
    s"""${spaces(indentIdx)}Line(
-      |${spaces}${origin},
+      |${originAndRotate},
       |${spaces}${points},
       |${spaces}${color},
       |${spaces}${linePattern},
@@ -294,9 +326,12 @@ class ModelicaCodeGenerator(
        val byteStr = new String(encodedBytes, "UTF-8")
        s"""imageSource = "$byteStr""""
    }
-
+   val originAndRotate = (genRotate(img) match {
+     case Some(str) => spaces + str + ",\n"
+     case None => ""
+   }) + spaces + origin
    s"""${spaces(indentIdx)}Bitmap(
-      |${spaces}${origin},
+      |${originAndRotate},
       |${spaces}extent = {${ext1}, ${ext2}},
       |${spaces}${imgStr}
       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
@@ -332,9 +367,12 @@ class ModelicaCodeGenerator(
    val style =
      if(styleList.isEmpty) ""
      else s"${spaces}textStyle = {" + styleList.mkString(",") + "},"
-
+   val originAndRotate = (genRotate(text) match {
+     case Some(str) => spaces + str + ",\n"
+     case None => ""
+   }) + spaces + origin
    s"""${spaces(indentIdx)}Text(
-      |${spaces}${origin},
+      |${originAndRotate},
       |${spaces}extent = {${start},${end}},
       |${spaces}textString = "${str}",
       |${spaces}fontSize = ${size},
