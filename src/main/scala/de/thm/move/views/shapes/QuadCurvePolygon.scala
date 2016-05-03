@@ -34,6 +34,7 @@ object QuadCurvePolygon {
     val points = polygon.getPoints.asScala.map(_.doubleValue).toList
     val curvedPolygon = QuadCurvePolygon(points)
     curvedPolygon.copyColors(polygon)
+    curvedPolygon.setRotate(polygon.getRotate)
     curvedPolygon
   }
 }
