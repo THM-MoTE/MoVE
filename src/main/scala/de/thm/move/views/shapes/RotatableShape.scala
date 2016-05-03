@@ -32,39 +32,57 @@ trait RotatableShape {
     yProp.set(newY)
   }
 
-  val rotationAnchor = new Anchor(0,0) with RotateAnchor
-  rotationAnchor.centerXProperty().bind(xProp)
-  rotationAnchor.centerYProperty().bind(yProp)
+  private val topLeftAnchor = new Anchor(0,0) with RotateAnchor
+  private val topRightAnchor = new Anchor(0,0) with RotateAnchor
+  private val bottomLeftAnchor = new Anchor(0,0) with RotateAnchor
+  private val bottomRightAnchor = new Anchor(0,0) with RotateAnchor
 
+  val rotationAnchors = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor,bottomRightAnchor)
+  rotationAnchors.foreach(setupListener)
+  boundsInLocalProperty().addListener { (_:Bounds, newB:Bounds) =>
+    topLeftAnchor.setCenterX(newB.getMinX)
+    topLeftAnchor.setCenterY(newB.getMinY)
 
-  private var startMouse = (0.0,0.0)
-  //undo-/redo command
-  private var command: (=> Unit) => Command = x => { History.emptyAction }
+    topRightAnchor.setCenterX(newB.getMaxX)
+    topRightAnchor.setCenterY(newB.getMinY)
 
-  rotationAnchor.setOnMousePressed(withConsumedEvent { me:MouseEvent =>
-    startMouse = (me.getSceneX,me.getSceneY)
-    val oldDegree = getRotate
-    command = History.partialAction {
-      setRotate(oldDegree)
-    }
-  })
+    bottomLeftAnchor.setCenterX(newB.getMinX)
+    bottomLeftAnchor.setCenterY(newB.getMaxY)
 
-  rotationAnchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
-    val newP = (me.getSceneX,me.getSceneY)
-    val delta = startMouse - newP
-    startMouse = newP
-    val rotationAndY = getRotate + delta.y*(-1)
-    val rotateDegree =
-      if(rotationAndY < 360) rotationAndY
-      else 0
+    bottomRightAnchor.setCenterX(newB.getMaxX)
+    bottomRightAnchor.setCenterY(newB.getMaxY)
+  }
 
-    setRotate(rotateDegree)
-  })
+  private def setupListener(anchor:Anchor): Unit = {
+    var startMouse = (0.0,0.0)
+    //undo-/redo command
+    var command: (=> Unit) => Command = x => { History.emptyAction }
 
-  rotationAnchor.setOnMouseReleased(withConsumedEvent { _: MouseEvent =>
-    val newDegree = getRotate
-    history.save(command {
-      setRotate(newDegree)
+    anchor.setOnMousePressed(withConsumedEvent { me:MouseEvent =>
+      startMouse = (me.getSceneX,me.getSceneY)
+      val oldDegree = getRotate
+      command = History.partialAction {
+        setRotate(oldDegree)
+      }
     })
-  })
+
+    anchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
+      val newP = (me.getSceneX,me.getSceneY)
+      val delta = startMouse - newP
+      startMouse = newP
+      val rotationAndY = getRotate + delta.y*(-1)
+      val rotateDegree =
+        if(rotationAndY < 360) rotationAndY
+        else 0
+
+      setRotate(rotateDegree)
+    })
+
+    anchor.setOnMouseReleased(withConsumedEvent { _: MouseEvent =>
+      val newDegree = getRotate
+      history.save(command {
+        setRotate(newDegree)
+      })
+    })
+  }
 }

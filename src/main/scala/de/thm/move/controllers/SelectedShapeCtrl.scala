@@ -70,8 +70,8 @@ class SelectedShapeCtrl(
     if(addSelectedShapeProperty.get) addToSelectedShapes(shape)
     else replaceSelectedShape(shape)
 
-    changeLike.removeById(shape.rotationAnchor.getId)
-    changeLike.addNode(shape.rotationAnchor)
+    shape.rotationAnchors.map(_.getId).foreach(changeLike.removeById)
+    changeLike.addNode(shape.rotationAnchors:_*)
   }
 
   private def addSelectionRectangle(shape:ResizableShape): Unit = {
@@ -174,7 +174,7 @@ class SelectedShapeCtrl(
         history.execute {
           shapeCopy foreach { shape =>
             changeLike.remove(shape.selectionRectangle)
-            changeLike.removeById(shape.rotationAnchor.getId)
+            shape.rotationAnchors.map(_.getId).foreach(changeLike.removeById)
             changeLike.removeShape(shape)
           }
         } {
