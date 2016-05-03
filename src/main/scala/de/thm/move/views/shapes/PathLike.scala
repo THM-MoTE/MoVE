@@ -14,21 +14,17 @@ import de.thm.move.util.JFxUtils._
 /** An element that is represented by a path.
   *
   * This trait adds moving/resizing the shape for free.
-  * Due to a initializing problem please be careful and make sure you overwrite
-  * getAnchors:List[Anchors] as follows:
-  * {{{
-  *   overwrite val getAnchors: List[Anchor] = genAnchors
-  * }}}
-  * genAnchors is already implemented, all you have to do is add the line above to your '''concrete''' class.
-  * This trait can't overwrite getAnchors, this would result in a NullPointerException or in a emptylist because
-  * edgeCount isn't proper initialized when getAnchors will be initialized!
+  *
+  * @note Due to initialization problems overwrite edgeCount as a lazy val!
  */
 trait PathLike {
   self: ResizableShape =>
   /** Count of the edges of this shape
     *
-    * Overwrite this field as a lazy val to avoid initialization problems! If you don't
+    * @note Overwrite this field as a lazy val to avoid initialization problems! If you don't
     * use a lazy val this field is 0 and getAnchors will return an empty list!
+    *
+    * @see [[https://github.com/scala/scala.github.com/blob/master/tutorials/FAQ/initialization-order.md Scala - Init order]]
     */
   val edgeCount:Int
 
@@ -89,7 +85,9 @@ trait PathLike {
   private lazy val indexes:List[Int] = (0 until edgeCount).toList
   private lazy val indexWithAnchors = indexes.zip(getAnchors)
 
+  /** Returns the point of this shape at the edge identified by idx. */
   def getEdgePoint(idx:Int): Point
+  /** Resizes the edge identified by idx with the given delta. */
   def resize(idx:Int, delta:Point): Unit
   override def move(delta:Point):Unit = indexWithAnchors.foreach {
     case (idx, anchor) =>
