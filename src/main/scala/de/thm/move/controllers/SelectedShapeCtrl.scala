@@ -174,6 +174,7 @@ class SelectedShapeCtrl(
         history.execute {
           shapeCopy foreach { shape =>
             changeLike.remove(shape.selectionRectangle)
+            changeLike.removeById(shape.rotationAnchor.getId)
             changeLike.removeShape(shape)
           }
         } {
