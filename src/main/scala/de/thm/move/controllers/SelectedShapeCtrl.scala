@@ -165,21 +165,21 @@ class SelectedShapeCtrl(
     }
   }
 
-  def setFillColorForSelectedShape(color:Color): Unit = if(!selectedShapes.isEmpty) {
+  def setFillColor(color:Color): Unit = if(!selectedShapes.isEmpty) {
     zippedUndo(coloredSelectedShape)(_.getFillColor)(
       _.setFillColor(color),
       _.setFillColor _
     )
   }
 
-  def setStrokeColorForSelectedShape(color:Color): Unit = if(!selectedShapes.isEmpty) {
+  def setStrokeColor(color:Color): Unit = if(!selectedShapes.isEmpty) {
     zippedUndo(coloredSelectedShape)(_.getStrokeColor)(
       _.setStrokeColor(color),
       _.setStrokeColor _
     )
   }
 
-  def setStrokeWidthForSelectedShape(width:Int): Unit = {
+  def setStrokeWidth(width:Int): Unit = {
     zippedUndo(coloredSelectedShape)(_.getStrokeWidth)(
       _.setStrokeWidth(width),
       _.setStrokeWidth _

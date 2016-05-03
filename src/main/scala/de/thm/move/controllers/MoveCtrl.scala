@@ -276,7 +276,7 @@ class MoveCtrl extends Initializable {
     strokeColorPicker.setOnAction(colorPickerChanged _)
 
     onChoiceboxChanged(borderThicknessChooser)(
-      selectionCtrl.setStrokeWidthForSelectedShape)
+      selectionCtrl.setStrokeWidth)
     onChoiceboxChanged(linePatternChooser)(
       selectionCtrl.setStrokePattern)
     onChoiceboxChanged(fillPatternChooser)(selectionCtrl.setFillPattern)
@@ -348,9 +348,9 @@ class MoveCtrl extends Initializable {
   def colorPickerChanged(ae:ActionEvent): Unit = {
     val src = ae.getSource
     if(src == strokeColorPicker)
-      selectionCtrl.setStrokeColorForSelectedShape(withCheckedColor(strokeColorPicker.getValue))
+      selectionCtrl.setStrokeColor(withCheckedColor(strokeColorPicker.getValue))
     else if(src == fillColorPicker)
-      selectionCtrl.setFillColorForSelectedShape(withCheckedColor(fillColorPicker.getValue))
+      selectionCtrl.setFillColor(withCheckedColor(fillColorPicker.getValue))
   }
 
   def shapeInputHandler(ev:InputEvent): Unit = {
