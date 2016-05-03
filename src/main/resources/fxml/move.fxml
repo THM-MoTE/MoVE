@@ -9,7 +9,7 @@
    <left>
       <ToolBar orientation="VERTICAL" BorderPane.alignment="CENTER">
         <items>
-            <ToggleButton fx:id="line_pointer" mnemonicParsing="false" onAction="#onPointerClicked" styleClass="toolbar-button" text="%fa.mouse-pointer">
+            <ToggleButton fx:id="line_pointer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPointerClicked" styleClass="toolbar-button" text="%fa.mouse-pointer">
                <toggleGroup>
                   <ToggleGroup fx:id="btnGroup" />
                </toggleGroup>
@@ -17,31 +17,31 @@
                   <Tooltip text="Select Element" />
                </tooltip>
             </ToggleButton>
-            <ToggleButton fx:id="line_btn" mnemonicParsing="false" onAction="#onLineClicked" styleClass="toolbar-button" text="%fa.minus" toggleGroup="$btnGroup">
+            <ToggleButton fx:id="line_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onLineClicked" styleClass="toolbar-button" text="%fa.minus" toggleGroup="$btnGroup">
                <tooltip>
                   <Tooltip text="Line" />
                </tooltip></ToggleButton>
-            <ToggleButton fx:id="path_btn" mnemonicParsing="false" onAction="#onPathClicked" styleClass="toolbar-button" text="%fa.pencil-square" toggleGroup="$btnGroup">
+            <ToggleButton fx:id="path_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPathClicked" styleClass="toolbar-button" text="%fa.pencil-square" toggleGroup="$btnGroup">
                <tooltip>
                   <Tooltip text="Path" />
                </tooltip></ToggleButton>
-            <ToggleButton fx:id="rectangle_btn" mnemonicParsing="false" onAction="#onRectangleClicked" styleClass="toolbar-button" text="%fa.square-o" toggleGroup="$btnGroup">
+            <ToggleButton fx:id="rectangle_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onRectangleClicked" styleClass="toolbar-button" text="%fa.square-o" toggleGroup="$btnGroup">
                <tooltip>
                   <Tooltip text="Rectangle" />
                </tooltip></ToggleButton>
-            <ToggleButton fx:id="polygon_btn" mnemonicParsing="false" onAction="#onPolygonClicked" styleClass="toolbar-button" text="%fa.pencil-square-o" toggleGroup="$btnGroup">
+            <ToggleButton fx:id="polygon_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPolygonClicked" styleClass="toolbar-button" text="%fa.pencil-square-o" toggleGroup="$btnGroup">
                <tooltip>
                   <Tooltip text="Polygon" />
                </tooltip></ToggleButton>
-            <ToggleButton fx:id="circle_btn" mnemonicParsing="false" onAction="#onCircleClicked" styleClass="toolbar-button" text="%fa.circle-o" toggleGroup="$btnGroup">
+            <ToggleButton fx:id="circle_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onCircleClicked" styleClass="toolbar-button" text="%fa.circle-o" toggleGroup="$btnGroup">
                <tooltip>
                   <Tooltip text="Circle" />
                </tooltip></ToggleButton>
-            <ToggleButton fx:id="image_btn" layoutX="10.0" layoutY="165.0" mnemonicParsing="false" onAction="#onLoadBitmap" styleClass="toolbar-button" text="%fa.image" toggleGroup="$btnGroup">
+            <ToggleButton fx:id="image_btn" layoutX="10.0" layoutY="165.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onLoadBitmap" styleClass="toolbar-button" text="%fa.image" toggleGroup="$btnGroup">
                <tooltip>
                   <Tooltip text="Bitmap" />
                </tooltip></ToggleButton>
-             <ToggleButton fx:id="text_btn" mnemonicParsing="false" onAction="#onTextClicked" styleClass="toolbar-button" text="%fa.font" toggleGroup="$btnGroup">
+             <ToggleButton fx:id="text_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onTextClicked" styleClass="toolbar-button" text="%fa.font" toggleGroup="$btnGroup">
                 <tooltip>
                    <Tooltip text="Text" />
                 </tooltip></ToggleButton>
