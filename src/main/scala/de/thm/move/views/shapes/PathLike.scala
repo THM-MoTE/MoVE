@@ -1,5 +1,6 @@
 package de.thm.move.views.shapes
 
+import javafx.geometry.Bounds
 import javafx.scene.input.MouseEvent
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
@@ -38,7 +39,7 @@ trait PathLike {
     })
     anchor.setOnMouseDragged(withConsumedEvent { mv: MouseEvent =>
       val delta = (mv.getSceneX - mouseP.x, mv.getSceneY - mouseP.y)
-      resizeWithAnchor(idx, delta)
+      resize(idx, delta)
       mouseP = (mv.getSceneX, mv.getSceneY)
     })
     anchor.setOnMouseReleased(withConsumedEvent { mv:MouseEvent =>
@@ -48,15 +49,25 @@ trait PathLike {
 
       val cmd = History.
         newCommand(
-          resizeWithAnchor(idx, deltaRedo),
-          resizeWithAnchor(idx, deltaUndo)
+          resize(idx, deltaRedo),
+          resize(idx, deltaUndo)
         )
       Global.history.save(cmd)
     })
     anchor
   }
 
+
+  boundsInLocalProperty().addListener { (_:Bounds, _:Bounds) =>
+    boundsChanged()
+  }
+
   rotateProperty().addListener { (_:Number, newV:Number) =>
+    boundsChanged()
+  }
+
+
+  private def boundsChanged(): Unit = {
     indexWithAnchors.foreach { case (idx, anchor) =>
       val (x,y) = localToParentPoint(getEdgePoint(idx))
       anchor.setCenterX(x)
@@ -67,22 +78,10 @@ trait PathLike {
   private lazy val indexes:List[Int] = (0 until edgeCount).toList
   private lazy val indexWithAnchors = indexes.zip(getAnchors)
 
-  private def moveAnchor(anchor:Anchor, delta:Point): Unit = {
-    anchor.setCenterX(anchor.getCenterX + delta.x)
-    anchor.setCenterY(anchor.getCenterY + delta.y)
-  }
-
-  private def resizeWithAnchor(idx:Int,delta:Point) = {
-    val anchor = getAnchors(idx)
-    resize(idx,delta)
-    moveAnchor(anchor,delta)
-  }
-
   def getEdgePoint(idx:Int): Point
   def resize(idx:Int, delta:Point): Unit
   override def move(delta:Point):Unit = indexWithAnchors.foreach {
     case (idx, anchor) =>
       resize(idx, delta)
-      moveAnchor(anchor,delta)
   }
 }
