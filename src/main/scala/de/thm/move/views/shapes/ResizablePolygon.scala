@@ -24,8 +24,7 @@ class ResizablePolygon(val points:List[Double])
   with QuadCurveTransformable
   with PathLike {
 
-  override val edgeCount: Int = points.size / 2
-  override val getAnchors: List[Anchor] = genAnchors
+  override lazy val edgeCount: Int = points.size / 2
   override def toCurvedShape = QuadCurvePolygon(this)
   override def copy: ResizableShape = {
     val duplicate = new ResizablePolygon(getPoints.map(_.doubleValue).toList)

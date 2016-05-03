@@ -30,8 +30,7 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
   with PathLike {
 
   val allElements = startPoint :: elements
-  override val edgeCount: Int = allElements.size
-  val getAnchors: List[Anchor] = genAnchors
+  override lazy val edgeCount: Int = allElements.size
 
 
   def getPoints:List[Point] = allElements.flatMap {

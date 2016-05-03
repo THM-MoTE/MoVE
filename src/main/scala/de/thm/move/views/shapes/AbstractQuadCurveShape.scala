@@ -39,7 +39,7 @@ abstract class AbstractQuadCurveShape(
    * controlPoint of becier curve = p2
    */
 
-  override val edgeCount:Int = points.size
+  override lazy val edgeCount:Int = points.size
   val reversedP = points.reverse
   /*the path behind this element; the points gets adjusted whenever someone
    *resizes this element

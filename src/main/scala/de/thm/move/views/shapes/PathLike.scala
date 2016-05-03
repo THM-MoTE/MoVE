@@ -25,7 +25,18 @@ import de.thm.move.util.JFxUtils._
  */
 trait PathLike {
   self: ResizableShape =>
+  /** Count of the edges of this shape
+    *
+    * Overwrite this field as a lazy val to avoid initialization problems! If you don't
+    * use a lazy val this field is 0 and getAnchors will return an empty list!
+    */
   val edgeCount:Int
+
+  /* Overwrite as lazy val in order to initialize this field AFTER edgeCount is initialized!
+    *
+    * If this is a strict val it will initialized before edgeCount and result in a empty list
+    * */
+  override lazy val getAnchors: List[Anchor] = genAnchors
 
   protected def genAnchors = List.tabulate(edgeCount) { idx =>
     val (x,y) = getEdgePoint(idx)
