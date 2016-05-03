@@ -23,15 +23,6 @@ import javafx.scene.Node
 trait RotatableShape {
   this:Node =>
 
-  //show the anchor always at the top of the element
-  private val xProp = new SimpleDoubleProperty(getBoundsInLocal.getMinX)
-  private val yProp = new SimpleDoubleProperty(getBoundsInLocal.getMinY)
-  boundsInLocalProperty().addListener { (_:Bounds, newB:Bounds) =>
-    val (newX,newY) = GeometryUtils.middleOfLine(newB.getMinX, newB.getMinY, newB.getMaxX, newB.getMinY)
-    xProp.set(newX)
-    yProp.set(newY)
-  }
-
   private val topLeftAnchor = new Anchor(0,0) with RotateAnchor
   private val topRightAnchor = new Anchor(0,0) with RotateAnchor
   private val bottomLeftAnchor = new Anchor(0,0) with RotateAnchor
@@ -65,7 +56,6 @@ trait RotatableShape {
         setRotate(oldDegree)
       }
     })
-
     anchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
       val newP = (me.getSceneX,me.getSceneY)
       val delta = startMouse - newP
@@ -77,7 +67,6 @@ trait RotatableShape {
 
       setRotate(rotateDegree)
     })
-
     anchor.setOnMouseReleased(withConsumedEvent { _: MouseEvent =>
       val newDegree = getRotate
       history.save(command {
