@@ -14,7 +14,7 @@ import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
 /** A shape with quadratic-bezier-curved edge-points.
   *
-  * See Modelica Spec 3.1 - Ch. 18.6.1.2 page 226, 227
+  * @see Modelica Spec 3.1 - Chapter 18.6.1.2 page 226, 227
   */
 abstract class AbstractQuadCurveShape(
   points: List[Point],
@@ -46,14 +46,15 @@ abstract class AbstractQuadCurveShape(
    */
   private val underlyingPolygonPoints = reversedP.toArray
 
-  val curves = adjustPath(reversedP.toArray)
+  val curves = calculatePathElements(reversedP.toArray)
   this.getElements.addAll(curves: _*)
 
-  private def adjustPath(points: Array[Point]): List[PathElement] = {
+  /** Calculates the path-elements from the given points */
+  private def calculatePathElements(points: Array[Point]): List[PathElement] = {
     val (stX, stY) = points.head
     val (tmpX, tmpY) = GeometryUtils.middleOfLine(points.head, points(1)) //point between head & points(1)
     /**
-     * shfit path to starting-point if this is a closedShape (e.g. polygon)
+     * shift path to starting-point if this is a closedShape (e.g. polygon)
      * if not draw a line between original startpoint and starting-point
      * for first bezier curve
      */
@@ -88,7 +89,7 @@ abstract class AbstractQuadCurveShape(
   def resize(idx:Int, delta:Point): Unit = {
     underlyingPolygonPoints(idx) = underlyingPolygonPoints(idx) + delta
     getElements.clear()
-    getElements.addAll(adjustPath(underlyingPolygonPoints): _*)
+    getElements.addAll(calculatePathElements(underlyingPolygonPoints): _*)
   }
 
   def toUncurvedShape: ResizableShape
