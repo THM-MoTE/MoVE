@@ -26,6 +26,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     menu.inBackgroundItem.setOnAction { ae:ActionEvent => onBackgroundPressed(ae, underlyingElement) }
     menu.inForegroundItem.setOnAction { ae:ActionEvent => onForegroundPressed (ae, underlyingElement) }
     menu.duplicateElementItem.setOnAction { ae:ActionEvent => onDuplicateElementPressed(ae, underlyingElement) }
+    menu.resetRotationElementItem.setOnAction { ae:ActionEvent => onResetRotationElementPressed(ae, underlyingElement) }
 
     underlyingElement match {
       case polygon:QuadCurveTransformable =>
@@ -113,6 +114,15 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
       changeLike.addNode(duplicate.getAnchors)
     } {
       changeLike.removeShape(duplicate)
+    }
+  }
+
+  def onResetRotationElementPressed(ae:ActionEvent, shape:ResizableShape): Unit = {
+    val oldRotate = shape.getRotate
+    history.execute {
+      shape.setRotate(0)
+    } {
+      shape.setRotate(oldRotate)
     }
   }
 
