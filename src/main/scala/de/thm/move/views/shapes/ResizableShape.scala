@@ -17,4 +17,10 @@ trait ResizableShape extends Node with MovableShape with RotatableShape {
   val getAnchors: List[Anchor]
   /** Creates a '''exact copy''' of this element. */
   def copy: ResizableShape
+
+  def localToParentPoint(point:Point):Point = {
+    val (x,y) = point
+    val point2D = localToParent(x,y)
+    (point2D.getX, point2D.getY)
+  }
 }

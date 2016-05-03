@@ -5,6 +5,7 @@
 package de.thm.move.views.shapes
 
 import de.thm.move.models.CommonTypes.Point
+import de.thm.move.views.Anchor
 import scala.collection.JavaConverters._
 
 /**
@@ -12,6 +13,7 @@ import scala.collection.JavaConverters._
  */
 class QuadCurvePolygon(points:List[Point])
   extends AbstractQuadCurveShape(points, true) {
+  override val getAnchors:List[Anchor] = genAnchors
   override def toUncurvedShape: ResizableShape = ResizablePolygon(this)
   override def copy: ResizableShape = {
     val duplicate = new QuadCurvePolygon(getUnderlyingPolygonPoints)

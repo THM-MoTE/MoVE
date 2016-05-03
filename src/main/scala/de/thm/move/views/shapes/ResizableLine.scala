@@ -22,94 +22,12 @@ class ResizableLine(
          strokeSize:Int)
    extends Line(start._1, start._2, end._1, end._2)
    with ResizableShape
-   with ColorizableShape {
+   with ColorizableShape
+   with PathLike {
+
   setStrokeWidth(strokeSize)
-
-  val startAnchor = new Anchor(start)
-  val endAnchor = new Anchor(end)
-  val getAnchors: List[Anchor] = List(startAnchor, endAnchor)
-
-  private def pointChanged():Unit = {
-    val startPoint2d = localToParent(getStartX, getStartY)
-    val endPoint2d = localToParent(getEndX, getEndY)
-    startAnchor.setCenterX(startPoint2d.getX)
-    startAnchor.setCenterY(startPoint2d.getY)
-    endAnchor.setCenterX(endPoint2d.getX)
-    endAnchor.setCenterY(endPoint2d.getY)
-  }
-
-  startXProperty().addListener { (_:Number,_:Number) =>
-    pointChanged()
-  }
-  startYProperty().addListener { (_:Number,_:Number) =>
-    pointChanged()
-  }
-  endXProperty().addListener { (_:Number,_:Number) =>
-    pointChanged()
-  }
-  endYProperty().addListener { (_:Number,_:Number) =>
-    pointChanged()
-  }
-
-  //element got rotated; adjust anchors
-  rotateProperty().addListener { (_:Number, _:Number) =>
-    pointChanged()
-  }
-
-  //undo-/redo command
-  private var command: (=> Unit) => Command = x => { History.emptyAction }
-
-  startAnchor.setOnMousePressed(withConsumedEvent { _:MouseEvent =>
-    val (oldX,oldY) = (getStartX, getStartY)
-    command = History.partialAction {
-      setStartX(oldX)
-      setStartY(oldY)
-    }
-  })
-
-  startAnchor.setOnMouseDragged(withConsumedEvent { me:MouseEvent =>
-      setStartX(me.getX)
-      setStartY(me.getY)
-  })
-
-  startAnchor.setOnMouseReleased(withConsumedEvent { _:MouseEvent =>
-    val (oldX,oldY) = (getStartX,getStartY)
-    history.save(command {
-      setStartX(oldX)
-      setStartY(oldY)
-    })
-  })
-
-  endAnchor.setOnMousePressed(withConsumedEvent { _:MouseEvent =>
-    val (oldX,oldY) = (getEndX, getEndY)
-    command = History.partialAction {
-      setEndX(oldX)
-      setEndY(oldY)
-    }
-  })
-
-  endAnchor.setOnMouseDragged(withConsumedEvent { me:MouseEvent =>
-      setEndX(me.getX)
-      setEndY(me.getY)
-  })
-
-  endAnchor.setOnMouseReleased(withConsumedEvent { _:MouseEvent =>
-    val (oldX,oldY) = (getEndX, getEndY)
-    history.save(command {
-      setEndX(oldX)
-      setEndY(oldY)
-    })
-  })
-
-  binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
-
-  override def move(delta:Point):Unit = {
-    val (x,y) = delta
-    setStartX(getStartX + x)
-    setStartY(getStartY + y)
-    setEndX(getEndX + x)
-    setEndY(getEndY + y)
-  }
+  override val edgeCount: Int = 2
+  val getAnchors: List[Anchor] = genAnchors
 
   override def copy: ResizableShape = {
     val duplicate = new ResizableLine(
@@ -119,5 +37,21 @@ class ResizableLine(
     duplicate.copyColors(this)
     duplicate.setRotate(getRotate)
     duplicate
+  }
+
+  override def getEdgePoint(idx: Int): (Double, Double) = idx match {
+    case 0 => (getStartX,getStartY)
+    case 1 => (getEndX,getEndY)
+    case _ => throw new IllegalArgumentException(s"There is now edge with given idx $idx")
+  }
+
+  override def resize(idx: Int, delta: (Double, Double)): Unit = idx match {
+    case 0 =>
+      setStartX(getStartX+delta.x)
+      setStartY(getStartY+delta.y)
+    case 1 =>
+      setEndX(getEndX+delta.x)
+      setEndY(getEndY+delta.y)
+    case _ => throw new IllegalArgumentException(s"There is now edge with given idx $idx")
   }
 }

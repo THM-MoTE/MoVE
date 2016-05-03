@@ -26,111 +26,19 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
   extends Path(startPoint :: elements)
   with ResizableShape
   with ColorizableShape
-  with QuadCurveTransformable {
+  with QuadCurveTransformable
+  with PathLike {
 
   val allElements = startPoint :: elements
+  override val edgeCount: Int = allElements.size
+  val getAnchors: List[Anchor] = genAnchors
 
-  private def moveToChanged(move:MoveTo, anchor:Anchor): Unit = {
-    val point2d = localToParent(move.getX,move.getY)
-    anchor.setCenterX(point2d.getX)
-    anchor.setCenterY(point2d.getY)
-  }
-
-  private def lineToChanged(line:LineTo, anchor:Anchor): Unit = {
-    val point2d = localToParent(line.getX,line.getY)
-    anchor.setCenterX(point2d.getX)
-    anchor.setCenterY(point2d.getY)
-  }
-
-  override val getAnchors: List[Anchor] =
-    allElements.flatMap {
-      case move:MoveTo =>
-        val anchor = new Anchor(move.getX,move.getY)
-        rotateProperty().addListener { (_:Number,_:Number) =>
-          moveToChanged(move, anchor)
-        }
-        move.xProperty.addListener { (_:Number,_:Number) =>
-          moveToChanged(move, anchor)
-        }
-        move.yProperty.addListener { (_:Number,_:Number) =>
-          moveToChanged(move, anchor)
-        }
-        var command: (=> Unit) => Command = x => { History.emptyAction }
-          //save for un-/redo
-        anchor.setOnMousePressed(withConsumedEvent { _:MouseEvent =>
-          val x = move.getX
-          val y = move.getY
-          command = History.partialAction {
-            move.setX(x)
-            move.setY(y)
-          }
-        })
-        anchor.setOnMouseDragged(withConsumedEvent { me:MouseEvent =>
-          move.setX(me.getX)
-          move.setY(me.getY)
-        })
-        anchor.setOnMouseReleased(withConsumedEvent { me:MouseEvent =>
-          val x = me.getX
-          val y = me.getY
-          history.save(command {
-            move.setX(x)
-            move.setY(y)
-          })
-        })
-        List(anchor)
-      case line:LineTo =>
-        val anchor = new Anchor(line.getX,line.getY)
-        rotateProperty().addListener { (_:Number,newV:Number) =>
-          lineToChanged(line, anchor)
-        }
-        line.xProperty.addListener { (_:Number,_:Number) =>
-          lineToChanged(line, anchor)
-        }
-        line.yProperty.addListener { (_:Number,_:Number) =>
-          lineToChanged(line, anchor)
-        }
-        var command: (=> Unit) => Command = x => { History.emptyAction }
-        //save for un-/redo
-        anchor.setOnMousePressed(withConsumedEvent { _:MouseEvent =>
-          val x = line.getX
-          val y = line.getY
-          command = History.partialAction {
-            line.setX(x)
-            line.setY(y)
-          }
-        })
-        anchor.setOnMouseDragged(withConsumedEvent { me:MouseEvent =>
-          line.setX(me.getX)
-          line.setY(me.getY)
-        })
-        anchor.setOnMouseReleased(withConsumedEvent { me:MouseEvent =>
-          val x = me.getX
-          val y = me.getY
-          history.save(command {
-            line.setX(x)
-            line.setY(y)
-          })
-        })
-
-        List(anchor)
-    }
-
-  JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors:_*)
 
   def getPoints:List[Point] = allElements.flatMap {
     case move:MoveTo => List((move.getX, move.getY))
     case line:LineTo => List((line.getX,line.getY))
   }
-  override def move(delta:Point):Unit = {
-    allElements.foreach {
-      case move:MoveTo =>
-        move.setX(move.getX+delta.x)
-        move.setY(move.getY+delta.y)
-      case line:LineTo =>
-        line.setX(line.getX+delta.x)
-        line.setY(line.getY+delta.y)
-    }
-  }
+
   override def getFillColor:Paint = null /*Path has no fill*/
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
   override def toCurvedShape = QuadCurvePath(this)
@@ -140,6 +48,21 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
     duplicate.setRotate(getRotate)
     duplicate
   }
+
+  override def resize(idx: Int, delta: (Double, Double)): Unit = {
+    val (x,y) = delta
+    allElements(idx) match {
+      case move:MoveTo =>
+        move.setX(move.getX + x)
+        move.setY(move.getY + y)
+      case line:LineTo =>
+        line.setX(line.getX + x)
+        line.setY(line.getY + y)
+      case _ => //ignore
+    }
+  }
+
+  override def getEdgePoint(idx: Int): (Double, Double) = getPoints(idx)
 }
 
 object ResizablePath {

@@ -21,7 +21,8 @@ abstract class AbstractQuadCurveShape(
   closedShape: Boolean)
   extends Path
   with ResizableShape
-  with ColorizableShape {
+  with ColorizableShape
+  with PathLike {
 
   /**
    * Implementation nodes:
@@ -38,6 +39,7 @@ abstract class AbstractQuadCurveShape(
    * controlPoint of becier curve = p2
    */
 
+  override val edgeCount:Int = points.size
   val reversedP = points.reverse
   /*the path behind this element; the points gets adjusted whenever someone
    *resizes this element
@@ -82,32 +84,12 @@ abstract class AbstractQuadCurveShape(
 
   def getUnderlyingPolygonPoints: List[Point] = underlyingPolygonPoints.toList
 
-  override val getAnchors: List[Anchor with MovableAnchor] =
-    (for (
-      idx <- 0 until underlyingPolygonPoints.size;
-      ctrlP = underlyingPolygonPoints(idx)
-    ) yield {
-      val anchor = new Anchor(ctrlP) with MovableAnchor
-      /* Everytime this shape get's resized the path get's replaced
-       * by a new path
-       */
-      anchor.centerXProperty.addListener { (_: Number, newV: Number) =>
-        underlyingPolygonPoints(idx) = (newV.doubleValue, underlyingPolygonPoints(idx).y)
-        this.getElements.clear()
-        this.getElements.addAll(adjustPath(underlyingPolygonPoints): _*)
-        ()
-      }
-      anchor.centerYProperty.addListener { (_: Number, newV: Number) =>
-        underlyingPolygonPoints(idx) = (underlyingPolygonPoints(idx).x, newV.doubleValue)
-        this.getElements.clear()
-        this.getElements.addAll(adjustPath(underlyingPolygonPoints): _*)
-        ()
-      }
-      anchor
-    }).toList
-
-  JFxUtils.binAnchorsLayoutToNodeLayout(this)(getAnchors: _*)
-  override def move(delta:Point):Unit = getAnchors.foreach(_.move(delta))
+  def getEdgePoint(idx:Int): Point = getUnderlyingPolygonPoints(idx)
+  def resize(idx:Int, delta:Point): Unit = {
+    underlyingPolygonPoints(idx) = underlyingPolygonPoints(idx) + delta
+    getElements.clear()
+    getElements.addAll(adjustPath(underlyingPolygonPoints): _*)
+  }
 
   def toUncurvedShape: ResizableShape
 }
