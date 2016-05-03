@@ -17,6 +17,7 @@ class QuadCurvePolygon(points:List[Point])
   override def copy: ResizableShape = {
     val duplicate = new QuadCurvePolygon(getUnderlyingPolygonPoints)
     duplicate.copyColors(this)
+    duplicate.setRotate(getRotate)
     duplicate
   }
 }
