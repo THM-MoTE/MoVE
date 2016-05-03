@@ -70,8 +70,8 @@ class SelectedShapeCtrl(
     if(addSelectedShapeProperty.get) addToSelectedShapes(shape)
     else replaceSelectedShape(shape)
 
+    shape.getAnchors.foreach(_.setVisible(true))
     shape.rotationAnchors.map(_.getId).foreach(changeLike.removeById)
-    changeLike.addNode(shape.rotationAnchors:_*)
   }
 
   private def addSelectionRectangle(shape:ResizableShape): Unit = {
@@ -94,6 +94,13 @@ class SelectedShapeCtrl(
   }
 
   def getSelectedElements:List[ResizableShape] = selectedShapes
+
+  def rotationMode(): Unit = {
+    selectedShapes.foreach { shape =>
+      shape.getAnchors.foreach(_.setVisible(false))
+      changeLike.addNode(shape.rotationAnchors)
+    }
+  }
 
   def getMoveHandler: (MouseEvent => Unit) = {
     var mouseP = (0.0,0.0)
