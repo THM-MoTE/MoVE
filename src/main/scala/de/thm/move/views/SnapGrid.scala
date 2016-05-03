@@ -12,7 +12,7 @@ import javafx.scene.shape.Line
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.util.GeometryUtils
 
-class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane with SnapLike {
+class SnapGrid(topPane:Pane, val cellSize:Int, snapDistance:Int) extends Pane with SnapLike {
 
   val verticalLineId = "vertical-grid-line"
   val horizontalLineId = "horizontal-grid-line"
@@ -106,4 +106,6 @@ class SnapGrid(topPane:Pane, cellSize:Int, snapDistance:Int) extends Pane with S
     val height = getHeight.toInt
     getClosestPosition(height,deltaY)
   }
+
+  def setCellSize(size:Int):SnapGrid = new SnapGrid(topPane, size, snapDistance)
 }

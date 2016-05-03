@@ -83,9 +83,28 @@ object Dialogs {
     pane.add(heightLbl, 0,1)
     pane.add(heightTxt, 1,1)
     dialog.getDialogPane.setContent(pane)
-    dialog.setOnCloseRequest { de:DialogEvent =>
+    dialog.setOnCloseRequest { _:DialogEvent =>
       val str = widthTxt.getText +";"+ heightTxt.getText
       dialog.setResult(str)
+    }
+    dialog
+  }
+
+  def newGridSizeDialog(cellSize:Int): TextInputDialog = {
+    val dialog = new TextInputDialog()
+    dialog.setTitle("Grid size");
+    dialog.setHeaderText("Give a grid size in px")
+    val sizeLbl = new Label ("Size in px:")
+    val sizeTxt = new TextField(cellSize.toString)
+    val pane = new GridPane()
+    pane.setMaxWidth(Double.MaxValue)
+    pane.setHgap(5)
+    pane.setVgap(5)
+    pane.add(sizeLbl, 0,0)
+    pane.add(sizeTxt, 1,0)
+    dialog.getDialogPane.setContent(pane)
+    dialog.setOnCloseRequest { _:DialogEvent =>
+      dialog.setResult(sizeTxt.getText)
     }
     dialog
   }
