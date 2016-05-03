@@ -4,7 +4,10 @@
 
 package de.thm.move.views
 
+import javafx.scene.Node
+
 import de.thm.move.models.CommonTypes._
+import de.thm.move.views.shapes.MovableShape
 
 /** Represents elements that can calculate a distance for a snapping-mechanism to a specific element.
   *
@@ -24,5 +27,26 @@ trait SnapLike {
       x <- xOpt
       y <- yOpt
     } yield (x.toDouble,y.toDouble)
+  }
+}
+
+object SnapLike {
+  /** Applys snap-t-grid to the given node using node's boundsInParent-property. */
+  def applySnapToGrid(snaplike:SnapLike, node:Node with MovableShape): Unit = {
+    val delta = getSnapToGridDistance(snaplike, node.getBoundsInParent.getMinX,
+      node.getBoundsInParent.getMinY)
+
+    node.move(delta)
+  }
+
+  /** Returns the delta for snap-to-grid for the point represented by (x,y). */
+  def getSnapToGridDistance(snaplike:SnapLike, x:Double,y:Double):Point = {
+    val deltaX = snaplike.getClosestXPosition(x).
+      map (_.toDouble - x).getOrElse(0.0)
+
+    val deltaY = snaplike.getClosestYPosition(y).
+      map (_.toDouble - y).getOrElse(0.0)
+
+    (deltaX,deltaY)
   }
 }

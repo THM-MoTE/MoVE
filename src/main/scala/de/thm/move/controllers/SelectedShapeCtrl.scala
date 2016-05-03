@@ -122,7 +122,7 @@ class SelectedShapeCtrl(
               if(selectedShapes.contains(shape)) selectedShapes
               else List(shape)
 
-            applySnapToGrid(node)
+            SnapLike.applySnapToGrid(grid, node)
 
             //calculate delta (offset from original position) for un-/redo
             val deltaRedo = (mv.getSceneX - startP.x, mv.getSceneY - startP.y)
@@ -138,24 +138,6 @@ class SelectedShapeCtrl(
       }
 
     moveElement
-  }
-
-  private def applySnapToGrid(node:Node with MovableShape): Unit = {
-    val delta = getSnapToGridDistance(node.getBoundsInParent.getMinX,
-      node.getBoundsInParent.getMinY)
-
-    node.move(delta)
-  }
-
-  /** Returns the delta for snap-to-grid for the point represented by (x,y). */
-  private def getSnapToGridDistance(x:Double,y:Double):Point = {
-    val deltaX = grid.getClosestXPosition(x).
-      map (_.toDouble - x).getOrElse(0.0)
-
-    val deltaY = grid.getClosestYPosition(y).
-      map (_.toDouble - y).getOrElse(0.0)
-
-    (deltaX,deltaY)
   }
 
   def removeSelectedShape: Unit = {
