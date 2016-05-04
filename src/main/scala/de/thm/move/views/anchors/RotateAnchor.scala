@@ -2,8 +2,9 @@
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
  */
 
-package de.thm.move.views
+package de.thm.move.views.anchors
 
+import de.thm.move.views.anchors
 import de.thm.move.views.panes.DrawPanel
 
 /** Turns a anchor into a rotation-anchor */
