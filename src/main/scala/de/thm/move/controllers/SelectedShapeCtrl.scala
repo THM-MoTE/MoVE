@@ -225,7 +225,9 @@ class SelectedShapeCtrl(
 
     history.execute {
       for( (shape, fillColor, strokeColor) <- coloredShapes ) {
-        val newFillColor = FillPattern.getFillColor(fillPattern, fillColor, strokeColor)
+        val width = shape.getBoundsInLocal.getWidth()
+        val height = shape.getBoundsInLocal.getHeight()
+        val newFillColor = FillPattern.getFillColor(fillPattern, fillColor, strokeColor,width, height)
         shape.setFillColor(newFillColor)
         shape.fillPatternProperty.set(fillPattern)
       }
