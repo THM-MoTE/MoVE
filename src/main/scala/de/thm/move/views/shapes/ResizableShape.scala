@@ -19,6 +19,10 @@ trait ResizableShape extends Node with MovableShape {
   /** Creates a '''exact copy''' of this element. */
   def copy: ResizableShape
 
+  /** Converts the given point from local-coordinate space into parent's coordinate space.
+    *
+    * @see [[javafx.scene.Node]]
+    * */
   def localToParentPoint(point:Point):Point = {
     val (x,y) = point
     val point2D = localToParent(x,y)

@@ -11,14 +11,17 @@ import scala.util._
 
 import de.thm.move.loader.parser.ast._
 
+/**A parser for modelica files. */
 trait ModelicaParserLike {
 
+  /** Parses the file represented by path and returns the parsed ast */
   def parse(path:Path): Try[List[Model]] = {
     val stream = Files.newInputStream(path)
     val erg = parse(stream)
-    stream.close
+    stream.close()
     erg
   }
+  /** Parses the given InputStream and returns the parsed ast */
   def parse(stream:InputStream): Try[List[Model]]
 }
 

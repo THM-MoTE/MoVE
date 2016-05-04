@@ -4,7 +4,8 @@
 
 package de.thm.move.views.shapes
 
-/** A bezier-curved shape that can get transformed into a non-curved/normal shape */
+/** A non-curved/normal shape that can get transformed into a curved shape */
 trait QuadCurveTransformable extends ResizableShape {
+  /** Returns a version with bezier-curves of this shape */
   def toCurvedShape: AbstractQuadCurveShape
 }

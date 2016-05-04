@@ -75,6 +75,7 @@ trait RectangleLike {
     if(w>checkValue)
       setWidth(w)
   }
+  /** Only sets the height if it's > a specific value */
   private def setCheckedHeight(h:Double):Unit = {
     if(h>checkValue)
       setHeight(h)

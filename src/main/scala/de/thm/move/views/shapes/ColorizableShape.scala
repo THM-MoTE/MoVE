@@ -30,6 +30,7 @@ trait ColorizableShape {
     setStrokeWidth(other.getStrokeWidth)
   }
 
+  /** Sets the fill and stroke color of this shape */
   def colorizeShape(fillColor:Paint, strokeColor:Paint): Unit = {
     self.setFillColor(fillColor)
     self.setStrokeColor(strokeColor)
