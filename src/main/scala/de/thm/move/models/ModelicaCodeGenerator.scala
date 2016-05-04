@@ -7,10 +7,10 @@ package de.thm.move.models
 import java.io.PrintWriter
 import java.net.URI
 import java.nio.charset.Charset
-import java.nio.file.{Paths, Files}
+import java.nio.file.{Files, Paths}
 import java.util.Base64
 import javafx.scene.Node
-import javafx.scene.paint.{Paint, Color}
+import javafx.scene.paint.{Color, Paint}
 import javafx.scene.shape.{LineTo, MoveTo}
 import javafx.scene.text.TextAlignment
 import javafx.geometry.Bounds
@@ -19,8 +19,8 @@ import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
 import de.thm.move.util.PointUtils._
-import de.thm.move.util.ResourceUtils
-import de.thm.move.util.GeometryUtils
+import de.thm.move.util.{Convertable, GeometryUtils, ResourceUtils}
+import de.thm.move.util.Convertable._
 import de.thm.move.views.shapes._
 
 class ModelicaCodeGenerator(
@@ -44,11 +44,8 @@ class ModelicaCodeGenerator(
     s"""points = {$psStrings}"""
   }
 
-  private def genColor(name:String, p:Paint):String = p match {
-    case c:Color =>
-    s"""${name} = {${(c.getRed*255).toInt},${(c.getGreen*255).toInt},${(c.getBlue*255).toInt}}"""
-    case _ => throw new IllegalArgumentException("Can't create rgb-values from non-color paint-values")
-  }
+  private def genColor(name:String, p:Paint)(implicit ev:Convertable[Paint,String]):String =
+    s"$name = ${ev.convert(p)}"
 
   private def genStrokeWidth(elem:ColorizableShape, key:String="lineThickness"): String =
     s"$key = ${elem.getStrokeWidth}"
