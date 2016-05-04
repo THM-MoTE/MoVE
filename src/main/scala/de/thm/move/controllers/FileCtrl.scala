@@ -21,10 +21,10 @@ import implicits.FxHandlerImplicits._
 import implicits.MonadImplicits._
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.UserInputException
-import de.thm.move.views.dialogs.SaveDialog
+import de.thm.move.views.dialogs.SrcFormatDialog
 import de.thm.move.Global._
 import de.thm.move.util.PointUtils._
-import de.thm.move.views.dialogs.{Dialogs, SaveDialog}
+import de.thm.move.views.dialogs.{Dialogs, SrcFormatDialog}
 
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
@@ -37,7 +37,7 @@ class FileCtrl(owner: => Window) {
   private var saveInfos: Option[SaveInfos] = None
 
   private def showSrcCodeDialog():FormatSrc = {
-    val dialog = new SaveDialog
+    val dialog = new SrcFormatDialog
     val selectOpt:Option[ButtonType] = dialog.showAndWait()
     selectOpt.map {
       case dialog.onelineBtn => Oneline
