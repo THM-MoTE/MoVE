@@ -13,7 +13,7 @@ import javafx.scene.shape.Line
 object FillPattern extends Enumeration {
   type FillPattern = Value
   val None, Solid, HorizontalCylinder, VerticalCylinder,
-  Sphere, Horizontal, Vertical, Cross, Backward = Value
+  Sphere, Horizontal, Vertical, Cross, Forward, Backward = Value
 
   def getFillColor(fillPattern:FillPattern.FillPattern,
     fillC:Color,
@@ -62,6 +62,10 @@ object FillPattern extends Enumeration {
       case FillPattern.Cross =>
         withCanvas(width,height,fillC) { canvas =>
           canvas.createGridStructure(strokeC)
+        }
+      case FillPattern.Forward =>
+        withCanvas(width,height,fillC) { canvas =>
+          canvas.createForwardStructure(strokeC)
         }
       case FillPattern.Backward =>
         withCanvas(width,height,fillC) { canvas =>
@@ -117,6 +121,28 @@ object FillPattern extends Enumeration {
         val x = i*distance
         val y = i*distance
         context.strokeLine(0, y, x, 0)
+      }
+    }
+
+    def createForwardStructure(foreground:Color): Unit = {
+      context.setFill(foreground)
+      val max = width max height
+      val doubled = max*2
+      var endX = 0
+      for(i <- (doubled/distance).toInt to 0 by -1) yield {
+        val startX = 0
+        val startY = i*distance
+        val endY = doubled
+        context.strokeLine(startX, startY, endX, endY)
+        endX += 5
+      }
+
+      for(i <- 1 to (doubled/distance).toInt) yield {
+        val startX = i*distance
+        val startY = 0
+        val endY = doubled
+        context.strokeLine(startX, startY, endX, endY)
+        endX += 5
       }
     }
   }
