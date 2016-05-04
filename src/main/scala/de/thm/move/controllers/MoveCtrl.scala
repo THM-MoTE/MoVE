@@ -40,6 +40,7 @@ import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
 import de.thm.move.util.ResourceUtils
 import de.thm.move.views._
+import de.thm.move.views.panes.{DrawPanel, SnapGrid}
 import de.thm.move.views.shapes.{ResizableShape, ResizableText}
 
 import scala.None

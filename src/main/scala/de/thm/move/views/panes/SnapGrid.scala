@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
  */
 
-package de.thm.move.views
+package de.thm.move.views.panes
 
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.Node
