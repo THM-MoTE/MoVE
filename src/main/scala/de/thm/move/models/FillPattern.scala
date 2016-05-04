@@ -84,7 +84,6 @@ object FillPattern extends Enumeration {
         val endY = height
         val x = i*distance
         context.strokeLine(x,startY,x,endY)
-        println("x: "+x)
       }
     }
 
