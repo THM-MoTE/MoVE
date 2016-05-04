@@ -7,12 +7,14 @@ package de.thm.move.views.shapes
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
-import de.thm.move.util.JFxUtils
-import de.thm.move.views.{MovableAnchor, Anchor}
 
+import de.thm.move.util.JFxUtils
+import de.thm.move.views.anchors.Anchor
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.util.PointUtils._
+import de.thm.move.views.anchors.Anchor
+
 import scala.collection.JavaConversions._
 
 class ResizablePolygon(val points:List[Double])

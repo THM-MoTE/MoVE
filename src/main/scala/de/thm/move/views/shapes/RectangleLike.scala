@@ -15,8 +15,8 @@ import de.thm.move.util.PointUtils._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._
-import de.thm.move.views.Anchor
 import de.thm.move.Global._
+import de.thm.move.views.anchors.Anchor
 
 /** Represents shapes with rectangular boundings.
   * For Example Rectangles, Circles, Images

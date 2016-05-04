@@ -10,9 +10,10 @@ import javafx.scene.text.Text
 import javafx.scene.text.Font
 import javafx.scene.text.FontPosture
 import javafx.scene.text.FontWeight
-import de.thm.move.views.Anchor
+
 import de.thm.move.util.PointUtils._
 import de.thm.move.models.CommonTypes._
+import de.thm.move.views.anchors.Anchor
 
 class ResizableText(
     txt:String,
