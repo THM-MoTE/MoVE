@@ -231,7 +231,7 @@ class ModelicaCodeGenerator(
    s"""${spaces(indentIdx)}Polygon(
       |${spaces}${origin},
       |${spaces}${points},
-      |${spaces}${colors},
+      |${colors},
       |${spaces}${fillPattern}
       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
  }
@@ -250,7 +250,7 @@ class ModelicaCodeGenerator(
    s"""${spaces(indentIdx)}Polygon(
       |${spaces}${origin},
       |${spaces}${points},
-      ${colors},
+      |${colors},
       |${spaces}${fillPattern},
       |${spaces}smooth = Smooth.Bezier
       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
