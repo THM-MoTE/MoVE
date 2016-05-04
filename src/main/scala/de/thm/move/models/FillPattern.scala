@@ -13,7 +13,7 @@ import javafx.scene.shape.Line
 object FillPattern extends Enumeration {
   type FillPattern = Value
   val None, Solid, HorizontalCylinder, VerticalCylinder,
-  Sphere, Horizontal, Vertical, Cross, Forward, Backward = Value
+  Sphere, Horizontal, Vertical, Cross, Forward, Backward, CrossDiag = Value
 
   def getFillColor(fillPattern:FillPattern.FillPattern,
     fillC:Color,
@@ -70,6 +70,10 @@ object FillPattern extends Enumeration {
       case FillPattern.Backward =>
         withCanvas(width,height,fillC) { canvas =>
           canvas.createBackwardStructure(strokeC)
+        }
+      case FillPattern.CrossDiag =>
+        withCanvas(width,height,fillC) { canvas =>
+          canvas.createCrossDiagStructure(strokeC)
         }
       case _ => fillC
     }
@@ -144,6 +148,11 @@ object FillPattern extends Enumeration {
         context.strokeLine(startX, startY, endX, endY)
         endX += 5
       }
+    }
+
+    def createCrossDiagStructure(foreground:Color): Unit = {
+      createBackwardStructure(foreground)
+      createForwardStructure(foreground)
     }
   }
 }
