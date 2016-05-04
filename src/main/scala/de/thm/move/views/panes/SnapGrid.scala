@@ -12,6 +12,10 @@ import javafx.scene.shape.Line
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.util.GeometryUtils
 
+/** Creates a new grid with the size of the given topPane.
+  * @param cellSize Size of each cell
+  * @param snapDistance How close must the shape be so that the snapping mode is activate
+  * */
 class SnapGrid(topPane:Pane, val cellSize:Int, snapDistance:Int) extends Pane with SnapLike {
 
   val verticalLineId = "vertical-grid-line"

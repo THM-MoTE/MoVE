@@ -26,6 +26,7 @@ class DrawPanel() extends Pane {
     shapes = n :: shapes
   }
 
+  /** Removes the given shape. If the shape is a ResizableShape the corresponding anchors get removed too. */
   def remove[A <: Node](shape:A): Unit = {
     shapes = shapes.filterNot(_ == shape)
     shape match {
@@ -36,6 +37,7 @@ class DrawPanel() extends Pane {
     }
   }
 
+  /** Removes all elements as long as the predicate returns true */
   def removeWhile(pred: Node => Boolean): Unit = {
     val removingShapes = shapes.takeWhile(pred)
     shapes = shapes.dropWhile(pred)
@@ -43,7 +45,7 @@ class DrawPanel() extends Pane {
     getChildren.removeAll(removingShapes:_*)
   }
 
-
+  /** Removes all elements as long as the predicate returns true */
   def removeWhileIdx(pred: (Node, Int) => Boolean): Unit = {
     val shapeWithidx = shapes.zipWithIndex
     val removingShapes = shapeWithidx.takeWhile {
