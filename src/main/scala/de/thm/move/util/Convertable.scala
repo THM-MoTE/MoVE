@@ -21,6 +21,7 @@ object Convertable {
     override def convert(f: String): Color = Color.valueOf(f)
   }
 
+  /** Converts a javafx-color into modelica's representation of colors. */
   implicit object ColorToString extends Convertable[Paint, String] {
     override def convert(p: Paint): String = p match {
     case c:Color => s"""{${(c.getRed*255).toInt},${(c.getGreen*255).toInt},${(c.getBlue*255).toInt}}"""
