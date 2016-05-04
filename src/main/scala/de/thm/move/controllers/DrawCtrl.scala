@@ -31,6 +31,7 @@ import de.thm.move.views._
 import scala.collection.JavaConversions._
 import javafx.scene.Parent
 
+import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.panes.DrawPanel
 
 /** Controller for drawing new shapes or adding existing shapes to the drawPanel. */
