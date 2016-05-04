@@ -9,11 +9,11 @@ import java.util.ResourceBundle
 import javafx.fxml.{FXML, FXMLLoader, Initializable}
 import javafx.stage.Stage
 import javafx.scene.control.TextArea
-import javafx.scene.layout.{VBox, AnchorPane}
+import javafx.scene.layout.{AnchorPane, VBox}
 import javafx.scene.{Cursor, Parent, Scene}
 
 import de.thm.move.Global
-import de.thm.move.views.InfoLine
+import de.thm.move.views.dialogs.InfoLine
 
 class AboutCtrl extends Initializable {
 

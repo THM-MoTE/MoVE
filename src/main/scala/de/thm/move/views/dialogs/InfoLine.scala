@@ -2,11 +2,10 @@
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
  */
 
-package de.thm.move.views
+package de.thm.move.views.dialogs
 
-import javafx.geometry.Insets
 import javafx.scene.control.Label
-import javafx.scene.layout.{FlowPane, GridPane}
+import javafx.scene.layout.FlowPane
 
 /** Infoline used inside the about-dialog. */
 class InfoLine(key:String, msg:String = "") extends FlowPane {

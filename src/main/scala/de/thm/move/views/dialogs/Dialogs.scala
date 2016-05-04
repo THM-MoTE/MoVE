@@ -2,18 +2,15 @@
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
  */
 
-package de.thm.move.views
+package de.thm.move.views.dialogs
 
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
-
+import java.io.{PrintWriter, StringWriter}
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control._
-import java.io.StringWriter
-import java.io.PrintWriter
-import javafx.scene.layout.GridPane
-import javafx.scene.layout.Priority
-import javafx.stage.WindowEvent
+import javafx.scene.layout.{GridPane, Priority}
 import javafx.stage.FileChooser
+
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
 object Dialogs {
 
