@@ -4,9 +4,11 @@
 
 package de.thm.move.views
 
+import de.thm.move.views.panes.DrawPanel
+
 /** Turns a anchor into a rotation-anchor */
 trait RotateAnchor {
-  this: Anchor =>
+  this: anchors.Anchor =>
   this.setId(DrawPanel.tmpShapeId)
   this.getStyleClass.addAll("rotation-anchor")
 }

@@ -2,22 +2,17 @@
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
  */
 
-package de.thm.move.views
+package de.thm.move.views.panes
 
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.value.{ObservableValue}
-import javafx.event.{EventHandler}
-import javafx.scene.input.KeyEvent;
-import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
-import javafx.scene.shape._
-import javafx.scene.image.{ImageView, Image}
-import javafx.scene.input.{InputEvent}
-import scala.collection.JavaConverters._
-import de.thm.move.views.shapes._
+
 import de.thm.move.models.CommonTypes._
+import de.thm.move.views.shapes._
+import de.thm.move.views.SelectionGroup
+import de.thm.move.views.anchors.Anchor
+
+import scala.collection.JavaConverters._
 
 /** The main-panel which holds all drawn shapes */
 class DrawPanel() extends Pane {

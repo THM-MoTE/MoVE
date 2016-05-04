@@ -15,7 +15,7 @@ import de.thm.move.history.History.Command
 import de.thm.move.util.JFxUtils._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.PointUtils._
-import de.thm.move.views.Anchor
+import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.RotateAnchor
 import javafx.scene.Node
 

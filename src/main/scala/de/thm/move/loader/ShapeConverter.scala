@@ -54,7 +54,9 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
     val fillPatt = FillPattern.withName(fs.fillPattern.split("\\.")(1))
     shape.fillPatternProperty.setValue(fillPatt)
 
-    shape.setFillColor(FillPattern.getFillColor(fillPatt, fs.fillColor, fs.strokeColor))
+    val width = shape.getBoundsInLocal.getWidth()
+    val height = shape.getBoundsInLocal.getHeight()
+    shape.setFillColor(FillPattern.getFillColor(fillPatt, fs.fillColor, fs.strokeColor, width, height))
     applyLineColor(shape, fs.strokeColor, fs.strokePattern, fs.strokeSize)
   }
 

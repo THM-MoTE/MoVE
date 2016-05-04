@@ -7,26 +7,27 @@ package de.thm.move.controllers
 import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
-import javafx.scene.control.{ChoiceDialog, ButtonType}
+import javafx.scene.control.{ButtonType, ChoiceDialog}
 import javafx.stage.Window
 import javafx.scene.Node
+
 import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
 import de.thm.move.loader.parser.ast.Model
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.models.{SrcFile, ModelicaCodeGenerator}
+import de.thm.move.models.{ModelicaCodeGenerator, SrcFile}
 import de.thm.move.views.shapes.ResizableShape
 import implicits.FxHandlerImplicits._
 import implicits.MonadImplicits._
-
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.UserInputException
-import de.thm.move.views.{Dialogs, SaveDialog}
+import de.thm.move.views.dialogs.SaveDialog
 import de.thm.move.Global._
 import de.thm.move.util.PointUtils._
+import de.thm.move.views.dialogs.{Dialogs, SaveDialog}
 
 import scala.collection.JavaConverters._
-import scala.util.{Try,Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 class FileCtrl(owner: => Window) {
 

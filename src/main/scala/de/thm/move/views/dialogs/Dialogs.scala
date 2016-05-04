@@ -2,18 +2,15 @@
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
  */
 
-package de.thm.move.views
+package de.thm.move.views.dialogs
 
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
-
+import java.io.{PrintWriter, StringWriter}
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control._
-import java.io.StringWriter
-import java.io.PrintWriter
-import javafx.scene.layout.GridPane
-import javafx.scene.layout.Priority
-import javafx.stage.WindowEvent
+import javafx.scene.layout.{GridPane, Priority}
 import javafx.stage.FileChooser
+
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
 object Dialogs {
 
@@ -83,9 +80,28 @@ object Dialogs {
     pane.add(heightLbl, 0,1)
     pane.add(heightTxt, 1,1)
     dialog.getDialogPane.setContent(pane)
-    dialog.setOnCloseRequest { de:DialogEvent =>
+    dialog.setOnCloseRequest { _:DialogEvent =>
       val str = widthTxt.getText +";"+ heightTxt.getText
       dialog.setResult(str)
+    }
+    dialog
+  }
+
+  def newGridSizeDialog(cellSize:Int): TextInputDialog = {
+    val dialog = new TextInputDialog()
+    dialog.setTitle("Grid size");
+    dialog.setHeaderText("Give a grid size in px")
+    val sizeLbl = new Label ("Size in px:")
+    val sizeTxt = new TextField(cellSize.toString)
+    val pane = new GridPane()
+    pane.setMaxWidth(Double.MaxValue)
+    pane.setHgap(5)
+    pane.setVgap(5)
+    pane.add(sizeLbl, 0,0)
+    pane.add(sizeTxt, 1,0)
+    dialog.getDialogPane.setContent(pane)
+    dialog.setOnCloseRequest { _:DialogEvent =>
+      dialog.setResult(sizeTxt.getText)
     }
     dialog
   }

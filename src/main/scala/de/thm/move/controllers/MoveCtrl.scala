@@ -40,6 +40,9 @@ import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
 import de.thm.move.util.ResourceUtils
 import de.thm.move.views._
+import de.thm.move.views.anchors.Anchor
+import de.thm.move.views.dialogs.Dialogs
+import de.thm.move.views.panes.{DrawPanel, SnapGrid}
 import de.thm.move.views.shapes.{ResizableShape, ResizableText}
 
 import scala.None
@@ -111,7 +114,7 @@ class MoveCtrl extends Initializable {
   @FXML
   var drawStub: StackPane = _
   private val drawPanel = new DrawPanel()
-  private val snapGrid = new SnapGrid(drawPanel,
+  private var snapGrid = new SnapGrid(drawPanel,
     config.getInt("grid-cell-size").getOrElse(20),
     config.getInt("grid-snap-distance").getOrElse(5)
     )
@@ -276,7 +279,7 @@ class MoveCtrl extends Initializable {
     strokeColorPicker.setOnAction(colorPickerChanged _)
 
     onChoiceboxChanged(borderThicknessChooser)(
-      selectionCtrl.setStrokeWidthForSelectedShape)
+      selectionCtrl.setStrokeWidth)
     onChoiceboxChanged(linePatternChooser)(
       selectionCtrl.setStrokePattern)
     onChoiceboxChanged(fillPatternChooser)(selectionCtrl.setFillPattern)
@@ -348,9 +351,9 @@ class MoveCtrl extends Initializable {
   def colorPickerChanged(ae:ActionEvent): Unit = {
     val src = ae.getSource
     if(src == strokeColorPicker)
-      selectionCtrl.setStrokeColorForSelectedShape(withCheckedColor(strokeColorPicker.getValue))
+      selectionCtrl.setStrokeColor(withCheckedColor(strokeColorPicker.getValue))
     else if(src == fillColorPicker)
-      selectionCtrl.setFillColorForSelectedShape(withCheckedColor(fillColorPicker.getValue))
+      selectionCtrl.setFillColor(withCheckedColor(fillColorPicker.getValue))
   }
 
   def shapeInputHandler(ev:InputEvent): Unit = {
@@ -452,6 +455,26 @@ class MoveCtrl extends Initializable {
       case None =>
         Dialogs.newErrorDialog("Given Papersize can't be used!\n" +
         "Please specify 2 valid numbers >0")
+    }
+  }
+
+  @FXML
+  def onChGridSizeClicked(e:ActionEvent): Unit = {
+    val strOpt:Option[String] = Dialogs.newGridSizeDialog(snapGrid.cellSize).showAndWait()
+    strOpt.flatMap { x =>
+      try {
+        Some(x.toInt)
+      } catch {
+        case _:NumberFormatException => None
+      }
+    } filter { x => x>0 } match {
+      case Some(size) =>
+        drawStub.getChildren.remove(snapGrid)
+        snapGrid = snapGrid.setCellSize(size)
+        drawStub.getChildren.add(0, snapGrid)
+      case None =>
+      Dialogs.newErrorDialog("Given Gridsize can't be used!\n" +
+      "Please specify a valid number > 0")
     }
   }
 

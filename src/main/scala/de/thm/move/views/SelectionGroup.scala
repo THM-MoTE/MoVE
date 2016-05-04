@@ -6,11 +6,14 @@ package de.thm.move.views
 
 import javafx.scene.Group
 import javafx.scene.paint.Paint
+
 import de.thm.move.views.shapes._
 import de.thm.move.models.CommonTypes._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import javafx.scene.layout.Pane
 import javafx.scene.input.MouseEvent
+
+import de.thm.move.views.anchors.Anchor
 
 /** A group of resizable shapes used for the grouping-mechanism (Edit - Group Elements) */
 class SelectionGroup(children:List[ResizableShape])

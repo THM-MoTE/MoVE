@@ -4,13 +4,23 @@
 
 package de.thm.move.models
 
+import javafx.scene._
 import javafx.scene.paint._
+import javafx.scene.canvas._
+import javafx.scene.paint._
+import javafx.scene.shape.Line
 
 object FillPattern extends Enumeration {
   type FillPattern = Value
-  val None, Solid, HorizontalCylinder, VerticalCylinder, Sphere = Value
+  val None, Solid, HorizontalCylinder, VerticalCylinder,
+  Sphere, Horizontal, Vertical, Cross, Forward, Backward, CrossDiag = Value
 
-  def getFillColor(fillPattern:FillPattern.FillPattern, fillC:Color, strokeC:Color):Paint = {
+  def getFillColor(fillPattern:FillPattern.FillPattern,
+    fillC:Color,
+    strokeC:Color,
+    width:Double,
+    height:Double
+    ):Paint = {
     /**
      * Implementation Nodes:
      * LinearGradients - Horizontal:
@@ -41,7 +51,108 @@ object FillPattern extends Enumeration {
         new RadialGradient(0,0,0.5,0.5,1,true,CycleMethod.NO_CYCLE, radialStops:_*)
       case FillPattern.Solid => fillC
       case FillPattern.None => null //None = null = transparent color
+      case FillPattern.Horizontal =>
+        withCanvas(width,height,fillC) { canvas =>
+          canvas.createHorizontalStructure(strokeC)
+        }
+      case FillPattern.Vertical =>
+        withCanvas(width,height,fillC) { canvas =>
+          canvas.createVerticalStructure(strokeC)
+        }
+      case FillPattern.Cross =>
+        withCanvas(width,height,fillC) { canvas =>
+          canvas.createGridStructure(strokeC)
+        }
+      case FillPattern.Forward =>
+        withCanvas(width,height,fillC) { canvas =>
+          canvas.createForwardStructure(strokeC)
+        }
+      case FillPattern.Backward =>
+        withCanvas(width,height,fillC) { canvas =>
+          canvas.createBackwardStructure(strokeC)
+        }
+      case FillPattern.CrossDiag =>
+        withCanvas(width,height,fillC) { canvas =>
+          canvas.createCrossDiagStructure(strokeC)
+        }
       case _ => fillC
+    }
+  }
+
+  private def withCanvas(width:Double,height:Double,fillC:Color)(fn: CustomCanvas => Unit): Paint = {
+    val drawing = new CustomCanvas(width,height, fillC)
+    fn(drawing)
+    new ImagePattern(drawing.snapshot(null,null))
+  }
+
+  class CustomCanvas(width:Double,height:Double, backgroundColor: Color) extends Canvas(width, height) {
+    val distance = 5 //distance between lines/cells
+    val lineSize = 1
+    val context = getGraphicsContext2D
+    context.setLineWidth(lineSize)
+    context.setFill(backgroundColor)
+    context.fillRect(0,0, width,height)
+
+    def createVerticalStructure(foreground:Color): Unit = {
+      context.setFill(foreground)
+      for (i <- 1 to (width/distance).toInt) yield {
+        val startY = 0
+        val endY = height
+        val x = i*distance
+        context.strokeLine(x,startY,x,endY)
+      }
+    }
+
+    def createHorizontalStructure(foreground:Color): Unit = {
+      context.setFill(foreground)
+      for (i <- 1 to (height/distance).toInt) yield {
+          val startX = 0
+          val endX = width
+          val y = i*distance
+          context.strokeLine(startX,y,endX,y)
+      }
+    }
+
+    def createGridStructure(foreground:Color): Unit = {
+      createVerticalStructure(foreground)
+      createHorizontalStructure(foreground)
+    }
+
+    def createBackwardStructure(foreground:Color): Unit = {
+      context.setFill(foreground)
+      val max = width max height
+      for(i <- 1 to ((max*2)/distance).toInt) yield {
+        val x = i*distance
+        val y = i*distance
+        context.strokeLine(0, y, x, 0)
+      }
+    }
+
+    def createForwardStructure(foreground:Color): Unit = {
+      context.setFill(foreground)
+      val max = width max height
+      val doubled = max*2
+      var endX = 0
+      for(i <- (doubled/distance).toInt to 0 by -1) yield {
+        val startX = 0
+        val startY = i*distance
+        val endY = doubled
+        context.strokeLine(startX, startY, endX, endY)
+        endX += 5
+      }
+
+      for(i <- 1 to (doubled/distance).toInt) yield {
+        val startX = i*distance
+        val startY = 0
+        val endY = doubled
+        context.strokeLine(startX, startY, endX, endY)
+        endX += 5
+      }
+    }
+
+    def createCrossDiagStructure(foreground:Color): Unit = {
+      createBackwardStructure(foreground)
+      createForwardStructure(foreground)
     }
   }
 }

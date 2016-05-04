@@ -21,6 +21,7 @@ import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
 import de.thm.move.views.shapes._
 import de.thm.move.views._
+import de.thm.move.views.panes.{DrawPanel, SnapLike}
 
 import scala.collection.JavaConversions._
 
@@ -132,7 +133,7 @@ class SelectedShapeCtrl(
               if(selectedShapes.contains(shape)) selectedShapes
               else List(shape)
 
-            applySnapToGrid(node)
+            SnapLike.applySnapToGrid(grid, node)
 
             //calculate delta (offset from original position) for un-/redo
             val deltaRedo = (mv.getSceneX - startP.x, mv.getSceneY - startP.y)
@@ -148,24 +149,6 @@ class SelectedShapeCtrl(
       }
 
     moveElement
-  }
-
-  private def applySnapToGrid(node:Node with MovableShape): Unit = {
-    val delta = getSnapToGridDistance(node.getBoundsInParent.getMinX,
-      node.getBoundsInParent.getMinY)
-
-    node.move(delta)
-  }
-
-  /** Returns the delta for snap-to-grid for the point represented by (x,y). */
-  private def getSnapToGridDistance(x:Double,y:Double):Point = {
-    val deltaX = grid.getClosestXPosition(x).
-      map (_.toDouble - x).getOrElse(0.0)
-
-    val deltaY = grid.getClosestYPosition(y).
-      map (_.toDouble - y).getOrElse(0.0)
-
-    (deltaX,deltaY)
   }
 
   def removeSelectedShape: Unit = {
@@ -194,21 +177,21 @@ class SelectedShapeCtrl(
     }
   }
 
-  def setFillColorForSelectedShape(color:Color): Unit = if(!selectedShapes.isEmpty) {
+  def setFillColor(color:Color): Unit = if(!selectedShapes.isEmpty) {
     zippedUndo(coloredSelectedShape)(_.getFillColor)(
       _.setFillColor(color),
       _.setFillColor _
     )
   }
 
-  def setStrokeColorForSelectedShape(color:Color): Unit = if(!selectedShapes.isEmpty) {
+  def setStrokeColor(color:Color): Unit = if(!selectedShapes.isEmpty) {
     zippedUndo(coloredSelectedShape)(_.getStrokeColor)(
       _.setStrokeColor(color),
       _.setStrokeColor _
     )
   }
 
-  def setStrokeWidthForSelectedShape(width:Int): Unit = {
+  def setStrokeWidth(width:Int): Unit = {
     zippedUndo(coloredSelectedShape)(_.getStrokeWidth)(
       _.setStrokeWidth(width),
       _.setStrokeWidth _
@@ -254,7 +237,9 @@ class SelectedShapeCtrl(
 
     history.execute {
       for( (shape, fillColor, strokeColor) <- coloredShapes ) {
-        val newFillColor = FillPattern.getFillColor(fillPattern, fillColor, strokeColor)
+        val width = shape.getBoundsInLocal.getWidth()
+        val height = shape.getBoundsInLocal.getHeight()
+        val newFillColor = FillPattern.getFillColor(fillPattern, fillColor, strokeColor,width, height)
         shape.setFillColor(newFillColor)
         shape.fillPatternProperty.set(fillPattern)
       }

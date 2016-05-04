@@ -11,12 +11,14 @@ import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.MouseButton
-import javafx.scene.control.{SeparatorMenuItem, Separator, MenuItem}
+import javafx.scene.control.{MenuItem, Separator, SeparatorMenuItem}
 import javafx.scene.input.{InputEvent, MouseEvent}
+
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.views.shapes._
-import de.thm.move.views.{DrawPanel, ShapeContextMenu}
+import de.thm.move.views.ShapeContextMenu
 import de.thm.move.Global._
+import de.thm.move.views.panes.DrawPanel
 
 /** Controller for context-menus of shapes */
 class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {

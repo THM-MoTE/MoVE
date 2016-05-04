@@ -6,8 +6,8 @@ package de.thm.move.controllers
 
 import javafx.scene.Node
 
+import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.shapes.ResizableShape
-import de.thm.move.views.Anchor
 
 trait ChangeDrawPanelLike {
 

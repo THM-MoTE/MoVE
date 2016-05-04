@@ -2,12 +2,12 @@
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
  */
 
-package de.thm.move.views
+package de.thm.move.views.anchors
 
-import javafx.scene.paint.Color
-import javafx.scene.shape.{Ellipse, Circle}
-import de.thm.move.models.CommonTypes.Point
+import javafx.scene.shape.Ellipse
+
 import de.thm.move.Global
+import de.thm.move.models.CommonTypes.Point
 
 class Anchor(x:Double, y:Double)
   extends Ellipse(x,y,Anchor.anchorWidth,Anchor.anchorHeight) {
