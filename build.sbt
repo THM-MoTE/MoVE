@@ -50,6 +50,9 @@ lazy val root = (project in file(".")).
     javacOptions ++= Seq("-source", "1.8")
     )
 
+mainClass in assembly := Some("de.thm.move.MoveApp")
+assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
+
 libraryDependencies ++= Seq(
     "com.novocode" % "junit-interface" % "0.11" % "test",
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4"
