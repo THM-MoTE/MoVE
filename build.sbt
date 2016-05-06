@@ -52,6 +52,7 @@ lazy val root = (project in file(".")).
 
 mainClass in assembly := Some("de.thm.move.MoveApp")
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
+test in assembly := {} //skip test's during packaging
 
 libraryDependencies ++= Seq(
     "com.novocode" % "junit-interface" % "0.11" % "test",
