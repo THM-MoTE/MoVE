@@ -23,6 +23,12 @@ import de.thm.move.util.{Convertable, GeometryUtils, ResourceUtils}
 import de.thm.move.util.Convertable._
 import de.thm.move.views.shapes._
 
+/** Codegenerator for modelica-source code.
+  * @param srcFormat format of generated code; either Pretty or Oneline
+  * @param pxPerMm Pixelcount per modelica "unit" a.k.a. millimeter
+  * @param paneWidth width of the icon's coordinate system
+  * @param paneHeight height of the icon's coordinate system
+  */
 class ModelicaCodeGenerator(
     srcFormat:FormatSrc,
     pxPerMm:Int,
@@ -371,6 +377,7 @@ class ModelicaCodeGenerator(
     iconStr :: graphicsStart :: shapeStr ::: List(s"${spacesOrNothing(4)}})")
   }
 
+  /** Generates a new model with the given name, source target and shapes */
   def generate[A <: Node](modelname:String, target:URI, shapes:List[A]): Lines = {
     val header = generateHeader(modelname)(2)
     val footer = generateFooter(modelname)(2)
@@ -379,6 +386,7 @@ class ModelicaCodeGenerator(
     header :: graphics
   }
 
+  /** Generates an existing model and adds the new generated Icon */
   def generateExistingFile[A <: Node](modelname:String, target:URI, shapes:List[A]): Lines = {
     val graphics = generateIcons(modelname, target, shapes)
     graphics

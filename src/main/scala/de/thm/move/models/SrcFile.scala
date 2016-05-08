@@ -10,9 +10,11 @@ import de.thm.move.loader.parser.ast._
 
 import scala.collection.JavaConversions._
 
+/** Represents a source-file with corresponding parsed AST. */
 case class SrcFile(file:Path, model:Model) {
   private lazy val lines = Files.readAllLines(file).toList
 
+  /** Gets the source before Icon(...) */
   def getBeforeModel: String = {
     model.annot match {
       case Icon(_,_,start,_) =>
@@ -34,6 +36,7 @@ case class SrcFile(file:Path, model:Model) {
     }
   }
 
+  /** Gets the source after Icon(..) */
   def getAfterModel: String = {
     model.annot match {
       case Icon(_,_,start,end) =>
