@@ -41,6 +41,7 @@ class SvgCodeGenerator {
       <defs>
         { shapesWithIds(shapes).flatMap {
             case (shape:ColorizableShape, id) => generateGradient(shape, id)
+            case _ => None
           }
         }
       </defs>
@@ -55,6 +56,7 @@ class SvgCodeGenerator {
     case rect:ResizableRectangle => genRectangle(rect, id)
     case ellipse:ResizableCircle => genCircle(ellipse, id)
     case line:ResizableLine => genLine(line)
+    case text:ResizableText => genText(text)
     case _ => throw new IllegalArgumentException(s"Can't generate svg code for: $shape")
   }
 
@@ -102,6 +104,24 @@ class SvgCodeGenerator {
       stroke-dasharray = {line.getStrokeDashArray.mkString(",")}
       /> %
       transformationAttribute(line)
+  }
+
+  private def genText(text:ResizableText): Elem = {
+    <text
+      x={text.getX.toString}
+      y={text.getY.toString}
+      fill={colorToCssColor(text.getFontColor)}
+      style={ List(
+          s"font-family: ${text.getFont.getFamily}",
+          s"font-size: ${text.getSize.toInt}pt",
+          s"font-weight: ${if(text.getBold) "bold" else "normal"}",
+          s"font-style: ${if(text.getBold) "italic" else "normal"}",
+          s"text-decoration: ${if(text.isUnderline) "underline" else "none"}"
+        ).mkString(";")
+      }
+      >
+      {text.getText}
+    </text> % transformationAttribute(text)
   }
 
   private def fillAttribute(shape:ColorizableShape, id:String) = {
