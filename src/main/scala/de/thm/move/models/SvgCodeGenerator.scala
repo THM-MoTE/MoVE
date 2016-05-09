@@ -11,6 +11,7 @@ import javafx.scene.paint.{Color, Paint}
 
 import de.thm.move.Global._
 import de.thm.move.util.GeometryUtils
+import de.thm.move.util.GeometryUtils._
 import de.thm.move.views.shapes._
 
 import scala.xml.{Elem, Null, UnprefixedAttribute}
@@ -49,6 +50,7 @@ class SvgCodeGenerator {
   }
   def generateShape(shape:Node, id:String): Elem = shape match {
     case rect:ResizableRectangle => genRectangle(rect, id)
+    case ellipse:ResizableCircle => genCircle(ellipse, id)
     case _ => throw new IllegalArgumentException(s"Can't generate svg code for: $shape")
   }
 
@@ -64,6 +66,20 @@ class SvgCodeGenerator {
       fillAttribute(rectangle, id) %
       fillOpacityAttribute(rectangle, id)  %
       transformationAttribute(rectangle)
+  }
+
+  private def genCircle(ellipse:ResizableCircle, id:String): Elem = {
+    <ellipse
+      cx={ellipse.getCenterX.toString}
+      cy={ellipse.getCenterY.toString}
+      rx={asRadius(ellipse.getWidth).toString}
+      ry={asRadius(ellipse.getHeight).toString}
+      style={genColorStyle(ellipse)}
+      stroke-dasharray = {ellipse.getStrokeDashArray.mkString(",")}
+      /> %
+      fillAttribute(ellipse, id) %
+      fillOpacityAttribute(ellipse, id)  %
+      transformationAttribute(ellipse)
   }
 
   private def fillAttribute(shape:ColorizableShape, id:String) = {
