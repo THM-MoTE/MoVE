@@ -46,10 +46,11 @@ class ModelicaParser extends JavaTokenParsers
 
   /** Icon is optional; there are models without a icon */
   def moSource:Parser[Option[Annotation]] = (
-    skipAnnotation ~> "annotation" ~> "(" ~> skipUninterestingStuff ~> posString(")") <~ ";" ^^ {
+    skipAnnotation ~> "annotation" ~> "(" ~> icon <~ ")" <~";" ^^ { Some(_) }
+    | skipAnnotation ~> "annotation" ~> "(" ~> skipUninterestingStuff ~> posString(")") <~ ";" ^^ {
       paren => Some(WithoutIcon(paren.pos))
     }
-    | skipUninterestingStuff ~> icon <~ ")" <~ ";" ^^ { Some(_) }
+    | skipUninterestingStuff ~> icon <~ ")" <~ ";" ^^ { Some(_) } //TODO i think this case can get removed
     | stuffAfterModel ^^ { _ => None }
   )
 
