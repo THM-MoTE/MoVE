@@ -142,16 +142,19 @@ class FileCtrl(owner: => Window) {
   }
 
   def exportAsSvg(shapes:List[Node], width:Double,height:Double): Try[Unit] = {
-    val chooser = Dialogs.newModelicaFileChooser()
+    val chooser = Dialogs.newSvgFileChooser()
     chooser.setTitle("Export as svg..")
     val fileTry = Option(chooser.showSaveDialog(owner)) match {
       case Some(x) => Success(x)
       case _ => Failure(UserInputException("Select a file for export!"))
     }
-    for(file <- fileTry) yield {
+    for{
+      file <- fileTry
+      path = Paths.get(file.toURI)
+      } yield {
       val generator = new SvgCodeGenerator
       val xml = generator.generateShapes(shapes, width, height)
-      generator.writeToFile(xml.text)
+      generator.writeToFile(xml.toString)(path)
     }
   }
 
