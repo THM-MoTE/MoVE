@@ -85,16 +85,22 @@ object FillPattern extends Enumeration {
     new ImagePattern(drawing.snapshot(null,null))
   }
 
+  /** A canvas for drawing modelica's structure-like FillPatterns.
+    */
   class CustomCanvas(width:Double,height:Double, backgroundColor: Color) extends Canvas(width, height) {
     val distance = 5 //distance between lines/cells
     val lineSize = 1
     val context = getGraphicsContext2D
     context.setLineWidth(lineSize)
     context.setFill(backgroundColor)
-    context.fillRect(0,0, width,height)
+    context.fillRect(0,0, width,height) //create a backgroundColor
 
+    /** Draws the FillPattern.Vertical structure from modelica onto this canvas
+      * with the given color.
+      */
     def createVerticalStructure(foreground:Color): Unit = {
       context.setFill(foreground)
+        //creates vertical lines starting left going to right
       for (i <- 1 to (width/distance).toInt) yield {
         val startY = 0
         val endY = height
@@ -103,6 +109,9 @@ object FillPattern extends Enumeration {
       }
     }
 
+    /** Draws the FillPattern.Horizontal structure from modelica onto this canvas
+      * with the given color.
+      */
     def createHorizontalStructure(foreground:Color): Unit = {
       context.setFill(foreground)
       for (i <- 1 to (height/distance).toInt) yield {
@@ -113,14 +122,21 @@ object FillPattern extends Enumeration {
       }
     }
 
+    /** Draws the FillPattern.Cross structure from modelica onto this canvas
+      * with the given color.
+      */
     def createGridStructure(foreground:Color): Unit = {
       createVerticalStructure(foreground)
       createHorizontalStructure(foreground)
     }
 
+    /** Draws the FillPattern.Backward structure from modelica onto this canvas
+      * with the given color.
+      */
     def createBackwardStructure(foreground:Color): Unit = {
       context.setFill(foreground)
       val max = width max height
+      //create lines going from top-left to bottom-right
       for(i <- 1 to ((max*2)/distance).toInt) yield {
         val x = i*distance
         val y = i*distance
@@ -128,19 +144,24 @@ object FillPattern extends Enumeration {
       }
     }
 
+    /** Draws the FillPattern.Forward structure from modelica onto this canvas
+      * with the given color.
+      */
     def createForwardStructure(foreground:Color): Unit = {
       context.setFill(foreground)
       val max = width max height
       val doubled = max*2
-      var endX = 0
+      var endX = 0 //distance to last line
+        //create lines from bottom-left to middle
       for(i <- (doubled/distance).toInt to 0 by -1) yield {
         val startX = 0
         val startY = i*distance
         val endY = doubled
         context.strokeLine(startX, startY, endX, endY)
-        endX += 5
+        endX += 5 //5px between this and the next line
       }
 
+        //create lines from middle to top-right
       for(i <- 1 to (doubled/distance).toInt) yield {
         val startX = i*distance
         val startY = 0
@@ -150,6 +171,9 @@ object FillPattern extends Enumeration {
       }
     }
 
+    /** Draws the FillPattern.Cross structure from modelica onto this canvas
+      * with the given color.
+      */
     def createCrossDiagStructure(foreground:Color): Unit = {
       createBackwardStructure(foreground)
       createForwardStructure(foreground)

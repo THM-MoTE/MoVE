@@ -22,39 +22,39 @@ object Dialogs {
 
   def newExceptionDialog(ex:Throwable, aditionalInfo:String=""): Alert = {
     val alert = new Alert(AlertType.ERROR)
-    alert.setTitle("Exception error!");
-    alert.setHeaderText("Something terrible happened!");
-    alert.setContentText(s"${ex.getMessage} $aditionalInfo");
+    alert.setTitle("Exception error!")
+    alert.setHeaderText("Something terrible happened!")
+    alert.setContentText(s"${ex.getMessage} $aditionalInfo")
 
     // Create expandable Exception.
-    val sw = new StringWriter();
-    val pw = new PrintWriter(sw);
-    ex.printStackTrace(pw);
-    val exceptionText = sw.toString();
-    val label = new Label("The exception stacktrace was:");
+    val sw = new StringWriter()
+    val pw = new PrintWriter(sw)
+    ex.printStackTrace(pw)
+    val exceptionText = sw.toString()
+    val label = new Label("The exception stacktrace was:")
 
-    val textArea = new TextArea(exceptionText);
-    textArea.setEditable(false);
-    textArea.setWrapText(true);
+    val textArea = new TextArea(exceptionText)
+    textArea.setEditable(false)
+    textArea.setWrapText(true)
 
-    textArea.setMaxWidth(Double.MaxValue);
-    textArea.setMaxHeight(Double.MaxValue);
-    GridPane.setVgrow(textArea, Priority.ALWAYS);
-    GridPane.setHgrow(textArea, Priority.ALWAYS);
+    textArea.setMaxWidth(Double.MaxValue)
+    textArea.setMaxHeight(Double.MaxValue)
+    GridPane.setVgrow(textArea, Priority.ALWAYS)
+    GridPane.setHgrow(textArea, Priority.ALWAYS)
 
-    val expContent = new GridPane();
-    expContent.setMaxWidth(Double.MaxValue);
-    expContent.add(label, 0, 0);
-    expContent.add(textArea, 0, 1);
+    val expContent = new GridPane()
+    expContent.setMaxWidth(Double.MaxValue)
+    expContent.add(label, 0, 0)
+    expContent.add(textArea, 0, 1)
 
     // Set expandable Exception into the dialog pane.
-    alert.getDialogPane().setExpandableContent(expContent);
+    alert.getDialogPane().setExpandableContent(expContent)
     alert
   }
 
   def newScaleDialog(): TextInputDialog = {
     val dialog = new TextInputDialog("1")
-    dialog.setTitle("Scale factor");
+    dialog.setTitle("Scale factor")
     dialog.setHeaderText("Give a scale factor in px/mm")
     dialog.setContentText("Please enter a valid scale factor between 1 and 100 (default=1):")
     dialog
@@ -62,7 +62,7 @@ object Dialogs {
 
   def newPaperSizeDialog(width:Double,height:Double): TextInputDialog = {
     val dialog = new TextInputDialog()
-    dialog.setTitle("Paper size");
+    dialog.setTitle("Paper size")
     dialog.setHeaderText("Give a paper size in px")
 
     val widthLbl = new Label("Width in px:")
@@ -89,7 +89,7 @@ object Dialogs {
 
   def newGridSizeDialog(cellSize:Int): TextInputDialog = {
     val dialog = new TextInputDialog()
-    dialog.setTitle("Grid size");
+    dialog.setTitle("Grid size")
     dialog.setHeaderText("Give a grid size in px")
     val sizeLbl = new Label ("Size in px:")
     val sizeTxt = new TextField(cellSize.toString)

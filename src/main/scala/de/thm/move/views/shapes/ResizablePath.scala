@@ -32,7 +32,7 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
     case line:LineTo => List((line.getX,line.getY))
   }
 
-  override def getFillColor:Paint = null /*Path has no fill*/
+  override def getFillColor:Paint = null /*Path has no fill => transparent background == null in JavaFx*/
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
   override def toCurvedShape = QuadCurvePath(this)
   override def copy: ResizableShape = {

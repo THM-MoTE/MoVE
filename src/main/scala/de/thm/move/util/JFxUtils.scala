@@ -48,10 +48,11 @@ object JFxUtils {
     case _ => throw new IllegalArgumentException(s"that's not a resizableShape: $n")
   }
 
+  /** Creates an EventHandler, calls inside handle() the given function fn and consumes the event afterwards. */
   def withConsumedEvent[A <: Event](fn: A => Unit): EventHandler[A] = new EventHandler[A]() {
     override def handle(event: A): Unit = {
       fn(event)
-      event.consume
+      event.consume()
     }
   }
 }

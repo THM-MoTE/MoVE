@@ -72,7 +72,7 @@ object Global {
 
   /** Helper function for implementing undo-/redo on a list of elements of the same type.
     *
-    * First map the elements of xs with function fn.
+    * First maps the elements of xs with function fn.
     * Then applys for each element in xs exec() in redo.
     * Last apply for each zipped element (A,B) undo in undo.
     *

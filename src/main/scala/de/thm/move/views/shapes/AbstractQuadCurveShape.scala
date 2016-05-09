@@ -93,5 +93,6 @@ abstract class AbstractQuadCurveShape(
     getElements.addAll(calculatePathElements(underlyingPolygonPoints): _*)
   }
 
+  /** Returns a non-curved version of this shape. */
   def toUncurvedShape: ResizableShape
 }

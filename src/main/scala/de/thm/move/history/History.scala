@@ -4,6 +4,7 @@
 
 package de.thm.move.history
 
+/** A history with un-/redo capability implemented with the Command-Pattern. */
 class History(cacheSize: Int) {
   import History._
 
@@ -16,15 +17,18 @@ class History(cacheSize: Int) {
   def execute(doFn: => Unit)(undoFn: => Unit): Unit =
     execute(Command( () => doFn, () => undoFn))
 
+  /** Executes the given command and saves it for un-/redo */
   def execute(c:Command): Unit = {
     c.exec()
     save(c)
   }
 
+  /** Saves the given command for un-/redo without executing it */
   def save(c:Command): Unit =  {
     memory = addWithFixedSize(memory, c, cacheSize)
   }
 
+  /** Undos last action */
   def undo(): Unit = {
     memory.headOption foreach { x =>
       x.undo()
@@ -33,6 +37,7 @@ class History(cacheSize: Int) {
     }
   }
 
+  /** Redos last action */
   def redo(): Unit = {
     revertedCmds.headOption foreach { x =>
       x.exec()
@@ -46,8 +51,10 @@ object History {
   type Action = () => Unit
   case class Command(exec: Action, undo: Action)
 
+  /** An action that does nothing. (use as placeholder) */
   val emptyAction = Command( () => Unit , () => Unit )
 
+  /** Creates a new command from the given functions */
   def newCommand(exec: => Unit, undo: => Unit):Command = Command( () => exec, () => undo )
 
   def partialAction(undo: => Unit)(exec: => Unit): Command = {

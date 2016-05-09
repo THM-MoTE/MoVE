@@ -24,7 +24,10 @@ class SelectionGroup(children:List[ResizableShape])
 
   val getAnchors: List[Anchor] = children.flatMap(_.getAnchors)
 
-  def copy: ResizableShape = throw new UnsupportedOperationException("Not supported")
+  def copy: ResizableShape = {
+    val childCopies = children.map(_.copy)
+    new SelectionGroup(childCopies)
+  }
 
   override def move(delta:Point):Unit = children.foreach(_.move(delta))
   override def childrens: List[ResizableShape] = children

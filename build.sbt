@@ -45,10 +45,14 @@ lazy val root = (project in file(".")).
   settings(
     organization := "thm",
     name := "move",
-    version := "0.5.1",
+    version := "0.5.2",
     scalaVersion := "2.11.7",
     javacOptions ++= Seq("-source", "1.8")
     )
+
+mainClass in assembly := Some("de.thm.move.MoveApp")
+assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
+test in assembly := {} //skip test's during packaging
 
 libraryDependencies ++= Seq(
     "com.novocode" % "junit-interface" % "0.11" % "test",
