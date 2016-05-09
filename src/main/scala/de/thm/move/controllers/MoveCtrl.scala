@@ -407,28 +407,37 @@ class MoveCtrl extends Initializable {
     rootStage.setTitle(newTitle)
   }
 
+  private def fileErrorHandling(tr: Try[_]): Unit = {
+    tr  match {
+      case Failure(ex:UserInputException) =>
+        Dialogs.newErrorDialog(ex.msg).showAndWait()
+      case Failure(ex) =>
+        Dialogs.newExceptionDialog(ex).showAndWait()
+      case _ => //ignore successfull case
+    }
+  }
+
   @FXML
   def onSaveClicked(e:ActionEvent): Unit = {
-    fileCtrl.saveFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
-      map(displayUsedFile) match {
-        case Failure(ex:UserInputException) =>
-          Dialogs.newErrorDialog(ex.msg).showAndWait()
-        case Failure(ex) =>
-          Dialogs.newExceptionDialog(ex).showAndWait()
-          case _ => //ignore successfull case
-      }
+    fileErrorHandling(
+      fileCtrl.saveFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
+      map(displayUsedFile)
+    )
   }
 
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
-    fileCtrl.saveNewFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
-      map(displayUsedFile) match {
-        case Failure(ex:UserInputException) =>
-          Dialogs.newErrorDialog(ex.msg).showAndWait()
-        case Failure(ex) =>
-          Dialogs.newExceptionDialog(ex).showAndWait()
-          case _ => //ignore successfull case
-      }
+    fileErrorHandling(
+      fileCtrl.saveNewFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
+        map(displayUsedFile)
+    )
+  }
+
+  @FXML
+  def onExportSvgClicked(e:ActionEvent): Unit = {
+    fileErrorHandling(
+      fileCtrl.exportAsSvg(drawPanel.getShapes, drawPanel.getWidth,drawPanel.getHeight)
+    )
   }
 
   @FXML
