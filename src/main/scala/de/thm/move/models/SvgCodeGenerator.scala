@@ -10,6 +10,7 @@ import javafx.scene.Node
 import javafx.scene.paint.{Color, Paint}
 
 import de.thm.move.Global._
+import de.thm.move.util.GeometryUtils
 import de.thm.move.views.shapes._
 
 import scala.xml.Elem
@@ -72,7 +73,21 @@ class SvgCodeGenerator {
           case _ => "%.2f".formatLocal(Locale.US, rectangle.oldFillColorProperty.get.getOpacity)
         }
       }
+      transform={
+        generateRotation(rectangle).getOrElse("")
+      }
       />
+  }
+
+  private def generateRotation(node:Node): Option[String] = {
+    val rotation = node.getRotate
+    if(rotation == 0 | rotation == 360) None
+    else {
+      val degree = rotation.toInt
+      val bounds = node.getBoundsInLocal
+      val (x,y) = GeometryUtils.middleOfLine(bounds.getMinX, bounds.getMinY, bounds.getMaxX,bounds.getMaxY)
+      Some(s"rotate($degree $x $y)")
+    }
   }
 
   private def generateGradient(shape:ColorizableShape, id:String):Option[Elem] = {
