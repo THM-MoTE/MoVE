@@ -57,9 +57,7 @@ object History {
   /** Creates a new command from the given functions */
   def newCommand(exec: => Unit, undo: => Unit):Command = Command( () => exec, () => undo )
 
-  def partialAction(undo: => Unit)(exec: => Unit): Command = {
-    Command( () => exec, () => undo)
-  }
+  def partialAction(undo: => Unit)(exec: => Unit): Command = newCommand(exec, undo)
 
 
   /** Prepends the element to the list if xs.size < fixedSize,
