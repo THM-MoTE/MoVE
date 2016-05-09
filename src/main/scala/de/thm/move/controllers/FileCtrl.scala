@@ -15,12 +15,11 @@ import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
 import de.thm.move.loader.parser.ast.Model
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.models.{ModelicaCodeGenerator, SrcFile}
+import de.thm.move.models.{ModelicaCodeGenerator, SrcFile, SvgCodeGenerator, UserInputException}
 import de.thm.move.views.shapes.ResizableShape
 import implicits.FxHandlerImplicits._
 import implicits.MonadImplicits._
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
-import de.thm.move.models.UserInputException
 import de.thm.move.views.dialogs.SrcFormatDialog
 import de.thm.move.Global._
 import de.thm.move.util.PointUtils._
@@ -139,6 +138,20 @@ class FileCtrl(owner: => Window) {
       save(usedFile, uri, srcFormat, pxPerMm, shapes, width, height)
       saveInfos = Some(SaveInfos(uri,pxPerMm, srcFormat))
       Paths.get(uri)
+    }
+  }
+
+  def exportAsSvg(shapes:List[Node], width:Double,height:Double): Try[Unit] = {
+    val chooser = Dialogs.newModelicaFileChooser()
+    chooser.setTitle("Export as svg..")
+    val fileTry = Option(chooser.showSaveDialog(owner)) match {
+      case Some(x) => Success(x)
+      case _ => Failure(UserInputException("Select a file for export!"))
+    }
+    for(file <- fileTry) yield {
+      val generator = new SvgCodeGenerator
+      val xml = generator.generateShapes(shapes, width, height)
+      generator.writeToFile(xml.text)
     }
   }
 
