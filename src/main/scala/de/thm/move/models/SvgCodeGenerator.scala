@@ -13,7 +13,7 @@ import de.thm.move.Global._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.views.shapes._
 
-import scala.xml.Elem
+import scala.xml.{Elem, Null, UnprefixedAttribute}
 import scala.collection.JavaConversions._
 
 class SvgCodeGenerator {
@@ -60,23 +60,31 @@ class SvgCodeGenerator {
       height={rectangle.getHeight.toString}
       style={genColorStyle(rectangle)}
       stroke-dasharray = {rectangle.getStrokeDashArray.mkString(",")}
-      fill= {
-        rectangle.fillPatternProperty.get match {
-          case FillPattern.None => "white"
-          case FillPattern.Solid => colorToCssColor(rectangle.oldFillColorProperty.get)
-          case _ => s"url(#$id)"
-        }
-      }
-      fill-opacity={
-        rectangle.fillPatternProperty.get match {
-          case FillPattern.None => "0.0"
-          case _ => "%.2f".formatLocal(Locale.US, rectangle.oldFillColorProperty.get.getOpacity)
-        }
-      }
-      transform={
-        generateRotation(rectangle).getOrElse("")
-      }
-      />
+      /> %
+      fillAttribute(rectangle, id) %
+      fillOpacityAttribute(rectangle, id)  %
+      transformationAttribute(rectangle)
+  }
+
+  private def fillAttribute(shape:ColorizableShape, id:String) = {
+    val fill = shape.fillPatternProperty.get match {
+      case FillPattern.None => "white"
+      case FillPattern.Solid => colorToCssColor(shape.oldFillColorProperty.get)
+      case _ => s"url(#$id)"
+    }
+    new UnprefixedAttribute("fill",fill,Null)
+  }
+
+  private def fillOpacityAttribute(shape:ColorizableShape, id:String) = {
+    val opacity = shape.fillPatternProperty.get match {
+      case FillPattern.None => "0.0"
+      case _ => "%.2f".formatLocal(Locale.US, shape.oldFillColorProperty.get.getOpacity)
+    }
+    new UnprefixedAttribute("fill-opacity",opacity,Null)
+  }
+
+  private def transformationAttribute(node:Node) = {
+    new UnprefixedAttribute("transform", generateRotation(node).getOrElse(""), Null)
   }
 
   private def generateRotation(node:Node): Option[String] = {
