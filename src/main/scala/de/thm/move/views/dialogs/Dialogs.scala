@@ -16,6 +16,7 @@ object Dialogs {
 
   val allFilesFilter  = new FileChooser.ExtensionFilter("All files", "*.*")
   val moFileFilter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo")
+  val svgFileFilter = new FileChooser.ExtensionFilter("Svg files (*.svg)", "*.svg")
   val bitmapFileFilter = new FileChooser.ExtensionFilter(
     "Image files (jpg,jpeg,png,gif,bmp)", "*.jpg",
     "*.jpeg","*.png","*.gif", "*.bmp")
@@ -135,4 +136,6 @@ object Dialogs {
 
   def newBitmapFileChooser(): FileChooser =
     newFileChooser(bitmapFileFilter)(allFilesFilter, bitmapFileFilter)
+
+  def newSvgFileChooser(): FileChooser = newFileChooser(svgFileFilter)(allFilesFilter, svgFileFilter)
 }
