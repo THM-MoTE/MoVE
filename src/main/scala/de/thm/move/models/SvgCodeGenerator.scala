@@ -51,6 +51,7 @@ class SvgCodeGenerator {
   def generateShape(shape:Node, id:String): Elem = shape match {
     case rect:ResizableRectangle => genRectangle(rect, id)
     case ellipse:ResizableCircle => genCircle(ellipse, id)
+    case line:ResizableLine => genLine(line)
     case _ => throw new IllegalArgumentException(s"Can't generate svg code for: $shape")
   }
 
@@ -80,6 +81,18 @@ class SvgCodeGenerator {
       fillAttribute(ellipse, id) %
       fillOpacityAttribute(ellipse, id)  %
       transformationAttribute(ellipse)
+  }
+
+  private def genLine(line:ResizableLine): Elem = {
+    <line
+      x1={line.getStartX.toString}
+      y1={line.getStartY.toString}
+      x2={line.getEndX.toString}
+      y2={line.getEndY.toString}
+      style={genColorStyle(line)}
+      stroke-dasharray = {line.getStrokeDashArray.mkString(",")}
+      /> %
+      transformationAttribute(line)
   }
 
   private def fillAttribute(shape:ColorizableShape, id:String) = {
