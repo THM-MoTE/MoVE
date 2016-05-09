@@ -14,10 +14,13 @@ import de.thm.move.util.GeometryUtils
 import de.thm.move.util.GeometryUtils._
 import de.thm.move.views.shapes._
 
-import scala.xml.{Elem, Null, UnprefixedAttribute}
+import scala.xml.{Elem, Null, PrettyPrinter, UnprefixedAttribute}
 import scala.collection.JavaConversions._
 
 class SvgCodeGenerator {
+
+  val lineWidth = 100
+  val indentation = 2
 
   /** Converts the given color into a css-style color (e.g. rgb(255,0,0)) */
   def colorToCssColor(p: Paint): String = p match {
@@ -53,6 +56,12 @@ class SvgCodeGenerator {
     case ellipse:ResizableCircle => genCircle(ellipse, id)
     case line:ResizableLine => genLine(line)
     case _ => throw new IllegalArgumentException(s"Can't generate svg code for: $shape")
+  }
+
+  def generatePrettyPrinted(shapes:List[Node], width:Double,height:Double): String = {
+    val xml = generateShapes(shapes, width,height)
+    val printer = new PrettyPrinter(lineWidth,indentation)
+    printer.format(xml)
   }
 
   private def genRectangle(rectangle:ResizableRectangle, id:String): Elem = {

@@ -153,8 +153,8 @@ class FileCtrl(owner: => Window) {
       path = Paths.get(file.toURI)
       } yield {
       val generator = new SvgCodeGenerator
-      val xml = generator.generateShapes(shapes, width, height)
-      generator.writeToFile(xml.toString)(path)
+      val str = generator.generatePrettyPrinted(shapes, width, height)
+      generator.writeToFile(str)(path)
     }
   }
 
