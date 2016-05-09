@@ -78,7 +78,7 @@ class SelectedShapeCtrl(
   }
 
   private def replaceSelectedShape(shape:ResizableShape): Unit = {
-    removeSelectedShape
+    unselectShapes()
     selectedShapes = List(shape)
     addSelectionRectangle(shape)
   }
@@ -141,14 +141,14 @@ class SelectedShapeCtrl(
     moveElement
   }
 
-  def removeSelectedShape: Unit = {
+  def unselectShapes(): Unit = {
     for(shape <- selectedShapes) {
       changeLike.remove(shape.selectionRectangle)
     }
     selectedShapes = Nil
   }
 
-  def deleteSelectedShape: Unit = {
+  def deleteSelectedShape(): Unit = {
     if(!selectedShapes.isEmpty) {
         val shapeCopy = selectedShapes
         history.execute {
@@ -274,7 +274,7 @@ class SelectedShapeCtrl(
       case _ => false
     } map(_.asInstanceOf[ResizableShape])
 
-    removeSelectedShape
+    unselectShapes()
     for(shape <- shapesInBox) {
       changeLike.addNode(shape.selectionRectangle)
     }

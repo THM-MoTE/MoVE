@@ -259,14 +259,14 @@ class MoveCtrl extends Initializable {
     val drawHandler = { mouseEvent:MouseEvent =>
       selectedShape match {
         case Some(SelectedShape.Text) =>
-          selectionCtrl.removeSelectedShape
+          selectionCtrl.unselectShapes()
           if(mouseEvent.getEventType == MouseEvent.MOUSE_CLICKED) {
             drawCtrl.drawText(mouseEvent.getX,mouseEvent.getY,
               embeddedTextMenuController.getFontColor,
               embeddedTextMenuController.getFont)
           }
         case Some(shape) =>
-          selectionCtrl.removeSelectedShape
+          selectionCtrl.unselectShapes()
           handler(shape, mouseEvent)(getFillColor, getStrokeColor, selectedThickness)
         case _ if mouseEvent.getSource == drawPanel =>
           groupHandler(mouseEvent)
@@ -516,7 +516,7 @@ class MoveCtrl extends Initializable {
   def onRedoClicked(e:ActionEvent): Unit = history.redo()
 
   @FXML
-  def onDeleteClicked(e:ActionEvent): Unit = selectionCtrl.deleteSelectedShape
+  def onDeleteClicked(e:ActionEvent): Unit = selectionCtrl.deleteSelectedShape()
 
   @FXML
   def onCopyClicked(e:ActionEvent): Unit = {
@@ -539,7 +539,7 @@ class MoveCtrl extends Initializable {
 
   private def drawToolChanged(c:Cursor): Unit = {
     setDrawingCursor(c)
-    selectionCtrl.removeSelectedShape
+    selectionCtrl.unselectShapes()
     drawCtrl.abortDrawingProcess()
   }
 
