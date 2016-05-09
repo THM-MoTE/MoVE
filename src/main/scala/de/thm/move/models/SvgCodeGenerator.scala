@@ -56,6 +56,7 @@ class SvgCodeGenerator {
     case rect:ResizableRectangle => genRectangle(rect, id)
     case ellipse:ResizableCircle => genCircle(ellipse, id)
     case line:ResizableLine => genLine(line)
+    case polygon:ResizablePolygon => genPolygon(polygon, id)
     case text:ResizableText => genText(text)
     case _ => throw new IllegalArgumentException(s"Can't generate svg code for: $shape")
   }
@@ -104,6 +105,19 @@ class SvgCodeGenerator {
       stroke-dasharray = {line.getStrokeDashArray.mkString(",")}
       /> %
       transformationAttribute(line)
+  }
+
+  private def genPolygon(polygon:ResizablePolygon, id:String): Elem = {
+    <polygon
+      points={
+        polygon.getPoints.map(_.toInt).mkString(",")
+      }
+      style={genColorStyle(polygon)}
+      stroke-dasharray = {polygon.getStrokeDashArray.mkString(",")}
+      /> %
+      fillAttribute(polygon, id) %
+      fillOpacityAttribute(polygon, id)  %
+      transformationAttribute(polygon)
   }
 
   private def genText(text:ResizableText): Elem = {
