@@ -46,17 +46,32 @@ class SvgCodeGenerator {
       }
     </svg>
   }
-  def generateShape(shape:Node): Elem = shape match {
-    case rect:ResizableRectangle => genRectangle(rect)
+  def generateShape(shape:Node, id:String): Elem = shape match {
+    case rect:ResizableRectangle => genRectangle(rect, id)
     case _ => throw new IllegalArgumentException(s"Can't generate svg code for: $shape")
   }
 
-  private def genRectangle(rectangle:ResizableRectangle): Elem = {
+  private def genRectangle(rectangle:ResizableRectangle, id:String): Elem = {
     <rect
       x={rectangle.getX.toString}
       y={rectangle.getY.toString}
       width={rectangle.getWidth.toString}
       height={rectangle.getHeight.toString}
+      style={genColorStyle(rectangle)}
+      stroke-dasharray = {rectangle.getStrokeDashArray.mkString(",")}
+      fill= {
+        rectangle.fillPatternProperty.get match {
+          case FillPattern.None => "white"
+          case FillPattern.Solid => colorToCssColor(rectangle.oldFillColorProperty.get)
+          case _ => s"url(#$id)"
+        }
+      }
+      fill-opacity={
+        rectangle.fillPatternProperty.get match {
+          case FillPattern.None => "0.0"
+          case _ => "%.2f".formatLocal(Locale.US, rectangle.oldFillColorProperty.get.getOpacity)
+        }
+      }
       />
   }
 
