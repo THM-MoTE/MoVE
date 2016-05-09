@@ -8,6 +8,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.Files
 import java.net.URL
+import java.nio.charset.Charset
 import java.util.ResourceBundle
 
 import de.thm.move.history.History
@@ -43,6 +44,8 @@ object Global {
       copyIfNotExist(filePath, relativePath)
       filePath.toUri.toURL
     }
+
+  lazy val encoding = Charset.forName("UTF-8")
 
   lazy val fillColorConfigURI:URL = getConfigFile("fillColor.conf")
   lazy val strokeColorConfigURI:URL = getConfigFile("strokeColor.conf")

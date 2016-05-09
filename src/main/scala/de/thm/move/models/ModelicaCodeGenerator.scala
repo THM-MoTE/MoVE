@@ -15,6 +15,7 @@ import javafx.scene.shape.{LineTo, MoveTo}
 import javafx.scene.text.TextAlignment
 import javafx.geometry.Bounds
 
+import de.thm.move.Global._
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
@@ -35,7 +36,6 @@ class ModelicaCodeGenerator(
     paneWidth:Double,
     paneHeight:Double) {
   type Lines = List[String]
-  val encoding = Charset.forName("UTF-8")
 
   /** Converts v (in pixel) to modelica "units" */
   private def convertVal(v:Double):Double = v/pxPerMm
