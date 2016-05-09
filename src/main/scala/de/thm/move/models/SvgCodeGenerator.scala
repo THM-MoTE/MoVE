@@ -8,6 +8,7 @@ import java.nio.file.{Files, Path}
 import java.util.Locale
 import javafx.scene.Node
 import javafx.scene.paint.{Color, Paint}
+import javafx.scene.shape.{LineTo, MoveTo, PathElement, QuadCurveTo}
 
 import de.thm.move.Global._
 import de.thm.move.util.GeometryUtils
@@ -58,6 +59,8 @@ class SvgCodeGenerator {
     case line:ResizableLine => genLine(line)
     case polygon:ResizablePolygon => genPolygon(polygon, id)
     case path:ResizablePath => genPath(path, id)
+    case curvedPolygon:QuadCurvePolygon => genCurvedPolygon(curvedPolygon, id)
+    case curvedPath:QuadCurvePath => genCurvedPath(curvedPath, id)
     case text:ResizableText => genText(text)
     case _ => throw new IllegalArgumentException(s"Can't generate svg code for: $shape")
   }
@@ -117,8 +120,7 @@ class SvgCodeGenerator {
       stroke-dasharray = {polygon.getStrokeDashArray.mkString(",")}
       /> %
       fillAttribute(polygon, id) %
-      fillOpacityAttribute(polygon, id)  %
-      transformationAttribute(polygon)
+      fillOpacityAttribute(polygon, id)
   }
 
   private def genPath(path:ResizablePath, id:String): Elem = {
@@ -133,6 +135,33 @@ class SvgCodeGenerator {
       fill = "none"
       /> %
       transformationAttribute(path)
+  }
+
+  private def genCurveLike(pathlike:AbstractQuadCurveShape): Elem = {
+    <path
+      d={
+        pathlike.getElements.map {
+          case move:MoveTo => s"M ${move.getX} ${move.getY}"
+          case line:LineTo => s"L ${line.getX} ${line.getY}"
+          case curved:QuadCurveTo =>
+            s"Q ${curved.getControlX} ${curved.getControlY} ${curved.getX} ${curved.getY}"
+        }.mkString(" ")
+      }
+      style={genColorStyle(pathlike)}
+      stroke-dasharray = {pathlike.getStrokeDashArray.mkString(",")}
+      /> %
+      transformationAttribute(pathlike)
+  }
+
+  private def genCurvedPath(curvedPath:QuadCurvePath, id:String): Elem = {
+    genCurveLike(curvedPath) % new UnprefixedAttribute("fill", "none", Null)
+  }
+
+  private def genCurvedPolygon(curvedPolygon:QuadCurvePolygon, id:String): Elem = {
+    genCurveLike(curvedPolygon)  %
+     fillAttribute(curvedPolygon, id) %
+     fillOpacityAttribute(curvedPolygon, id)  %
+     transformationAttribute(curvedPolygon)
   }
 
   private def genText(text:ResizableText): Elem = {
