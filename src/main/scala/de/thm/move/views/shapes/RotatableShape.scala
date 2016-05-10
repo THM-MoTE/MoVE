@@ -18,7 +18,7 @@ import de.thm.move.util.PointUtils._
 import de.thm.move.views.anchors.{Anchor, RotateAnchor}
 import javafx.scene.Node
 
-/** Turns a Node into a rotatable node by adding a anchor for rotation and rotate the element accordingly. */
+/** Turns a Node into a rotatable node by adding anchors for rotation and rotate the element accordingly. */
 trait RotatableShape {
   this:Node =>
 
@@ -30,6 +30,7 @@ trait RotatableShape {
   val rotationAnchors = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor,bottomRightAnchor)
   rotationAnchors.foreach(setupListener)
   boundsInLocalProperty().addListener { (_:Bounds, newB:Bounds) =>
+      //align rotation-anchors to the local bounding-box
     topLeftAnchor.setCenterX(newB.getMinX)
     topLeftAnchor.setCenterY(newB.getMinY)
 

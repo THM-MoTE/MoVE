@@ -13,6 +13,9 @@ import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._
 import de.thm.move.util.JFxUtils._
 
+/** Makes an anchor/ellipse movable when dragging the anchor
+  * @note This trait adjusts the Ellipse's centerX/centerY coordinates
+  */
 trait MovableAnchor {
   self: Ellipse =>
 

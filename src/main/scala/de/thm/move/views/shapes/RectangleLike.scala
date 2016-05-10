@@ -24,6 +24,12 @@ import de.thm.move.views.anchors.Anchor
 trait RectangleLike {
   self: ResizableShape =>
 
+  /** Indicates if the coordinates of the shape should get adjusted too, when the
+    * width and height get's adjusted.
+    *
+    * (On a circle the coordinates shouldn't get adjusted because the coordinate
+    *  is in the middle of the circle!)
+    */
   protected val adjustCoordinates:Boolean = true
 
   //resize anchors at edges

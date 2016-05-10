@@ -12,14 +12,23 @@ import de.thm.move.models.FillPattern
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.ObjectProperty
 
+/** A colorizable shape. */
 trait ColorizableShape {
   self: Shape =>
 
+  /** Pattern of the stroke */
   val linePattern:ObjectProperty[LinePattern.Value] =
     new SimpleObjectProperty(LinePattern.Solid)
 
+  /** Pattern of the fill */
   val fillPatternProperty:ObjectProperty[FillPattern.Value] =
     new SimpleObjectProperty(FillPattern.Solid)
+  /** The old/actual Color fill.
+    *
+    * @note
+    *       If you add gradients, images, etc. as fill you lost the actual color behind the fill,
+    *       this property saves the color for later usgae.
+    */
   val oldFillColorProperty:ObjectProperty[Color] =
     new SimpleObjectProperty(null) //null = transparent
 

@@ -82,7 +82,9 @@ trait PathLike {
     }
   }
 
+  /** The indexes of the anchors */
   private lazy val indexes:List[Int] = (0 until edgeCount).toList
+  /** Indexes together with it's anchors */
   private lazy val indexWithAnchors = indexes.zip(getAnchors)
 
   /** Returns the point of this shape at the edge identified by idx. */

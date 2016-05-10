@@ -27,6 +27,7 @@ class SnapGrid(topPane:Pane, val cellSize:Int, snapDistance:Int) extends Pane wi
   setPickOnBounds(false)
   getStyleClass.add("snap-grid-pane")
 
+    //make this pane the same size as topPane
   prefHeightProperty.bind(topPane.prefHeightProperty)
   prefWidthProperty.bind(topPane.widthProperty)
   minHeightProperty.bind(topPane.minHeightProperty)

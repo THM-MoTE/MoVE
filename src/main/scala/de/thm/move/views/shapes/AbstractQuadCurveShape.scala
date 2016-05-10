@@ -15,7 +15,8 @@ import de.thm.move.views.anchors.MovableAnchor
 
 /** A shape with quadratic-bezier-curved edge-points.
   *
-  * @see Modelica Spec 3.1 - Chapter 18.6.1.2 page 226, 227
+  * @see [[https://www.modelica.org/documents/ModelicaSpec33Revision1.pdf#226
+  *       Modelica Spec 3.1 - Chapter 18.6.1.2 page 226, 227]]
   */
 abstract class AbstractQuadCurveShape(
   points: List[Point],

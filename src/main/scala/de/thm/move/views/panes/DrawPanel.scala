@@ -20,6 +20,7 @@ class DrawPanel() extends Pane {
 
   getStyleClass.add("draw-pane")
 
+  /** Draws/Adds the given Node n to this panel */
   def drawShape[T <: Node](n:T):Unit = {
     super.getChildren.add(n)
 

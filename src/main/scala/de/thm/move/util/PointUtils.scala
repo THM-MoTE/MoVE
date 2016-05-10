@@ -6,6 +6,9 @@ package de.thm.move.util
 
 import de.thm.move.models.CommonTypes._
 
+/** Utils for working with the type [[de.thm.move.models.CommonTypes.Point]]
+  * (This object contains a implicit value-class which makes calculation on a point possible.)
+  */
 object PointUtils {
   /** A valueclass for extending the type Point.
     * This class makes it possible to write:
