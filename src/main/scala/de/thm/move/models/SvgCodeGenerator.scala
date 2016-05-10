@@ -34,6 +34,7 @@ class SvgCodeGenerator {
       val green = (c.getGreen * 255).toInt
       val blue = (c.getBlue * 255).toInt
       s"rgb($red,$green,$blue)"
+    case null => "white"
     case _ => throw new IllegalArgumentException(s"Can't generate color for: $p")
   }
 
@@ -295,7 +296,8 @@ class SvgCodeGenerator {
   private def genColorStyle(shape:ColorizableShape): String = {
     List(
       "stroke: " + colorToCssColor(shape.getStrokeColor),
-      "stroke-width: " + shape.getStrokeWidth.toInt
+      "stroke-width: " + shape.getStrokeWidth.toInt,
+      "stroke-opacity: " + (if(shape.getStrokeColor == null) "0.0" else "1.0")
     ).mkString(";")
   }
 
