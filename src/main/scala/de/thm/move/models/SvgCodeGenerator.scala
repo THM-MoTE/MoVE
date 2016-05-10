@@ -59,7 +59,7 @@ class SvgCodeGenerator {
       >
       <defs>
         { shapesWithIds(shapes).flatMap {
-            case (shape:ColorizableShape, id) => generateGradient(shape, id)
+            case (shape:ColorizableShape, id) => generateFillPattern(shape, id)
             case _ => None
           }
         }
@@ -265,7 +265,7 @@ class SvgCodeGenerator {
     }
   }
 
-  private def generateGradient(shape:Node with ColorizableShape, id:String):Option[Elem] = {
+  private def generateFillPattern(shape:Node with ColorizableShape, id:String):Option[Elem] = {
     shape.fillPatternProperty.get match {
       case FillPattern.VerticalCylinder =>
         Some(<linearGradient id={id.toString} x1="0%" y1="0%" x2="100%" y2="0%">
