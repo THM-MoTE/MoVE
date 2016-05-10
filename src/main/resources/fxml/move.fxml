@@ -59,6 +59,7 @@
                         <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#onSaveClicked" text="Save" />
                         <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#onSaveAsClicked" text="Save as.." />
                       <MenuItem fx:id="exportSvgMenuItem" mnemonicParsing="false" onAction="#onExportSvgClicked" text="Export as SVG.." />
+                      <MenuItem fx:id="exportBitmatpMenuItem" mnemonicParsing="false" onAction="#onExportBitmapClicked" text="Export as Bitmap.." />
                       <MenuItem fx:id="chPaperSizeMenuItem" mnemonicParsing="false" onAction="#onChPaperSizeClicked" text="Change paper size.." />
                         <MenuItem fx:id="chGridSizeMenuItem" mnemonicParsing="false" onAction="#onChGridSizeClicked" text="Change gridsize" />
                     <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#onClosePressed" text="Close" />

@@ -9,6 +9,7 @@ import javafx.scene.control.Alert.AlertType
 import javafx.scene.control._
 import javafx.scene.layout.{GridPane, Priority}
 import javafx.stage.FileChooser
+import javafx.stage.FileChooser.ExtensionFilter
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 
@@ -17,6 +18,7 @@ object Dialogs {
   val allFilesFilter  = new FileChooser.ExtensionFilter("All files", "*.*")
   val moFileFilter = new FileChooser.ExtensionFilter("Modelica files (*.mo)", "*.mo")
   val svgFileFilter = new FileChooser.ExtensionFilter("Svg files (*.svg)", "*.svg")
+  val pngFileFilter = new FileChooser.ExtensionFilter("Png files (*.png)", "*.png")
   val bitmapFileFilter = new FileChooser.ExtensionFilter(
     "Image files (jpg,jpeg,png,gif,bmp)", "*.jpg",
     "*.jpeg","*.png","*.gif", "*.bmp")
@@ -138,4 +140,5 @@ object Dialogs {
     newFileChooser(bitmapFileFilter)(allFilesFilter, bitmapFileFilter)
 
   def newSvgFileChooser(): FileChooser = newFileChooser(svgFileFilter)(allFilesFilter, svgFileFilter)
+  def newPngFileChooser(): FileChooser = newFileChooser(pngFileFilter)(allFilesFilter, pngFileFilter)
 }

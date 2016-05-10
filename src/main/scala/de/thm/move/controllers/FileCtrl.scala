@@ -7,9 +7,11 @@ package de.thm.move.controllers
 import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
+import javafx.embed.swing.SwingFXUtils
 import javafx.scene.control.{ButtonType, ChoiceDialog}
 import javafx.stage.Window
 import javafx.scene.Node
+import javax.imageio.ImageIO
 
 import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
@@ -156,6 +158,26 @@ class FileCtrl(owner: => Window) {
       val str = generator.generatePrettyPrinted(shapes, width, height)
       generator.writeToFile(str)(path)
     }
+  }
+
+  def exportAsBitmap(root:Node): Try[Unit] = {
+   val chooser = Dialogs.newPngFileChooser()
+    chooser.setTitle("Export as jpeg..")
+    val fileTry = Option(chooser.showSaveDialog(owner)) match {
+      case Some(x) => Success(x)
+      case _ => Failure(UserInputException("Select a file for export!"))
+    }
+    for {
+      file <- fileTry
+      image = root.snapshot(null, null)
+      filename = file.getName
+      suffix = filename.substring(filename.lastIndexOf(".")+1)
+      _ <- Try {
+        println(s"before io suffix $suffix")
+        println( ImageIO.write(SwingFXUtils.fromFXImage(image, null), suffix, file) )
+        println("after io")
+      }
+    } yield ()
   }
 
   def openImage: Option[URI] = {

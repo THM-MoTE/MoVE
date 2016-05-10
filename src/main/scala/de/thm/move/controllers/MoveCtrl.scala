@@ -445,6 +445,14 @@ class MoveCtrl extends Initializable {
   }
 
   @FXML
+  def onExportBitmapClicked(e:ActionEvent): Unit = {
+    println("export bitmap")
+    fileErrorHandling(
+      fileCtrl.exportAsBitmap(drawPanel)
+    )
+  }
+
+  @FXML
   def onChPaperSizeClicked(e:ActionEvent): Unit = {
     val strOpt:Option[String] = Dialogs.newPaperSizeDialog(drawPanel.getWidth, drawPanel.getHeight).showAndWait()
     strOpt.flatMap { x =>
