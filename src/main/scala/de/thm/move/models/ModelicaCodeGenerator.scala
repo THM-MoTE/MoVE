@@ -288,13 +288,11 @@ class ModelicaCodeGenerator(
 
    val imgStr = img.srcEither match {
      case Left(uri) =>
-       copyImg(uri, target)
+       ResourceUtils.copy(uri, target)
        val filename = ResourceUtils.getFilename(uri)
        s"""fileName = "modelica://$modelname/$filename""""
      case Right(bytes) =>
-       val encoder = Base64.getEncoder
-       val encodedBytes = encoder.encode(bytes)
-       val byteStr = new String(encodedBytes, "UTF-8")
+       val byteStr = ResourceUtils.encodeBase64String(bytes)
        s"""imageSource = "$byteStr""""
    }
 
@@ -347,14 +345,6 @@ class ModelicaCodeGenerator(
       |${spaces}horizontalAlignment = ${alignment}
       |${spaces(indentIdx)})""".stripMargin.replaceAll("\n", linebreak)
  }
-
-  private def copyImg(src:URI, target:URI): Unit = {
-    val targetPath = Paths.get(target).getParent
-    val srcPath = Paths.get(src)
-    val filename = srcPath.getFileName
-    Files.copy(srcPath, targetPath.resolve(filename))
-  }
-
 
   private def generateIcons[A <: Node](modelname:String, target:URI, shapes:List[A]): Lines = {
     val systemStartpoint = genPoint((0.0,0.0))
