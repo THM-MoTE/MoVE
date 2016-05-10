@@ -22,10 +22,17 @@ import de.thm.move.views.shapes._
 import scala.xml.{Elem, Null, PrettyPrinter, UnprefixedAttribute}
 import scala.collection.JavaConversions._
 
+/** Codegenerator for SVG-Images
+  *
+  * @note
+  *       Useful informations about SVG can be found here:
+  *       - [[https://www.w3.org/TR/SVG/ W3C Specification]]
+  *       - [[http://www.w3schools.com/svg/default.asp W3CSchools]]
+  * */
 class SvgCodeGenerator {
 
-  val lineWidth = 100
-  val indentation = 2
+  val lineWidth = 100 //maximum line-width of generated SVG-XML
+  val indentation = 2 //indentation of generated SVG-XML
 
   /** Converts the given color into a css-style color (e.g. rgb(255,0,0)) */
   def colorToCssColor(p: Paint): String = p match {
@@ -42,6 +49,7 @@ class SvgCodeGenerator {
     case (shape,idx) => (shape, idx.toString)
   }
 
+  /** Generates an SVG Image from the given shapes with the given width & height */
   def generateShapes(shapes:List[Node], width:Double, height:Double): Elem = {
     <svg
       width={width.toString}
@@ -63,6 +71,7 @@ class SvgCodeGenerator {
       }
     </svg>
   }
+
   def generateShape(shape:Node, id:String): Elem = shape match {
     case rect:ResizableRectangle => genRectangle(rect, id)
     case ellipse:ResizableCircle => genCircle(ellipse, id)
@@ -76,6 +85,10 @@ class SvgCodeGenerator {
     case _ => throw new IllegalArgumentException(s"Can't generate svg code for: $shape")
   }
 
+  /** Generates an SVG with pretty-printed XML.
+    *
+    * @see [[de.thm.move.models.SvgCodeGenerator#generateShapes]]
+    */
   def generatePrettyPrinted(shapes:List[Node], width:Double,height:Double): String = {
     val xml = generateShapes(shapes, width,height)
     val printer = new PrettyPrinter(lineWidth,indentation)
@@ -148,6 +161,13 @@ class SvgCodeGenerator {
       transformationAttribute(path)
   }
 
+  /** Generates a curved-like element.
+    *
+    * @note
+    *       Informations to the SVG-Path element:
+    *       - [[http://www.w3schools.com/svg/svg_path.asp W3Schools-Path]]
+    *       - [[https://www.w3.org/TR/SVG/paths.html#PathData W3CSpecification-PathData]]
+    * */
   private def genCurveLike(pathlike:AbstractQuadCurveShape): Elem = {
     <path
       d={
@@ -165,6 +185,7 @@ class SvgCodeGenerator {
   }
 
   private def genCurvedPath(curvedPath:QuadCurvePath, id:String): Elem = {
+    //generate a curved path & remove default fill
     genCurveLike(curvedPath) % new UnprefixedAttribute("fill", "none", Null)
   }
 
@@ -324,7 +345,6 @@ class SvgCodeGenerator {
 
   def writeToFile(str:String)(target:Path): Unit = {
     val writer = Files.newBufferedWriter(target, encoding)
-
     try {
       writer.write(str)
     } finally {
