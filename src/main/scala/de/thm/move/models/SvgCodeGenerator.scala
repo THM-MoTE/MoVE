@@ -13,6 +13,7 @@ import javafx.scene.shape.{LineTo, MoveTo, PathElement, QuadCurveTo}
 import de.thm.move.Global._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.GeometryUtils._
+import de.thm.move.util.ResourceUtils
 import de.thm.move.views.shapes._
 
 import scala.xml.{Elem, Null, PrettyPrinter, UnprefixedAttribute}
@@ -59,6 +60,7 @@ class SvgCodeGenerator {
     case line:ResizableLine => genLine(line)
     case polygon:ResizablePolygon => genPolygon(polygon, id)
     case path:ResizablePath => genPath(path, id)
+    case img:ResizableImage => genImage(img)
     case curvedPolygon:QuadCurvePolygon => genCurvedPolygon(curvedPolygon, id)
     case curvedPath:QuadCurvePath => genCurvedPath(curvedPath, id)
     case text:ResizableText => genText(text)
@@ -162,6 +164,25 @@ class SvgCodeGenerator {
      fillAttribute(curvedPolygon, id) %
      fillOpacityAttribute(curvedPolygon, id)  %
      transformationAttribute(curvedPolygon)
+  }
+
+  private def genImage(img:ResizableImage): Elem = {
+    <image
+      x={img.getX.toString}
+      y={img.getY.toString}
+      width={img.getWidth.toString}
+      height={img.getHeight.toString}
+      xlink:href={
+        img.srcEither match {
+          case Left(uri) =>
+            uri.toString
+          case Right(bytes) =>
+            val byteStr = ResourceUtils.encodeBase64String(bytes)
+            s"data:image/png;base64,$byteStr"
+        }
+      }
+      /> %
+      transformationAttribute(img)
   }
 
   private def genText(text:ResizableText): Elem = {
