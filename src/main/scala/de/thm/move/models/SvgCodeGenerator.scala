@@ -4,11 +4,14 @@
 
 package de.thm.move.models
 
+import java.io.ByteArrayOutputStream
 import java.nio.file.{Files, Path}
 import java.util.Locale
+import javafx.embed.swing.SwingFXUtils
 import javafx.scene.Node
-import javafx.scene.paint.{Color, Paint}
+import javafx.scene.paint._
 import javafx.scene.shape.{LineTo, MoveTo, PathElement, QuadCurveTo}
+import javax.imageio.ImageIO
 
 import de.thm.move.Global._
 import de.thm.move.util.GeometryUtils
@@ -240,7 +243,7 @@ class SvgCodeGenerator {
     }
   }
 
-  private def generateGradient(shape:ColorizableShape, id:String):Option[Elem] = {
+  private def generateGradient(shape:Node with ColorizableShape, id:String):Option[Elem] = {
     shape.fillPatternProperty.get match {
       case FillPattern.VerticalCylinder =>
         Some(<linearGradient id={id.toString} x1="0%" y1="0%" x2="100%" y2="0%">
@@ -262,6 +265,29 @@ class SvgCodeGenerator {
           <stop offset="20%" style={s"stop-color:${colorToCssColor(shape.oldFillColorProperty.get)}; stop-opacity:1"} />
           <stop offset="100%" style={s"stop-color:${colorToCssColor(shape.getStrokeColor)};stop-opacity:1"} />
         </radialGradient>)
+      case _ if shape.getFillColor.isInstanceOf[ImagePattern] =>
+          //get the underlying image
+        val imgpattern = shape.getFillColor.asInstanceOf[ImagePattern]
+        val img = imgpattern.getImage
+        val byteOutput = new ByteArrayOutputStream()
+        ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", byteOutput) //write img into OutputStream
+        val bytes = byteOutput.toByteArray //turn stream into Array[Byte]
+        val byteStr = ResourceUtils.encodeBase64String(bytes)
+        //add a little bit more px to fill the full smoothed polygons
+        val width = shape.getBoundsInLocal.getWidth+5
+        val height = shape.getBoundsInLocal.getHeight+5
+        //finaly create a svg-pattern with an underlying base64-encoded image
+        Some(
+          <pattern id={id} patternUnits="objectBoundingBox" width="100" height="100">
+            <image
+              x="0"
+              y="0"
+              width={width.toString}
+              height={height.toString}
+              xlink:href={s"data:image/png;base64,$byteStr"}
+              />
+          </pattern>
+        )
       case _ => None
     }
   }
