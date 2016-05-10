@@ -11,7 +11,6 @@ import de.thm.move.views.anchors.Anchor
 
 class QuadCurvePath(points:List[Point])
   extends AbstractQuadCurveShape(points, false) {
-  override val getAnchors:List[Anchor] = genAnchors
   override def getFillColor:Paint = null /*Path has no fill*/
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
 
@@ -19,6 +18,7 @@ class QuadCurvePath(points:List[Point])
   override def copy: ResizableShape = {
     val duplicate = new QuadCurvePath(getUnderlyingPolygonPoints)
     duplicate.copyColors(this)
+    duplicate.setRotate(getRotate)
     duplicate
   }
 }
@@ -28,6 +28,7 @@ object QuadCurvePath {
     val points:List[Point] = rePath.getPoints
     val path = new QuadCurvePath(points)
     path.copyColors(rePath)
+    path.setRotate(rePath.getRotate)
     path
   }
   def apply(points:List[Point]) = new QuadCurvePath(points)

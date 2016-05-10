@@ -34,10 +34,30 @@ trait RectangleLike {
   override val getAnchors: List[Anchor] =
     List(topLeftAnchor, topRightAnchor, bottomLeftAnchor, bottomRightAnchor)
 
+  /** Gets the untransformed upper-left point */
   def getTopLeft:Point = (getBoundsInLocal.getMinX, getBoundsInLocal.getMinY)
+  /** Gets the untransformed upper-right point */
   def getTopRight:Point = (getBoundsInLocal.getMaxX, getBoundsInLocal.getMinY)
+  /** Gets the untransformed bottom-left point */
   def getBottomLeft:Point = (getBoundsInLocal.getMinX, getBoundsInLocal.getMaxY)
+  /** Gets the untransformed bottom-right point */
   def getBottomRight:Point = (getBoundsInLocal.getMaxX,getBoundsInLocal.getMaxY)
+
+  /** Transforms the point src from local into parent's coordinate space */
+  private def transformedPoint(src:Point):Point = {
+    val (x,y) = src
+    val point2D = localToParent(x,y)
+    (point2D.getX, point2D.getY)
+  }
+
+  /** Gets the transformed upper-left point */
+  def getTransformedTopLeft:Point = transformedPoint(getTopLeft)
+  /** Gets the transformed upper-right point */
+  def getTransformedTopRight:Point = transformedPoint(getTopRight)
+  /** Gets the transformed bottom-left point */
+  def getTransformedBottomLeft:Point = transformedPoint(getBottomLeft)
+  /** Gets the transformed bottom-right point */
+  def getTransformedBottomRight:Point = transformedPoint(getBottomRight)
 
   def adjustCenter(e:Ellipse, newPoint:Point): Unit = {
     val (x,y) = newPoint
@@ -50,6 +70,7 @@ trait RectangleLike {
       this.setXY(other.getXY)
       this.setWidth(other.getWidth)
       this.setHeight(other.getHeight)
+      this.setRotate(other.getRotate)
   }
 
   def getX: Double
@@ -89,12 +110,20 @@ trait RectangleLike {
     }
   }
 
+  def boundsChanged(): Unit = {
+    adjustCenter(topLeftAnchor, getTransformedTopLeft)
+    adjustCenter(topRightAnchor, getTransformedTopRight)
+    adjustCenter(bottomLeftAnchor, getTransformedBottomLeft)
+    adjustCenter(bottomRightAnchor, getTransformedBottomRight)
+  }
+
   //adjust the anchors to the bounding-box
   boundsInLocalProperty().addListener { (_:Bounds, _:Bounds) =>
-    adjustCenter(topLeftAnchor, getTopLeft)
-    adjustCenter(topRightAnchor, getTopRight)
-    adjustCenter(bottomLeftAnchor, getBottomLeft)
-    adjustCenter(bottomRightAnchor, getBottomRight)
+    boundsChanged()
+  }
+  //element got rotated; adjust anchors
+  rotateProperty().addListener { (_:Number, _:Number) =>
+    boundsChanged()
   }
 
   //undo-/redo command

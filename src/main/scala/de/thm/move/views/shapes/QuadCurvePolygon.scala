@@ -14,11 +14,11 @@ import scala.collection.JavaConverters._
  */
 class QuadCurvePolygon(points:List[Point])
   extends AbstractQuadCurveShape(points, true) {
-  override val getAnchors:List[Anchor] = genAnchors
   override def toUncurvedShape: ResizableShape = ResizablePolygon(this)
   override def copy: ResizableShape = {
     val duplicate = new QuadCurvePolygon(getUnderlyingPolygonPoints)
     duplicate.copyColors(this)
+    duplicate.setRotate(getRotate)
     duplicate
   }
 }
@@ -35,6 +35,7 @@ object QuadCurvePolygon {
     val points = polygon.getPoints.asScala.map(_.doubleValue).toList
     val curvedPolygon = QuadCurvePolygon(points)
     curvedPolygon.copyColors(polygon)
+    curvedPolygon.setRotate(polygon.getRotate)
     curvedPolygon
   }
 }

@@ -25,10 +25,9 @@ class ResizableLine(
    with ResizableShape
    with ColorizableShape
    with PathLike {
-  setStrokeWidth(strokeSize)
 
-  override val edgeCount: Int = 2
-  val getAnchors: List[Anchor] = genAnchors
+  setStrokeWidth(strokeSize)
+  override lazy val edgeCount: Int = 2
 
   override def copy: ResizableShape = {
     val duplicate = new ResizableLine(
@@ -36,6 +35,7 @@ class ResizableLine(
       (getEndX,getEndY),
       strokeSize)
     duplicate.copyColors(this)
+    duplicate.setRotate(getRotate)
     duplicate
   }
 

@@ -4,6 +4,7 @@
 
 package de.thm.move.views.shapes
 
+import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Paint
 import javafx.scene.shape.{LineTo, MoveTo, Path}
 
@@ -13,7 +14,7 @@ import collection.JavaConversions._
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.util.PointUtils._
-import de.thm.move.views.anchors.Anchor
+import de.thm.move.views.anchors.{Anchor, MovableAnchor}
 
 class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
   extends Path(startPoint :: elements)
@@ -23,8 +24,8 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
   with PathLike {
 
   val allElements = startPoint :: elements
-  override val edgeCount: Int = allElements.size
-  val getAnchors: List[Anchor] = genAnchors
+  override lazy val edgeCount: Int = allElements.size
+
 
   def getPoints:List[Point] = allElements.flatMap {
     case move:MoveTo => List((move.getX, move.getY))
@@ -37,6 +38,7 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
   override def copy: ResizableShape = {
     val duplicate = ResizablePath(getPoints)
     duplicate.copyColors(this)
+    duplicate.setRotate(getRotate)
     duplicate
   }
 

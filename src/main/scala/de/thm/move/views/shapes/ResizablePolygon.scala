@@ -7,7 +7,6 @@ package de.thm.move.views.shapes
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.paint.Color
 import javafx.scene.shape.Polygon
-
 import de.thm.move.util.JFxUtils
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
@@ -24,12 +23,12 @@ class ResizablePolygon(val points:List[Double])
   with QuadCurveTransformable
   with PathLike {
 
-  override val edgeCount: Int = points.size / 2
-  override val getAnchors: List[Anchor] = genAnchors
+  override lazy val edgeCount: Int = points.size / 2
   override def toCurvedShape = QuadCurvePolygon(this)
   override def copy: ResizableShape = {
     val duplicate = new ResizablePolygon(getPoints.map(_.doubleValue).toList)
     duplicate.copyColors(this)
+    duplicate.setRotate(getRotate)
     duplicate
   }
 

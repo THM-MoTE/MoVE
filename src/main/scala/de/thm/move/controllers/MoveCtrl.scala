@@ -359,6 +359,10 @@ class MoveCtrl extends Initializable {
   def shapeInputHandler(ev:InputEvent): Unit = {
     if(selectedShape.isEmpty) {
       ev match {
+        case mv:MouseEvent if mv.getEventType == MouseEvent.MOUSE_CLICKED &&
+                              mv.getButton == MouseButton.PRIMARY &&
+                              mv.getClickCount() == 2 =>
+          selectionCtrl.rotationMode()
         case mv:MouseEvent if mv.getEventType == MouseEvent.MOUSE_CLICKED =>
           //user selects an element
           mv.getSource() match {

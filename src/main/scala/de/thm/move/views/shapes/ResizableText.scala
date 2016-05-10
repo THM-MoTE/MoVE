@@ -65,6 +65,7 @@ class ResizableText(
   def copy: ResizableShape = {
     val txt = new ResizableText(getText, getX,getY,getFont)
     txt.setFontColor(getFontColor)
+    txt.setRotate(getRotate)
     txt
   }
 

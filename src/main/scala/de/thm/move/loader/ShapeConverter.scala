@@ -85,6 +85,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       val rect = new ResizableRectangle(start, w,h)
       applyColor(rect, fs)
       rect.setVisible(gi.visible)
+      rect.setRotate(gi.rotation)
       rect
     case Ellipse(gi, fs, ext, _,_) =>
       val (start,w,h) = rectangleLikeDimensions(gi.origin, ext)
@@ -92,6 +93,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       val ellipse = new ResizableCircle(middle, asRadius(w),asRadius(h))
       applyColor(ellipse, fs)
       ellipse.setVisible(gi.visible)
+      ellipse.setRotate(gi.rotation)
       ellipse
     case pe:PathElement if(pe.points.size == 2) =>
       val startP = convertPoint(pe.points.head+pe.gItem.origin)
@@ -99,6 +101,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       val line = new ResizableLine(startP,endP, pe.strokeSize.toInt)
       applyLineColor(line, pe.color, pe.strokePattern, pe.strokeSize)
       line.setVisible(pe.gItem.visible)
+      line.setRotate(pe.gItem.rotation)
       line
     case pe:PathElement =>
       val points = pe.points.map(x => convertPoint(x+pe.gItem.origin))
@@ -106,6 +109,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
         if(pe.smooth == "Smooth.Bezier") QuadCurvePath(points)
         else ResizablePath(points)
       path.setVisible(pe.gItem.visible)
+      path.setRotate(pe.gItem.rotation)
       applyLineColor(path, pe.color, pe.strokePattern, pe.strokeSize)
       path
     case Polygon(gi,fs,ps,smooth) =>
@@ -115,6 +119,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
         else ResizablePolygon(points)
       applyColor(polygon, fs)
       polygon.setVisible(gi.visible)
+      polygon.setRotate(gi.rotation)
       polygon
     case ImageURI(gi, ext, uriStr) =>
       val imageName = uriStr.substring(uriStr.lastIndexOf("/")+1, uriStr.length)
@@ -126,6 +131,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       img.setWidth(w)
       img.setHeight(h)
       img.setVisible(gi.visible)
+      img.setRotate(gi.rotation)
       img
     case ImageBase64(gi,ext,encodedStr) =>
       val decoder = Base64.getDecoder()
@@ -139,6 +145,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       resizableImg.setWidth(w)
       resizableImg.setHeight(h)
       resizableImg.setVisible(gi.visible)
+      resizableImg.setRotate(gi.rotation)
       resizableImg
     case txt:Text =>
       val (x,y) = convertPoint(txt.extent._1+txt.gItem.origin)
@@ -154,6 +161,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       val txtAlign = TextAlignment.valueOf(txt.hAlignment.substring(txt.hAlignment.indexOf(".")+1).toUpperCase)
       text.setTextAlignment(txtAlign)
       text.setVisible(txt.gItem.visible)
+      text.setRotate(txt.gItem.rotation)
       text
     case a:Any => throw new IllegalArgumentException(s"Unknown shape-ast $a")
   }
