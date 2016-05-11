@@ -55,6 +55,8 @@ class MoveCtrl extends Initializable {
   private var rootStage:Stage = _
 
   @FXML
+  var newMenuItem: MenuItem = _
+  @FXML
   var saveMenuItem: MenuItem = _
   @FXML
   var saveAsMenuItem: MenuItem = _
@@ -209,6 +211,7 @@ class MoveCtrl extends Initializable {
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     setupShortcuts(
+      "new" -> newMenuItem,
       "open" -> openMenuItem,
       "save" -> saveMenuItem,
       "save-as" -> saveAsMenuItem,
@@ -382,6 +385,10 @@ class MoveCtrl extends Initializable {
     }
   }
 
+  @FXML
+  def onNewClicked(e:ActionEvent): Unit = {
+    drawPanelCtrl.removeAll()
+  }
 
   @FXML
   def onOpenClicked(e:ActionEvent): Unit = {
