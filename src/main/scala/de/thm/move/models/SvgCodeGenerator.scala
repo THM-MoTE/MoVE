@@ -354,6 +354,14 @@ class SvgCodeGenerator {
         val height = bounds.getHeight()
         val xs = verticalLines(width,height,shape.getStrokeColor)
         Some(generateStructurePattern(xs, width, height))
+      case FillPattern.Cross =>
+        val bounds = shape.getBoundsInLocal()
+        val width = bounds.getWidth
+        val height = bounds.getHeight
+        val verticals = verticalLines(width, height, shape.getStrokeColor)
+        val horizontals = horizontalLines(width, height, shape.getStrokeColor)
+        val lines = verticals ++ horizontals
+        Some(generateStructurePattern(lines, width, height))
       case _ if shape.getFillColor.isInstanceOf[ImagePattern] =>
           //get the underlying image
         val imgpattern = shape.getFillColor.asInstanceOf[ImagePattern]
