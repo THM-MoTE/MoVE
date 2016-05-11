@@ -321,6 +321,11 @@ class SvgCodeGenerator {
           {xs}
       </pattern>
     }
+
+    val bounds = shape.getBoundsInLocal()
+    val width = bounds.getWidth
+    val height = bounds.getHeight
+
     shape.fillPatternProperty.get match {
       case FillPattern.VerticalCylinder =>
         Some(<linearGradient id={id.toString} x1="0%" y1="0%" x2="100%" y2="0%">
@@ -343,21 +348,12 @@ class SvgCodeGenerator {
           <stop offset="100%" style={s"stop-color:${colorToCssColor(shape.getStrokeColor)};stop-opacity:1"} />
         </radialGradient>)
       case FillPattern.Horizontal =>
-        val bounds = shape.getBoundsInLocal()
-        val height = bounds.getHeight
-        val width = bounds.getWidth
         val xs = horizontalLines(width, height, shape.getStrokeColor)
         Some(generateStructurePattern(xs, width, height))
       case FillPattern.Vertical =>
-        val bounds = shape.getBoundsInLocal()
-        val width = bounds.getWidth()
-        val height = bounds.getHeight()
         val xs = verticalLines(width,height,shape.getStrokeColor)
         Some(generateStructurePattern(xs, width, height))
       case FillPattern.Cross =>
-        val bounds = shape.getBoundsInLocal()
-        val width = bounds.getWidth
-        val height = bounds.getHeight
         val verticals = verticalLines(width, height, shape.getStrokeColor)
         val horizontals = horizontalLines(width, height, shape.getStrokeColor)
         val lines = verticals ++ horizontals
