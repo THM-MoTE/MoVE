@@ -265,13 +265,18 @@ class SvgCodeGenerator {
     }
   }
 
-  private def structureLine(x1:Double,y1:Double,x2:Double,y2:Double,style:String): Elem =
+  /** Creates a line that's used inside structures/patterns */
+  private def structureLine(x1:Double,y1:Double,x2:Double,y2:Double,lineColor:Paint): Elem =
     <line
       x1={x1.toString}
       x2={x2.toString}
       y1={y1.toString}
       y2={y2.toString}
-      style={style}
+      style={
+        List(
+          s"stroke:${colorToCssColor(lineColor)}",
+          s"stroke-width: 1").mkString(";")
+      }
       />
 
   private def horizontalLines(width:Double,height:Double,lineColor:Paint):Seq[Elem] =
@@ -281,9 +286,7 @@ class SvgCodeGenerator {
       x = 0
       endX = width
     } yield {
-      structureLine(x,y,endX,y,List(
-        s"stroke:${colorToCssColor(lineColor)}",
-        s"stroke-width: 1").mkString(";"))
+      structureLine(x,y,endX,y,lineColor)
     }
 
   private def verticalLines(width:Double,height:Double,lineColor:Paint):Seq[Elem] =
@@ -293,9 +296,7 @@ class SvgCodeGenerator {
       y = 0
       endY = height
     } yield {
-      structureLine(x, y, x, endY,List(
-        s"stroke:${colorToCssColor(lineColor)}",
-        s"stroke-width: 1").mkString(";"))
+      structureLine(x, y, x, endY,lineColor)
     }
 
   private def forwardLines(width:Double,height:Double,lineColor:Paint):Seq[Elem] = {
@@ -308,10 +309,7 @@ class SvgCodeGenerator {
       val startY = i*5
       val endY = doubled
       val line =
-        structureLine(startX, startY, endX,endY,List(
-          s"stroke:${colorToCssColor(lineColor)}",
-          s"stroke-width: 1"
-        ).mkString(";"))
+        structureLine(startX, startY, endX,endY,lineColor)
       endX += 5 //5px between this and the next line
       line
     }
@@ -321,10 +319,7 @@ class SvgCodeGenerator {
       val startY = 0
       val endY = doubled
       val line =
-        structureLine(startX, startY, endX,endY,List(
-          s"stroke:${colorToCssColor(lineColor)}",
-          s"stroke-width: 1"
-        ).mkString(";"))
+        structureLine(startX, startY, endX,endY,lineColor)
       endX += 5 //5px between this and the next line
       line
     }
@@ -339,10 +334,7 @@ class SvgCodeGenerator {
       x = i*5
       y = i*5
       } yield {
-        structureLine(0, y, x, 0, List(
-          s"stroke:${colorToCssColor(lineColor)}",
-          s"stroke-width: 1"
-        ).mkString(";"))
+        structureLine(0, y, x, 0, lineColor)
       }
   }
 
