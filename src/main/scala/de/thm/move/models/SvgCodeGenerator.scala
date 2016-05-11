@@ -265,6 +265,15 @@ class SvgCodeGenerator {
     }
   }
 
+  private def structureLine(x1:Double,y1:Double,x2:Double,y2:Double,style:String): Elem =
+    <line
+      x1={x1.toString}
+      x2={x2.toString}
+      y1={y1.toString}
+      y2={y2.toString}
+      style={style}
+      />
+
   private def horizontalLines(width:Double,height:Double,lineColor:Paint):Seq[Elem] =
     for {
       i <- 1 to (height/5).toInt
@@ -272,18 +281,9 @@ class SvgCodeGenerator {
       x = 0
       endX = width
     } yield {
-      <line
-        x1={x.toString}
-        y1={y.toString}
-        x2={endX.toString}
-        y2={y.toString}
-        style={
-          List(
-            s"stroke:${colorToCssColor(lineColor)}",
-            s"stroke-width: 1"
-          ).mkString(";")
-        }
-        />
+      structureLine(x,y,endX,y,List(
+        s"stroke:${colorToCssColor(lineColor)}",
+        s"stroke-width: 1").mkString(";"))
     }
 
   private def verticalLines(width:Double,height:Double,lineColor:Paint):Seq[Elem] =
@@ -293,19 +293,12 @@ class SvgCodeGenerator {
       y = 0
       endY = height
     } yield {
-      <line
-        x1={x.toString}
-        y1={y.toString}
-        x2={x.toString}
-        y2={endY.toString}
-        style={
-          List(
-            s"stroke:${colorToCssColor(lineColor)}",
-            s"stroke-width: 1"
-          ).mkString(";")
-        }
-        />
+      structureLine(x, y, x, endY,List(
+        s"stroke:${colorToCssColor(lineColor)}",
+        s"stroke-width: 1").mkString(";"))
     }
+
+
 
   private def generateFillPattern(shape:Node with ColorizableShape, id:String):Option[Elem] = {
     def generateStructurePattern(xs:Seq[Elem], width:Double, height:Double):Elem = {
@@ -366,18 +359,10 @@ class SvgCodeGenerator {
           x = i*5
           y = i*5
           } yield {
-          <line
-            x1={0.toString}
-            y1={y.toString}
-            x2={x.toString}
-            y2={0.toString}
-            style={
-              List(
-                s"stroke:${colorToCssColor(shape.getStrokeColor)}",
-                s"stroke-width: 1"
-              ).mkString(";")
-            }
-            />
+            structureLine(0, y, x, 0, List(
+              s"stroke:${colorToCssColor(shape.getStrokeColor)}",
+              s"stroke-width: 1"
+            ).mkString(";"))
           }
           Some(generateStructurePattern(lines, width, height))
       case _ if shape.getFillColor.isInstanceOf[ImagePattern] =>
