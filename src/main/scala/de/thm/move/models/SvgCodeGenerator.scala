@@ -324,6 +324,28 @@ class SvgCodeGenerator {
             />
         })
         Some(generateStructurePattern(xs, width, height))
+      case FillPattern.Vertical =>
+        val bounds = shape.getBoundsInLocal()
+        val xs = (for {
+          i <- 1 to (bounds.getWidth/5).toInt
+          x = (i*5)
+          y = 0
+          endY = bounds.getHeight
+        } yield {
+          <line
+            x1={x.toString}
+            y1={y.toString}
+            x2={x.toString}
+            y2={endY.toString}
+            style={
+              List(
+                s"stroke:${colorToCssColor(shape.getStrokeColor)}",
+                s"stroke-width: 1"
+              ).mkString(";")
+            }
+            />
+        })
+        Some(generateStructurePattern(xs, bounds.getWidth(), bounds.getHeight))
       case _ if shape.getFillColor.isInstanceOf[ImagePattern] =>
           //get the underlying image
         val imgpattern = shape.getFillColor.asInstanceOf[ImagePattern]
