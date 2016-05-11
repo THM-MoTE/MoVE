@@ -358,6 +358,28 @@ class SvgCodeGenerator {
         val horizontals = horizontalLines(width, height, shape.getStrokeColor)
         val lines = verticals ++ horizontals
         Some(generateStructurePattern(lines, width, height))
+      case FillPattern.Backward =>
+        val max = width max height
+        //create lines going from top-left to bottom-right
+        val lines = for {
+          i <- 1 to ((max*2)/5).toInt
+          x = i*5
+          y = i*5
+          } yield {
+          <line
+            x1={0.toString}
+            y1={y.toString}
+            x2={x.toString}
+            y2={0.toString}
+            style={
+              List(
+                s"stroke:${colorToCssColor(shape.getStrokeColor)}",
+                s"stroke-width: 1"
+              ).mkString(";")
+            }
+            />
+          }
+          Some(generateStructurePattern(lines, width, height))
       case _ if shape.getFillColor.isInstanceOf[ImagePattern] =>
           //get the underlying image
         val imgpattern = shape.getFillColor.asInstanceOf[ImagePattern]
