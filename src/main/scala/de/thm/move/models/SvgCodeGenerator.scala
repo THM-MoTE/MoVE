@@ -279,10 +279,12 @@ class SvgCodeGenerator {
       }
       />
 
+  val lineDistance = 5 //distance between a structureLine
+
   private def horizontalLines(width:Double,height:Double,lineColor:Paint):Seq[Elem] =
     for {
-      i <- 1 to (height/5).toInt
-      y = (i*5)
+      i <- 1 to (height/lineDistance).toInt
+      y = (i*lineDistance)
       x = 0
       endX = width
     } yield {
@@ -291,8 +293,8 @@ class SvgCodeGenerator {
 
   private def verticalLines(width:Double,height:Double,lineColor:Paint):Seq[Elem] =
     for {
-      i <- 1 to (width/5).toInt
-      x = (i*5)
+      i <- 1 to (width/lineDistance).toInt
+      x = (i*lineDistance)
       y = 0
       endY = height
     } yield {
@@ -315,12 +317,12 @@ class SvgCodeGenerator {
     }
       //create lines from middle to top-right
     val secondHalf = for(i <- 1 to (doubled/5).toInt) yield {
-      val startX = i*5
+      val startX = i*lineDistance
       val startY = 0
       val endY = doubled
       val line =
         structureLine(startX, startY, endX,endY,lineColor)
-      endX += 5 //5px between this and the next line
+      endX += lineDistance //5px between this and the next line
       line
     }
     firstHalf ++ secondHalf
@@ -330,9 +332,9 @@ class SvgCodeGenerator {
     val max = width max height
     //create lines going from top-left to bottom-right
     for {
-      i <- 1 to ((max*2)/5).toInt
-      x = i*5
-      y = i*5
+      i <- 1 to ((max*2)/lineDistance).toInt
+      x = i*lineDistance
+      y = i*lineDistance
       } yield {
         structureLine(0, y, x, 0, lineColor)
       }
