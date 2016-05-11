@@ -446,7 +446,6 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onExportBitmapClicked(e:ActionEvent): Unit = {
-    println("export bitmap")
     fileErrorHandling(
       fileCtrl.exportAsBitmap(drawPanel)
     )

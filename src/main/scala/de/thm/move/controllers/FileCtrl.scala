@@ -172,11 +172,7 @@ class FileCtrl(owner: => Window) {
       image = root.snapshot(null, null)
       filename = file.getName
       suffix = filename.substring(filename.lastIndexOf(".")+1)
-      _ <- Try {
-        println(s"before io suffix $suffix")
-        println( ImageIO.write(SwingFXUtils.fromFXImage(image, null), suffix, file) )
-        println("after io")
-      }
+      _ <- Try (ImageIO.write(SwingFXUtils.fromFXImage(image, null), suffix, file))
     } yield ()
   }
 
