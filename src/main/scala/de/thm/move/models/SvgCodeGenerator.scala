@@ -403,6 +403,11 @@ class SvgCodeGenerator {
       case FillPattern.Forward =>
         val lines = forwardLines(width, height, shape.getStrokeColor)
         Some(generateStructurePattern(lines, width, height))
+      case FillPattern.CrossDiag =>
+        val backward = backwardLines(width, height, shape.getStrokeColor)
+        val forward = forwardLines(width, height, shape.getStrokeColor)
+        val lines = backward ++ forward
+        Some(generateStructurePattern(lines, width, height))
       case _ if shape.getFillColor.isInstanceOf[ImagePattern] =>
           //get the underlying image
         val imgpattern = shape.getFillColor.asInstanceOf[ImagePattern]
