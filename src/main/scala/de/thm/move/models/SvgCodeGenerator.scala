@@ -266,6 +266,19 @@ class SvgCodeGenerator {
   }
 
   private def generateFillPattern(shape:Node with ColorizableShape, id:String):Option[Elem] = {
+    def generateStructurePattern(xs:Seq[Elem], width:Double, height:Double):Elem = {
+      <pattern id={id} patternUnits="userSpaceOnUse" width={width.toString} height={height.toString}>
+        <rect
+          x={0.toString}
+          y={0.toString}
+          width={width.toString}
+          height={height.toString}
+          fill={colorToCssColor(shape.oldFillColorProperty.get)}
+          style="stroke:none;"
+          />
+          {xs}
+      </pattern>
+    }
     shape.fillPatternProperty.get match {
       case FillPattern.VerticalCylinder =>
         Some(<linearGradient id={id.toString} x1="0%" y1="0%" x2="100%" y2="0%">
@@ -287,6 +300,30 @@ class SvgCodeGenerator {
           <stop offset="20%" style={s"stop-color:${colorToCssColor(shape.oldFillColorProperty.get)}; stop-opacity:1"} />
           <stop offset="100%" style={s"stop-color:${colorToCssColor(shape.getStrokeColor)};stop-opacity:1"} />
         </radialGradient>)
+      case FillPattern.Horizontal =>
+        val bounds = shape.getBoundsInLocal()
+        val height = bounds.getHeight
+        val width = bounds.getWidth
+        val xs = (for {
+          i <- 1 to (height/5).toInt
+          y = (i*5)
+          x = 0
+          endX = width
+        } yield {
+          <line
+            x1={x.toString}
+            y1={y.toString}
+            x2={endX.toString}
+            y2={y.toString}
+            style={
+              List(
+                s"stroke:${colorToCssColor(shape.getStrokeColor)}",
+                s"stroke-width: 1"
+              ).mkString(";")
+            }
+            />
+        })
+        Some(generateStructurePattern(xs, width, height))
       case _ if shape.getFillColor.isInstanceOf[ImagePattern] =>
           //get the underlying image
         val imgpattern = shape.getFillColor.asInstanceOf[ImagePattern]
