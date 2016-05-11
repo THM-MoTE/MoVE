@@ -30,6 +30,10 @@ import de.thm.move.views.dialogs.{Dialogs, SrcFormatDialog}
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
+/** Controller for interaction with files.
+  * This controller asks the user to select a appropriate file and uses the selected file for it's
+  * functions.
+  */
 class FileCtrl(owner: => Window) {
 
   case class SaveInfos(targetUri:URI, pxPerMm:Int, srcFormat:FormatSrc)
@@ -69,6 +73,9 @@ class FileCtrl(owner: => Window) {
     } else xs.head
   }
 
+  /** Let the user chooses a modelica file; parses this file and returns the
+    * coordinate-system bounds & the shapes of the modelica model.
+    */
   def openFile:Try[(Point,List[ResizableShape])] = {
     val chooser = Dialogs.newModelicaFileChooser()
     chooser.setTitle("Open..")
@@ -115,6 +122,9 @@ class FileCtrl(owner: => Window) {
     }
   }
 
+  /** Saves the icon represented by the shapes and their width, height to an existing file.
+    * If there is no existing file the user get asked to save a new file.
+    */
   def saveFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
     saveInfos match {
       case Some(SaveInfos(target,px,format)) =>
@@ -124,6 +134,9 @@ class FileCtrl(owner: => Window) {
     }
   }
 
+  /** Saves a new file by asking the user for a target file and writing the Icon represented by
+    * the given shapes and width,height as modelica-code into the file.
+    */
   def saveNewFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
     val chooser = Dialogs.newModelicaFileChooser()
     chooser.setTitle("Save as..")
@@ -143,6 +156,9 @@ class FileCtrl(owner: => Window) {
     }
   }
 
+  /** Exports the given Icon represented by
+    * the given shapes and width,height into an user-selected svg-file
+    */
   def exportAsSvg(shapes:List[Node], width:Double,height:Double): Try[Unit] = {
     val chooser = Dialogs.newSvgFileChooser()
     chooser.setTitle("Export as svg..")
@@ -160,6 +176,9 @@ class FileCtrl(owner: => Window) {
     }
   }
 
+  /** Exports the given Icon represented by
+    * the given shapes and width,height into an user-selected png-file
+    */
   def exportAsBitmap(root:Node): Try[Unit] = {
    val chooser = Dialogs.newPngFileChooser()
     chooser.setTitle("Export as jpeg..")
@@ -176,6 +195,7 @@ class FileCtrl(owner: => Window) {
     } yield ()
   }
 
+  /** Lets the user pick an image and returns the URI of the selected file */
   def openImage: Option[URI] = {
     val chooser = Dialogs.newBitmapFileChooser()
     chooser.setTitle("Open bitmap")

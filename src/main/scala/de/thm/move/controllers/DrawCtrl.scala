@@ -39,9 +39,12 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
 
   private val tmpShapeId = DrawPanel.tmpShapeId + "drawctrl"
 
+  /** The constraint that indicates if the drawing-element should hold their
+    * proportions. E.g. a ellipse becomes a circle, a rectangle becomes a square
+    */
   val drawConstraintProperty = new SimpleBooleanProperty()
 
-  /** Signals that the running drawing-process should be aborted. */
+  /** Signals that the running drawing-process should get aborted. */
   val abortDrawing = new SimpleBooleanProperty(false)
 
   def getDrawHandler: (SelectedShape, MouseEvent) => (Color, Color, Int) => Unit = {
@@ -183,6 +186,7 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
     removingNodes foreach changeLike.remove
   }
 
+  /** Aborts a running drawing-process */
   def abortDrawingProcess(): Unit = {
     removeTmpShapes(tmpShapeId)
     abortDrawing.set(true)

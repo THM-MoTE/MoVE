@@ -4,6 +4,10 @@
 
  package de.thm.move.controllers
 
+/** A controller for a clipboard.
+  * A clipboard contains optonally an element of type A
+  * (If no one added an element the clipboard is empty ==> getElement returns None)
+  */
 class ClipboardCtrl[A] {
   private var element:Option[A] = None
 
