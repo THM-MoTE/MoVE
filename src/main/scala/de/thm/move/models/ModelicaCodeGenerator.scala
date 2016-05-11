@@ -48,6 +48,7 @@ class ModelicaCodeGenerator(
   private def genRotate(n:Node):Option[String] = {
     val degree = n.getRotate
     if(degree != 0 && degree != 360) {
+        //Modelica rotates counter-clockwise; JavafX rotates clockwise
       Some(s"""rotation = ${degree*(-1)}""")
     } else None
   }
