@@ -387,11 +387,11 @@ class SvgCodeGenerator {
           <stop offset="100%" style={s"stop-color:${colorToCssColor(shape.getStrokeColor)};stop-opacity:1"} />
         </radialGradient>)
       case FillPattern.Horizontal =>
-        val xs = horizontalLines(width, height, shape.getStrokeColor)
-        Some(generateStructurePattern(xs, width, height))
+        val lines = horizontalLines(width, height, shape.getStrokeColor)
+        Some(generateStructurePattern(lines, width, height))
       case FillPattern.Vertical =>
-        val xs = verticalLines(width,height,shape.getStrokeColor)
-        Some(generateStructurePattern(xs, width, height))
+        val lines = verticalLines(width,height,shape.getStrokeColor)
+        Some(generateStructurePattern(lines, width, height))
       case FillPattern.Cross =>
         val verticals = verticalLines(width, height, shape.getStrokeColor)
         val horizontals = horizontalLines(width, height, shape.getStrokeColor)
