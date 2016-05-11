@@ -365,6 +365,39 @@ class SvgCodeGenerator {
             ).mkString(";"))
           }
           Some(generateStructurePattern(lines, width, height))
+      case FillPattern.Forward =>
+        val max = width max height
+        val doubled = max*2
+        var endX = 0 //distance to last line
+          //create lines from bottom-left to middle
+        val firstHalf = for(i <- (doubled/5).toInt to 0 by -1) yield {
+          val startX = 0
+          val startY = i*5
+          val endY = doubled
+          val line =
+            structureLine(startX, startY, endX,endY,List(
+              s"stroke:${colorToCssColor(shape.getStrokeColor)}",
+              s"stroke-width: 1"
+            ).mkString(";"))
+          endX += 5 //5px between this and the next line
+          line
+        }
+
+          //create lines from middle to top-right
+        val secondHalf = for(i <- 1 to (doubled/5).toInt) yield {
+          val startX = i*5
+          val startY = 0
+          val endY = doubled
+          val line =
+            structureLine(startX, startY, endX,endY,List(
+              s"stroke:${colorToCssColor(shape.getStrokeColor)}",
+              s"stroke-width: 1"
+            ).mkString(";"))
+          endX += 5 //5px between this and the next line
+          line
+        }
+        val lines = firstHalf ++ secondHalf
+        Some(generateStructurePattern(lines, width, height))
       case _ if shape.getFillColor.isInstanceOf[ImagePattern] =>
           //get the underlying image
         val imgpattern = shape.getFillColor.asInstanceOf[ImagePattern]
