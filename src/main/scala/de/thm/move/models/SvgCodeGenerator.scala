@@ -408,30 +408,6 @@ class SvgCodeGenerator {
         val forward = forwardLines(width, height, shape.getStrokeColor)
         val lines = backward ++ forward
         Some(generateStructurePattern(lines, width, height))
-      case _ if shape.getFillColor.isInstanceOf[ImagePattern] =>
-          //get the underlying image
-        val imgpattern = shape.getFillColor.asInstanceOf[ImagePattern]
-        val img = imgpattern.getImage
-        val byteOutput = new ByteArrayOutputStream()
-        ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", byteOutput) //write img into OutputStream
-        val bytes = byteOutput.toByteArray //turn stream into Array[Byte]
-        val byteStr = ResourceUtils.encodeBase64String(bytes)
-        //add a little bit more px to fill the full smoothed polygons
-        val width = shape.getBoundsInLocal.getWidth+5
-        val height = shape.getBoundsInLocal.getHeight+5
-        //finaly create a svg-pattern with an underlying base64-encoded image
-        Some(
-          <pattern id={id} patternUnits="objectBoundingBox" width="100" height="100">
-            <image
-              x="0"
-              y="0"
-              width={width.toString}
-              height={height.toString}
-              xlink:href={s"data:image/png;base64,$byteStr"}
-              />
-          </pattern>
-        )
-      case _ => None
     }
   }
 
@@ -441,27 +417,6 @@ class SvgCodeGenerator {
       "stroke-width: " + shape.getStrokeWidth.toInt,
       "stroke-opacity: " + (if(shape.getStrokeColor == null) "0.0" else "1.0")
     ).mkString(";")
-  }
-
-  private def horizontalGradient(id:String, startColor:Color, endColor:Color): Elem = {
-    <linearGradient id={id} x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style={s"stop-color:${colorToCssColor(startColor)};stop-opacity:1"} />
-      <stop offset="100%" style={s"stop-color:${colorToCssColor(endColor)};stop-opacity:1"} />
-    </linearGradient>
-  }
-
-  private def verticalGradient(id:String, startColor:Color, endColor:Color): Elem = {
-    <linearGradient id={id} x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style={s"stop-color:${colorToCssColor(startColor)};stop-opacity:1"} />
-      <stop offset="100%" style={s"stop-color:${colorToCssColor(endColor)};stop-opacity:1"} />
-    </linearGradient>
-  }
-
-  private def radialGradient(id:String, startColor:Color, endColor:Color): Elem = {
-    <radialGradient id={id} cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-      <stop offset="0%" style={s"stop-color:${colorToCssColor(startColor)}; stop-opacity:0"} />
-      <stop offset="100%" style={s"stop-color:${colorToCssColor(endColor)};stop-opacity:1"} />
-    </radialGradient>
   }
 
   def writeToFile(str:String)(target:Path): Unit = {
