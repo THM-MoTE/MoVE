@@ -33,6 +33,10 @@ import scala.util.{Failure, Success, Try}
 /** Controller for interaction with files.
   * This controller asks the user to select a appropriate file and uses the selected file for it's
   * functions.
+  * @note
+  *     Due to JavaFx's reflection-magic we need a "lazy val" (=>) Window-field so that we can create
+  *     a FileCtrl before the Scene/Window is fully loaded. The field owner is initialized on first
+  *     access which is after the whole scene is constructed.
   */
 class FileCtrl(owner: => Window) {
 
