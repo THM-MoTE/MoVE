@@ -402,6 +402,7 @@ class SvgCodeGenerator {
         val forward = forwardLines(width, height, shape.getStrokeColor)
         val lines = backward ++ forward
         Some(generateStructurePattern(lines, width, height))
+      case _ => None
     }
   }
 
