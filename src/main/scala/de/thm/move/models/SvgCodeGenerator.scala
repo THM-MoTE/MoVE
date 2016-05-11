@@ -265,6 +265,48 @@ class SvgCodeGenerator {
     }
   }
 
+  private def horizontalLines(width:Double,height:Double,lineColor:Paint):Seq[Elem] =
+    for {
+      i <- 1 to (height/5).toInt
+      y = (i*5)
+      x = 0
+      endX = width
+    } yield {
+      <line
+        x1={x.toString}
+        y1={y.toString}
+        x2={endX.toString}
+        y2={y.toString}
+        style={
+          List(
+            s"stroke:${colorToCssColor(lineColor)}",
+            s"stroke-width: 1"
+          ).mkString(";")
+        }
+        />
+    }
+
+  private def verticalLines(width:Double,height:Double,lineColor:Paint):Seq[Elem] =
+    for {
+      i <- 1 to (width/5).toInt
+      x = (i*5)
+      y = 0
+      endY = height
+    } yield {
+      <line
+        x1={x.toString}
+        y1={y.toString}
+        x2={x.toString}
+        y2={endY.toString}
+        style={
+          List(
+            s"stroke:${colorToCssColor(lineColor)}",
+            s"stroke-width: 1"
+          ).mkString(";")
+        }
+        />
+    }
+
   private def generateFillPattern(shape:Node with ColorizableShape, id:String):Option[Elem] = {
     def generateStructurePattern(xs:Seq[Elem], width:Double, height:Double):Elem = {
       <pattern id={id} patternUnits="userSpaceOnUse" width={width.toString} height={height.toString}>
@@ -304,48 +346,14 @@ class SvgCodeGenerator {
         val bounds = shape.getBoundsInLocal()
         val height = bounds.getHeight
         val width = bounds.getWidth
-        val xs = (for {
-          i <- 1 to (height/5).toInt
-          y = (i*5)
-          x = 0
-          endX = width
-        } yield {
-          <line
-            x1={x.toString}
-            y1={y.toString}
-            x2={endX.toString}
-            y2={y.toString}
-            style={
-              List(
-                s"stroke:${colorToCssColor(shape.getStrokeColor)}",
-                s"stroke-width: 1"
-              ).mkString(";")
-            }
-            />
-        })
+        val xs = horizontalLines(width, height, shape.getStrokeColor)
         Some(generateStructurePattern(xs, width, height))
       case FillPattern.Vertical =>
         val bounds = shape.getBoundsInLocal()
-        val xs = (for {
-          i <- 1 to (bounds.getWidth/5).toInt
-          x = (i*5)
-          y = 0
-          endY = bounds.getHeight
-        } yield {
-          <line
-            x1={x.toString}
-            y1={y.toString}
-            x2={x.toString}
-            y2={endY.toString}
-            style={
-              List(
-                s"stroke:${colorToCssColor(shape.getStrokeColor)}",
-                s"stroke-width: 1"
-              ).mkString(";")
-            }
-            />
-        })
-        Some(generateStructurePattern(xs, bounds.getWidth(), bounds.getHeight))
+        val width = bounds.getWidth()
+        val height = bounds.getHeight()
+        val xs = verticalLines(width,height,shape.getStrokeColor)
+        Some(generateStructurePattern(xs, width, height))
       case _ if shape.getFillColor.isInstanceOf[ImagePattern] =>
           //get the underlying image
         val imgpattern = shape.getFillColor.asInstanceOf[ImagePattern]
