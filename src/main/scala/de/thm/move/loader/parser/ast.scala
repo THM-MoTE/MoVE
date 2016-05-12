@@ -35,7 +35,12 @@ object ast {
                         initScale:Double = 0.1
                         ) extends ModelicaAst
 
-  sealed trait ShapeElement extends ModelicaAst
+  sealed trait ShapeElement extends ModelicaAst {
+    /** A list of possible warnings that occured during parsing the file.
+      * Will be used to warn the user when some Property can't get used
+      */
+    var warnings: List[String] = Nil
+  }
 
   case class GraphicItem(visible:Boolean = true,
                         origin:Point = (0,0),
