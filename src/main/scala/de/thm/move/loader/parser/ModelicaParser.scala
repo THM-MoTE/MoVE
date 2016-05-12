@@ -18,6 +18,9 @@ import java.io.InputStreamReader
 import java.io.InputStream
 
 import de.thm.move.models.CommonTypes._
+import de.thm.move.util.ValueWithWarning
+import de.thm.move.util.ValueSuccess
+import de.thm.move.util.ValueWarning
 import de.thm.move.util.PointUtils._
 
 import scala.util.parsing.input.Position
@@ -90,33 +93,38 @@ class ModelicaParser extends JavaTokenParsers
     val ext = getPropertyValue(map, extent)(extension)
     val aspectRatio = getPropertyValue(map, preserveRatio, defaultPreserveRatio)(bool)
     val scale = getPropertyValue(map, initScale, defaultinitScale)(decimalNo)
-    CoordinateSystem(ext,aspectRatio,scale)
+    ext match {
+      case ValueSuccess(et) => CoordinateSystem(et,aspectRatio,scale)
+      case _ => throw new ParsingError("extension for coordinate system has to be statically defined!")
+    }
   })
 
-  def extensionParser:Parser[Extent] =
+  def extensionParser:Parser[ParsedWarning[Extent]] =
     "extent" ~> "=" ~> extension
 
   def graphic:Parser[List[ShapeElement]] =
     "graphics" ~>  "=" ~> "{" ~> repsep(graphics, ",") <~ "}"
 
-  def graphics:Parser[ShapeElement] = positioned(
+  def graphics:Parser[ShapeElement] = positioned (
     "Rectangle" ~> "(" ~> rectangleFields <~ ")"
-    | "Ellipse" ~> "(" ~> ellipseFields <~ ")"
+/*    | "Ellipse" ~> "(" ~> ellipseFields <~ ")"
     | "Line" ~> "(" ~> lineFields <~ ")"
     | "Polygon" ~> "(" ~> polygonFields <~ ")"
     | "Bitmap" ~> "(" ~> bitmapFields <~ ")"
-    | "Text" ~> "(" ~> textFields <~ ")"
+    | "Text" ~> "(" ~> textFields <~ ")" */
     )
 
   def rectangleFields:Parser[RectangleElement] =
     positioned(propertyKeys(visible, origin, rotation,lineCol,linePatt,fillCol,
       fillPatt,extent,lineThick, radius) ^^ { map =>
-        val gi = getGraphicItem(map)
-        val fs = getFilledShape(map)
-        val ext = getPropertyValue(map, extent)(extension)
-        RectangleElement(gi,fs, extent=ext)
+        val withWarnings = for {
+          gi <- getGraphicItem(map)
+          fs <- getFilledShape(map)
+          ext <- getPropertyValue(map, extent)(extension)
+        } yield RectangleElement(gi,fs, extent=ext)
+        toAst(withWarnings)
     })
-
+/*
   def polygonFields:Parser[Polygon] =
     positioned(propertyKeys(visible, origin, rotation,pointsKey,lineCol,linePatt,fillCol,
       fillPatt,lineThick,smooth) ^^ { map =>
@@ -179,20 +187,23 @@ class ModelicaParser extends JavaTokenParsers
           getPropertyValue(map, textColor, defaultCol)(color),
           getPropertyValue(map, hAlignment, defaultHAlignment)(ident))
     })
-
-  def getGraphicItem(map:Map[String,String]):GraphicItem = {
-    GraphicItem(getPropertyValue(map, visible, defaultVisible)(bool),
-                getPropertyValue(map, origin, defaultOrigin)(point),
-                getPropertyValue(map, rotation, defaultRotation)(numberParser)
-                )
+*/
+  def getGraphicItem(map:Map[String,String]):ParsedWarning[GraphicItem] = {
+    for {
+      visible <- getPropertyValue(map, visible, parseValue(defaultVisible))(withVariableGraphics(bool, visible))
+      origin <- getPropertyValue(map, origin, parseValue(defaultOrigin))(withVariableGraphics(point, origin))
+      rotation <- getPropertyValue(map, rotation, parseValue(defaultRotation))(withVariableGraphics(numberParser, rotation))
+    } yield GraphicItem(visible,origin,rotation)
   }
 
-  def getFilledShape(map:Map[String,String]):FilledShape =
-    FilledShape(getPropertyValue(map, fillCol, defaultCol)(color),
-                getPropertyValue(map, fillPatt, defaultFillPatt)(ident),
-                getPropertyValue(map, lineCol, defaultCol)(color),
-                getPropertyValue(map, lineThick, defaultLineThick)(numberParser),
-                getPropertyValue(map, linePatt, defaultLinePatt)(ident))
+  def getFilledShape(map:Map[String,String]):ParsedWarning[FilledShape] =
+    for {
+      cl <- getPropertyValue(map, fillCol, parseValue(defaultCol))(withVariableGraphics(color, fillCol))
+      fp <- getPropertyValue(map, fillPatt, parseValue(defaultFillPatt))(withVariableGraphics(ident, fillPatt))
+      lc <- getPropertyValue(map, lineCol, parseValue(defaultCol))(withVariableGraphics(color, lineCol))
+      thick <- getPropertyValue(map, lineThick, parseValue(defaultLineThick))(withVariableGraphics(numberParser, lineThick))
+      lp <- getPropertyValue(map, linePatt, parseValue(defaultLinePatt))(withVariableGraphics(ident, linePatt))
+    } yield FilledShape(cl,fp,lc,thick,lp)
 
   def identWithoutHyphens(str:String):String = {
     val regex = "\"(.*)\"".r
@@ -208,6 +219,12 @@ class ModelicaParser extends JavaTokenParsers
       case NoSuccess(msg, input) =>
         throw new ParsingError(s"Error in line ${input.pos.line}, column ${input.pos.column}: "+msg)
     }
+  }
+
+  private def toAst[A <: ShapeElement](parsedWarnings:ParsedWarning[A]):A = {
+    val v = parsedWarnings.getValue
+    v.warnings = parsedWarnings.getWarnings
+    v
   }
 
   private def missingKeyError(str:String) = throw new ParsingError(s"$str has to be defined!")
