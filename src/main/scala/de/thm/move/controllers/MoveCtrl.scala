@@ -457,9 +457,18 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onExportBitmapClicked(e:ActionEvent): Unit = {
-    fileErrorHandling(
-      fileCtrl.exportAsBitmap(drawPanel)
-    )
+    fileErrorHandling {
+        //temporary pane for making a snapshot,
+        //this pane doesn't hold anchors or selection-rectangles
+      val shapePanel = new DrawPanel()
+      val shapes = drawPanel.getShapes
+      //create a copy of all shapes and add them to the new temporary pane
+      shapes flatMap {
+        case rs:ResizableShape => List(rs.copy)
+        case _ => Nil
+      } foreach shapePanel.drawShape
+      fileCtrl.exportAsBitmap(shapePanel)
+    }
   }
 
   @FXML
