@@ -34,7 +34,7 @@ import scala.util.{Failure, Success, Try}
   * This controller asks the user to select a appropriate file and uses the selected file for it's
   * functions.
   */
-class FileCtrl(owner: => Window) {
+class FileCtrl(owner: Window) {
 
   case class SaveInfos(targetUri:URI, pxPerMm:Int, srcFormat:FormatSrc)
 
