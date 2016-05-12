@@ -154,7 +154,8 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       resizableImg
     case txt:Text =>
       val (x,y) = convertPoint(txt.extent._1+txt.gItem.origin)
-      val font = Font.font(txt.fontName, txt.size)
+      val fontSize = if(txt.size == 0.0) 12.0 else txt.size
+      val font = Font.font(txt.fontName, fontSize)
       val text = new ResizableText(txt.text,x,y,font)
       text.setFontColor(txt.color)
       txt.style.foreach {
