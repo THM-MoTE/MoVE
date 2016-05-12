@@ -107,8 +107,8 @@ class ModelicaParser extends JavaTokenParsers
 
   def graphics:Parser[ShapeElement] = positioned (
     "Rectangle" ~> "(" ~> rectangleFields <~ ")"
-/*    | "Ellipse" ~> "(" ~> ellipseFields <~ ")"
-    | "Line" ~> "(" ~> lineFields <~ ")"
+    | "Ellipse" ~> "(" ~> ellipseFields <~ ")"
+/*    | "Line" ~> "(" ~> lineFields <~ ")"
     | "Polygon" ~> "(" ~> polygonFields <~ ")"
     | "Bitmap" ~> "(" ~> bitmapFields <~ ")"
     | "Text" ~> "(" ~> textFields <~ ")" */
@@ -150,18 +150,19 @@ class ModelicaParser extends JavaTokenParsers
                   )
 
     })
-
+*/
   def ellipseFields:Parser[Ellipse] =
     positioned(propertyKeys(visible,origin,rotation,lineCol,linePatt,fillCol,
       fillPatt,extent,lineThick, endAngle) ^^ { map =>
-        val gi = getGraphicItem(map)
-        val fs = getFilledShape(map)
-        val ext = getPropertyValue(map, extent)(extension)
-        val endAng = getPropertyValue(map, endAngle, defaultEndAngle)(numberParser)
-        Ellipse(gi,fs, extent=ext, endAngle = endAng)
+        toAst( for {
+          gi <- getGraphicItem(map)
+          fs <- getFilledShape(map)
+          ext <- getPropertyValue(map, extent)(extension)
+          endAngl <- getPropertyValue(map, endAngle, parseValue(defaultEndAngle))(withVariableGraphics(numberParser, endAngle))
+        } yield  Ellipse(gi,fs, extent=ext, endAngle = endAngl) )
       })
 
-
+/*
   def bitmapFields:Parser[AbstractImage] =
     positioned(propertyKeys(visible, origin, extent, rotation, base64, imgUri) ^^ { map =>
       val gi = getGraphicItem(map)
