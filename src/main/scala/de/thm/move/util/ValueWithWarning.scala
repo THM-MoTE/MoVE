@@ -26,3 +26,10 @@ case class ValueWarning[A, E](value:A, warnings:List[E]) extends ValueWithWarnin
   def getValue:A = value
   def getWarnings:List[E] = warnings
 }
+
+object ValueWithWarning {
+  def apply[A, E](a:A):ValueWithWarning[A,E] = ValueSuccess(a)
+}
+object ValueWarning {
+  def apply[A, E](a:A, w:E):ValueWarning[A,E] = ValueWarning(a, List(w))
+}
