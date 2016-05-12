@@ -8,18 +8,27 @@ import javafx.scene.paint.Color
 
 import de.thm.move.loader.parser.ModelicaParserLike.ParsingError
 import de.thm.move.models.CommonTypes._
-
+import de.thm.move.util.ValueWithWarning
+import de.thm.move.util.ValueSuccess
+import de.thm.move.util.ValueWarning
 import scala.util.parsing.combinator.RegexParsers
 
 /** Defines parsers for all properties/fields that a modelica primitive can have. */
 trait PropertyParser {
   self: RegexParsers =>
 
+  type ParsedWarning[A] = ValueWithWarning[A, String]
+
+  def dynamicSelectWarning(propertyName:String = "") = s"Warning DynamicSelected-Value '$propertyName' has no effect. It will be overwritten when saving file!"
+  def conditionWarning(propertyName:String = "") = s"Warning Conditional-Value '$propertyName' has no effect. It will be overwritten when saving file!"
+
   // regex from: http://stackoverflow.com/a/5954831
   override val whiteSpace = """(\s|//.*|(?m)/\*(\*(?!/)|[^*])*\*/)+""".r
   protected val identRegex = "[a-zA-Z_][a-zA-Z0-9_\\.]*".r
   protected val numberRegex = "-?[0-9]+".r
   protected val javaLikeStrRegex = "\"(.*)\"".r
+
+  def parseValue[A](v:A): ParsedWarning[A] = ValueWithWarning[A, String](v)
 
   @annotation.tailrec
   private def containsDuplicates[A](xs:List[A], seen:Set[A] = Set[A]()): Boolean = xs match {
@@ -56,7 +65,15 @@ trait PropertyParser {
           s"""property "$key" has to be defined!"""))(parser)
 
   val value:Parser[String] = (
-    identRegex
+    "DynamicSelect" ~ "(" ~ value ~ "," ~ value ~ ")" ^^ {
+      case ds~lp~v~k~v2~rp => ds+lp+v+k+v2+rp
+    }
+    | "if" ~ identRegex ~ "then" ~ value ~ "else" ~ value ^^ {
+      case ifs~id~th~vl~el~vl2 => val s = s"$ifs $id $th $vl $el $vl2"
+      println(s)
+      s
+    }
+    | identRegex
     | javaLikeStrRegex
     | numberRegex ~ "." ~ numberRegex ^^ { case n1~comma~n2 => n1+comma+n2 }
     | numberRegex
@@ -64,8 +81,21 @@ trait PropertyParser {
     | "{" ~ repsep(value, ",") ~ "}" ^^ { case lp~inner~rp => lp+inner.mkString(",")+rp }
   )
 
-  def extension:Parser[(Point,Point)] =
+  def dynamicSelectedValue[A](v:Parser[A]): Parser[A] =
+    "DynamicSelect" ~> "(" ~> v <~ "," <~ v <~ ")"
+
+  def conditionValue[A](v:Parser[A]): Parser[A] =
+    "if" ~> identRegex ~> "then" ~> v <~ "else" <~ v
+
+  def withVariableGraphics[A](p:Parser[A], propertyName:String = ""):Parser[ParsedWarning[A]] = (
+     p ^^ { ValueSuccess(_) }
+     | dynamicSelectedValue(p) ^^ { v => ValueWarning(v, dynamicSelectWarning(propertyName))  }
+     | conditionValue(p) ^^ { v => ValueWarning(v, conditionWarning(propertyName))  }
+  )
+
+  def extension:Parser[ParsedWarning[(Point,Point)]] = withVariableGraphics (
     ("{"~> point <~ ",") ~ point <~ "}" ^^ { case p1 ~ p2 => (p1,p2) }
+    )
 
   def point:Parser[Point] =
     ("{" ~> decimalNo <~ ",") ~ decimalNo <~ "}" ^^ {
