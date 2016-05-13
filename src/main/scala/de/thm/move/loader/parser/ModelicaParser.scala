@@ -43,7 +43,6 @@ class ModelicaParser extends JavaTokenParsers
     | skipAnnotation ~> "annotation" ~> "(" ~> skipUninterestingStuff ~> posString(")") <~ ";" ^^ {
       paren => Some(WithoutIcon(paren.pos))
     }
-    | skipUninterestingStuff ~> icon <~ ")" <~ ";" ^^ { Some(_) } //TODO i think this case can get removed
     | stuffAfterModel ^^ { _ => None }
   )
 
