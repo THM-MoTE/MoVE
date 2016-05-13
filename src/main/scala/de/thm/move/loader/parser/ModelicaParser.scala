@@ -122,7 +122,7 @@ class ModelicaParser extends JavaTokenParsers
         gi <- getGraphicItem(map)
         fs <- getFilledShape(map)
         points <- getPropertyValue(map, pointsKey)(withVariableGraphics(points, pointsKey))
-        smooth <- getPropertyValue(map, smooth, parseValue(defaultSmooth))(withVariableGraphics(ident, smooth))
+        smooth <- getPropertyValue(map, smooth, validValue(defaultSmooth))(withVariableGraphics(ident, smooth))
       } yield Polygon(gi,fs,points,smooth))
       })
 
@@ -132,12 +132,12 @@ class ModelicaParser extends JavaTokenParsers
         toAst(for {
           gi <- getGraphicItem(map)
           points <- getPropertyValue(map, pointsKey)(withVariableGraphics(points, pointsKey))
-          col <- getPropertyValue(map, colorKey, parseValue(defaultCol))(withVariableGraphics(color, colorKey))
-          thick <- getPropertyValue(map, thick, parseValue(defaultLineThick))(withVariableGraphics(decimalNo, thick))
-          lp <- getPropertyValue(map, linePatt, parseValue(defaultLinePatt))(withVariableGraphics(ident, linePatt))
-          smooth <- getPropertyValue(map, smooth, parseValue(defaultSmooth))(withVariableGraphics(ident,  smooth))
-          arrow <- getPropertyValue(map, arrowKey, parseValue(defaultArrow))(withVariableGraphics(arrow, arrowKey))
-          as <- getPropertyValue(map, arrowSize, parseValue(defaultArrowSize))(withVariableGraphics(numberParser, arrowSize))
+          col <- getPropertyValue(map, colorKey, validValue(defaultCol))(withVariableGraphics(color, colorKey))
+          thick <- getPropertyValue(map, thick, validValue(defaultLineThick))(withVariableGraphics(decimalNo, thick))
+          lp <- getPropertyValue(map, linePatt, validValue(defaultLinePatt))(withVariableGraphics(ident, linePatt))
+          smooth <- getPropertyValue(map, smooth, validValue(defaultSmooth))(withVariableGraphics(ident,  smooth))
+          arrow <- getPropertyValue(map, arrowKey, validValue(defaultArrow))(withVariableGraphics(arrow, arrowKey))
+          as <- getPropertyValue(map, arrowSize, validValue(defaultArrowSize))(withVariableGraphics(numberParser, arrowSize))
         } yield PathElement(gi, points, col, thick, lp, smooth, arrow, as))
     })
 
@@ -148,7 +148,7 @@ class ModelicaParser extends JavaTokenParsers
           gi <- getGraphicItem(map)
           fs <- getFilledShape(map)
           ext <- getPropertyValue(map, extent)(extension)
-          endAngl <- getPropertyValue(map, endAngle, parseValue(defaultEndAngle))(withVariableGraphics(numberParser, endAngle))
+          endAngl <- getPropertyValue(map, endAngle, validValue(defaultEndAngle))(withVariableGraphics(numberParser, endAngle))
         } yield  Ellipse(gi,fs, extent=ext, endAngle = endAngl) )
       })
 
@@ -174,29 +174,29 @@ class ModelicaParser extends JavaTokenParsers
           gi <- getGraphicItem(map)
           ext <- getPropertyValue(map, extent)(extension)
           text = map.get(textString).map(identWithoutHyphens).getOrElse(missingKeyError(textString))
-          fs <- getPropertyValue(map, fontSize, parseValue(defaultFontSize))(withVariableGraphics(decimalNo, fontSize))
+          fs <- getPropertyValue(map, fontSize, validValue(defaultFontSize))(withVariableGraphics(decimalNo, fontSize))
           font = map.get(fontName).map(identWithoutHyphens).getOrElse(defaultFont)
-          fontStyle <- getPropertyValue(map, textStyle, parseValue(defaultFontStyle))(withVariableGraphics(emptySeqString, textStyle))
-          cl <- getPropertyValue(map, textColor, parseValue(defaultCol))(withVariableGraphics(color, textColor))
-          halignment <- getPropertyValue(map, hAlignment, parseValue(defaultHAlignment))(withVariableGraphics(ident, hAlignment))
+          fontStyle <- getPropertyValue(map, textStyle, validValue(defaultFontStyle))(withVariableGraphics(emptySeqString, textStyle))
+          cl <- getPropertyValue(map, textColor, validValue(defaultCol))(withVariableGraphics(color, textColor))
+          halignment <- getPropertyValue(map, hAlignment, validValue(defaultHAlignment))(withVariableGraphics(ident, hAlignment))
         } yield Text(gi,ext,text,fs,font,fontStyle, cl, halignment))
     })
 
   def getGraphicItem(map:Map[String,String]):StringValidation[GraphicItem] = {
     for {
-      visible <- getPropertyValue(map, visible, parseValue(defaultVisible))(withVariableGraphics(bool, visible))
-      origin <- getPropertyValue(map, origin, parseValue(defaultOrigin))(withVariableGraphics(point, origin))
-      rotation <- getPropertyValue(map, rotation, parseValue(defaultRotation))(withVariableGraphics(numberParser, rotation))
+      visible <- getPropertyValue(map, visible, validValue(defaultVisible))(withVariableGraphics(bool, visible))
+      origin <- getPropertyValue(map, origin, validValue(defaultOrigin))(withVariableGraphics(point, origin))
+      rotation <- getPropertyValue(map, rotation, validValue(defaultRotation))(withVariableGraphics(numberParser, rotation))
     } yield GraphicItem(visible,origin,rotation)
   }
 
   def getFilledShape(map:Map[String,String]):StringValidation[FilledShape] =
     for {
-      cl <- getPropertyValue(map, fillCol, parseValue(defaultCol))(withVariableGraphics(color, fillCol))
-      fp <- getPropertyValue(map, fillPatt, parseValue(defaultFillPatt))(withVariableGraphics(ident, fillPatt))
-      lc <- getPropertyValue(map, lineCol, parseValue(defaultCol))(withVariableGraphics(color, lineCol))
-      thick <- getPropertyValue(map, lineThick, parseValue(defaultLineThick))(withVariableGraphics(decimalNo, lineThick))
-      lp <- getPropertyValue(map, linePatt, parseValue(defaultLinePatt))(withVariableGraphics(ident, linePatt))
+      cl <- getPropertyValue(map, fillCol, validValue(defaultCol))(withVariableGraphics(color, fillCol))
+      fp <- getPropertyValue(map, fillPatt, validValue(defaultFillPatt))(withVariableGraphics(ident, fillPatt))
+      lc <- getPropertyValue(map, lineCol, validValue(defaultCol))(withVariableGraphics(color, lineCol))
+      thick <- getPropertyValue(map, lineThick, validValue(defaultLineThick))(withVariableGraphics(decimalNo, lineThick))
+      lp <- getPropertyValue(map, linePatt, validValue(defaultLinePatt))(withVariableGraphics(ident, linePatt))
     } yield FilledShape(cl,fp,lc,thick,lp)
 
   def identWithoutHyphens(str:String):String = {

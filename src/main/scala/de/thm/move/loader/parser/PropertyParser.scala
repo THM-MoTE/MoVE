@@ -28,8 +28,8 @@ trait PropertyParser {
   protected val numberRegex = "-?[0-9]+".r
   protected val javaLikeStrRegex = "\"(.*)\"".r
 
-    //TODO rename this
-  def parseValue[A](v:A): StringValidation[A] = Validation[A, String](v)
+  /** Wraps the given value in a StringValidation */
+  def validValue[A](v:A): StringValidation[A] = Validation[A, String](v)
 
   @annotation.tailrec
   private def containsDuplicates[A](xs:List[A], seen:Set[A] = Set[A]()): Boolean = xs match {
@@ -88,7 +88,6 @@ trait PropertyParser {
   def conditionValue[A](v:Parser[A]): Parser[A] =
     "if" ~> identRegex ~> "then" ~> v <~ "else" <~ v
 
-    //TODO rename this
   def withVariableGraphics[A](p:Parser[A], propertyName:String):Parser[StringValidation[A]] = (
       dynamicSelectedValue(p) ^^ { v => ValidationWarning(v, dynamicSelectWarning(propertyName))  }
     | conditionValue(p) ^^ { v => ValidationWarning(v, conditionWarning(propertyName))  }
