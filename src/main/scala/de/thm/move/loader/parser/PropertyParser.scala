@@ -90,9 +90,9 @@ trait PropertyParser {
 
     //TODO rename this
   def withVariableGraphics[A](p:Parser[A], propertyName:String):Parser[StringValidation[A]] = (
-     p ^^ { ValidationSuccess(_) }
-     | dynamicSelectedValue(p) ^^ { v => ValidationWarning(v, dynamicSelectWarning(propertyName))  }
-     | conditionValue(p) ^^ { v => ValidationWarning(v, conditionWarning(propertyName))  }
+      dynamicSelectedValue(p) ^^ { v => ValidationWarning(v, dynamicSelectWarning(propertyName))  }
+    | conditionValue(p) ^^ { v => ValidationWarning(v, conditionWarning(propertyName))  }
+    | p ^^ { ValidationSuccess(_) }
   )
 
   def extension:Parser[StringValidation[(Point,Point)]] = withVariableGraphics (
