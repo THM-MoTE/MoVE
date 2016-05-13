@@ -99,8 +99,16 @@ class FileCtrl(owner: Window) {
       val converter = new ShapeConverter(scaleFactor,
         systemSize,
         path)
-      val shapes = converter.getShapes(model)
+      val shapesWithWarnings = converter.getShapes(model)
+      val shapes = shapesWithWarnings.map(_._1)
+      val warnings = shapesWithWarnings.flatMap(_._2)
       val scaledSystem = systemSize.map(_*scaleFactor)
+      if(warnings.nonEmpty) {
+        //TODO create own dialog
+        //a header text "property will be ignored and overriden"
+        //textarea with all warnings
+        Dialogs.newWarnDialog(warnings.mkString("\n")).showAndWait()
+      }
       (scaledSystem, shapes)
     }
   }
