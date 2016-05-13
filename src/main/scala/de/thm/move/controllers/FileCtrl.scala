@@ -104,10 +104,9 @@ class FileCtrl(owner: Window) {
       val warnings = shapesWithWarnings.flatMap(_._2)
       val scaledSystem = systemSize.map(_*scaleFactor)
       if(warnings.nonEmpty) {
-        //TODO create own dialog
-        //a header text "property will be ignored and overriden"
-        //textarea with all warnings
-        Dialogs.newWarnDialog(warnings.mkString("\n")).showAndWait()
+        Dialogs.newListDialog(warnings,
+          "Some properties can't get used.\nThey will be overridden when saving the file!").
+          showAndWait()
       }
       (scaledSystem, shapes)
     }
