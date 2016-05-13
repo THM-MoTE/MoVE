@@ -19,7 +19,11 @@ trait PropertyParser {
 
   type StringValidation[A] = Validation[A, String]
 
+  /** Warning for a DynamicSelect(..) value */
   def dynamicSelectWarning(propertyName:String = "") = s"DynamicSelected-Value '$propertyName' has no effect."
+  /** Warning for a conditional-Value.
+    * E.G.: if condition then 0 else 5
+    * */
   def conditionWarning(propertyName:String = "") = s"Conditional-Value '$propertyName' has no effect."
 
   // regex from: http://stackoverflow.com/a/5954831
@@ -38,6 +42,14 @@ trait PropertyParser {
     case Nil => false
   }
 
+  /** Parses fields of an IconPrimitive with the given parsers and returns a map of parsed strings.
+    * '''This method doesn't convert the value... The value isn't itself touched!'''
+    *
+    *  If there are dublicate fields this method will throw a ParsingError.
+    * @param parsers The parsers for converting the fields of the IconPrimitive into a Tupel (key -> value).
+    *                The parsers will be joined with the alternative composition ("|")
+    * @return
+    */
   def properties(parsers:Parser[(String, String)]*):Parser[Map[String,String]] = {
     val oredParser = parsers.tail.foldLeft(parsers.head)(_|_)
 
@@ -48,11 +60,16 @@ trait PropertyParser {
     }
   }
 
+  /** Turns the given keys into a parser for Tupels (key -> value) and uses this parser as input for properties()
+    * returning properties() value. */
   def propertyKeys(keys:String*):Parser[Map[String,String]] = properties(keys.map(property):_*)
 
   def property(key:String):Parser[(String,String)] =
     (key <~ "=") ~ value ^^ { case k ~ v => (k,v) }
 
+  /** Returns a value from the given '''map''' converted with '''parser''' and '''identified by key'''.
+    * Returns default if there is no value for the given key.
+    */
   def getPropertyValue[A](map:Map[String,String], key:String, default: => A)(parser:Parser[A]): A =
     map.get(key).map(parse(parser,_)).map {
       case Success(v,_) => v
@@ -60,9 +77,11 @@ trait PropertyParser {
         throw new ParsingError(msg)
     }.getOrElse(default)
 
+  /** Returns a value from the given '''map''' converted with '''parser''' and '''identified by key'''.
+    * Throws a ParsingError if there is no value for the given key.
+    */
     def getPropertyValue[A](map:Map[String,String], key:String)(parser:Parser[A]): A =
-      getPropertyValue(map,
-        key, throw new ParsingError(
+      getPropertyValue(map, key, throw new ParsingError(
           s"""property "$key" has to be defined!"""))(parser)
 
   val value:Parser[String] = (
@@ -88,6 +107,9 @@ trait PropertyParser {
   def conditionValue[A](v:Parser[A]): Parser[A] =
     "if" ~> identRegex ~> "then" ~> v <~ "else" <~ v
 
+  /** Parses a value which could be a variable-value.
+    * E.G.: DynamicSelect(...), if condition then ... else ..
+    */
   def withVariableValues[A](p:Parser[A], propertyName:String):Parser[StringValidation[A]] = (
       dynamicSelectedValue(p) ^^ { v => ValidationWarning(v, dynamicSelectWarning(propertyName))  }
     | conditionValue(p) ^^ { v => ValidationWarning(v, conditionWarning(propertyName))  }
