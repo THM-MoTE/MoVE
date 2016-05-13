@@ -148,4 +148,32 @@ object Dialogs {
     alert.setHeaderText("Are you sure?")
     alert
   }
+
+  def newListDialog[A](xs:List[A], aditionalInfo:String=""): Alert = {
+    val alert = new Alert(AlertType.WARNING)
+    alert.setTitle("Warnings!")
+    alert.setHeaderText(aditionalInfo)
+
+    // Create expandable Exception.
+    val label = new Label("List of warnings:")
+    val text = xs.mkString("\n")
+    val textArea = new TextArea(text)
+    textArea.setEditable(false)
+    textArea.setWrapText(true)
+
+    textArea.setMaxWidth(Double.MaxValue)
+    textArea.setMaxHeight(Double.MaxValue)
+    GridPane.setVgrow(textArea, Priority.ALWAYS)
+    GridPane.setHgrow(textArea, Priority.ALWAYS)
+
+    val listContent = new GridPane()
+    listContent.setMaxWidth(Double.MaxValue)
+    listContent.add(label, 0, 0)
+    listContent.add(textArea, 0, 1)
+
+    // Set expandable Exception into the dialog pane.
+    alert.getDialogPane.setExpandableContent(listContent)
+    alert.getDialogPane.setExpanded(true)
+    alert
+  }
 }
