@@ -142,10 +142,10 @@ object Dialogs {
   def newSvgFileChooser(): FileChooser = newFileChooser(svgFileFilter)(allFilesFilter, svgFileFilter)
   def newPngFileChooser(): FileChooser = newFileChooser(pngFileFilter)(allFilesFilter, pngFileFilter)
 
-  def newConfirmationDialog():Alert = {
+  def newConfirmationDialog(additionalInfo:String = ""):Alert = {
     val alert = new Alert(AlertType.CONFIRMATION)
     alert.setTitle("Confirm this action")
-    alert.setHeaderText("Are you sure?")
+    alert.setHeaderText(s"Are you sure?\n$additionalInfo")
     alert
   }
 

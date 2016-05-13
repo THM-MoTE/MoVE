@@ -387,7 +387,7 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onNewClicked(e:ActionEvent): Unit = {
-    val selectOpt:Option[ButtonType] = Dialogs.newConfirmationDialog.showAndWait()
+    val selectOpt:Option[ButtonType] = Dialogs.newConfirmationDialog("Unsaved changes will be lost!").showAndWait()
     selectOpt.foreach {
       case ButtonType.OK => drawPanelCtrl.removeAll()
       case _ => //do nothing; abort
