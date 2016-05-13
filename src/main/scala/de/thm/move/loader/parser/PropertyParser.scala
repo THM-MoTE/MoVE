@@ -8,16 +8,16 @@ import javafx.scene.paint.Color
 
 import de.thm.move.loader.parser.ModelicaParserLike.ParsingError
 import de.thm.move.models.CommonTypes._
-import de.thm.move.util.ValueWithWarning
-import de.thm.move.util.ValueSuccess
-import de.thm.move.util.ValueWarning
+import de.thm.move.util.Validation
+import de.thm.move.util.ValidationSuccess
+import de.thm.move.util.ValidationWarning
 import scala.util.parsing.combinator.RegexParsers
 
 /** Defines parsers for all properties/fields that a modelica primitive can have. */
 trait PropertyParser {
   self: RegexParsers =>
 
-  type ParsedWarning[A] = ValueWithWarning[A, String]
+  type ParsedWarning[A] = Validation[A, String]
 
   def dynamicSelectWarning(propertyName:String = "") = s"Warning DynamicSelected-Value '$propertyName' has no effect. It will be overwritten when saving file!"
   def conditionWarning(propertyName:String = "") = s"Warning Conditional-Value '$propertyName' has no effect. It will be overwritten when saving file!"
@@ -28,7 +28,7 @@ trait PropertyParser {
   protected val numberRegex = "-?[0-9]+".r
   protected val javaLikeStrRegex = "\"(.*)\"".r
 
-  def parseValue[A](v:A): ParsedWarning[A] = ValueWithWarning[A, String](v)
+  def parseValue[A](v:A): ParsedWarning[A] = Validation[A, String](v)
 
   @annotation.tailrec
   private def containsDuplicates[A](xs:List[A], seen:Set[A] = Set[A]()): Boolean = xs match {
@@ -88,9 +88,9 @@ trait PropertyParser {
     "if" ~> identRegex ~> "then" ~> v <~ "else" <~ v
 
   def withVariableGraphics[A](p:Parser[A], propertyName:String = ""):Parser[ParsedWarning[A]] = (
-     p ^^ { ValueSuccess(_) }
-     | dynamicSelectedValue(p) ^^ { v => ValueWarning(v, dynamicSelectWarning(propertyName))  }
-     | conditionValue(p) ^^ { v => ValueWarning(v, conditionWarning(propertyName))  }
+     p ^^ { ValidationSuccess(_) }
+     | dynamicSelectedValue(p) ^^ { v => ValidationWarning(v, dynamicSelectWarning(propertyName))  }
+     | conditionValue(p) ^^ { v => ValidationWarning(v, conditionWarning(propertyName))  }
   )
 
   def extension:Parser[ParsedWarning[(Point,Point)]] = withVariableGraphics (

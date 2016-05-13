@@ -18,9 +18,9 @@ import java.io.InputStreamReader
 import java.io.InputStream
 
 import de.thm.move.models.CommonTypes._
-import de.thm.move.util.ValueWithWarning
-import de.thm.move.util.ValueSuccess
-import de.thm.move.util.ValueWarning
+import de.thm.move.util.Validation
+import de.thm.move.util.ValidationSuccess
+import de.thm.move.util.ValidationWarning
 import de.thm.move.util.PointUtils._
 
 import scala.util.parsing.input.Position
@@ -94,7 +94,7 @@ class ModelicaParser extends JavaTokenParsers
     val aspectRatio = getPropertyValue(map, preserveRatio, defaultPreserveRatio)(bool)
     val scale = getPropertyValue(map, initScale, defaultinitScale)(decimalNo)
     ext match {
-      case ValueSuccess(et) => CoordinateSystem(et,aspectRatio,scale)
+      case ValidationSuccess(et) => CoordinateSystem(et,aspectRatio,scale)
       case _ => throw new ParsingError("extension for coordinate system has to be statically defined!")
     }
   })

@@ -8,38 +8,38 @@ class ValueWithWarningTest {
   @Test
   def mapTest: Unit = {
     val v = 5
-    val vs = ValueSuccess(v)
+    val vs = ValidationSuccess(v)
     val mappedVS = vs.map(_.toString)
-    assertEquals(ValueSuccess("5"), mappedVS)
+    assertEquals(ValidationSuccess("5"), mappedVS)
     assertEquals("5", mappedVS.getValue)
     assertEquals(Nil, mappedVS.getWarnings)
 
     val v2 = "Nico"
-    val verror = ValueWarning(v2, List("Error"))
+    val verror = ValidationWarning(v2, List("Error"))
     val mapped = verror.map(_.charAt(0))
-    assertEquals(ValueWarning('N', List("Error")), mapped)
+    assertEquals(ValidationWarning('N', List("Error")), mapped)
     assertEquals('N', mapped.getValue)
     assertEquals(List("Error"), mapped.getWarnings)
   }
 
   @Test
   def flatMapTest: Unit = {
-    val vs = ValueSuccess("A")
+    val vs = ValidationSuccess("A")
     val mapped = vs.flatMap { v =>
-        ValueWarning(v.length, List("Length < 2"))
+        ValidationWarning(v.length, List("Length < 2"))
     }
-    assertEquals(ValueWarning(1, List("Length < 2")), mapped)
+    assertEquals(ValidationWarning(1, List("Length < 2")), mapped)
 
-    val vs2 = ValueWarning("A", List("Blup"))
+    val vs2 = ValidationWarning("A", List("Blup"))
     val mapped2 = vs2.flatMap { v =>
-      ValueSuccess(v.length)
+      ValidationSuccess(v.length)
     }
 
-    assertEquals(ValueWarning(1, List("Blup")), mapped2)
+    assertEquals(ValidationWarning(1, List("Blup")), mapped2)
 
     val mapped3 = vs2.flatMap { v =>
-        ValueWarning(v+"N", List("test"))
+        ValidationWarning(v+"N", List("test"))
     }
-    assertEquals(ValueWarning("AN", List("Blup", "test")), mapped3)
+    assertEquals(ValidationWarning("AN", List("Blup", "test")), mapped3)
   }
 }
