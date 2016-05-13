@@ -178,9 +178,9 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
 
   def getError(ast:ShapeElement, shapename:String): Option[ErrorMsg] =
     ast.warnings.foldLeft(None:Option[ErrorMsg]) {
-      case (Some(acc), msg) => Some(acc + "\n" + msg)
+      case (Some(acc), msg) => Some(acc + "\n  " + msg)
       case (None, msg) => Some(
-        s"""$shapename: \n $msg""")
+        s"""$shapename: \n  $msg""")
     }
 }
 
