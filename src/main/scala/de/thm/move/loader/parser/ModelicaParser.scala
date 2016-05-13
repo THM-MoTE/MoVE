@@ -99,9 +99,9 @@ class ModelicaParser extends JavaTokenParsers
     "Rectangle" ~> "(" ~> rectangleFields <~ ")"
     | "Ellipse" ~> "(" ~> ellipseFields <~ ")"
     | "Line" ~> "(" ~> lineFields <~ ")"
-/*    | "Polygon" ~> "(" ~> polygonFields <~ ")"
-    | "Bitmap" ~> "(" ~> bitmapFields <~ ")"
-    | "Text" ~> "(" ~> textFields <~ ")" */
+    | "Polygon" ~> "(" ~> polygonFields <~ ")"
+    /*    | "Bitmap" ~> "(" ~> bitmapFields <~ ")"
+        | "Text" ~> "(" ~> textFields <~ ")" */
     )
 
   def rectangleFields:Parser[RectangleElement] =
@@ -114,17 +114,17 @@ class ModelicaParser extends JavaTokenParsers
         } yield RectangleElement(gi,fs, extent=ext)
         toAst(withWarnings)
     })
-/*
+
   def polygonFields:Parser[Polygon] =
     positioned(propertyKeys(visible, origin, rotation,pointsKey,lineCol,linePatt,fillCol,
       fillPatt,lineThick,smooth) ^^ { map =>
-        Polygon(getGraphicItem(map),
-        getFilledShape(map),
-        getPropertyValue(map, pointsKey)(points),
-        getPropertyValue(map, smooth, defaultSmooth)(ident)
-        )
+      toAst(for {
+        gi <- getGraphicItem(map)
+        fs <- getFilledShape(map)
+        points <- getPropertyValue(map, pointsKey)(withVariableGraphics(points))
+        smooth <- getPropertyValue(map, smooth, parseValue(defaultSmooth))(withVariableGraphics(ident))
+      } yield Polygon(gi,fs,points,smooth))
       })
-*/
 
   def lineFields:Parser[PathElement] =
     positioned(propertyKeys(visible,origin,rotation,pointsKey,colorKey,linePatt,thick,arrowKey,smooth) ^^ {
