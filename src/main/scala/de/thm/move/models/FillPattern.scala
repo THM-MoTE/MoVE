@@ -10,6 +10,7 @@ import javafx.scene.canvas._
 import javafx.scene.paint._
 import javafx.scene.shape.Line
 
+import de.thm.move.Global._
 object FillPattern extends Enumeration {
   type FillPattern = Value
   val None, Solid, HorizontalCylinder, VerticalCylinder,
@@ -88,8 +89,8 @@ object FillPattern extends Enumeration {
   /** A canvas for drawing modelica's structure-like FillPatterns.
     */
   class CustomCanvas(width:Double,height:Double, backgroundColor: Color) extends Canvas(width, height) {
-    val distance = 5 //distance between lines/cells
-    val lineSize = 1
+    val distance = config.getInt("structure-distance").getOrElse(5) //distance between lines/cells
+    val lineSize = config.getInt("structure-linesize").getOrElse(1)
     val context = getGraphicsContext2D
     context.setLineWidth(lineSize)
     context.setFill(backgroundColor)

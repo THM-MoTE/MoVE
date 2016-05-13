@@ -279,7 +279,7 @@ class SvgCodeGenerator {
       }
       />
 
-  val lineDistance = 5 //distance between a structureLine
+  val lineDistance = config.getInt("structure-distance").getOrElse(5) //distance between lines/cells
 
   private def horizontalLines(width:Double,height:Double,lineColor:Paint):Seq[Elem] =
     for {
@@ -306,7 +306,7 @@ class SvgCodeGenerator {
     val doubled = max*2
     var endX = 0 //distance to last line
       //create lines from bottom-left to middle
-    val firstHalf = for(i <- (doubled/5).toInt to 0 by -1) yield {
+    val firstHalf = for(i <- (doubled/lineDistance).toInt to 0 by -1) yield {
       val startX = 0
       val startY = i*5
       val endY = doubled
@@ -316,7 +316,7 @@ class SvgCodeGenerator {
       line
     }
       //create lines from middle to top-right
-    val secondHalf = for(i <- 1 to (doubled/5).toInt) yield {
+    val secondHalf = for(i <- 1 to (doubled/lineDistance).toInt) yield {
       val startX = i*lineDistance
       val startY = 0
       val endY = doubled
