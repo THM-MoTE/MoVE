@@ -101,7 +101,7 @@ class ModelicaParser extends JavaTokenParsers
     | "Line" ~> "(" ~> lineFields <~ ")"
     | "Polygon" ~> "(" ~> polygonFields <~ ")"
         | "Bitmap" ~> "(" ~> bitmapFields <~ ")"
-    /*    | "Text" ~> "(" ~> textFields <~ ")" */
+        | "Text" ~> "(" ~> textFields <~ ")"
     )
 
   def rectangleFields:Parser[RectangleElement] =
@@ -166,21 +166,22 @@ class ModelicaParser extends JavaTokenParsers
           missingKeyError("fileName or imageSource has to be defined for Bitmaps!"))
       })
     })
-/*
+
   def textFields:Parser[Text] =
     positioned(propertyKeys(visible, origin, extent, rotation, textString,
       fontSize,fontName,textStyle,textColor,hAlignment) ^^ { map =>
-        Text(
-          getGraphicItem(map),
-          getPropertyValue(map, extent)(extension),
-          map.get(textString).map(identWithoutHyphens).getOrElse(missingKeyError(textString)),
-          getPropertyValue(map, fontSize, defaultFontSize)(decimalNo),
-          map.get(fontName).map(identWithoutHyphens).getOrElse(defaultFont),
-          getPropertyValue(map, textStyle, defaultFontStyle)(emptySeqString),
-          getPropertyValue(map, textColor, defaultCol)(color),
-          getPropertyValue(map, hAlignment, defaultHAlignment)(ident))
+        toAst( for {
+          gi <- getGraphicItem(map)
+          ext <- getPropertyValue(map, extent)(extension)
+          text = map.get(textString).map(identWithoutHyphens).getOrElse(missingKeyError(textString))
+          fs <- getPropertyValue(map, fontSize, parseValue(defaultFontSize))(withVariableGraphics(decimalNo))
+          font = map.get(fontName).map(identWithoutHyphens).getOrElse(defaultFont)
+          fontStyle <- getPropertyValue(map, textStyle, parseValue(defaultFontStyle))(withVariableGraphics(emptySeqString))
+          cl <- getPropertyValue(map, textColor, parseValue(defaultCol))(withVariableGraphics(color))
+          halignment <- getPropertyValue(map, hAlignment, parseValue(defaultHAlignment))(withVariableGraphics(ident))
+        } yield Text(gi,ext,text,fs,font,fontStyle, cl, halignment))
     })
-*/
+
   def getGraphicItem(map:Map[String,String]):StringValidation[GraphicItem] = {
     for {
       visible <- getPropertyValue(map, visible, parseValue(defaultVisible))(withVariableGraphics(bool, visible))
