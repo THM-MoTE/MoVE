@@ -133,7 +133,7 @@ class ModelicaParser extends JavaTokenParsers
           gi <- getGraphicItem(map)
           points <- getPropertyValue(map, pointsKey)(withVariableGraphics(points, pointsKey))
           col <- getPropertyValue(map, colorKey, parseValue(defaultCol))(withVariableGraphics(color, colorKey))
-          thick <- getPropertyValue(map, thick, parseValue(defaultLineThick))(withVariableGraphics(numberParser, thick))
+          thick <- getPropertyValue(map, thick, parseValue(defaultLineThick))(withVariableGraphics(decimalNo, thick))
           lp <- getPropertyValue(map, linePatt, parseValue(defaultLinePatt))(withVariableGraphics(ident, linePatt))
           smooth <- getPropertyValue(map, smooth, parseValue(defaultSmooth))(withVariableGraphics(ident,  smooth))
           arrow <- getPropertyValue(map, arrowKey, parseValue(defaultArrow))(withVariableGraphics(arrow, arrowKey))
@@ -195,7 +195,7 @@ class ModelicaParser extends JavaTokenParsers
       cl <- getPropertyValue(map, fillCol, parseValue(defaultCol))(withVariableGraphics(color, fillCol))
       fp <- getPropertyValue(map, fillPatt, parseValue(defaultFillPatt))(withVariableGraphics(ident, fillPatt))
       lc <- getPropertyValue(map, lineCol, parseValue(defaultCol))(withVariableGraphics(color, lineCol))
-      thick <- getPropertyValue(map, lineThick, parseValue(defaultLineThick))(withVariableGraphics(numberParser, lineThick))
+      thick <- getPropertyValue(map, lineThick, parseValue(defaultLineThick))(withVariableGraphics(decimalNo, lineThick))
       lp <- getPropertyValue(map, linePatt, parseValue(defaultLinePatt))(withVariableGraphics(ident, linePatt))
     } yield FilledShape(cl,fp,lc,thick,lp)
 
