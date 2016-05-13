@@ -4,26 +4,16 @@
 
 package de.thm.move.loader.parser
 
-import javafx.scene.paint.Color
+import java.io.{BufferedInputStream, InputStream, InputStreamReader}
 
-import de.thm.move.loader.parser.ast._
 import de.thm.move.loader.parser.ModelicaParserLike.ParsingError
 import de.thm.move.loader.parser.PropertyParser._
+import de.thm.move.loader.parser.ast._
+import de.thm.move.util.ValidationSuccess
 
-import scala.util.parsing.combinator.{JavaTokenParsers, ImplicitConversions}
 import scala.language.postfixOps
 import scala.util._
-import java.io.BufferedInputStream
-import java.io.InputStreamReader
-import java.io.InputStream
-
-import de.thm.move.models.CommonTypes._
-import de.thm.move.util.Validation
-import de.thm.move.util.ValidationSuccess
-import de.thm.move.util.ValidationWarning
-import de.thm.move.util.PointUtils._
-
-import scala.util.parsing.input.Position
+import scala.util.parsing.combinator.{ImplicitConversions, JavaTokenParsers}
 
 class ModelicaParser extends JavaTokenParsers
   with ImplicitConversions
@@ -108,8 +98,8 @@ class ModelicaParser extends JavaTokenParsers
   def graphics:Parser[ShapeElement] = positioned (
     "Rectangle" ~> "(" ~> rectangleFields <~ ")"
     | "Ellipse" ~> "(" ~> ellipseFields <~ ")"
-/*    | "Line" ~> "(" ~> lineFields <~ ")"
-    | "Polygon" ~> "(" ~> polygonFields <~ ")"
+    | "Line" ~> "(" ~> lineFields <~ ")"
+/*    | "Polygon" ~> "(" ~> polygonFields <~ ")"
     | "Bitmap" ~> "(" ~> bitmapFields <~ ")"
     | "Text" ~> "(" ~> textFields <~ ")" */
     )
@@ -134,23 +124,23 @@ class ModelicaParser extends JavaTokenParsers
         getPropertyValue(map, smooth, defaultSmooth)(ident)
         )
       })
-
+*/
 
   def lineFields:Parser[PathElement] =
     positioned(propertyKeys(visible,origin,rotation,pointsKey,colorKey,linePatt,thick,arrowKey,smooth) ^^ {
       map =>
-        PathElement(getGraphicItem(map),
-                    getPropertyValue(map, pointsKey)(points),
-                    getPropertyValue(map, colorKey, defaultCol)(color),
-                    getPropertyValue(map, thick, defaultLineThick)(numberParser),
-                    getPropertyValue(map, linePatt, defaultLinePatt)(ident),
-                    getPropertyValue(map, smooth, defaultSmooth)(ident),
-                    getPropertyValue(map, arrowKey, defaultArrow)(arrow),
-                    getPropertyValue(map, arrowSize, defaultArrowSize)(numberParser)
-                  )
-
+        toAst(for {
+          gi <- getGraphicItem(map)
+          points <- getPropertyValue(map, pointsKey)(withVariableGraphics(points))
+          col <- getPropertyValue(map, colorKey, parseValue(defaultCol))(withVariableGraphics(color))
+          thick <- getPropertyValue(map, thick, parseValue(defaultLineThick))(withVariableGraphics(numberParser))
+          lp <- getPropertyValue(map, linePatt, parseValue(defaultLinePatt))(withVariableGraphics(ident))
+          smooth <- getPropertyValue(map, smooth, parseValue(defaultSmooth))(withVariableGraphics(ident))
+          arrow <- getPropertyValue(map, arrowKey, parseValue(defaultArrow))(withVariableGraphics(arrow))
+          as <- getPropertyValue(map, arrowSize, parseValue(defaultArrowSize))(withVariableGraphics(numberParser))
+        } yield PathElement(gi, points, col, thick, lp, smooth, arrow, as))
     })
-*/
+
   def ellipseFields:Parser[Ellipse] =
     positioned(propertyKeys(visible,origin,rotation,lineCol,linePatt,fillCol,
       fillPatt,extent,lineThick, endAngle) ^^ { map =>
