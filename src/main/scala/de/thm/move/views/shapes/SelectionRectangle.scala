@@ -38,8 +38,7 @@ class SelectionRectangle(selectedShape:ResizableShape) extends Rectangle {
 }
 
 object SelectionRectangle {
-  val distanceToShape =
-    Global.config.getInt("selection-rectangle.distance").getOrElse(5)
+  val distanceToShape = 5
   //needed for width, height because of some strange boundsInLocal behaviour
   val aditionalSpace = 6
 }
