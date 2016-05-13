@@ -29,7 +29,7 @@ trait RotatableShape {
 
   val rotationAnchors = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor,bottomRightAnchor)
   rotationAnchors.foreach(setupListener)
-  boundsInLocalProperty().addListener { (_:Bounds, newB:Bounds) =>
+  boundsInParentProperty().addListener { (_:Bounds, newB:Bounds) =>
       //align rotation-anchors to the local bounding-box
     topLeftAnchor.setCenterX(newB.getMinX)
     topLeftAnchor.setCenterY(newB.getMinY)
