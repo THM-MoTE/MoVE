@@ -100,8 +100,8 @@ class ModelicaParser extends JavaTokenParsers
     | "Ellipse" ~> "(" ~> ellipseFields <~ ")"
     | "Line" ~> "(" ~> lineFields <~ ")"
     | "Polygon" ~> "(" ~> polygonFields <~ ")"
-    /*    | "Bitmap" ~> "(" ~> bitmapFields <~ ")"
-        | "Text" ~> "(" ~> textFields <~ ")" */
+        | "Bitmap" ~> "(" ~> bitmapFields <~ ")"
+    /*    | "Text" ~> "(" ~> textFields <~ ")" */
     )
 
   def rectangleFields:Parser[RectangleElement] =
@@ -152,19 +152,21 @@ class ModelicaParser extends JavaTokenParsers
         } yield  Ellipse(gi,fs, extent=ext, endAngle = endAngl) )
       })
 
-/*
+
   def bitmapFields:Parser[AbstractImage] =
     positioned(propertyKeys(visible, origin, extent, rotation, base64, imgUri) ^^ { map =>
-      val gi = getGraphicItem(map)
-      val ext = getPropertyValue(map, extent)(extension)
-      val base64Opt = map.get(base64).map(identWithoutHyphens)
-      val imgUriOpt = map.get(imgUri).map(identWithoutHyphens)
-
-      base64Opt.map(ImageBase64(gi,ext,_)).orElse(
-        imgUriOpt.map(ImageURI(gi, ext, _))).getOrElse(
+      toAst(for {
+        gi <- getGraphicItem(map)
+        ext <- getPropertyValue(map, extent)(extension)
+        base64Opt = map.get(base64).map(identWithoutHyphens)
+        imgUriOpt = map.get(imgUri).map(identWithoutHyphens)
+      } yield {
+        base64Opt.map(ImageBase64(gi, ext, _)).orElse(
+          imgUriOpt.map(ImageURI(gi, ext, _))).getOrElse(
           missingKeyError("fileName or imageSource has to be defined for Bitmaps!"))
+      })
     })
-
+/*
   def textFields:Parser[Text] =
     positioned(propertyKeys(visible, origin, extent, rotation, textString,
       fontSize,fontName,textStyle,textColor,hAlignment) ^^ { map =>
