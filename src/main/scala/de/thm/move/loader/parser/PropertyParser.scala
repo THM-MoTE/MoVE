@@ -88,13 +88,13 @@ trait PropertyParser {
   def conditionValue[A](v:Parser[A]): Parser[A] =
     "if" ~> identRegex ~> "then" ~> v <~ "else" <~ v
 
-  def withVariableGraphics[A](p:Parser[A], propertyName:String):Parser[StringValidation[A]] = (
+  def withVariableValues[A](p:Parser[A], propertyName:String):Parser[StringValidation[A]] = (
       dynamicSelectedValue(p) ^^ { v => ValidationWarning(v, dynamicSelectWarning(propertyName))  }
     | conditionValue(p) ^^ { v => ValidationWarning(v, conditionWarning(propertyName))  }
     | p ^^ { ValidationSuccess(_) }
   )
 
-  def extension:Parser[StringValidation[(Point,Point)]] = withVariableGraphics (
+  def extension:Parser[StringValidation[(Point,Point)]] = withVariableValues (
     ("{"~> point <~ ",") ~ point <~ "}" ^^ { case p1 ~ p2 => (p1,p2) }
     , "extent")
 
