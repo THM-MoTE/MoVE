@@ -99,7 +99,7 @@ class ModelicaParser extends JavaTokenParsers
     }
   })
 
-  def extensionParser:Parser[ParsedWarning[Extent]] =
+  def extensionParser:Parser[StringValidation[Extent]] =
     "extent" ~> "=" ~> extension
 
   def graphic:Parser[List[ShapeElement]] =
@@ -189,7 +189,7 @@ class ModelicaParser extends JavaTokenParsers
           getPropertyValue(map, hAlignment, defaultHAlignment)(ident))
     })
 */
-  def getGraphicItem(map:Map[String,String]):ParsedWarning[GraphicItem] = {
+  def getGraphicItem(map:Map[String,String]):StringValidation[GraphicItem] = {
     for {
       visible <- getPropertyValue(map, visible, parseValue(defaultVisible))(withVariableGraphics(bool, visible))
       origin <- getPropertyValue(map, origin, parseValue(defaultOrigin))(withVariableGraphics(point, origin))
@@ -197,7 +197,7 @@ class ModelicaParser extends JavaTokenParsers
     } yield GraphicItem(visible,origin,rotation)
   }
 
-  def getFilledShape(map:Map[String,String]):ParsedWarning[FilledShape] =
+  def getFilledShape(map:Map[String,String]):StringValidation[FilledShape] =
     for {
       cl <- getPropertyValue(map, fillCol, parseValue(defaultCol))(withVariableGraphics(color, fillCol))
       fp <- getPropertyValue(map, fillPatt, parseValue(defaultFillPatt))(withVariableGraphics(ident, fillPatt))
@@ -222,7 +222,7 @@ class ModelicaParser extends JavaTokenParsers
     }
   }
 
-  private def toAst[A <: ShapeElement](parsedWarnings:ParsedWarning[A]):A = {
+  private def toAst[A <: ShapeElement](parsedWarnings:StringValidation[A]):A = {
     val v = parsedWarnings.getValue
     v.warnings = parsedWarnings.getWarnings
     v

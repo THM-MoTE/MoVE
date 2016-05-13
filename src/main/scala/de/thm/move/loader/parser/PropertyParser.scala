@@ -17,7 +17,7 @@ import scala.util.parsing.combinator.RegexParsers
 trait PropertyParser {
   self: RegexParsers =>
 
-  type ParsedWarning[A] = Validation[A, String]
+  type StringValidation[A] = Validation[A, String]
 
   def dynamicSelectWarning(propertyName:String = "") = s"Warning DynamicSelected-Value '$propertyName' has no effect. It will be overwritten when saving file!"
   def conditionWarning(propertyName:String = "") = s"Warning Conditional-Value '$propertyName' has no effect. It will be overwritten when saving file!"
@@ -28,7 +28,7 @@ trait PropertyParser {
   protected val numberRegex = "-?[0-9]+".r
   protected val javaLikeStrRegex = "\"(.*)\"".r
 
-  def parseValue[A](v:A): ParsedWarning[A] = Validation[A, String](v)
+  def parseValue[A](v:A): StringValidation[A] = Validation[A, String](v)
 
   @annotation.tailrec
   private def containsDuplicates[A](xs:List[A], seen:Set[A] = Set[A]()): Boolean = xs match {
@@ -87,13 +87,13 @@ trait PropertyParser {
   def conditionValue[A](v:Parser[A]): Parser[A] =
     "if" ~> identRegex ~> "then" ~> v <~ "else" <~ v
 
-  def withVariableGraphics[A](p:Parser[A], propertyName:String = ""):Parser[ParsedWarning[A]] = (
+  def withVariableGraphics[A](p:Parser[A], propertyName:String = ""):Parser[StringValidation[A]] = (
      p ^^ { ValidationSuccess(_) }
      | dynamicSelectedValue(p) ^^ { v => ValidationWarning(v, dynamicSelectWarning(propertyName))  }
      | conditionValue(p) ^^ { v => ValidationWarning(v, conditionWarning(propertyName))  }
   )
 
-  def extension:Parser[ParsedWarning[(Point,Point)]] = withVariableGraphics (
+  def extension:Parser[StringValidation[(Point,Point)]] = withVariableGraphics (
     ("{"~> point <~ ",") ~ point <~ "}" ^^ { case p1 ~ p2 => (p1,p2) }
     )
 
