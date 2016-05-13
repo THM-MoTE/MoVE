@@ -121,8 +121,8 @@ class ModelicaParser extends JavaTokenParsers
       toAst(for {
         gi <- getGraphicItem(map)
         fs <- getFilledShape(map)
-        points <- getPropertyValue(map, pointsKey)(withVariableGraphics(points))
-        smooth <- getPropertyValue(map, smooth, parseValue(defaultSmooth))(withVariableGraphics(ident))
+        points <- getPropertyValue(map, pointsKey)(withVariableGraphics(points, pointsKey))
+        smooth <- getPropertyValue(map, smooth, parseValue(defaultSmooth))(withVariableGraphics(ident, smooth))
       } yield Polygon(gi,fs,points,smooth))
       })
 
@@ -131,13 +131,13 @@ class ModelicaParser extends JavaTokenParsers
       map =>
         toAst(for {
           gi <- getGraphicItem(map)
-          points <- getPropertyValue(map, pointsKey)(withVariableGraphics(points))
-          col <- getPropertyValue(map, colorKey, parseValue(defaultCol))(withVariableGraphics(color))
-          thick <- getPropertyValue(map, thick, parseValue(defaultLineThick))(withVariableGraphics(numberParser))
-          lp <- getPropertyValue(map, linePatt, parseValue(defaultLinePatt))(withVariableGraphics(ident))
-          smooth <- getPropertyValue(map, smooth, parseValue(defaultSmooth))(withVariableGraphics(ident))
-          arrow <- getPropertyValue(map, arrowKey, parseValue(defaultArrow))(withVariableGraphics(arrow))
-          as <- getPropertyValue(map, arrowSize, parseValue(defaultArrowSize))(withVariableGraphics(numberParser))
+          points <- getPropertyValue(map, pointsKey)(withVariableGraphics(points, pointsKey))
+          col <- getPropertyValue(map, colorKey, parseValue(defaultCol))(withVariableGraphics(color, colorKey))
+          thick <- getPropertyValue(map, thick, parseValue(defaultLineThick))(withVariableGraphics(numberParser, thick))
+          lp <- getPropertyValue(map, linePatt, parseValue(defaultLinePatt))(withVariableGraphics(ident, linePatt))
+          smooth <- getPropertyValue(map, smooth, parseValue(defaultSmooth))(withVariableGraphics(ident,  smooth))
+          arrow <- getPropertyValue(map, arrowKey, parseValue(defaultArrow))(withVariableGraphics(arrow, arrowKey))
+          as <- getPropertyValue(map, arrowSize, parseValue(defaultArrowSize))(withVariableGraphics(numberParser, arrowSize))
         } yield PathElement(gi, points, col, thick, lp, smooth, arrow, as))
     })
 
@@ -174,11 +174,11 @@ class ModelicaParser extends JavaTokenParsers
           gi <- getGraphicItem(map)
           ext <- getPropertyValue(map, extent)(extension)
           text = map.get(textString).map(identWithoutHyphens).getOrElse(missingKeyError(textString))
-          fs <- getPropertyValue(map, fontSize, parseValue(defaultFontSize))(withVariableGraphics(decimalNo))
+          fs <- getPropertyValue(map, fontSize, parseValue(defaultFontSize))(withVariableGraphics(decimalNo, fontSize))
           font = map.get(fontName).map(identWithoutHyphens).getOrElse(defaultFont)
-          fontStyle <- getPropertyValue(map, textStyle, parseValue(defaultFontStyle))(withVariableGraphics(emptySeqString))
-          cl <- getPropertyValue(map, textColor, parseValue(defaultCol))(withVariableGraphics(color))
-          halignment <- getPropertyValue(map, hAlignment, parseValue(defaultHAlignment))(withVariableGraphics(ident))
+          fontStyle <- getPropertyValue(map, textStyle, parseValue(defaultFontStyle))(withVariableGraphics(emptySeqString, textStyle))
+          cl <- getPropertyValue(map, textColor, parseValue(defaultCol))(withVariableGraphics(color, textColor))
+          halignment <- getPropertyValue(map, hAlignment, parseValue(defaultHAlignment))(withVariableGraphics(ident, hAlignment))
         } yield Text(gi,ext,text,fs,font,fontStyle, cl, halignment))
     })
 
