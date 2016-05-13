@@ -25,12 +25,15 @@ import java.nio.file.Path
 import de.thm.move.util.GeometryUtils
 
 /** Converts the parsed AST into "real" ResizableShapes.
+  *
   * @param pxPerMm describes how many px are 1 unit from modelica
   *                Example: pxPerMm = 2 => every unit gets doubled
   * @param system (width,height) from the coordinate system in which the shapes get loaded/displayed
   * @param srcFilePath the path to the parsed modelica-file
   */
 class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
+
+  type ErrorMsg = String
 
   lazy val parentPath = srcFilePath.getParent
 
@@ -78,20 +81,20 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
     (convP1, w,h)
   }
 
-  def getShapes(ast:ModelicaAst):List[ResizableShape] = ast match {
+  def getShapes(ast:ModelicaAst):List[(ResizableShape, Option[ErrorMsg])] = ast match {
     case Model(_,icons) => getShapes(icons)
     case Icon(_,graphics, _,_) => graphics map getShape
     case _ => List()
   }
 
-  def getShape(ast:ShapeElement): ResizableShape = ast match {
+  def getShape(ast:ShapeElement): (ResizableShape, Option[ErrorMsg]) = ast match {
     case RectangleElement(gi,fs,bp,ext,rad) =>
       val (start,w,h) = rectangleLikeDimensions(gi.origin, ext)
       val rect = new ResizableRectangle(start, w,h)
       applyColor(rect, fs)
       rect.setVisible(gi.visible)
       rect.setRotate(convertRotation(gi.rotation))
-      rect
+      (rect, getError(ast, "Rectangle"))
     case Ellipse(gi, fs, ext, _,_) =>
       val (start,w,h) = rectangleLikeDimensions(gi.origin, ext)
       val middle = GeometryUtils.middleOfLine(start, (w+start.x,h+start.y) )
@@ -99,7 +102,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       applyColor(ellipse, fs)
       ellipse.setVisible(gi.visible)
       ellipse.setRotate(convertRotation(gi.rotation))
-      ellipse
+      (ellipse, getError(ast, "Ellipse"))
     case pe:PathElement if(pe.points.size == 2) =>
       val startP = convertPoint(pe.points.head+pe.gItem.origin)
       val endP = convertPoint(pe.points.tail.head+pe.gItem.origin)
@@ -107,7 +110,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       applyLineColor(line, pe.color, pe.strokePattern, pe.strokeSize)
       line.setVisible(pe.gItem.visible)
       line.setRotate(convertRotation(pe.gItem.rotation))
-      line
+      (line, getError(ast, "Line"))
     case pe:PathElement =>
       val points = pe.points.map(x => convertPoint(x+pe.gItem.origin))
       val path =
@@ -116,7 +119,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       path.setVisible(pe.gItem.visible)
       path.setRotate(convertRotation(pe.gItem.rotation))
       applyLineColor(path, pe.color, pe.strokePattern, pe.strokeSize)
-      path
+      (path, getError(ast, "Line"))
     case Polygon(gi,fs,ps,smooth) =>
       val points = ps.map(x => convertPoint(x+gi.origin))
       val polygon =
@@ -125,7 +128,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       applyColor(polygon, fs)
       polygon.setVisible(gi.visible)
       polygon.setRotate(convertRotation(gi.rotation))
-      polygon
+      (polygon, getError(ast, "Polygon"))
     case ImageURI(gi, ext, uriStr) =>
       val imageName = uriStr.substring(uriStr.lastIndexOf("/")+1, uriStr.length)
       val uri = parentPath.resolve(imageName).toUri
@@ -137,7 +140,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       img.setHeight(h)
       img.setVisible(gi.visible)
       img.setRotate(convertRotation(gi.rotation))
-      img
+      (img, getError(ast, "Bitmap"))
     case ImageBase64(gi,ext,encodedStr) =>
       val decoder = Base64.getDecoder()
       val bytes = decoder.decode(encodedStr)
@@ -151,7 +154,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       resizableImg.setHeight(h)
       resizableImg.setVisible(gi.visible)
       resizableImg.setRotate(convertRotation(gi.rotation))
-      resizableImg
+      (resizableImg, getError(ast, "Bitmap"))
     case txt:Text =>
       val (x,y) = convertPoint(txt.extent._1+txt.gItem.origin)
       val fontSize = if(txt.size == 0.0) 12.0 else txt.size
@@ -168,9 +171,17 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       text.setTextAlignment(txtAlign)
       text.setVisible(txt.gItem.visible)
       text.setRotate(convertRotation(txt.gItem.rotation))
-      text
+      (text, getError(ast, "Text"))
     case a:Any => throw new IllegalArgumentException(s"Unknown shape-ast $a")
   }
+
+
+  def getError(ast:ShapeElement, shapename:String): Option[ErrorMsg] =
+    ast.warnings.foldLeft(None:Option[ErrorMsg]) {
+      case (Some(acc), msg) => Some(acc + "\n" + msg)
+      case (None, msg) => Some(
+        s"""$shapename: \n $msg""")
+    }
 }
 
 object ShapeConverter {
