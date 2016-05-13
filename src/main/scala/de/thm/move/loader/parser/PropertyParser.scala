@@ -19,8 +19,8 @@ trait PropertyParser {
 
   type StringValidation[A] = Validation[A, String]
 
-  def dynamicSelectWarning(propertyName:String = "") = s"Warning DynamicSelected-Value '$propertyName' has no effect."
-  def conditionWarning(propertyName:String = "") = s"Warning Conditional-Value '$propertyName' has no effect."
+  def dynamicSelectWarning(propertyName:String = "") = s"DynamicSelected-Value '$propertyName' has no effect."
+  def conditionWarning(propertyName:String = "") = s"Conditional-Value '$propertyName' has no effect."
 
   // regex from: http://stackoverflow.com/a/5954831
   override val whiteSpace = """(\s|//.*|(?m)/\*(\*(?!/)|[^*])*\*/)+""".r
