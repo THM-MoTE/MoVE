@@ -50,7 +50,7 @@ trait PathLike {
     })
     anchor.setOnMouseDragged(withConsumedEvent { mv: MouseEvent =>
       val delta = (mv.getSceneX - mouseP.x, mv.getSceneY - mouseP.y)
-      resize(idx, delta)
+      resizeWithAnchor(idx, delta)
       mouseP = (mv.getSceneX, mv.getSceneY)
     })
     anchor.setOnMouseReleased(withConsumedEvent { mv:MouseEvent =>
@@ -60,8 +60,8 @@ trait PathLike {
 
       val cmd = History.
         newCommand(
-          resize(idx, deltaRedo),
-          resize(idx, deltaUndo)
+          resizeWithAnchor(idx, deltaRedo),
+          resizeWithAnchor(idx, deltaUndo)
         )
       Global.history.save(cmd)
     })
@@ -93,6 +93,13 @@ trait PathLike {
 
   /** Returns the point of this shape at the edge identified by idx. */
   def getEdgePoint(idx:Int): Point
+  /** Resizes the edge identified by idx with the given delta and adjusts the corresponding anchor. */
+  def resizeWithAnchor(idx:Int, delta:Point): Unit = {
+    val anchor = getAnchors(idx)
+    anchor.setCenterX(anchor.getCenterX + delta.x)
+    anchor.setCenterY(anchor.getCenterY + delta.y)
+    resize(idx,delta)
+  }
   /** Resizes the edge identified by idx with the given delta. */
   def resize(idx:Int, delta:Point): Unit
   override def move(delta:Point):Unit = indexWithAnchors.foreach {
