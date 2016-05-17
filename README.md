@@ -74,9 +74,6 @@ model test
 end test;
 ```
 
-### Generated SVG-Image
-![Example SV](doc/example.svg)
-
 # Try it
 If you like to try it follow these steps:
 - Make sure you are using JDK version >= __1.8.0_77__ by running ```java -version```
