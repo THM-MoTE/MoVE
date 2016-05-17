@@ -13,6 +13,7 @@ import de.thm.move.Global._
 
 import scala.collection.JavaConversions._
 
+/** Behaviour for colorizing selected ResizableShapes. */
 trait ColorizeSelectionCtrl {
   this:SelectionCtrlLike =>
 

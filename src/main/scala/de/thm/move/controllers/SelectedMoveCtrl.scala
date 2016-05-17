@@ -15,6 +15,7 @@ import de.thm.move.util.PointUtils._
 import de.thm.move.history.History
 import de.thm.move.Global
 
+/** Behaviour for moving selected ResizableShapes. */
 trait SelectedMoveCtrl {
   this: SelectionCtrlLike =>
 

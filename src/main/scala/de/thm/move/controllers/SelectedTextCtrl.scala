@@ -10,6 +10,7 @@ import javafx.scene.text.TextAlignment
 import de.thm.move.views.shapes.ResizableText
 import de.thm.move.Global._
 
+/** Behaviour for changing selected ResizableTexts. */
 trait SelectedTextCtrl {
   this: SelectionCtrlLike =>
 
