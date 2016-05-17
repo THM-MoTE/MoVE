@@ -46,7 +46,7 @@ compile <<= (compile in Compile) dependsOn copyRscs
 lazy val root = (project in file(".")).
   settings(
     organization := "thm",
-    name := "move",
+    name := "Move",
     version := "0.6.0",
     scalaVersion := "2.11.7",
     javacOptions ++= Seq("-source", "1.8")
