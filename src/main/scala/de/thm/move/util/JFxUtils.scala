@@ -9,6 +9,7 @@ import javafx.event.{Event, EventHandler}
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import javafx.scene.Node
 import javafx.scene.control.ChoiceBox
+import javafx.beans.property.ObjectProperty
 
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.shapes.{MovableShape, ResizableShape}
@@ -31,6 +32,10 @@ object JFxUtils {
       anchor.layoutYProperty().bind(node.layoutYProperty())
     }
   }
+
+  /** Copies the value of property2 into property1 */
+  def copyProperty[A](property1:ObjectProperty[A], property2:ObjectProperty[A]): Unit =
+    property1.set(property2.get)
 
   /** Checks if the parent of given Node n is a MovableShape and
     * if it is the given function fn is called with the parent. If the parent
