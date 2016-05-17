@@ -52,7 +52,8 @@ lazy val root = (project in file(".")).
     javacOptions ++= Seq("-source", "1.8")
     )
 
-mainClass in assembly := Some("de.thm.move.MoveApp")
+mainClass in Compile := Some("de.thm.move.MoveApp")
+mainClass in assembly := (mainClass in Compile).value
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 test in assembly := {} //skip test's during packaging
 
