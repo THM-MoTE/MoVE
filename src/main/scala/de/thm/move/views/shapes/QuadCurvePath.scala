@@ -14,8 +14,8 @@ class QuadCurvePath(points:List[Point])
   override def getFillColor:Paint = null /*Path has no fill*/
   override def setFillColor(c:Paint):Unit = { /*Path has no fill*/ }
 
-  override def toUncurvedShape: ResizableShape = ResizablePath(this)
-  override def copy: ResizableShape = {
+  override def toUncurvedShape: ResizablePath = ResizablePath(this)
+  override def copy: QuadCurvePath = {
     val duplicate = new QuadCurvePath(getUnderlyingPolygonPoints)
     duplicate.copyColors(this)
     duplicate.setRotate(getRotate)

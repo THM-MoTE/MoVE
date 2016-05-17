@@ -30,7 +30,7 @@ class ResizableRectangle(
   override def getTopRight:Point = (getX + getWidth, getY)
   override def getBottomLeft:Point = (getX, getY + getHeight)
   override def getBottomRight:Point = (getX + getWidth,getY + getHeight)
-  override def copy: ResizableShape = {
+  override def copy: ResizableRectangle = {
     val duplicate = new ResizableRectangle(startPoint, width, height)
     duplicate.copyColors(this)
     duplicate.copyPosition(this)

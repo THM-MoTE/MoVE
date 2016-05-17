@@ -29,7 +29,7 @@ class ResizableLine(
   setStrokeWidth(strokeSize)
   override lazy val edgeCount: Int = 2
 
-  override def copy: ResizableShape = {
+  override def copy: ResizableLine = {
     val duplicate = new ResizableLine(
       (getStartX,getStartY),
       (getEndX,getEndY),

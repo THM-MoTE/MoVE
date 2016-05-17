@@ -39,7 +39,7 @@ class ResizableImage(val srcEither:Either[URI, Array[Byte]], val img:Image)
     else ()
   }
 
-  override def copy: ResizableShape = {
+  override def copy: ResizableImage = {
     val duplicate = new ResizableImage(srcEither, img)
     duplicate.copyPosition(this)
     duplicate

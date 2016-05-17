@@ -62,7 +62,7 @@ class ResizableText(
   def getItalic:Boolean = isItalic
   def getSize: Double = getFont.getSize
   def getFontColor: Paint = getFill
-  def copy: ResizableShape = {
+  def copy: ResizableText = {
     val txt = new ResizableText(getText, getX,getY,getFont)
     txt.setFontColor(getFontColor)
     txt.setRotate(getRotate)
