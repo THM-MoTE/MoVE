@@ -30,11 +30,15 @@ import scala.collection.JavaConversions._
  */
 class SelectedShapeCtrl(
     changeLike:ChangeDrawPanelLike,
-    grid:SnapLike) {
+    grid:SnapLike)
+    extends SelectionCtrlLike
+    with SelectedTextCtrl {
 
   val addSelectedShapeProperty = new SimpleBooleanProperty(false)
 
   private var selectedShapes:List[ResizableShape] = Nil
+
+  override def getSelectedShapes: List[ResizableShape] = selectedShapes
 
   /** Gets all shapes that are colorizable and removes groups if they exist */
   private def coloredSelectedShape: List[ResizableShape with ColorizableShape] = {
@@ -57,11 +61,6 @@ class SelectedShapeCtrl(
       }
 
     findGroups(selectedShapes)
-  }
-
-  private def getTexts: List[ResizableText] = selectedShapes.flatMap {
-    case x:ResizableText => List(x)
-    case _ => Nil
   }
 
   private val linePatternToCssClass: Map[LinePattern.LinePattern, String] =
@@ -327,49 +326,4 @@ class SelectedShapeCtrl(
 
     groupHandler
   }
-
-  def setFontName(name:String): Unit = {
-    zippedUndo(getTexts)(
-      _.getFontName)(
-      _.setFontName(name),
-      _.setFontName _
-    )
-  }
-  def setFontSize(size:Int): Unit =
-    zippedUndo(getTexts)(
-      _.getSize)(
-      _.setSize(size),
-      _.setSize _
-    )
-
-  def setFontColor(c:Color): Unit =
-    zippedUndo(getTexts)(
-      _.getFontColor)(
-      _.setFontColor(c),
-      _.setFontColor _
-    )
-
-  def setFontBold(b:Boolean): Unit =
-    zippedUndo(getTexts)(_ => !b)(
-      _.setBold(b),
-      _.setBold _
-    )
-
-  def setFontItalic(b:Boolean): Unit =
-    zippedUndo(getTexts)(_ => !b)(
-      _.setItalic(b),
-      _.setItalic _
-    )
-
-  def setFontUnderline(b:Boolean): Unit =
-    zippedUndo(getTexts)(_ => !b)(
-      _.setUnderline(b),
-      _.setUnderline _
-    )
-
-  def setTextAlignment(alignment:TextAlignment): Unit =
-    zippedUndo(getTexts)(_.getTextAlignment)(
-      _.setTextAlignment(alignment),
-      _.setTextAlignment _
-    )
 }
