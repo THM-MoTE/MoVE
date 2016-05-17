@@ -17,9 +17,6 @@ import scala.collection.JavaConversions._
 trait ColorizeSelectionCtrl {
   this:SelectionCtrlLike =>
 
-  private val linePatternToCssClass: Map[LinePattern.LinePattern, String] =
-    LinePattern.linePatternToCssClass
-
   /** Gets all shapes that are colorizable and removes groups if they exist */
   private def coloredSelectedShape: List[ResizableShape with ColorizableShape] = {
     def findColorizables(xs:List[ResizableShape]): List[ResizableShape with ColorizableShape] =
@@ -55,7 +52,7 @@ trait ColorizeSelectionCtrl {
   }
 
   def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
-    linePatternToCssClass.get(linePattern) foreach { cssClass =>
+    LinePattern.linePatternToCssClass.get(linePattern) foreach { cssClass =>
       val cssOpt = coloredSelectedShape.
         map(_.getStyleClass().find(_.`matches`(LinePattern.cssRegex)))
       val linePatterns = coloredSelectedShape.map(_.linePattern.get)
