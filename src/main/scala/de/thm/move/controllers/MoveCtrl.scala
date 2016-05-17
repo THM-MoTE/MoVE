@@ -536,7 +536,7 @@ class MoveCtrl extends Initializable {
     snapGrid.gridVisibleProperty.set(flag)
     if(!flag) { //not visible; disable snapping
       enableGridItem.fire()
-    }
+    } else enableGridItem.setDisable(false)
   }
   @FXML
   def onEnableGridClicked(e:ActionEvent): Unit = {
@@ -544,6 +544,7 @@ class MoveCtrl extends Initializable {
     if(!showGridItem.isSelected) {
       //visible is false => disable snapping-mode
       enableGridItem.setSelected(false)
+      enableGridItem.setDisable(true)
       snapGrid.snappingProperty.set(false)
     } else {
       snapGrid.snappingProperty.set(flag)
