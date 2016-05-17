@@ -23,8 +23,6 @@ import de.thm.move.views.shapes._
 import de.thm.move.views._
 import de.thm.move.views.panes.{DrawPanel, SnapLike}
 
-import scala.collection.JavaConversions._
-
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.
  */
@@ -33,7 +31,8 @@ class SelectedShapeCtrl(
     grid:SnapLike)
     extends SelectionCtrlLike
     with SelectedTextCtrl
-    with SelectedMoveCtrl {
+    with SelectedMoveCtrl
+    with ColorizeSelectionCtrl {
 
   val addSelectedShapeProperty = new SimpleBooleanProperty(false)
 
@@ -41,19 +40,6 @@ class SelectedShapeCtrl(
 
   override def getSelectedShapes: List[ResizableShape] = selectedShapes
   override def getSnapLike:SnapLike = grid
-
-  /** Gets all shapes that are colorizable and removes groups if they exist */
-  private def coloredSelectedShape: List[ResizableShape with ColorizableShape] = {
-    def findColorizables(xs:List[ResizableShape]): List[ResizableShape with ColorizableShape] =
-      xs flatMap {
-        //filter non-colrizable shapes; they have no linepattern
-        case colorizable:ColorizableShape => List(colorizable)
-        case g:GroupLike => findColorizables(g.childrens)
-        case _ => Nil
-      }
-
-    findColorizables(selectedShapes)
-  }
 
   private def getSelectionGroups: List[GroupLike] = {
     def findGroups(xs:List[ResizableShape]): List[GroupLike] =
@@ -64,9 +50,6 @@ class SelectedShapeCtrl(
 
     findGroups(selectedShapes)
   }
-
-  private val linePatternToCssClass: Map[LinePattern.LinePattern, String] =
-    LinePattern.linePatternToCssClass
 
   def setSelectedShape(shape:ResizableShape): Unit = {
     if(addSelectedShapeProperty.get) addToSelectedShapes(shape)
@@ -127,80 +110,6 @@ class SelectedShapeCtrl(
           }
         }
       selectedShapes = List()
-    }
-  }
-
-  def setFillColor(color:Color): Unit = if(!selectedShapes.isEmpty) {
-    zippedUndo(coloredSelectedShape)(_.getFillColor)(
-      _.setFillColor(color),
-      _.setFillColor _
-    )
-  }
-
-  def setStrokeColor(color:Color): Unit = if(!selectedShapes.isEmpty) {
-    zippedUndo(coloredSelectedShape)(_.getStrokeColor)(
-      _.setStrokeColor(color),
-      _.setStrokeColor _
-    )
-  }
-
-  def setStrokeWidth(width:Int): Unit = {
-    zippedUndo(coloredSelectedShape)(_.getStrokeWidth)(
-      _.setStrokeWidth(width),
-      _.setStrokeWidth _
-    )
-  }
-
-  def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
-    linePatternToCssClass.get(linePattern) foreach { cssClass =>
-      val cssOpt = coloredSelectedShape.
-        map(_.getStyleClass().find(_.`matches`(LinePattern.cssRegex)))
-      val linePatterns = coloredSelectedShape.map(_.linePattern.get)
-      val shapeAndCss = coloredSelectedShape zip (cssOpt zip linePatterns)
-
-      history.execute {
-        for(shape <- coloredSelectedShape) {
-          LinePattern.removeOldCss(shape)
-          shape.getStyleClass().add(cssClass)
-          shape.linePattern.set(linePattern)
-        }
-      } {
-        for {
-          (shape, (oldCssOpt, oldLinePattern)) <- shapeAndCss
-          if oldCssOpt.isDefined
-          css = oldCssOpt.get
-        } {
-            LinePattern.removeOldCss(shape)
-            shape.getStyleClass().add(css)
-            shape.linePattern.set(oldLinePattern)
-          }
-      }
-    }
-
-  def setFillPattern(fillPattern:FillPattern.FillPattern): Unit = {
-    val coloredShapes = coloredSelectedShape map { shape =>
-      (shape, shape.oldFillColorProperty.get, shape.getStrokeColor)
-    } flatMap {
-      case (shape, c1,c2:Color) => List((shape,c1,c2))
-      case _ => Nil
-    }
-
-    val shapeAndFillPattern = coloredSelectedShape zip (coloredSelectedShape.
-      map(_.fillPatternProperty.get) zip coloredSelectedShape.map(_.getFillColor))
-
-    history.execute {
-      for( (shape, fillColor, strokeColor) <- coloredShapes ) {
-        val width = shape.getBoundsInLocal.getWidth()
-        val height = shape.getBoundsInLocal.getHeight()
-        val newFillColor = FillPattern.getFillColor(fillPattern, fillColor, strokeColor,width, height)
-        shape.setFillColor(newFillColor)
-        shape.fillPatternProperty.set(fillPattern)
-      }
-    } {
-      for( (shape,(oldFillProperty, oldFillGradient)) <- shapeAndFillPattern) {
-        shape.setFillColor(oldFillGradient)
-        shape.fillPatternProperty.set(oldFillProperty)
-      }
     }
   }
 
