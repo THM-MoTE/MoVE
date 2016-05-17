@@ -568,7 +568,14 @@ class MoveCtrl extends Initializable {
   }
   @FXML
   def onPasteClicked(e:ActionEvent): Unit = {
-    clipboardCtrl.getElement.map(_.map(_.copy)) foreach(_.foreach(drawPanelCtrl.addShapeWithAnchors))
+    clipboardCtrl.getElement.map(_.map(_.copy)).foreach(_.foreach { shape =>
+      val p = (for {
+        x <- config.getDouble("shift-copied-element-x")
+        y <- config.getDouble("shift-copied-element-y")
+      } yield (x,y)) getOrElse((0.0,0.0))
+      shape.move(p) //shift element a little bit to left &  top
+      drawPanelCtrl.addShapeWithAnchors(shape)
+    })
   }
   @FXML
   def onDuplicateClicked(e:ActionEvent): Unit = {
