@@ -151,6 +151,8 @@ class SelectedShapeCtrl(
     moveElement
   }
 
+  def move(p:Point): Unit = selectedShapes.foreach(_.move(p))
+
   def unselectShapes(): Unit = {
     for(shape <- selectedShapes) {
       changeLike.remove(shape.selectionRectangle)
