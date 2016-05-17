@@ -327,9 +327,41 @@ class MoveCtrl extends Initializable {
       })
     }
 
+    setupMoveShapesByShortcuts(drawStub.getScene)
     drawStub.getScene.getAccelerators.putAll(combinationsToRunnable)
 
     drawStub.requestFocus()
+  }
+
+  private def setupMoveShapesByShortcuts(scene:Scene) = {
+    val (deltaX,deltaY) = config.
+      getPoint("shortcut-moving-delta-x", "shortcut-moving-delta-y").
+      getOrElse((5.0,5.0))
+
+    shortcuts.getKeyCode("move-left") foreach { code =>
+      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+          val directioned = (deltaX*(-1), 0.0)
+          selectionCtrl.move(directioned)
+      })
+    }
+    shortcuts.getKeyCode("move-right") foreach { code =>
+      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+          val directioned = (deltaX, 0.0)
+          selectionCtrl.move(directioned)
+      })
+    }
+    shortcuts.getKeyCode("move-up") foreach { code =>
+      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+          val directioned = (0.0, deltaY*(-1))
+          selectionCtrl.move(directioned)
+      })
+    }
+    shortcuts.getKeyCode("move-down") foreach { code =>
+      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+          val directioned = (0.0, deltaY)
+          selectionCtrl.move(directioned)
+      })
+    }
   }
 
   def shutdownMove(): Unit = {
