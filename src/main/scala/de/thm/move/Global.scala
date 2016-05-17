@@ -57,7 +57,7 @@ object Global {
   lazy val history = new History(historySize)
 
   lazy val copyright = "(c) 2016 Nicola Justus"
-  lazy val version = "0.5"
+  lazy val version = "0.6"
 
   lazy val licenseFile = "/LICENSE"
 
