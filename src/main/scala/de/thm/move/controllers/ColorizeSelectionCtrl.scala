@@ -6,10 +6,10 @@ package de.thm.move.controllers
 
 import javafx.scene.paint.Color
 
-import de.thm.move.views.shapes.{ResizableShape, ColorizableShape}
-import de.thm.move.views.GroupLike
-import de.thm.move.models.{LinePattern, FillPattern}
 import de.thm.move.Global._
+import de.thm.move.models.{FillPattern, LinePattern}
+import de.thm.move.views.GroupLike
+import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 
 import scala.collection.JavaConversions._
 

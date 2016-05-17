@@ -4,14 +4,14 @@
 
 package de.thm.move.controllers
 
+import javafx.event.EventHandler
 import javafx.scene.Node
-import javafx.event.{ActionEvent, EventHandler}
 import javafx.scene.input.InputEvent
 
 import de.thm.move.views.panes.DrawPanel
+import de.thm.move.views.shapes.ResizableShape
 
 import scala.collection.JavaConversions._
-import de.thm.move.views.shapes.ResizableShape
 
 class DrawPanelCtrl(
     val drawPanel: DrawPanel,

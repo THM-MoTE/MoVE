@@ -5,7 +5,6 @@
 package de.thm.move.views.shapes
 
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.views.anchors.Anchor
 
 import scala.collection.JavaConverters._
 

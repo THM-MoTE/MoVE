@@ -5,6 +5,7 @@
 package de.thm.move.controllers.implicits
 
 import java.util.Optional
+
 import scala.language.implicitConversions
 
 object MonadImplicits {

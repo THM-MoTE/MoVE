@@ -8,9 +8,8 @@ import javafx.scene.paint.Color
 
 import de.thm.move.loader.parser.ModelicaParserLike.ParsingError
 import de.thm.move.models.CommonTypes._
-import de.thm.move.util.Validation
-import de.thm.move.util.ValidationSuccess
-import de.thm.move.util.ValidationWarning
+import de.thm.move.util.{Validation, ValidationSuccess, ValidationWarning}
+
 import scala.util.parsing.combinator.RegexParsers
 
 /** Defines parsers for all properties/fields that a modelica primitive can have. */

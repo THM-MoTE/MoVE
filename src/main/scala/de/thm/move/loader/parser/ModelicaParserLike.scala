@@ -5,11 +5,11 @@
 package de.thm.move.loader.parser
 
 import java.io.InputStream
-import java.nio.file.Path
-import java.nio.file.Files
-import scala.util._
+import java.nio.file.{Files, Path}
 
 import de.thm.move.loader.parser.ast._
+
+import scala.util._
 
 /**A parser for modelica files. */
 trait ModelicaParserLike {

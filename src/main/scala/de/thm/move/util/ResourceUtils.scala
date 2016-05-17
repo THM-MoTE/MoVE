@@ -4,12 +4,11 @@
 
 package de.thm.move.util
 
-import java.util.Base64
 import java.net.URI
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.Files
+import java.nio.file.{Files, Path, Paths}
+import java.util.Base64
 import javafx.scene.paint.Color
+
 import de.thm.move.Global._
 
 object ResourceUtils {

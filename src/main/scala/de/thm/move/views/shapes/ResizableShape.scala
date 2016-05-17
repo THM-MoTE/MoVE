@@ -6,7 +6,6 @@ package de.thm.move.views.shapes
 
 import javafx.scene.Node
 
-import de.thm.move.util.PointUtils._
 import de.thm.move.models.CommonTypes._
 import de.thm.move.views.anchors.Anchor
 

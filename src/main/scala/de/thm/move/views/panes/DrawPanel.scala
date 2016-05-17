@@ -8,9 +8,9 @@ import javafx.scene.Node
 import javafx.scene.layout.Pane
 
 import de.thm.move.models.CommonTypes._
-import de.thm.move.views.shapes._
 import de.thm.move.views.SelectionGroup
 import de.thm.move.views.anchors.Anchor
+import de.thm.move.views.shapes._
 
 import scala.collection.JavaConverters._
 

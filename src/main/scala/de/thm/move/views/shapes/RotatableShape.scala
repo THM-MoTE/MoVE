@@ -4,8 +4,8 @@
 
 package de.thm.move.views.shapes
 
-import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Bounds
+import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 
 import de.thm.move.Global._
@@ -13,10 +13,8 @@ import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.util.JFxUtils._
-import de.thm.move.util.GeometryUtils
 import de.thm.move.util.PointUtils._
 import de.thm.move.views.anchors.{Anchor, RotateAnchor}
-import javafx.scene.Node
 
 /** Turns a Node into a rotatable node by adding anchors for rotation and rotate the element accordingly. */
 trait RotatableShape {

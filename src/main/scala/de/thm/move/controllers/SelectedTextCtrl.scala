@@ -5,10 +5,10 @@
 package de.thm.move.controllers
 
 import javafx.scene.paint.Color
-import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
-import de.thm.move.views.shapes.ResizableText
+
 import de.thm.move.Global._
+import de.thm.move.views.shapes.ResizableText
 
 /** Behaviour for changing selected ResizableTexts. */
 trait SelectedTextCtrl {

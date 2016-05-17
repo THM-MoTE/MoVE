@@ -4,14 +4,14 @@
 
 package de.thm.move.config
 
+import java.net.URL
 import java.nio.charset.Charset
 import java.nio.file.{Files, Paths}
 
 import de.thm.move.util.Convertable
 
-import scala.io.Source
 import scala.collection._
-import java.net.URL
+import scala.io.Source
 
 class ValueConfig(url:URL) {
   val values = Source.fromURL(url, "UTF-8").getLines().to[mutable.ArrayBuffer]

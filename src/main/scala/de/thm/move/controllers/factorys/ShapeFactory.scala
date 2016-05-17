@@ -5,9 +5,9 @@
 package de.thm.move.controllers.factorys
 
 import java.net.URI
-import javafx.scene.paint.Color
-import javafx.scene.shape.{LineTo, MoveTo, Rectangle}
 import javafx.scene.image.Image
+import javafx.scene.paint.Color
+import javafx.scene.shape.{LineTo, MoveTo}
 
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape

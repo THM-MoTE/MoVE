@@ -4,19 +4,18 @@
 
 package de.thm.move.controllers
 
-import java.util.ResourceBundle
 import java.net.URL
-import javafx.event.ActionEvent
-import javafx.scene.text.TextAlignment
-import javafx.scene.control._
-import javafx.scene.text.Font
-import javafx.scene.paint.Color
+import java.util.ResourceBundle
 import javafx.collections.FXCollections
-import javafx.fxml.{FXML, FXMLLoader, Initializable}
-import implicits.FxHandlerImplicits._
+import javafx.event.ActionEvent
+import javafx.fxml.{FXML, Initializable}
+import javafx.scene.control._
+import javafx.scene.paint.Color
+import javafx.scene.text.{Font, TextAlignment}
 
-import de.thm.move.util.ResourceUtils
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.util.JFxUtils._
+import de.thm.move.util.ResourceUtils
 
 import scala.collection.JavaConverters._
 

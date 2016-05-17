@@ -5,23 +5,16 @@
 package de.thm.move.controllers
 
 import javafx.beans.property.SimpleBooleanProperty
-import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
-import javafx.scene.text.Font
-import javafx.scene.text.TextAlignment
 
-import de.thm.move.Global
 import de.thm.move.Global._
 import de.thm.move.controllers.factorys.ShapeFactory
-import de.thm.move.history.History
 import de.thm.move.models.CommonTypes._
-import de.thm.move.models.{FillPattern, LinePattern}
-import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
-import de.thm.move.views.shapes._
 import de.thm.move.views._
 import de.thm.move.views.panes.{DrawPanel, SnapLike}
+import de.thm.move.views.shapes._
 
 /** Controller for selected shapes. Selected shapes are highlighted by a dotted
  * black border around the bounding-box.

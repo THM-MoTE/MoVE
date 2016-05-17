@@ -3,10 +3,9 @@
  */
 
 package de.thm.move.shortcuts
-import javafx.scene.input.KeyCombination
-import javafx.scene.input.KeyCodeCombination
-import javafx.scene.input.KeyCode
 import java.net.URL
+import javafx.scene.input.{KeyCode, KeyCombination}
+
 import de.thm.move.config.ConfigLoader
 
 class ShortCutHandler(src:URL) {

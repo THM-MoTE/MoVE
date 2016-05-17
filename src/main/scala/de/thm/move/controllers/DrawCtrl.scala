@@ -6,33 +6,22 @@ package de.thm.move.controllers
 
 import java.net.URI
 import javafx.beans.property.SimpleBooleanProperty
-import javafx.event.{ActionEvent, EventHandler}
-import javafx.scene.Node
-import javafx.scene.input.{InputEvent, KeyCode, MouseEvent}
-import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
+import javafx.event.ActionEvent
 import javafx.scene.control.TextField
+import javafx.scene.input.MouseEvent
+import javafx.scene.paint.Color
 import javafx.scene.text.Font
 
-import de.thm.move.Global
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
-import de.thm.move.history.History
-import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.PointUtils._
-import de.thm.move.util.JFxUtils._
-import de.thm.move.views.shapes._
-import de.thm.move.views._
-
-import scala.collection.JavaConversions._
-import javafx.scene.Parent
-
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.panes.DrawPanel
+import de.thm.move.views.shapes._
 
 /** Controller for drawing new shapes or adding existing shapes to the drawPanel. */
 class DrawCtrl(changeLike:ChangeDrawPanelLike) {

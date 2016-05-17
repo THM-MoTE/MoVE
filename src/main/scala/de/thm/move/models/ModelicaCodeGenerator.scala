@@ -4,24 +4,21 @@
 
 package de.thm.move.models
 
-import java.io.PrintWriter
 import java.net.URI
-import java.nio.charset.Charset
 import java.nio.file.{Files, Paths}
-import java.util.Base64
+import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.paint.{Color, Paint}
 import javafx.scene.shape.{LineTo, MoveTo}
 import javafx.scene.text.TextAlignment
-import javafx.geometry.Bounds
 
 import de.thm.move.Global._
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
+import de.thm.move.util.Convertable._
 import de.thm.move.util.PointUtils._
 import de.thm.move.util.{Convertable, GeometryUtils, ResourceUtils}
-import de.thm.move.util.Convertable._
 import de.thm.move.views.shapes._
 
 /** Codegenerator for modelica-source code.

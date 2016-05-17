@@ -4,17 +4,9 @@
 
 package de.thm.move.views.shapes
 
-import javafx.geometry.Bounds
-import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
-import javafx.scene.input.KeyEvent
-import javafx.event.EventHandler
 
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.views.ShapeContextMenu
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
-
-import de.thm.move.Global
 
 class ResizableRectangle(
             startPoint:Point,

@@ -4,23 +4,19 @@
 
 package de.thm.move.models
 
-import java.io.ByteArrayOutputStream
 import java.nio.file.{Files, Path}
 import java.util.Locale
-import javafx.embed.swing.SwingFXUtils
 import javafx.scene.Node
 import javafx.scene.paint._
-import javafx.scene.shape.{LineTo, MoveTo, PathElement, QuadCurveTo}
-import javax.imageio.ImageIO
+import javafx.scene.shape.{LineTo, MoveTo, QuadCurveTo}
 
 import de.thm.move.Global._
-import de.thm.move.util.GeometryUtils
+import de.thm.move.util.{GeometryUtils, ResourceUtils}
 import de.thm.move.util.GeometryUtils._
-import de.thm.move.util.ResourceUtils
 import de.thm.move.views.shapes._
 
-import scala.xml.{Elem, Null, PrettyPrinter, UnprefixedAttribute}
 import scala.collection.JavaConversions._
+import scala.xml.{Elem, Null, PrettyPrinter, UnprefixedAttribute}
 
 /** Codegenerator for SVG-Images
   *

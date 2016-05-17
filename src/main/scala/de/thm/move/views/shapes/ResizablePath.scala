@@ -4,17 +4,13 @@
 
 package de.thm.move.views.shapes
 
-import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Paint
 import javafx.scene.shape.{LineTo, MoveTo, Path}
 
-import de.thm.move.util.JFxUtils
-
-import collection.JavaConversions._
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.views.anchors.Anchor
 import de.thm.move.util.PointUtils._
-import de.thm.move.views.anchors.{Anchor, MovableAnchor}
+
+import scala.collection.JavaConversions._
 
 class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
   extends Path(startPoint :: elements)

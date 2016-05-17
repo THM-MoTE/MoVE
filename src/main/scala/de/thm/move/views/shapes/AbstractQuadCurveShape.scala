@@ -4,14 +4,11 @@
 
 package de.thm.move.views.shapes
 
-import javafx.scene.shape.{LineTo, MoveTo, Path, PathElement, QuadCurveTo}
+import javafx.scene.shape._
 
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.util.{GeometryUtils, JFxUtils}
+import de.thm.move.util.GeometryUtils
 import de.thm.move.util.PointUtils._
-import de.thm.move.views.anchors.Anchor
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
-import de.thm.move.views.anchors.MovableAnchor
 
 /** A shape with quadratic-bezier-curved edge-points.
   *

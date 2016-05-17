@@ -4,8 +4,7 @@
 
 package de.thm.move.views
 
-import javafx.scene.Node
-import javafx.scene.control.{MenuItem, ContextMenu}
+import javafx.scene.control.{ContextMenu, MenuItem}
 
 class ShapeContextMenu extends ContextMenu {
   val inForegroundItem = new MenuItem("In foreground")

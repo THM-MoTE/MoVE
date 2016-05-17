@@ -5,14 +5,13 @@
 package de.thm.move.controllers
 
 import java.net.URL
-import java.nio.file.Paths
 import java.nio.file.Path
 import java.util.ResourceBundle
 import javafx.application.Platform
 import javafx.collections.ListChangeListener.Change
 import javafx.collections.{FXCollections, ListChangeListener}
 import javafx.event.ActionEvent
-import javafx.fxml.{FXML, FXMLLoader, Initializable}
+import javafx.fxml.{FXML, Initializable}
 import javafx.scene.control._
 import javafx.scene.input._
 import javafx.scene.layout.StackPane
@@ -25,21 +24,13 @@ import de.thm.move.config.ValueConfig
 import de.thm.move.controllers.implicits.ConcurrentImplicits._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.controllers.implicits.MonadImplicits._
-import de.thm.move.loader.ShapeConverter
-import de.thm.move.loader.parser.ModelicaParserLike
-import de.thm.move.loader.parser.ast.Model
-import de.thm.move.models.FillPattern
 import de.thm.move.models.FillPattern._
-import de.thm.move.models.LinePattern
 import de.thm.move.models.LinePattern._
-import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.SelectedShape.SelectedShape
 import de.thm.move.models._
 import de.thm.move.util.Convertable._
 import de.thm.move.util.JFxUtils._
-import de.thm.move.util.PointUtils._
 import de.thm.move.util.ResourceUtils
-import de.thm.move.views._
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.dialogs.Dialogs
 import de.thm.move.views.panes.{DrawPanel, SnapGrid}

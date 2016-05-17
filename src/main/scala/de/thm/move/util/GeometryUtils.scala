@@ -4,8 +4,9 @@
 
 package de.thm.move.util
 
-import scala.math.BigDecimal
 import de.thm.move.models.CommonTypes.Point
+
+import scala.math.BigDecimal
 
 object GeometryUtils {
 

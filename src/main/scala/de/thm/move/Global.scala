@@ -4,16 +4,13 @@
 
 package de.thm.move
 
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.Files
 import java.net.URL
 import java.nio.charset.Charset
+import java.nio.file.{Files, Path, Paths}
 import java.util.ResourceBundle
 
+import de.thm.move.config.{Config, ConfigLoader}
 import de.thm.move.history.History
-import de.thm.move.config.Config
-import de.thm.move.config.ConfigLoader
 import de.thm.move.shortcuts.ShortCutHandler
 
 object Global {

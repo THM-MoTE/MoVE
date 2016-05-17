@@ -5,27 +5,24 @@
 package de.thm.move.controllers
 
 import java.net.URI
-import java.nio.file.Path
-import java.nio.file.Paths
+import java.nio.file.{Path, Paths}
 import javafx.embed.swing.SwingFXUtils
+import javafx.scene.Node
 import javafx.scene.control.{ButtonType, ChoiceDialog}
 import javafx.stage.Window
-import javafx.scene.Node
 import javax.imageio.ImageIO
 
+import de.thm.move.Global._
+import de.thm.move.controllers.implicits.MonadImplicits._
 import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
 import de.thm.move.loader.parser.ast.Model
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.models.{ModelicaCodeGenerator, SrcFile, SvgCodeGenerator, UserInputException}
-import de.thm.move.views.shapes.ResizableShape
-import implicits.FxHandlerImplicits._
-import implicits.MonadImplicits._
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
-import de.thm.move.views.dialogs.SrcFormatDialog
-import de.thm.move.Global._
+import de.thm.move.models.{ModelicaCodeGenerator, SrcFile, SvgCodeGenerator, UserInputException}
 import de.thm.move.util.PointUtils._
 import de.thm.move.views.dialogs.{Dialogs, SrcFormatDialog}
+import de.thm.move.views.shapes.ResizableShape
 
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}

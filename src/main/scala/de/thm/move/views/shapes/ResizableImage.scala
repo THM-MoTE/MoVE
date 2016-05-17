@@ -5,7 +5,7 @@
 package de.thm.move.views.shapes
 
 import java.net.URI
-import javafx.scene.image.{ImageView, Image}
+import javafx.scene.image.{Image, ImageView}
 
 /** An image with either an URI as '''underlying image-path''' or an array of bytes indicating that
   * its image is '''base64-encoded''' and an image used for displaying the image itself.

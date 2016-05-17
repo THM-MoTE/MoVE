@@ -4,11 +4,8 @@
 
 package de.thm.move.models
 
-import javafx.scene._
-import javafx.scene.paint._
 import javafx.scene.canvas._
 import javafx.scene.paint._
-import javafx.scene.shape.Line
 
 import de.thm.move.Global._
 object FillPattern extends Enumeration {

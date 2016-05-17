@@ -6,7 +6,6 @@ package de.thm.move.models
 
 import java.util.function.Predicate
 import javafx.scene.Node
-import javafx.scene.shape.Shape
 
 object LinePattern extends Enumeration {
   type LinePattern = Value

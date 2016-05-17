@@ -7,7 +7,8 @@ package de.thm.move.controllers.implicits
 import java.util.function.Predicate
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.event.{ActionEvent, EventHandler}
-import javafx.scene.input.{InputEvent, MouseEvent, KeyEvent}
+import javafx.scene.input.{KeyEvent, MouseEvent}
+
 import scala.language.implicitConversions
 
 object FxHandlerImplicits {

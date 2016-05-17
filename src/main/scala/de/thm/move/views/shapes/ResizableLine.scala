@@ -4,18 +4,10 @@
 
 package de.thm.move.views.shapes
 
-import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Line
 
-import de.thm.move.Global._
-import de.thm.move.history.History
-import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes.Point
-import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
-import de.thm.move.views.anchors.Anchor
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
-import de.thm.move.views.anchors.Anchor
 
 class ResizableLine(
          start:Point,

@@ -5,24 +5,21 @@
 package de.thm.move.loader
 
 import java.io.ByteArrayInputStream
+import java.nio.file.Path
 import java.util.Base64
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
-import javafx.scene.text.Font
-import javafx.scene.text.TextAlignment
-import java.net.URI
-import java.nio.file.Paths
+import javafx.scene.text.{Font, TextAlignment}
 
 import de.thm.move.controllers.factorys.ShapeFactory
+import de.thm.move.loader.parser.PropertyParser
+import de.thm.move.loader.parser.ast._
 import de.thm.move.models.CommonTypes._
-import de.thm.move.models.{LinePattern, FillPattern}
+import de.thm.move.models.{FillPattern, LinePattern}
+import de.thm.move.util.GeometryUtils
 import de.thm.move.util.GeometryUtils._
 import de.thm.move.util.PointUtils._
 import de.thm.move.views.shapes._
-import de.thm.move.loader.parser.PropertyParser
-import de.thm.move.loader.parser.ast._
-import java.nio.file.Path
-import de.thm.move.util.GeometryUtils
 
 /** Converts the parsed AST into "real" ResizableShapes.
   *

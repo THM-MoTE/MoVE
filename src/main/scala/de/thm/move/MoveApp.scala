@@ -4,16 +4,13 @@
 
 package de.thm.move
 
-import java.util.ResourceBundle
 import javafx.application.Application
 import javafx.event.EventHandler
-import javafx.scene.control.Alert.AlertType
-import javafx.scene.text.Font
-import javafx.stage.{WindowEvent, Stage}
-import javafx.scene.{Cursor, Parent, Scene}
 import javafx.fxml.FXMLLoader
-import javafx.scene.control.{Alert, Label}
-import javax.annotation.Resource
+import javafx.scene.control.Alert
+import javafx.scene.control.Alert.AlertType
+import javafx.scene.{Parent, Scene}
+import javafx.stage.{Stage, WindowEvent}
 
 import de.thm.move.controllers.MoveCtrl
 

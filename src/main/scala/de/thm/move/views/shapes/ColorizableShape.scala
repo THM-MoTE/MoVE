@@ -4,14 +4,12 @@
 
 package de.thm.move.views.shapes
 
-import javafx.scene.paint.Paint
-import javafx.scene.paint.Color
+import javafx.beans.property.{ObjectProperty, SimpleObjectProperty}
+import javafx.scene.paint.{Color, Paint}
 import javafx.scene.shape.Shape
-import de.thm.move.models.LinePattern
-import de.thm.move.models.FillPattern
+
+import de.thm.move.models.{FillPattern, LinePattern}
 import de.thm.move.util.JFxUtils._
-import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.property.ObjectProperty
 
 /** A colorizable shape. */
 trait ColorizableShape {

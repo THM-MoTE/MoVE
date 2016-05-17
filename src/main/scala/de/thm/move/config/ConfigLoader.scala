@@ -4,8 +4,9 @@
 
 package de.thm.move.config
 
-import scala.io.Source
 import java.net.URL
+
+import scala.io.Source
 
 class ConfigLoader(path:URL) extends Config {
   private val map =

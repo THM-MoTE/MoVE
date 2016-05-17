@@ -4,13 +4,12 @@
 
 package de.thm.move.util
 
+import javafx.beans.property.ObjectProperty
 import javafx.event.{Event, EventHandler}
-
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import javafx.scene.Node
 import javafx.scene.control.ChoiceBox
-import javafx.beans.property.ObjectProperty
 
+import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.shapes.{MovableShape, ResizableShape}
 
