@@ -410,6 +410,7 @@ class MoveCtrl extends Initializable {
     }
   }
 
+  /** Displays the file behind p in the title of move's main window */
   private def displayUsedFile(p:Path): Unit = {
     val oldTitle = rootStage.getTitle
     val newTitle = if(oldTitle.contains("-")) {
@@ -422,6 +423,7 @@ class MoveCtrl extends Initializable {
     rootStage.setTitle(newTitle)
   }
 
+  /** Handles errors from tr by displaying them in a popup-dialog. */
   private def fileErrorHandling(tr: Try[_]): Unit = {
     tr  match {
       case Failure(ex:UserInputException) =>
