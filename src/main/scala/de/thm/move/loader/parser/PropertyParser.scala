@@ -192,7 +192,7 @@ object PropertyParser {
   val defaultSmooth = "Smooth.None"
   val defaultEndAngle = 360.0
   val defaultRotation = 0.0
-  val defaultCoordinateSystemSize = (200.0,200.0)
+  val defaultCoordinateSystemSize = (100.0,100.0)
   val defaultPreserveRatio = true
   val defaultinitScale = 0.1
   val defaultFontSize = 12.0
