@@ -55,4 +55,10 @@ object JFxUtils {
       event.consume()
     }
   }
+
+  /** Creates a new EventHandler[A] in which fn get's executed if predicate returns true. */
+  def filteredEventHandler[A <: Event](predicate: A => Boolean)(fn: => Unit): EventHandler[A] =
+    new EventHandler[A]() {
+      override def handle(a:A):Unit = if(predicate(a)) fn
+    }
 }
