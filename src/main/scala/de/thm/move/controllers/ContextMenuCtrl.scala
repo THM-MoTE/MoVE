@@ -11,7 +11,7 @@ import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.MouseButton
-import javafx.scene.control.{MenuItem, Separator, SeparatorMenuItem}
+import javafx.scene.control.{MenuItem, Separator, SeparatorMenuItem, TextField}
 import javafx.scene.input.{InputEvent, MouseEvent}
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
@@ -43,6 +43,10 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
         val encodeBase64Item = new MenuItem("Encode as Base64")
         encodeBase64Item.setOnAction { ae:ActionEvent => onEncodePressed(ae, img)}
         menu.getItems.add(encodeBase64Item)
+      case txt:ResizableText =>
+        val editItem = new MenuItem("Edit text")
+        editItem.setOnAction { ae: ActionEvent => onEditText(ae, txt) }
+        menu.getItems.add(editItem)
       case _ => //ignore
     }
 
@@ -137,5 +141,19 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
         changeLike.remove(resImg)
         changeLike.addShapeWithAnchors(newImg)
       case _ => //ignore
+  }
+
+  def onEditText(ae:ActionEvent, txt:ResizableText): Unit = {
+    val txtField = new TextField(txt.getText)
+    txtField.setLayoutX(txt.getX)
+    txtField.setLayoutY(txt.getY)
+    txtField.setRotate(txt.getRotate)
+    txtField.setOnAction { _:ActionEvent =>
+      txt.setText(txtField.getText)
+      changeLike.addShape(txt)
+      changeLike.remove(txtField)
+    }
+    changeLike.removeShape(txt)
+    changeLike.addNode(txtField)
   }
 }
