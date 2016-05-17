@@ -78,8 +78,6 @@ class SelectedShapeCtrl(
     }
   }
 
-  def getSelectedElements:List[ResizableShape] = selectedShapes
-
   def rotationMode(): Unit = {
     selectedShapes.foreach { shape =>
       shape.getAnchors.foreach(_.setVisible(false))

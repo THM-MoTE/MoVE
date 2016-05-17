@@ -8,6 +8,6 @@ import de.thm.move.views.shapes.ResizableShape
 
 /** Base trait for all functions that work with selected elements */
 trait SelectionCtrlLike {
-  /** Returns the currently selected elements */
+  /** Returns the currently selected shapes */
   def getSelectedShapes: List[ResizableShape]
 }

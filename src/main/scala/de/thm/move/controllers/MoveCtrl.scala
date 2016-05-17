@@ -595,7 +595,7 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onCopyClicked(e:ActionEvent): Unit = {
-    val elements = selectionCtrl.getSelectedElements
+    val elements = selectionCtrl.getSelectedShapes
     clipboardCtrl.setElement(elements)
   }
   @FXML
@@ -611,7 +611,7 @@ class MoveCtrl extends Initializable {
   }
   @FXML
   def onDuplicateClicked(e:ActionEvent): Unit = {
-    val elements = selectionCtrl.getSelectedElements.map(_.copy)
+    val elements = selectionCtrl.getSelectedShapes.map(_.copy)
     elements.foreach(contextMenuCtrl.onDuplicateElementPressed(e, _))
   }
   @FXML
