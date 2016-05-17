@@ -4,6 +4,8 @@
 
 package de.thm.move.config
 
+import de.thm.move.models.CommonTypes._
+
 trait Config {
   def getAll: List[(String,String)]
   def getString(key:String):Option[String]
@@ -26,4 +28,10 @@ trait Config {
     case "true" => true
     case _ => false
   }
+
+  def getPoint(xKey:String, yKey:String): Option[Point] =
+    for {
+      x <- getDouble(xKey)
+      y <- getDouble(yKey)
+    } yield (x,y)
 }
