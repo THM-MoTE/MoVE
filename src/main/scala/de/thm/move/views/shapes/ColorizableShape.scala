@@ -9,6 +9,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 import de.thm.move.models.LinePattern
 import de.thm.move.models.FillPattern
+import de.thm.move.util.JFxUtils._
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.ObjectProperty
 
@@ -37,6 +38,10 @@ trait ColorizableShape {
     setFillColor(other.getFillColor)
     setStrokeColor(other.getStrokeColor)
     setStrokeWidth(other.getStrokeWidth)
+
+    copyProperty(fillPatternProperty, other.fillPatternProperty)
+    copyProperty(oldFillColorProperty, other.oldFillColorProperty)
+    copyProperty(linePattern, other.linePattern)
   }
 
   /** Sets the fill and stroke color of this shape */
