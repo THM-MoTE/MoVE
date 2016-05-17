@@ -38,10 +38,10 @@ trait ColorizableShape {
     setFillColor(other.getFillColor)
     setStrokeColor(other.getStrokeColor)
     setStrokeWidth(other.getStrokeWidth)
-
     copyProperty(fillPatternProperty, other.fillPatternProperty)
     copyProperty(oldFillColorProperty, other.oldFillColorProperty)
     copyProperty(linePattern, other.linePattern)
+    LinePattern.linePatternToCssClass.get(linePattern.get) foreach getStyleClass.add
   }
 
   /** Sets the fill and stroke color of this shape */
