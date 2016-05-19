@@ -76,9 +76,15 @@ end test;
 
 # Try it
 If you like to try it follow these steps:
-- Make sure you are using JDK version >= __1.8.0_77__ by running ```java -version```
+- Check that you are using JDK version >= __1.8.0_77__ by running ```java -version```
   (Because of a bug in the JavaFX lib that causes strange
   behavior from the JavaFX-FileChooser we need JDK version >= 1.8.0_77)
+- Check that it's the __Oracle JDK__, not the OpenJDK. The OpenJDK will crash on startup like this:
+```java
+Graphics Device initialization failed for :  es2, sw
+Error initializing QuantumRenderer: no suitable pipeline found
+```
+This also seems to be a bug in the implementation of JavaFx in OpenJDK.
 - Make sure you have a ```$JAVA_HOME``` environment variable which holds the path to the
   java-home directory.
 
