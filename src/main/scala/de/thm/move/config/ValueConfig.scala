@@ -8,13 +8,14 @@ import java.net.URL
 import java.nio.charset.Charset
 import java.nio.file.{Files, Paths}
 
+import de.thm.move.Global
 import de.thm.move.util.Convertable
 
 import scala.collection._
 import scala.io.Source
 
 class ValueConfig(url:URL) {
-  val values = Source.fromURL(url, "UTF-8").getLines().to[mutable.ArrayBuffer]
+  val values = Source.fromURL(url, Global.encoding.name).getLines().to[mutable.ArrayBuffer]
 
   def getValues:List[String] = values.filter(!_.startsWith("##")).toList
   def getConvertedValues[A](implicit ev:Convertable[String, A]):List[A] = getValues.map(ev.convert)
