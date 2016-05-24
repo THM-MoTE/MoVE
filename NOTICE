@@ -6,7 +6,7 @@ Used fonts:
     Homepage: http://fontawesome.io/
 
 Used sbt-plugins:
-    == sbt-assembly
+    == sbt-assembly ==
     License: MIT License
     Homepage: https://github.com/sbt/sbt-assembly
 
