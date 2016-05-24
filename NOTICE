@@ -1,0 +1,24 @@
+
+Used fonts:
+    == Font Awesome ==
+    Created by Dave Gandy
+    License: SIL OFL 1.1 (http://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web)
+    Homepage: http://fontawesome.io/
+
+Used sbt-plugins:
+    == sbt-assembly
+    License: MIT License
+    Homepage: https://github.com/sbt/sbt-assembly
+
+Used ibrarys:
+    == scala-parser-combinators ==
+    License: BSD 3-Clause License
+    Homepage: https://github.com/scala/scala-parser-combinators
+
+    == scala-xml ==
+    License: BSD 3-Clause License
+    Homepage: https://github.com/scala/scala-xml
+
+    == JUnit Interface ==
+    License: BSD 2-Clause License
+    Homepage: https://github.com/sbt/junit-interface
