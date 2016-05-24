@@ -6,18 +6,18 @@ Used fonts:
 
 Used sbt-plugins:
     == sbt-assembly ==
-    License: MIT License
+    License: MIT License (https://github.com/sbt/sbt-assembly/blob/master/LICENSE)
     Homepage: https://github.com/sbt/sbt-assembly
 
 Used ibrarys:
     == scala-parser-combinators ==
-    License: BSD 3-Clause License
+    License: BSD 3-Clause License (https://github.com/scala/scala-parser-combinators/blob/1.0.x/LICENSE.md)
     Homepage: https://github.com/scala/scala-parser-combinators
 
     == scala-xml ==
-    License: BSD 3-Clause License
+    License: BSD 3-Clause License (https://github.com/scala/scala-xml/blob/master/LICENSE.md)
     Homepage: https://github.com/scala/scala-xml
 
     == JUnit Interface ==
-    License: BSD 2-Clause License
+    License: BSD 2-Clause License (https://github.com/sbt/junit-interface/blob/master/LICENSE.txt)
     Homepage: https://github.com/sbt/junit-interface
