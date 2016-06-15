@@ -4,15 +4,19 @@
 
 package de.thm.move.views.shapes
 
-import javafx.geometry.Bounds
+import javafx.geometry.{Bounds, Point2D}
 import javafx.scene.input.MouseEvent
-import javafx.scene.shape.Ellipse
+import javafx.scene.layout.Pane
+import javafx.scene.paint.Color
+import javafx.scene.shape.{Circle, Ellipse}
+import javafx.scene.transform.Affine
 
 import de.thm.move.Global._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._
+import de.thm.move.util.GeometryUtils
 import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
 import de.thm.move.views.anchors.Anchor
@@ -22,6 +26,8 @@ import de.thm.move.views.anchors.Anchor
   */
 trait RectangleLike {
   self: ResizableShape =>
+
+  private var startMouse = (0.0,0.0)
 
   /** Indicates if the coordinates of the shape should get adjusted too, when the
     * width and height get's adjusted.
@@ -215,10 +221,28 @@ trait RectangleLike {
     }
   })
 
-  bottomRightAnchor.setOnMousePressed(withConsumedEvent { _: MouseEvent =>
+  private def highlightPoint(p:Point) = {
+    val (x,y) = p
+    val circ = new Circle()
+    circ.setCenterX(x)
+    circ.setCenterY(y)
+    circ.setRadius(5)
+    circ.setFill(Color.BLUE)
+    getParent().asInstanceOf[Pane].getChildren().add(circ)
+  }
+
+  private def untransformedMiddlePoint: Point = {
+    List(getTopLeft, getTopRight, getBottomLeft, getBottomRight).foldLeft((0.0,0.0)) {
+      case (acc, elem) => acc + elem
+    } / (4.0,4.0)
+  }
+
+  bottomRightAnchor.setOnMousePressed(withConsumedEvent { me: MouseEvent =>
     val oldHeight = getHeight
     val oldWidth = getWidth
 
+    startMouse = (me.getSceneX, me.getSceneY)
+    highlightPoint(untransformedMiddlePoint)
     command = History.partialAction {
       setWidth(oldWidth)
       setHeight(oldHeight)
@@ -226,16 +250,33 @@ trait RectangleLike {
   })
 
   bottomRightAnchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
-    val (oldX, oldY) = getBottomRight
-    val (newX, newY) = (me.getX, me.getY)
+    val newMouse = (me.getSceneX, me.getSceneY)
+    val (deltaX, deltaY) = newMouse - startMouse
+    val (isoX,isoY) = getTopLeft
+    val isoCorner = new Point2D(isoX,isoY)
 
-    val boundWidth = getWidth
-    val boundHeight = getHeight
+    val (x,y) = untransformedMiddlePoint
+    val oldMiddle = new Point2D(x,y)
+    setWidth(getWidth + deltaX)
+    setHeight(getHeight + deltaY)
+    val (middleX,middleY) = untransformedMiddlePoint
+    val newMiddle = new Point2D(middleX,middleY)
 
-    val deltaX = newX - oldX + boundWidth
-    val deltaY = newY - oldY + boundHeight
+    val deltaP = GeometryUtils.calculateRotationOffset(oldMiddle, newMiddle, getRotate, isoCorner)
 
-    withCheckedBounds(deltaX,deltaY) {}
+    //topRight
+    setWidth(getWidth + deltaP.getX)
+    setHeight(getHeight + deltaP.getY)
+    setY(getY + deltaP.getY)
+    //bottomRight
+    setWidth(getWidth + deltaP.getX)
+    setHeight(getHeight + deltaP.getY)
+    //bottomLeft
+    setX(getX + deltaP.getX)
+    setWidth(getWidth + deltaP.getX)
+    setHeight(getHeight + deltaP.getY)
+
+    startMouse = newMouse
   })
 
   bottomLeftAnchor.setOnMousePressed(withConsumedEvent { me: MouseEvent =>
