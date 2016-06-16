@@ -231,16 +231,6 @@ trait RectangleLike {
     startMouse = (me.getSceneX,me.getSceneY)
   })
 
-  private def highlightPoint(p:Point) = {
-    val (x,y) = p
-    val circ = new Circle()
-    circ.setCenterX(x)
-    circ.setCenterY(y)
-    circ.setRadius(5)
-    circ.setFill(Color.BLUE)
-    getParent().asInstanceOf[Pane].getChildren().add(circ)
-  }
-
   private def untransformedMiddlePoint: Point = {
     List(getTopLeft, getTopRight, getBottomLeft, getBottomRight).foldLeft((0.0,0.0)) {
       case (acc, elem) => acc + elem
@@ -252,7 +242,6 @@ trait RectangleLike {
     val oldWidth = getWidth
 
     startMouse = (me.getSceneX, me.getSceneY)
-    // highlightPoint(untransformedMiddlePoint)
     command = History.partialAction {
       setWidth(oldWidth)
       setHeight(oldHeight)
