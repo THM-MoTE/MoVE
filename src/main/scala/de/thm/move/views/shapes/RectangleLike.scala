@@ -142,7 +142,7 @@ trait RectangleLike {
 
   getAnchors.foreach { anchor =>
     anchor.setOnMouseReleased { _:MouseEvent =>
-      val oldP = getTopLeft
+      val oldP = getXY
       val oldHeight = getHeight
       val oldWidth = getWidth
 
