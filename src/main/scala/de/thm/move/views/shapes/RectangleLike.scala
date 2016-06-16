@@ -157,10 +157,12 @@ trait RectangleLike {
     }
   }
 
-  topLeftAnchor.setOnMousePressed(withConsumedEvent { _: MouseEvent =>
+  topLeftAnchor.setOnMousePressed(withConsumedEvent { me: MouseEvent =>
     val (oldX, oldY) = getTopLeft
     val oldHeight = getHeight
     val oldWidth = getWidth
+
+    startMouse = (me.getSceneX,me.getSceneY)
 
     command = History.partialAction {
       if(adjustCoordinates) {
@@ -173,27 +175,33 @@ trait RectangleLike {
   })
 
   topLeftAnchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
+    val delta = calculateDelta(me)
+    val isoCorner = getBottomRight.asJava
     val (oldX, oldY) = getTopLeft
-    val (newX, newY) = (me.getX, me.getY)
     val boundWidth = getWidth
     val boundHeight = getHeight
 
-    val deltaX = if(oldX > newX) (oldX-newX) + boundWidth else boundWidth - (newX-oldX)
-    val deltaY = if(newY < oldY) (oldY - newY)  + boundHeight else boundHeight - (newY-oldY)
-
-    withCheckedBounds(deltaX,deltaY) {
+    val oldMiddle = untransformedMiddlePoint.asJava
+    withCheckedBounds(getWidth+delta.getX*(-1),getHeight+delta.getY*(-1)) {
       if(adjustCoordinates) {
         //use the new height & width for calculating the new x/y position
         setX(oldX - (getWidth-boundWidth))
         setY(oldY - (getHeight-boundHeight))
+        val newMiddle = untransformedMiddlePoint.asJava
+        val deltaP = GeometryUtils.calculateRotationOffset(oldMiddle, newMiddle, getRotate, isoCorner)
+        setX(getX + deltaP.getX)
+        setY(getY + deltaP.getY)
       }
     }
+    startMouse = (me.getSceneX,me.getSceneY)
   })
 
-  topRightAnchor.setOnMousePressed(withConsumedEvent { _: MouseEvent =>
+  topRightAnchor.setOnMousePressed(withConsumedEvent { me: MouseEvent =>
     val (oldX, oldY) = getTopLeft
     val oldHeight = getHeight
     val oldWidth = getWidth
+
+    startMouse = (me.getSceneX, me.getSceneY)
 
     command = History.partialAction {
       if(adjustCoordinates) {
@@ -205,20 +213,22 @@ trait RectangleLike {
   })
 
   topRightAnchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
-    val (oldX, oldY) = getTopRight
-    val (newX, newY) = (me.getX, me.getY)
-
-    val boundWidth = getWidth
+    val delta = calculateDelta(me)
+    val isoCorner = getBottomLeft.asJava
     val boundHeight = getHeight
-
-    val deltaX = if (newX > oldX) (newX - oldX) + boundWidth else boundWidth - (oldX - newX)
-    val deltaY = if (newY < oldY) oldY - newY + boundHeight else boundHeight - (newY - oldY)
-
-    withCheckedBounds(deltaX,deltaY) {
+    val oldY = getTopRight.y
+    val oldMiddle = untransformedMiddlePoint.asJava
+    withCheckedBounds(getWidth+delta.getX,getHeight+delta.getY*(-1)) {
       if (adjustCoordinates) {
         setY(oldY - (getHeight - boundHeight))
+        val newMiddle = untransformedMiddlePoint.asJava
+        val deltaP = GeometryUtils.calculateRotationOffset(oldMiddle, newMiddle, getRotate, isoCorner)
+        setX(getX + deltaP.getX)
+        setY(getY + deltaP.getY)
       }
     }
+
+    startMouse = (me.getSceneX,me.getSceneY)
   })
 
   private def highlightPoint(p:Point) = {
@@ -242,7 +252,7 @@ trait RectangleLike {
     val oldWidth = getWidth
 
     startMouse = (me.getSceneX, me.getSceneY)
-    highlightPoint(untransformedMiddlePoint)
+    // highlightPoint(untransformedMiddlePoint)
     command = History.partialAction {
       setWidth(oldWidth)
       setHeight(oldHeight)
@@ -250,39 +260,29 @@ trait RectangleLike {
   })
 
   bottomRightAnchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
-    val newMouse = (me.getSceneX, me.getSceneY)
-    val (deltaX, deltaY) = newMouse - startMouse
-    val (isoX,isoY) = getTopLeft
-    val isoCorner = new Point2D(isoX,isoY)
+    val delta = calculateDelta(me)
+    val isoCorner = getTopLeft.asJava
 
-    val (x,y) = untransformedMiddlePoint
-    val oldMiddle = new Point2D(x,y)
-    setWidth(getWidth + deltaX)
-    setHeight(getHeight + deltaY)
-    val (middleX,middleY) = untransformedMiddlePoint
-    val newMiddle = new Point2D(middleX,middleY)
+    val oldMiddle = untransformedMiddlePoint.asJava
+    withCheckedBounds(getWidth + delta.getX, getHeight + delta.getY) {
+      val newMiddle = untransformedMiddlePoint.asJava
+      val deltaP = GeometryUtils.calculateRotationOffset(oldMiddle, newMiddle, getRotate, isoCorner)
 
-    val deltaP = GeometryUtils.calculateRotationOffset(oldMiddle, newMiddle, getRotate, isoCorner)
+      if(adjustCoordinates) {
+        setX(getX + deltaP.getX)
+        setY(getY + deltaP.getY)
+      }
+    }
 
-    //topRight
-    setWidth(getWidth + deltaP.getX)
-    setHeight(getHeight + deltaP.getY)
-    setY(getY + deltaP.getY)
-    //bottomRight
-    setWidth(getWidth + deltaP.getX)
-    setHeight(getHeight + deltaP.getY)
-    //bottomLeft
-    setX(getX + deltaP.getX)
-    setWidth(getWidth + deltaP.getX)
-    setHeight(getHeight + deltaP.getY)
-
-    startMouse = newMouse
+    startMouse = (me.getSceneX,me.getSceneY)
   })
 
   bottomLeftAnchor.setOnMousePressed(withConsumedEvent { me: MouseEvent =>
     val (oldX, oldY) = getTopLeft
     val oldHeight = getHeight
     val oldWidth = getWidth
+
+    startMouse = (me.getSceneX, me.getSceneY)
 
     command = History.partialAction {
       if (adjustCoordinates) {
@@ -294,18 +294,27 @@ trait RectangleLike {
   })
 
   bottomLeftAnchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
-    val (oldX, oldY) = getBottomLeft
-    val (newX, newY) = (me.getX, me.getY)
-
+    val delta = calculateDelta(me)
+    val isoCorner = getTopRight.asJava
     val boundWidth = getWidth
-    val boundHeight = getHeight
+    val oldX = getBottomLeft.x
+    val oldMiddle = untransformedMiddlePoint.asJava
+    withCheckedBounds(getWidth+delta.getX*(-1),getHeight+delta.getY) {
+      if (adjustCoordinates) {
+        setX(oldX - (getWidth-boundWidth))
+        val newMiddle = untransformedMiddlePoint.asJava
+        val deltaP = GeometryUtils.calculateRotationOffset(oldMiddle, newMiddle, getRotate, isoCorner)
+        setX(getX + deltaP.getX)
+        setY(getY + deltaP.getY)
+      }
+    }
 
-    val deltaX = if (newX < oldX) (oldX - newX) + boundWidth else boundWidth - (newX - oldX)
-    val deltaY = if (newY > oldY) (newY - oldY) + boundHeight else boundHeight - (oldY - newY)
-
-    withCheckedBounds(deltaX,deltaY) {
-    if (adjustCoordinates) {
-      setX(oldX - (getWidth-boundWidth))
-    }}
+    startMouse = (me.getSceneX,me.getSceneY)
   })
+
+  private def calculateDelta(newMouse:MouseEvent):Point2D = {
+    val transStart = sceneToLocal(startMouse.x, startMouse.y)
+    val transEnd = sceneToLocal(newMouse.getSceneX,newMouse.getSceneY)
+    transEnd.subtract(transStart)
+  }
 }
