@@ -26,16 +26,18 @@ class ResizableCircle(
 
   override def setY(y: Double): Unit = setCenterY(y)
 
-  override def setWidth(w: Double): Unit = setRadiusX(GeometryUtils.asRadius(w))
+  override def setWidth(w: Double): Unit =
+    setRadiusX(w/2)
 
-  override def setHeight(h: Double): Unit = setRadiusY(GeometryUtils.asRadius(h))
+  override def setHeight(h: Double): Unit =
+    setRadiusY(h/2)
 
   override def getX: Double = getCenterX
 
   override def getY: Double = getCenterY
 
-  override def getWidth: Double = getBoundsInLocal.getWidth
-  override def getHeight: Double = getBoundsInLocal.getHeight
+  override def getWidth: Double = getRadiusX*2
+  override def getHeight: Double = getRadiusY*2
   override def copy: ResizableCircle = {
     val duplicate = new ResizableCircle(point, getRadiusX, getRadiusY)
     duplicate.copyPosition(this)
