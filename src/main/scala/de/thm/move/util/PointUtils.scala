@@ -4,6 +4,7 @@
 
 package de.thm.move.util
 
+import javafx.geometry.Point2D
 import de.thm.move.models.CommonTypes._
 
 /** Utils for working with the type [[de.thm.move.models.CommonTypes.Point]]
@@ -35,5 +36,7 @@ object PointUtils {
     final def y:Double = p._2
     @inline
     final def abs:Point = (Math.abs(p._1), Math.abs(p._2))
+    @inline
+    final def asJava: Point2D = new Point2D(p._1, p._2)
   }
 }
