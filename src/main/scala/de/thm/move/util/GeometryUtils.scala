@@ -35,6 +35,18 @@ object GeometryUtils {
     else Some(multiple*x)
   }
 
+  /** Calculates the offset which needs to get added to a (rotated) RectangleLike
+    * after a RectangleLike got resized.
+    *
+    * @note All given Point2D's have to be in untransformed
+    *       coordinates.
+    *       This function is an adaption of Christopher Schölzel's equivalent in Java, Processing.
+    * @param cOld the middle-point of the rectangle BEFORE the resize
+    * @param cNew the middle-point of the rectangle AFTER the resize
+    * @param deg the rotation-degree
+    * @param isoCorner the corner which shouldn't change;
+    *                  in general the opposite corner of the resized corner
+    */
   def calculateRotationOffset(cOld: Point2D, cNew: Point2D, deg: Double, isoCorner: Point2D): Point2D =  {
     val r = new Rotate(deg, cOld.getX(), cOld.getY());
     val rotCorner = r.transform(isoCorner);

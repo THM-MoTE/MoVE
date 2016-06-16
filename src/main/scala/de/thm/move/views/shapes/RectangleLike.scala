@@ -301,6 +301,13 @@ trait RectangleLike {
     startMouse = (me.getSceneX,me.getSceneY)
   })
 
+  /** Calculates the delta-offset for a resize with the value `startMouse` and
+    * the given `newMouse` MouseEvent.
+    *
+    * @note To use this function first set startMouse in the XXXMousePressed-handler
+    *       and use this function in the XXXMouseDragged-handler.
+    *       The coordinates of `startMouse` have to be relative to the scene!
+    */
   private def calculateDelta(newMouse:MouseEvent):Point2D = {
     val transStart = sceneToLocal(startMouse.x, startMouse.y)
     val transEnd = sceneToLocal(newMouse.getSceneX,newMouse.getSceneY)
