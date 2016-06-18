@@ -65,6 +65,13 @@ object GeometryUtils {
     delta;
   }
 
+
+  def rectangleMiddlePoint(p1:Point, p2:Point, p3:Point, p4:Point): Point = {
+    List(p1,p2,p3,p4).foldLeft((0.0,0.0)) {
+      case (acc, elem) => acc + elem
+    } / (4.0,4.0)
+  }
+
   def vectorOf(startPoint:Point, endPoint:Point): Vector2D =
     endPoint - startPoint
 
