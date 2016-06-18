@@ -67,4 +67,7 @@ object GeometryUtils {
 
   def vectorOf(startPoint:Point, endPoint:Point): Vector2D =
     endPoint - startPoint
+
+  def vectorMagnitude(v:Vector2D): Double =
+    sqrt(pow(v.x, 2) + pow(v.y, 2))
 }
