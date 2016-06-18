@@ -231,11 +231,8 @@ trait RectangleLike {
     startMouse = (me.getSceneX,me.getSceneY)
   })
 
-  private def untransformedMiddlePoint: Point = {
-    List(getTopLeft, getTopRight, getBottomLeft, getBottomRight).foldLeft((0.0,0.0)) {
-      case (acc, elem) => acc + elem
-    } / (4.0,4.0)
-  }
+  private def untransformedMiddlePoint: Point =
+    GeometryUtils.rectangleMiddlePoint(getTopLeft, getTopRight, getBottomLeft, getBottomRight)
 
   bottomRightAnchor.setOnMousePressed(withConsumedEvent { me: MouseEvent =>
     val oldHeight = getHeight
