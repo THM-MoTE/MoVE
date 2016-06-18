@@ -72,13 +72,6 @@ trait RotatableShape {
         GeometryUtils.rectangleMiddlePoint(
           topLeft, topRight, bottomLeft, bottomRight)
 
-      val circ = new Circle()
-      circ.setCenterX(middlePoint.x)
-      circ.setCenterY(middlePoint.y)
-      circ.setRadius(5)
-      circ.setFill(Color.BLUE)
-
-      getParent().asInstanceOf[Pane].getChildren().add(circ)
       val vector1 = GeometryUtils.vectorOf(middlePoint, (translatedStart.getX, translatedStart.getY))
       val vector2 = GeometryUtils.vectorOf(middlePoint, (translatedEnd.getX, translatedEnd.getY))
       val scalar = GeometryUtils.scalar(vector1,vector2)

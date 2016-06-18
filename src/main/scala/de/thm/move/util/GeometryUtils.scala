@@ -65,19 +65,24 @@ object GeometryUtils {
     delta;
   }
 
-
+  /** Calculates the middle-point between the given 4 points
+    * if the 4 points represent a rectangular-bounds.
+    */
   def rectangleMiddlePoint(p1:Point, p2:Point, p3:Point, p4:Point): Point = {
     List(p1,p2,p3,p4).foldLeft((0.0,0.0)) {
       case (acc, elem) => acc + elem
     } / (4.0,4.0)
   }
 
+  /* Calculates the vector between the given 2 points */
   def vectorOf(startPoint:Point, endPoint:Point): Vector2D =
     endPoint - startPoint
 
+  /* Calculates the magnitude of the given vector */
   def vectorMagnitude(v:Vector2D): Double =
     sqrt(pow(v.x, 2) + pow(v.y, 2))
 
+  /* Calculates the scalar-product from the given 2 vectors */
   def scalar(v1:Vector2D, v2:Vector2D): Double =
     v1.x * v2.x + v1.y * v2.y
 }
