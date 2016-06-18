@@ -77,4 +77,7 @@ object GeometryUtils {
 
   def vectorMagnitude(v:Vector2D): Double =
     sqrt(pow(v.x, 2) + pow(v.y, 2))
+
+  def scalar(v1:Vector2D, v2:Vector2D): Double =
+    v1.x * v2.x + v1.y * v2.y
 }
