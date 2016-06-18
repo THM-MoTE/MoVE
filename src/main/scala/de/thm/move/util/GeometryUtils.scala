@@ -7,10 +7,12 @@ package de.thm.move.util
 import de.thm.move.models.CommonTypes.Point
 import javafx.geometry.Point2D
 import javafx.scene.transform.{Affine, Rotate, Transform}
-
-import scala.math.BigDecimal
+import PointUtils._
+import   scala.math._
 
 object GeometryUtils {
+
+  type Vector2D = Point
 
   /** Calculates the middle-point M of the line represented by the given 2 points */
   def middleOfLine(start:Point, end:Point): Point = {
@@ -62,4 +64,7 @@ object GeometryUtils {
     val delta = cNewTrans.subtract(cNew);
     delta;
   }
+
+  def vectorOf(startPoint:Point, endPoint:Point): Vector2D =
+    endPoint - startPoint
 }
