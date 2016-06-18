@@ -4,17 +4,20 @@
 
 package de.thm.move.views.shapes
 
-import javafx.geometry.Bounds
-import javafx.scene.Node
-import javafx.scene.input.MouseEvent
-
 import de.thm.move.Global._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.util.JFxUtils._
 import de.thm.move.util.PointUtils._
+import de.thm.move.util.GeometryUtils
 import de.thm.move.views.anchors.{Anchor, RotateAnchor}
+import javafx.geometry.Bounds
+import javafx.scene.Node
+import javafx.scene.input.MouseEvent
+import javafx.scene.shape.Circle
+import javafx.scene.paint.Color
+import javafx.scene.layout.Pane
 
 /** Turns a Node into a rotatable node by adding anchors for rotation and rotate the element accordingly. */
 trait RotatableShape {
@@ -24,6 +27,12 @@ trait RotatableShape {
   private val topRightAnchor = new Anchor(0,0) with RotateAnchor
   private val bottomLeftAnchor = new Anchor(0,0) with RotateAnchor
   private val bottomRightAnchor = new Anchor(0,0) with RotateAnchor
+
+  private def usedBounds = getBoundsInLocal()
+  private def topLeft = (usedBounds.getMinX, usedBounds.getMinY)
+  private def topRight = (usedBounds.getMaxX, usedBounds.getMinY)
+  private def bottomLeft = (usedBounds.getMinX, usedBounds.getMaxY)
+  private def bottomRight = (usedBounds.getMaxX, usedBounds.getMaxY)
 
   val rotationAnchors = List(topLeftAnchor, topRightAnchor, bottomLeftAnchor,bottomRightAnchor)
   rotationAnchors.foreach(setupListener)
@@ -55,15 +64,29 @@ trait RotatableShape {
       }
     })
     anchor.setOnMouseDragged(withConsumedEvent { me: MouseEvent =>
-      val newP = (me.getSceneX,me.getSceneY)
-      val delta = startMouse - newP
-      startMouse = newP
-      val rotationAndY = getRotate + delta.y*(-1)
-      val rotateDegree =
-        if(rotationAndY < 360) rotationAndY
-        else 0
+      //translated from:
+      //http://www.mathe-online.at/materialien/Andreas.Pester/files/Vectors/winkel_zwischen_vektoren.htm
+      val translatedStart = sceneToLocal(startMouse.x, startMouse.y)
+      val translatedEnd = sceneToLocal(me.getSceneX, me.getSceneY)
+      val middlePoint =
+        GeometryUtils.rectangleMiddlePoint(
+          topLeft, topRight, bottomLeft, bottomRight)
 
-      setRotate(rotateDegree)
+      val circ = new Circle()
+      circ.setCenterX(middlePoint.x)
+      circ.setCenterY(middlePoint.y)
+      circ.setRadius(5)
+      circ.setFill(Color.BLUE)
+
+      getParent().asInstanceOf[Pane].getChildren().add(circ)
+      val vector1 = GeometryUtils.vectorOf(middlePoint, (translatedStart.getX, translatedStart.getY))
+      val vector2 = GeometryUtils.vectorOf(middlePoint, (translatedEnd.getX, translatedEnd.getY))
+      val scalar = GeometryUtils.scalar(vector1,vector2)
+      val magnitudeVector1 = GeometryUtils.vectorMagnitude(vector1)
+      val magnitudeVector2 = GeometryUtils.vectorMagnitude(vector2)
+      val cos_angle = scalar / (magnitudeVector1 * magnitudeVector2)
+      val angle = scala.math.acos(cos_angle)
+      setRotate(getRotate + angle)
     })
     anchor.setOnMouseReleased(withConsumedEvent { _: MouseEvent =>
       val newDegree = getRotate
