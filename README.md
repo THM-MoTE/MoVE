@@ -96,4 +96,8 @@ This also seems to be a bug in the implementation of JavaFx in OpenJDK.
 - Compile and run Move: ```sbt ";compile;run"```
 
 # License
-We __didn't pick__ a license yet! All copyright belongs to the developers.
+:copyright: 2016 Nicola Justus.
+
+This software is distributed under the terms of the
+__Mozilla Public License Version 2.0__. For more information see the
+LICENSE.
