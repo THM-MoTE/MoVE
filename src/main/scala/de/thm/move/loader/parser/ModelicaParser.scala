@@ -58,7 +58,7 @@ class ModelicaParser extends JavaTokenParsers
   def stuffAfterModel = ((not("end") ~> ident ~> """([^\n]+)""".r) *)
 
   def classComment:Parser[Option[String]] =
-    "\"" ~> (ident *) <~ "\"" ^^ { _.mkString(" ") } ?
+    "\"" ~> """([^"]*)""".r <~ "\"" ^^ { s => s } ?
 
   def annotation:Parser[List[Annotation]] = "annotation" ~> "(" ~> annotations <~ ")" <~ ";"
   def annotations:Parser[List[Annotation]] =
