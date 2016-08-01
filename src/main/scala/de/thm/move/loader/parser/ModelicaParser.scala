@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -29,7 +29,7 @@ class ModelicaParser extends JavaTokenParsers
 
   val start = model +
   def model:Parser[Model] = stuffBeforeModel ~> positioned(
-    ("model" ~> identRegex) ~ moSource ~ posString("end") ~ identRegex <~ ";" ^^ {
+    ("model" ~> identRegex) ~ (classComment ~> moSource) ~ posString("end") ~ identRegex <~ ";" ^^ {
       case startIdent ~ icon ~ endPos ~ endIdent =>
         if(startIdent == endIdent) {
           Model(startIdent, icon getOrElse {
@@ -56,6 +56,9 @@ class ModelicaParser extends JavaTokenParsers
   def skipUninterestingStuff = ((not("Icon") ~> ident ~> """([^\n]+)""".r) *)
   def stuffBeforeModel = ((not("model") ~> ident ~> """([^\n]+)""".r) *)
   def stuffAfterModel = ((not("end") ~> ident ~> """([^\n]+)""".r) *)
+
+  def classComment:Parser[Option[String]] =
+    "\"" ~> (ident *) <~ "\"" ^^ { _.mkString(" ") } ?
 
   def annotation:Parser[List[Annotation]] = "annotation" ~> "(" ~> annotations <~ ")" <~ ";"
   def annotations:Parser[List[Annotation]] =
