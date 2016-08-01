@@ -31,7 +31,7 @@ trait PropertyParser {
 
   // regex from: http://stackoverflow.com/a/5954831
   override val whiteSpace = """(\s|//.*|(?m)/\*(\*(?!/)|[^*])*\*/)+""".r
-  protected val identRegex = "[a-zA-Z_][a-zA-Z0-9_\\.]*".r
+  protected val identRegex = """[a-zA-Z_][a-zA-Z0-9_\\.\(\)\[\]\{\}]*""".r
   protected val numberRegex = "-?[0-9]+".r
   protected val javaLikeStrRegex = "\"(.*)\"".r
 

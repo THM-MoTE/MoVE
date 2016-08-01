@@ -50,7 +50,7 @@ class ModelicaParser extends JavaTokenParsers
     | stuffAfterModel ^^ { _ => None }
   )
 
-  def skipAnnotation = ((not("annotation") ~> ident ~> """([^\n]+)""".r) *)
+  def skipAnnotation = ((not("annotation" ~> "(") ~> ident ~> """([^\n]+)""".r) *)
 
   /** This parser skips everything that doesn't start with Icon because we are only intersted in Icon(.. */
   def skipUninterestingStuff = ((not("Icon") ~> ident ~> """([^\n]+)""".r) *)
