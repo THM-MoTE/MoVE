@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -25,7 +25,7 @@ import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.{ModelicaCodeGenerator, SrcFile, SvgCodeGenerator, UserInputException}
 import de.thm.move.util.PointUtils._
-import de.thm.move.views.dialogs.{Dialogs, SrcFormatDialog}
+import de.thm.move.views.dialogs.{Dialogs, SrcFormatDialog, ExternalChangesDialog}
 import de.thm.move.views.shapes.ResizableShape
 
 import scala.collection.JavaConverters._
@@ -126,17 +126,49 @@ class FileCtrl(owner: Window) {
     pxPerMm:Int, shapes:List[Node], width:Double,height:Double): Unit = {
     val generator = new ModelicaCodeGenerator(srcFormat, pxPerMm, width, height)
     existingFile match {
-      case Some(src@SrcFile(oldpath, Model(modelname, _))) =>
+      case Some(src@SrcFile(oldpath, Model(modelname, _))) if src.noExternalChanges =>
+        println(s"no changes at $src")
         val lines = generator.generateExistingFile(modelname, targetUri, shapes)
         val before = src.getBeforeModel
         val after = src.getAfterModel
         generator.writeToFile(before,lines, after)(targetUri)
+        usedFile = Some(SrcFile(src.file, src.model)) //update timestamp
+      case Some(src@SrcFile(oldpath, Model(modelname, _))) =>
+        println("WARNING EXTERNAL CHANGES")
+        warnExternalChanges(src).foreach { newSrcFile =>
+          val lines = generator.generateExistingFile(newSrcFile.model.name, targetUri, shapes)
+          val before = newSrcFile.getBeforeModel
+          val after = newSrcFile.getAfterModel
+          println(s"before $before")
+          println(s"after $after")
+          generator.writeToFile(before,lines, after)(targetUri)
+          usedFile = Some(SrcFile(newSrcFile.file, newSrcFile.model)) //update timestamp
+        }
       case _ =>
-        val filenamestr = Paths.get(targetUri).getFileName.toString
+        val path = Paths.get(targetUri)
+        val filenamestr = path.getFileName.toString
         val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
         val lines = generator.generate(modelName, targetUri, shapes)
         generator.writeToFile("",lines, "")(targetUri)
+        usedFile = Some(parseFile(path).get) //update timestamp; we've written the file, there can't be an error
     }
+  }
+
+  private def warnExternalChanges(src:SrcFile): Option[SrcFile] = {
+    val dialog = new ExternalChangesDialog(src.file.toString)
+    val selectedOption:Option[ButtonType] = dialog.showAndWait()
+    selectedOption.
+      filter { _ == dialog.overwriteAnnotationsBtn }.
+      map { _ =>
+        println("reparsing file")
+        parseFile(src.file)
+      } flatMap {
+        case Success(src) =>
+          Some(src)
+        case Failure(ex) =>
+          Dialogs.newExceptionDialog(ex, "Error while reparsing file").showAndWait()
+          None
+      }
   }
 
   /** Saves the icon represented by the shapes and their width, height to an existing file.
@@ -145,6 +177,7 @@ class FileCtrl(owner: Window) {
   def saveFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
     saveInfos match {
       case Some(SaveInfos(target,px,format)) =>
+        println("save with saveinfos")
         save(usedFile, target, format, px, shapes,width,height)
         Success(Paths.get(target))
       case _ => saveNewFile(shapes, width, height)
