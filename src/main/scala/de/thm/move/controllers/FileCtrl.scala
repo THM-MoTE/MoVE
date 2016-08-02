@@ -74,6 +74,17 @@ class FileCtrl(owner: Window) {
     } else xs.head
   }
 
+
+  def parseFile(path:Path): Try[SrcFile] = {
+    val parser = ModelicaParserLike()
+    for {
+      modelList <- parser.parse(path)
+    } yield {
+      val model = chooseModelDialog(modelList)
+      SrcFile(path, model)
+    }
+  }
+
   /** Let the user chooses a modelica file; parses this file and returns the
     * coordinate-system bounds & the shapes of the modelica model.
     */
@@ -88,14 +99,10 @@ class FileCtrl(owner: Window) {
     for {
       file <- fileTry
       path = Paths.get(file.toURI)
+      srcFile <- parseFile(path)
       scaleFactor <- showScaleDialog()
-      parser = ModelicaParserLike()
-      modelList <- parser.parse(path)
     } yield {
-      val model = chooseModelDialog(modelList)
-
-      usedFile = Some(SrcFile(path, model))
-
+      val model = srcFile.model
       val systemSize = ShapeConverter.gettCoordinateSystemSizes(model)
       val converter = new ShapeConverter(scaleFactor,
         systemSize,
@@ -109,6 +116,8 @@ class FileCtrl(owner: Window) {
           "Some properties can't get used.\nThey will be overridden when saving the file!").
           showAndWait()
       }
+      usedFile = Some(srcFile)
+      println(s"file opened src  $srcFile")
       (scaledSystem, shapes)
     }
   }
