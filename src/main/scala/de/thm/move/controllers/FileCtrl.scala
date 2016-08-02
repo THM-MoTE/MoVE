@@ -74,7 +74,7 @@ class FileCtrl(owner: Window) {
   }
 
 
-  def parseFile(path:Path): Try[SrcFile] = {
+  private def parseFile(path:Path): Try[SrcFile] = {
     val parser = ModelicaParserLike()
     for {
       modelList <- parser.parse(path)
@@ -83,6 +83,9 @@ class FileCtrl(owner: Window) {
       SrcFile(path, model)
     }
   }
+
+  private def parseFileExc(path:Path): SrcFile =
+    parseFile(path).get
 
   /** Let the user chooses a modelica file; parses this file and returns the
     * path to the file, coordinate-system bounds & the shapes of the modelica model.
@@ -146,31 +149,61 @@ class FileCtrl(owner: Window) {
     val codeGen = generateCodeAndWriteToFile(shapes,width,height) _
     (openedFile, formatInfos) match {
       case (Some(src@SrcFile(filepath, modelAst)), Some(FormatInfos(pxPerMm, Some(format)))) => //file was opened & saved before
-        codeGen(src, pxPerMm, format)
-        openedFile = Some(SrcFile(filepath, modelAst)) //update timestamp
+        codeGen(Left(src), pxPerMm, format)
+        val newSrc = SrcFile(filepath, modelAst)
+        openedFile = Some(newSrc) //update timestamp
         Success(filepath)
       case (Some(src@SrcFile(filepath, modelAst)), Some(FormatInfos(pxPerMm, None))) => //file was opened but not saved before; we need a formating
         val format = showSrcCodeDialog()
-        codeGen(src, pxPerMm, format)
+        codeGen(Left(src), pxPerMm, format)
         openedFile = Some(SrcFile(filepath, modelAst)) //update timestamp
         formatInfos = Some(FormatInfos(pxPerMm, Some(format))) //update info
         Success(filepath)
-      case (None, None) => ??? //save a new file
+      case (None, None) => //never saved this file; we need all informations
+        val chooser = Dialogs.newModelicaFileChooser()
+        chooser.setTitle("Save as..")
+        val fileTry = Option(chooser.showSaveDialog(owner)) match {
+          case Some(x) => Success(x)
+          case _ => Failure(UserInputException("Select a file for saving!"))
+        }
+        for {
+          file <- fileTry
+          pxPerMm <- showScaleDialog()
+          filepath = Paths.get(file.toURI)
+          format = showSrcCodeDialog()
+        } yield {
+          codeGen(Right(filepath), pxPerMm, format)
+          openedFile = Some(parseFile(filepath).get) //update timestamp; we've written the file -> there can't be an error
+          formatInfos = Some(FormatInfos(pxPerMm, Some(format))) //update info
+          filepath
+        }
+      case _ =>
+        println(s"Developer WARNING: saveFile() both None: $openedFile $formatInfos")
+        Failure(new IllegalStateException("Internal state crashed! Reopen file and try again."))
     }
   }
 
   private def generateCodeAndWriteToFile(shapes:List[Node],
                                          width:Double,
                                          height:Double)
-                                        (src:SrcFile,
+                                        (srcEither:Either[SrcFile, Path],
                                          pxPerMm:Int,
                                          format:FormatSrc): Unit = {
     val generator = new ModelicaCodeGenerator(format, pxPerMm, width, height)
-    val targetUri = src.file.toUri
-    val lines = generator.generateExistingFile(src.model.name, targetUri, shapes)
-    val before = src.getBeforeModel
-    val after = src.getAfterModel
-    generator.writeToFile(before,lines, after)(targetUri)
+    srcEither match {
+      case Left(src) =>
+        val targetUri = src.file.toUri
+        val lines = generator.generateExistingFile(src.model.name, targetUri, shapes)
+        val before = src.getBeforeModel
+        val after = src.getAfterModel
+        generator.writeToFile(before,lines, after)(targetUri)
+      case Right(filepath) =>
+        val targetUri = filepath.toUri
+        val filenamestr = Paths.get(targetUri).getFileName.toString
+        val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
+        val lines = generator.generate(modelName, targetUri, shapes)
+        generator.writeToFile("",lines, "")(targetUri)
+    }
   }
 
   /** Exports the given Icon represented by
