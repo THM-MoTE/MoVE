@@ -36,11 +36,10 @@ import scala.util.{Failure, Success, Try}
   * functions.
   */
 class FileCtrl(owner: Window) {
+  case class FormatInfos(pxPerMm:Int, srcFormat:Option[FormatSrc])
 
-  case class SaveInfos(targetUri:URI, pxPerMm:Int, srcFormat:FormatSrc)
-
-  private var usedFile: Option[SrcFile] = None
-  private var saveInfos: Option[SaveInfos] = None
+  private var openedFile: Option[SrcFile] = None
+  private var formatInfos: Option[FormatInfos] = None
 
   private def showSrcCodeDialog():FormatSrc = {
     val dialog = new SrcFormatDialog
@@ -86,9 +85,9 @@ class FileCtrl(owner: Window) {
   }
 
   /** Let the user chooses a modelica file; parses this file and returns the
-    * coordinate-system bounds & the shapes of the modelica model.
+    * path to the file, coordinate-system bounds & the shapes of the modelica model.
     */
-  def openFile:Try[(Point,List[ResizableShape])] = {
+  def openFile:Try[(Path, Point,List[ResizableShape])] = {
     val chooser = Dialogs.newModelicaFileChooser()
     chooser.setTitle("Open..")
 
@@ -116,41 +115,10 @@ class FileCtrl(owner: Window) {
           "Some properties can't get used.\nThey will be overridden when saving the file!").
           showAndWait()
       }
-      usedFile = Some(srcFile)
       println(s"file opened src  $srcFile")
-      (scaledSystem, shapes)
-    }
-  }
-
-  private def save(existingFile:Option[SrcFile], targetUri:URI, srcFormat:FormatSrc,
-    pxPerMm:Int, shapes:List[Node], width:Double,height:Double): Unit = {
-    val generator = new ModelicaCodeGenerator(srcFormat, pxPerMm, width, height)
-    existingFile match {
-      case Some(src@SrcFile(oldpath, Model(modelname, _))) if src.noExternalChanges =>
-        println(s"no changes at $src")
-        val lines = generator.generateExistingFile(modelname, targetUri, shapes)
-        val before = src.getBeforeModel
-        val after = src.getAfterModel
-        generator.writeToFile(before,lines, after)(targetUri)
-        usedFile = Some(SrcFile(src.file, src.model)) //update timestamp
-      case Some(src@SrcFile(oldpath, Model(modelname, _))) =>
-        println("WARNING EXTERNAL CHANGES")
-        warnExternalChanges(src).foreach { newSrcFile =>
-          val lines = generator.generateExistingFile(newSrcFile.model.name, targetUri, shapes)
-          val before = newSrcFile.getBeforeModel
-          val after = newSrcFile.getAfterModel
-          println(s"before $before")
-          println(s"after $after")
-          generator.writeToFile(before,lines, after)(targetUri)
-          usedFile = Some(SrcFile(newSrcFile.file, newSrcFile.model)) //update timestamp
-        }
-      case _ =>
-        val path = Paths.get(targetUri)
-        val filenamestr = path.getFileName.toString
-        val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
-        val lines = generator.generate(modelName, targetUri, shapes)
-        generator.writeToFile("",lines, "")(targetUri)
-        usedFile = Some(parseFile(path).get) //update timestamp; we've written the file, there can't be an error
+      openedFile = Some(srcFile)
+      formatInfos = Some(FormatInfos(scaleFactor, None))
+      (path, scaledSystem, shapes)
     }
   }
 
@@ -175,35 +143,34 @@ class FileCtrl(owner: Window) {
     * If there is no existing file the user get asked to save a new file.
     */
   def saveFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
-    saveInfos match {
-      case Some(SaveInfos(target,px,format)) =>
-        println("save with saveinfos")
-        save(usedFile, target, format, px, shapes,width,height)
-        Success(Paths.get(target))
-      case _ => saveNewFile(shapes, width, height)
+    val codeGen = generateCodeAndWriteToFile(shapes,width,height) _
+    (openedFile, formatInfos) match {
+      case (Some(src@SrcFile(filepath, modelAst)), Some(FormatInfos(pxPerMm, Some(format)))) => //file was opened & saved before
+        codeGen(src, pxPerMm, format)
+        openedFile = Some(SrcFile(filepath, modelAst)) //update timestamp
+        Success(filepath)
+      case (Some(src@SrcFile(filepath, modelAst)), Some(FormatInfos(pxPerMm, None))) => //file was opened but not saved before; we need a formating
+        val format = showSrcCodeDialog()
+        codeGen(src, pxPerMm, format)
+        openedFile = Some(SrcFile(filepath, modelAst)) //update timestamp
+        formatInfos = Some(FormatInfos(pxPerMm, Some(format))) //update info
+        Success(filepath)
+      case (None, None) => ??? //save a new file
     }
   }
 
-  /** Saves a new file by asking the user for a target file and writing the Icon represented by
-    * the given shapes and width,height as modelica-code into the file.
-    */
-  def saveNewFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
-    val chooser = Dialogs.newModelicaFileChooser()
-    chooser.setTitle("Save as..")
-    val fileTry = Option(chooser.showSaveDialog(owner)) match {
-      case Some(x) => Success(x)
-      case _ => Failure(UserInputException("Select a file for saving!"))
-    }
-    for (
-      file <- fileTry;
-      uri = file.toURI;
-      srcFormat = showSrcCodeDialog();
-      pxPerMm <- showScaleDialog()
-    ) yield {
-      save(usedFile, uri, srcFormat, pxPerMm, shapes, width, height)
-      saveInfos = Some(SaveInfos(uri,pxPerMm, srcFormat))
-      Paths.get(uri)
-    }
+  private def generateCodeAndWriteToFile(shapes:List[Node],
+                                         width:Double,
+                                         height:Double)
+                                        (src:SrcFile,
+                                         pxPerMm:Int,
+                                         format:FormatSrc): Unit = {
+    val generator = new ModelicaCodeGenerator(format, pxPerMm, width, height)
+    val targetUri = src.file.toUri
+    val lines = generator.generateExistingFile(src.model.name, targetUri, shapes)
+    val before = src.getBeforeModel
+    val after = src.getAfterModel
+    generator.writeToFile(before,lines, after)(targetUri)
   }
 
   /** Exports the given Icon represented by

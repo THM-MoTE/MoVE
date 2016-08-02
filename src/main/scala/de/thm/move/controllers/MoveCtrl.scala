@@ -424,7 +424,8 @@ class MoveCtrl extends Initializable {
   @FXML
   def onOpenClicked(e:ActionEvent): Unit = {
     fileCtrl.openFile match {
-      case Success((system, shapes)) =>
+      case Success((file, system, shapes)) =>
+        displayUsedFile(file)
         drawPanel.setSize(system)
         if (drawPanelCtrl.getElements.nonEmpty) {
           drawPanelCtrl.removeAll()
@@ -472,8 +473,7 @@ class MoveCtrl extends Initializable {
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
     fileErrorHandling(
-      fileCtrl.saveNewFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
-        map(displayUsedFile)
+      Try(new IllegalStateException("not implemented yet!"))
     )
   }
 
