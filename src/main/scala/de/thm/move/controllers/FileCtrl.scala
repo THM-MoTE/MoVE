@@ -142,28 +142,39 @@ class FileCtrl(owner: Window) {
       }
   }
 
+  private def awareExternalChanges[A](srcOpt:Option[SrcFile])(f: Option[SrcFile] => Try[A]): Try[A]= {
+    srcOpt match {
+      case Some(src) if src.noExternalChanges => f(srcOpt)
+      case Some(src) => warnExternalChanges(src).map(x => f(Some(x))).getOrElse(Failure(new UserInputException("Didn't save the file")))
+      case None => f(srcOpt)
+    }
+  }
+
   /** Saves the icon represented by the shapes and their width, height to an existing file.
     * If there is no existing file the user get asked to save a new file.
     */
   def saveFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
-    val codeGen = generateCodeAndWriteToFile(shapes,width,height) _
-    (openedFile, formatInfos) match {
-      case (Some(src@SrcFile(filepath, modelAst)), Some(FormatInfos(pxPerMm, Some(format)))) => //file was opened & saved before
-        codeGen(Left(src), pxPerMm, format)
-        val newSrc = SrcFile(filepath, modelAst)
-        openedFile = Some(newSrc) //update timestamp
-        Success(filepath)
-      case (Some(src@SrcFile(filepath, modelAst)), Some(FormatInfos(pxPerMm, None))) => //file was opened but not saved before; we need a formating
-        val format = showSrcCodeDialog()
-        codeGen(Left(src), pxPerMm, format)
-        openedFile = Some(SrcFile(filepath, modelAst)) //update timestamp
-        formatInfos = Some(FormatInfos(pxPerMm, Some(format))) //update info
-        Success(filepath)
-      case (None, None) => //never saved this file; we need all informations
-        saveAsFile(shapes, width, height)
-      case _ =>
-        println(s"Developer WARNING: saveFile() both None: $openedFile $formatInfos")
-        Failure(new IllegalStateException("Internal state crashed! Reopen file and try again."))
+    awareExternalChanges(openedFile) { newFile =>
+      val codeGen = generateCodeAndWriteToFile(shapes, width, height) _
+      (newFile, formatInfos) match {
+        case (Some(src@SrcFile(filepath, modelAst)), Some(FormatInfos(pxPerMm, Some(format)))) => //file was opened & saved before
+          codeGen(Left(src), pxPerMm, format)
+          val newSrc = parseFileExc(filepath) //reparse for getting new positional values
+          openedFile = Some(newSrc) //update timestamp
+          Success(filepath)
+        case (Some(src@SrcFile(filepath, modelAst)), Some(FormatInfos(pxPerMm, None))) => //file was opened but not saved before; we need a formating
+          val format = showSrcCodeDialog()
+          codeGen(Left(src), pxPerMm, format)
+          val newSrc = parseFileExc(filepath) //reparse for getting new positional values
+          openedFile = Some(newSrc) //update timestamp
+          formatInfos = Some(FormatInfos(pxPerMm, Some(format))) //update info
+          Success(filepath)
+        case (None, None) => //never saved this file; we need all informations
+          saveAsFile(shapes, width, height)
+        case _ =>
+          println(s"Developer WARNING: saveFile() both None: $openedFile $formatInfos")
+          Failure(new IllegalStateException("Internal state crashed! Reopen file and try again."))
+      }
     }
   }
 
@@ -182,7 +193,7 @@ class FileCtrl(owner: Window) {
       format = showSrcCodeDialog()
     } yield {
       codeGen(Right(filepath), pxPerMm, format)
-      openedFile = Some(parseFile(filepath).get) //update timestamp; we've written the file -> there can't be an error
+      openedFile = Some(parseFileExc(filepath)) //update timestamp; we've written the file -> there can't be an error
       formatInfos = Some(FormatInfos(pxPerMm, Some(format))) //update info
       filepath
     }
