@@ -16,7 +16,7 @@ import scala.collection.JavaConversions._
 
 /** Represents a source-file with corresponding parsed AST. */
 case class SrcFile(file:Path, model:Model) {
-  private lazy val lines = Files.readAllLines(file).toList
+  private val lines = Files.readAllLines(file).toList
   private val lastModifiedTimestamp = Files.getLastModifiedTime(file)
 
   /** Gets the source before Icon(...) */
