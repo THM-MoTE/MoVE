@@ -473,7 +473,8 @@ class MoveCtrl extends Initializable {
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
     fileErrorHandling(
-      Try(new IllegalStateException("not implemented yet!"))
+      fileCtrl.saveAsFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
+        map(displayUsedFile)
     )
   }
 

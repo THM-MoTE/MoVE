@@ -160,26 +160,31 @@ class FileCtrl(owner: Window) {
         formatInfos = Some(FormatInfos(pxPerMm, Some(format))) //update info
         Success(filepath)
       case (None, None) => //never saved this file; we need all informations
-        val chooser = Dialogs.newModelicaFileChooser()
-        chooser.setTitle("Save as..")
-        val fileTry = Option(chooser.showSaveDialog(owner)) match {
-          case Some(x) => Success(x)
-          case _ => Failure(UserInputException("Select a file for saving!"))
-        }
-        for {
-          file <- fileTry
-          pxPerMm <- showScaleDialog()
-          filepath = Paths.get(file.toURI)
-          format = showSrcCodeDialog()
-        } yield {
-          codeGen(Right(filepath), pxPerMm, format)
-          openedFile = Some(parseFile(filepath).get) //update timestamp; we've written the file -> there can't be an error
-          formatInfos = Some(FormatInfos(pxPerMm, Some(format))) //update info
-          filepath
-        }
+        saveAsFile(shapes, width, height)
       case _ =>
         println(s"Developer WARNING: saveFile() both None: $openedFile $formatInfos")
         Failure(new IllegalStateException("Internal state crashed! Reopen file and try again."))
+    }
+  }
+
+  def saveAsFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
+    val codeGen = generateCodeAndWriteToFile(shapes, width, height) _
+    val chooser = Dialogs.newModelicaFileChooser()
+    chooser.setTitle("Save as..")
+    val fileTry = Option(chooser.showSaveDialog(owner)) match {
+      case Some(x) => Success(x)
+      case _ => Failure(UserInputException("Select a file for saving!"))
+    }
+    for {
+      file <- fileTry
+      pxPerMm <- showScaleDialog()
+      filepath = Paths.get(file.toURI)
+      format = showSrcCodeDialog()
+    } yield {
+      codeGen(Right(filepath), pxPerMm, format)
+      openedFile = Some(parseFile(filepath).get) //update timestamp; we've written the file -> there can't be an error
+      formatInfos = Some(FormatInfos(pxPerMm, Some(format))) //update info
+      filepath
     }
   }
 
