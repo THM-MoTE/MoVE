@@ -24,6 +24,7 @@ class ModelicaParser extends JavaTokenParsers
   with ModelicaParserLike
   with PropertyParser {
   val decimalNo = floatingPointNumber ^^ { _.toDouble }
+  val nonWhitespaceRegex = """[^\s]+""".r
 
   override val ident:Parser[String] = identRegex
 
@@ -50,12 +51,12 @@ class ModelicaParser extends JavaTokenParsers
     | stuffAfterModel ^^ { _ => None }
   )
 
-  def skipAnnotation = ((not("annotation" ~> "(") ~> ident ~> """([^\n]+)""".r) *)
+  def skipAnnotation = ((not("annotation" ~> "(") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
 
   /** This parser skips everything that doesn't start with Icon because we are only intersted in Icon(.. */
-  def skipUninterestingStuff = ((not("Icon") ~> ident ~> """([^\n]+)""".r) *)
-  def stuffBeforeModel = ((not("model") ~> ident ~> """([^\n]+)""".r) *)
-  def stuffAfterModel = ((not("end") ~> ident ~> """([^\n]+)""".r) *)
+  def skipUninterestingStuff = ((not("Icon") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
+  def stuffBeforeModel = ((not("model") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
+  def stuffAfterModel = ((not("end") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
 
   def classComment:Parser[Option[String]] =
     "\"" ~> """([^"]*)""".r <~ "\"" ^^ { s => s } ?
