@@ -73,7 +73,7 @@ class ConverterTest {
 
     val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
 
-    val convertedLine = conv.getShapes(ast).head.asInstanceOf[ResizableLine]
+    val convertedLine = conv.getShapes(ast).head.asInstanceOf[(ResizableLine, Option[String])]._1
     val startAnchor = convertedLine.getAnchors.head
     val endAnchor = convertedLine.getAnchors.tail.head
 
@@ -103,13 +103,13 @@ class ConverterTest {
     val expectedPoints = points2.map {
       case (x,y) => (x, 200-y)
     }
-    val convPath = conv.getShapes(ast2).head.asInstanceOf[ResizablePath]
+    val convPath = conv.getShapes(ast2).head.asInstanceOf[(ResizablePath, Option[String])]._1
     convPath.getAnchors.zip(expectedPoints).foreach {
       case (p1,p2) => assertEquals((p1.getCenterX,p1.getCenterY),p2)
     }
 
     val converter = new ShapeConverter(5, ShapeConverter.gettCoordinateSystemSizes(ast2), null)
-    val convPath2 = converter.getShapes(ast2).head.asInstanceOf[ResizablePath]
+    val convPath2 = converter.getShapes(ast2).head.asInstanceOf[(ResizablePath, Option[String])]._1
     convPath2.getAnchors.zip(expectedPoints.map(_.map(_*5))).foreach {
       case (p1,p2) => assertEquals(p2, (p1.getCenterX,p1.getCenterY))
     }
@@ -129,14 +129,14 @@ class ConverterTest {
     )
 
     val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
-    val convRec = conv.getShapes(ast).head.asInstanceOf[ResizableRectangle]
+    val convRec = conv.getShapes(ast).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
     assertEquals((205,defaultCoordinateSystemSize.y-179), convRec.getXY)
     assertEquals(348-205, convRec.getWidth, 0.01)
     assertEquals(179-36, convRec.getHeight, 0.01)
 
     val multiplier = 5
     val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast), null)
-    val convRec2 = conv2.getShapes(ast).head.asInstanceOf[ResizableRectangle]
+    val convRec2 = conv2.getShapes(ast).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
     assertEquals((205*multiplier,(defaultCoordinateSystemSize.y-179)*multiplier), convRec2.getXY)
     assertEquals((348-205)*multiplier, convRec2.getWidth, 0.01)
     assertEquals((179-36)*multiplier, convRec2.getHeight, 0.01)
@@ -156,7 +156,7 @@ class ConverterTest {
     )
 
     val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
-    val convCircle = conv.getShapes(ast).head.asInstanceOf[ResizableCircle]
+    val convCircle = conv.getShapes(ast).head.asInstanceOf[(ResizableCircle, Option[String])]._1
     val middleP = GeometryUtils.middleOfLine(205,
       defaultCoordinateSystemSize.y-179,
       348, defaultCoordinateSystemSize.y-36
@@ -166,7 +166,7 @@ class ConverterTest {
 
     val multiplier = 2
     val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast), null)
-    val conv2Circle = conv2.getShapes(ast).head.asInstanceOf[ResizableCircle]
+    val conv2Circle = conv2.getShapes(ast).head.asInstanceOf[(ResizableCircle, Option[String])]._1
 
     val middleP2 = GeometryUtils.middleOfLine(205*multiplier,
       (defaultCoordinateSystemSize.y-179)*multiplier,
@@ -197,7 +197,7 @@ class ConverterTest {
     }
 
     val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
-    val convPolygon = conv.getShapes(ast).head.asInstanceOf[ResizablePolygon]
+    val convPolygon = conv.getShapes(ast).head.asInstanceOf[(ResizablePolygon, Option[String])]._1
     convPolygon.getAnchors.zip(expPoints).foreach {
       case (anchor,p2) =>
       val p1 = (anchor.getCenterX,anchor.getCenterY)
@@ -206,7 +206,7 @@ class ConverterTest {
 
     val multiplier = 4
     val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast), null)
-    val conv2Polygon = conv2.getShapes(ast).head.asInstanceOf[ResizablePolygon]
+    val conv2Polygon = conv2.getShapes(ast).head.asInstanceOf[(ResizablePolygon, Option[String])]._1
     conv2Polygon.getAnchors.zip(expPoints.map(_.map(_*multiplier))).foreach {
       case (anchor,p2) =>
         val p1 = (anchor.getCenterX,anchor.getCenterY)
@@ -249,7 +249,7 @@ class ConverterTest {
     )
 
     val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
-    val rect = conv.getShapes(ast).head.asInstanceOf[ResizableRectangle]
+    val rect = conv.getShapes(ast).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
 
     val expXY:Point = (10-10,defaultCoordinateSystemSize.y-(10+50))
     val expW = 10+30
@@ -274,7 +274,7 @@ class ConverterTest {
       val multiplier = 2
       val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast), null)
 
-      val rect2 = conv2.getShapes(ast2).head.asInstanceOf[ResizableRectangle]
+      val rect2 = conv2.getShapes(ast2).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
       val expXY2:Point = (50-5,defaultCoordinateSystemSize.y-(30+70))
       val expW2 = 15
       val expH2 = 70+20
@@ -299,7 +299,7 @@ class ConverterTest {
     )
 
     val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
-    val circ = conv.getShapes(ast).head.asInstanceOf[ResizableCircle]
+    val circ = conv.getShapes(ast).head.asInstanceOf[(ResizableCircle, Option[String])]._1
 
     val expCenterXY = (origin.x, defaultCoordinateSystemSize.y-origin.y)
     val expWRadius = asRadius(10+30)
