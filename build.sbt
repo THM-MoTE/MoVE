@@ -1,6 +1,4 @@
 import java.lang.System
-import java.io.File
-import java.nio.file.Paths
 
 //include javafx-jar (from java's home directory) in classpath
 unmanagedJars in Compile += Attributed.blank(
