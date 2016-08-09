@@ -51,6 +51,14 @@ class ModelicaParser extends JavaTokenParsers
     | stuffAfterModel ^^ { _ => None }
   )
 
+
+  /** The skip parsers are working like this:
+    * 1. check that the word isn't the word we are searching (e.g.: annotation)
+    * 2. if it's not, skip it (everythign that's not whiespace as defined by
+    *  noneWhitespaceRegex) and also skip till a linebreak (\n)
+    *  if the word is the searched word, this parser failes/stops
+    */
+
   def skipAnnotation = ((not("annotation" ~> "(") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
 
   /** This parser skips everything that doesn't start with Icon because we are only intersted in Icon(.. */

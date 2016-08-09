@@ -1,0 +1,50 @@
+======= Version 0.6.0 ==
+==> New major Features
+- Generate "stand-alone" jar for running move from
+    "java -jar" command using the sbt-assembly-plugin
+- Exporting generated Icons as:
+    - SVG
+    - PNG
+- FillPattern now fully supported
+    All FillPatterns (especially FillPattern.Vertical, FillPattern.Horizontal, ..)
+    from Modelica are now supported and can be used
+- Rotate shapes
+    It's now possible to rotate shapes at the edges by double-clicking an element
+
+==> Code improvements
+- Pathlike elements are now implemented using an abstract trait that abstracts over
+    all elements that look-like a path with points (similar to RectangleLike)
+
+
+======= Version 0.5.2 ==
+- The generated  position of shapes is now relative to their origin
+    The origin-point is the middle-point of the shape
+- FillPatterns are now fully supported (e.g: Horizontal, Vertical, Cross, ..)
+- Added Menu for changing the gridsize
+- Smaller bug fixes
+- Refactoring path-like elements:
+    All elements that uses a path under the hood for drawing it's shape can use
+    PathLike to get moving, resizing the element. This removes the duplicated code
+    inside Lines Polygons, Paths, Curved Paths/Polygons drastically and makes them
+    more maintainable.
+- Refactoring package-structure inside views-package:
+    Anchors are now placed inside it's own package
+    Dialogs are now placed inside it's own package
+    Panes are now placed inside it's own package
+
+
+======= Version 0.5.1 ==
+Basically a refactoring, documentation and smaller bug-fixes version.
+- Simplified code-snippets
+- Removed all setLayoutX/Y usages and replaced them with direct
+  positioning the points
+
+
+======= Version 0.5 ==
+All major features and Shapes are working and tested.
+- Un-/Redo features, grouping, multiple selection is implemented.
+- Save existing files while preserving it's source-code
+  (Code that's not Icon/Graphics-related) is working.
+- Snap-to-Grid is working and can be disabled if not needed.
+- Set the paper-size is working
+- copy,paste,duplicate shapes is implemented

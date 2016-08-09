@@ -43,7 +43,7 @@ class ParserAndConvertTest {
 
     val parsed = withParseSuccess(str)
     val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
-    val convertedRectangle = conv.getShapes(parsed).head.asInstanceOf[ResizableRectangle]
+    val convertedRectangle = conv.getShapes(parsed).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
 
     assertEquals((0,(500)), convertedRectangle.getXY)
     assertEquals((50), convertedRectangle.getWidth, 0.01)
@@ -52,7 +52,7 @@ class ParserAndConvertTest {
 
     val multiplier = 4
     val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
-    val convertedRectangle2 = conv2.getShapes(parsed).head.asInstanceOf[ResizableRectangle]
+    val convertedRectangle2 = conv2.getShapes(parsed).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
 
     assertEquals((0,500*multiplier), convertedRectangle2.getXY)
     assertEquals(50*multiplier, convertedRectangle2.getWidth, 0.01)
@@ -83,7 +83,7 @@ class ParserAndConvertTest {
 
     val parsed2 = withParseSuccess(str2)
     val conv3 = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
-    val convertedRectangle3 = conv.getShapes(parsed2).head.asInstanceOf[ResizableRectangle]
+    val convertedRectangle3 = conv.getShapes(parsed2).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
 
     assertEquals((20,500-60), convertedRectangle3.getXY)
     assertEquals(100-20, convertedRectangle3.getWidth, 0.01)

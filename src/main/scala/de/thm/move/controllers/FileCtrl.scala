@@ -38,7 +38,9 @@ import scala.util.{Failure, Success, Try}
 class FileCtrl(owner: Window) {
   case class FormatInfos(pxPerMm:Int, srcFormat:Option[FormatSrc])
 
+  /** Informations about the current open file */
   private var openedFile: Option[SrcFile] = None
+  /** Sourcecode format specified by the user - either Oneline or Pretty */
   private var formatInfos: Option[FormatInfos] = None
 
   private def showSrcCodeDialog():FormatSrc = {
@@ -87,7 +89,7 @@ class FileCtrl(owner: Window) {
   private def parseFileExc(path:Path): SrcFile =
     parseFile(path).get
 
-  /** Let the user chooses a modelica file; parses this file and returns the
+  /** Let the user choose a modelica file; parses this file and returns the
     * path to the file, coordinate-system bounds & the shapes of the modelica model.
     */
   def openFile:Try[(Path, Point,List[ResizableShape])] = {
@@ -125,6 +127,12 @@ class FileCtrl(owner: Window) {
     }
   }
 
+  /** Warns the user that the given SrcFile got changed from another program and let the
+    *  user decide if he wants to reparse the file or cancel the operation.
+    *  - If the user wants to reparse the file, the file is reparsed and the returned SrcFile
+    *    is the reparsed filecontent. (openedFile variable wasn't changed)
+    *  - If the user chooses cancel None is returned
+    */
   private def warnExternalChanges(src:SrcFile): Option[SrcFile] = {
     val dialog = new ExternalChangesDialog(src.file.toString)
     val selectedOption:Option[ButtonType] = dialog.showAndWait()
@@ -142,11 +150,18 @@ class FileCtrl(owner: Window) {
       }
   }
 
+  /** Check for external file changes and react on it before calling `f`. */
   private def awareExternalChanges[A](srcOpt:Option[SrcFile])(f: Option[SrcFile] => Try[A]): Try[A]= {
     srcOpt match {
-      case Some(src) if src.noExternalChanges => f(srcOpt)
-      case Some(src) => warnExternalChanges(src).map(x => f(Some(x))).getOrElse(Failure(new UserInputException("Didn't save the file")))
-      case None => f(srcOpt)
+      case Some(src) if src.noExternalChanges => f(srcOpt) //no changes; just call f
+      case Some(src) =>
+        //external changes; ask the user for his decision and
+        //call `f` if he likes to save the file.
+        //If not fail with a UserInputException
+        warnExternalChanges(src).
+          map(x => f(Some(x))).
+          getOrElse(Failure(new UserInputException("Didn't save the file")))
+      case None => f(srcOpt) //no opened file; just call f
     }
   }
 
