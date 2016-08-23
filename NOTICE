@@ -9,7 +9,7 @@ Used sbt-plugins:
     License: MIT License (https://github.com/sbt/sbt-assembly/blob/master/LICENSE)
     Homepage: https://github.com/sbt/sbt-assembly
 
-Used librarys:
+Used libraries:
     == scala-parser-combinators ==
     License: BSD 3-Clause License (https://github.com/scala/scala-parser-combinators/blob/1.0.x/LICENSE.md)
     Homepage: https://github.com/scala/scala-parser-combinators
