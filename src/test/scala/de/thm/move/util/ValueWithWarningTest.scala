@@ -8,7 +8,6 @@
 
 package de.thm.move.util
 
-import org.scalatest._
 import de.thm.move.MoveSpec
 import GeometryUtils._
 
