@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -12,9 +12,8 @@ import javafx.scene.paint.Color
 
 import de.thm.move.models.LinePattern
 import de.thm.move.views.shapes._
-import org.junit.Assert._
-import org.junit.Test
 
+import de.thm.move.MoveSpec
 import de.thm.move.loader.parser.PropertyParser._
 import de.thm.move.loader.parser.ast._
 import de.thm.move.util.PointUtils._
@@ -25,10 +24,9 @@ import de.thm.move.models.CommonTypes._
 import scala.util.parsing.input.Position
 import scala.util.parsing.input.NoPosition
 
-class ConverterTest {
+class ConverterTest extends MoveSpec {
 
-  @Test
-  def convertCoordinationSystem: Unit = {
+  "ShapeConverter.`gettCoordinateSystemSizes`" should "convert coordinate systems" in {
 
     val extent = ( ((-100.0),(-50.0)),((100.0),(50.0)) )
     val ast = Model("ölkj",
@@ -37,25 +35,24 @@ class ConverterTest {
     val conv = new ShapeConverter(4, ShapeConverter.gettCoordinateSystemSizes(ast), null)
 
     val exp = (200,100)
-    assertEquals(exp, ShapeConverter.gettCoordinateSystemSizes(ast) )
+    ShapeConverter.gettCoordinateSystemSizes(ast) shouldBe exp
 
     val ast2 = Model("ög",
       Icon(Some(CoordinateSystem(extent)), List(), NoPosition, NoPosition)
     )
 
     val x = ShapeConverter.gettCoordinateSystemSizes(ast)
-    assertEquals(exp, x)
+    x shouldBe exp
 
     val extent2 = ( ((-100.0),(-50.0)),((0.0),(-20.0)) )
     val ast3 = Model("ölkj",
     Icon(Some(CoordinateSystem(extent2)), List(), NoPosition, NoPosition)
     )
     val exp2 = (100.0, 30)
-    assertEquals(exp2, ShapeConverter.gettCoordinateSystemSizes(ast3) )
+    ShapeConverter.gettCoordinateSystemSizes(ast3) shouldBe exp2
   }
 
-  @Test
-  def convertLine:Unit = {
+  "ShapeConverter" should "convert Lines" in {
     //without origin
     val extent = ( ((0.0),(0.0)),((100.0),(200.0)) )
     val ast = Model("ölkj",
@@ -77,13 +74,13 @@ class ConverterTest {
     val startAnchor = convertedLine.getAnchors.head
     val endAnchor = convertedLine.getAnchors.tail.head
 
-    assertEquals( 10.0, startAnchor.getCenterX, 0.01 )
-    assertEquals( 200.0-10.0, startAnchor.getCenterY, 0.01 )
-    assertEquals( 50.0, endAnchor.getCenterX, 0.01 )
-    assertEquals( 200.0-30.0, endAnchor.getCenterY, 0.01 )
-    assertEquals( Color.BLACK, convertedLine.getStrokeColor )
-    assertEquals( 1.0, convertedLine.getStrokeWidth, 0.01 )
-    assertEquals( LinePattern.Dash, convertedLine.linePattern.get )
+    startAnchor.getCenterX shouldBe 10.0
+    startAnchor.getCenterY shouldBe (200.0-10.0)
+    endAnchor.getCenterX shouldBe 50.0
+    endAnchor.getCenterY shouldBe (200.0-30.0)
+    convertedLine.getStrokeColor shouldBe Color.BLACK
+    convertedLine.getStrokeWidth shouldBe 1.0
+    convertedLine.linePattern.get shouldBe LinePattern.Dash
 
 
     val points2 = List( (10.0,10.0),(50.0,30.0), (60.0,80.0),(30.0,30.0) )
@@ -105,18 +102,17 @@ class ConverterTest {
     }
     val convPath = conv.getShapes(ast2).head.asInstanceOf[(ResizablePath, Option[String])]._1
     convPath.getAnchors.zip(expectedPoints).foreach {
-      case (p1,p2) => assertEquals((p1.getCenterX,p1.getCenterY),p2)
+      case (p1,p2) => p2 shouldBe (p1.getCenterX,p1.getCenterY)
     }
 
     val converter = new ShapeConverter(5, ShapeConverter.gettCoordinateSystemSizes(ast2), null)
     val convPath2 = converter.getShapes(ast2).head.asInstanceOf[(ResizablePath, Option[String])]._1
     convPath2.getAnchors.zip(expectedPoints.map(_.map(_*5))).foreach {
-      case (p1,p2) => assertEquals(p2, (p1.getCenterX,p1.getCenterY))
+      case (p1,p2) => (p1.getCenterX,p1.getCenterY) shouldBe p2
     }
   }
 
-  @Test
-  def convertRectangle:Unit = {
+  it should "convert Rectangels" in {
     val ast = Model("ölk",
       Icon(None,
         List(
@@ -130,20 +126,19 @@ class ConverterTest {
 
     val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(ast), null)
     val convRec = conv.getShapes(ast).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
-    assertEquals((205,defaultCoordinateSystemSize.y-179), convRec.getXY)
-    assertEquals(348-205, convRec.getWidth, 0.01)
-    assertEquals(179-36, convRec.getHeight, 0.01)
+    convRec.getXY shouldBe (205,defaultCoordinateSystemSize.y-179)
+    convRec.getWidth  shouldBe 348-205
+    convRec.getHeight shouldBe 179-36
 
     val multiplier = 5
     val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast), null)
     val convRec2 = conv2.getShapes(ast).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
-    assertEquals((205*multiplier,(defaultCoordinateSystemSize.y-179)*multiplier), convRec2.getXY)
-    assertEquals((348-205)*multiplier, convRec2.getWidth, 0.01)
-    assertEquals((179-36)*multiplier, convRec2.getHeight, 0.01)
+    convRec2.getXY shouldBe (205*multiplier,(defaultCoordinateSystemSize.y-179)*multiplier)
+    convRec2.getWidth  shouldBe ((348-205)*multiplier)
+    convRec2.getHeight shouldBe ((179-36)*multiplier)
   }
 
-  @Test
-  def convertCircle:Unit = {
+  it should "convert Ellipses" in {
     val ast = Model("ölk",
       Icon(None,
         List(
@@ -161,8 +156,8 @@ class ConverterTest {
       defaultCoordinateSystemSize.y-179,
       348, defaultCoordinateSystemSize.y-36
       )
-    assertEquals(348-205, convCircle.getWidth, 1.0)
-    assertEquals(179-36, convCircle.getHeight, 1.0)
+    convCircle.getWidth  shouldBe (348-205)
+    convCircle.getHeight shouldBe (179-36)
 
     val multiplier = 2
     val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast), null)
@@ -173,13 +168,12 @@ class ConverterTest {
       348*multiplier, (defaultCoordinateSystemSize.y-36)*multiplier
       )
 
-    assertEquals(middleP2, conv2Circle.getXY)
-    assertEquals((348-205)*multiplier, conv2Circle.getWidth, 1.0)
-    assertEquals((179-36)*multiplier, conv2Circle.getHeight, 1.0)
+    conv2Circle.getXY shouldBe middleP2
+    conv2Circle.getWidth  shouldBe ((348-205)*multiplier)
+    conv2Circle.getHeight shouldBe ((179-36)*multiplier)
   }
 
-  @Test
-  def convertPolygon:Unit = {
+  it should "convert Polygons" in {
     val points = List( (205.0,179.0),(348.0,36.0),(420.0,50.0) )
     val ast = Model("ölk",
       Icon(None,
@@ -201,7 +195,7 @@ class ConverterTest {
     convPolygon.getAnchors.zip(expPoints).foreach {
       case (anchor,p2) =>
       val p1 = (anchor.getCenterX,anchor.getCenterY)
-      assertEquals(p2,p1)
+      p2 shouldBe p1
     }
 
     val multiplier = 4
@@ -210,13 +204,11 @@ class ConverterTest {
     conv2Polygon.getAnchors.zip(expPoints.map(_.map(_*multiplier))).foreach {
       case (anchor,p2) =>
         val p1 = (anchor.getCenterX,anchor.getCenterY)
-        assertEquals(p2,p1)
+        p2 shouldBe p1
     }
-
   }
 
-  @Test
-  def convertBitmap:Unit = {
+  it should "convert Images" in {
     val extent = ( (10.0,10.0),(200.0,100.0) )
     val ast =
       Model("bitmap",
@@ -234,8 +226,7 @@ class ConverterTest {
     //conv.getShapes(ast).head.asInstanceOf[ResizableImage]
   }
 
-  @Test
-  def rectangleWithorigin: Unit = {
+  it should "convert Rectangles containing a origin" in {
     val origin:Point = (10,10)
     val ast = Model("ölk",
       Icon(None,
@@ -255,9 +246,9 @@ class ConverterTest {
     val expW = 10+30
     val expH = 50+40
 
-    assertEquals(expXY, rect.getXY)
-    assertEquals(expW, rect.getWidth, 0.01)
-    assertEquals(expH, rect.getHeight, 0.01)
+    rect.getXY     shouldBe expXY
+    rect.getWidth  shouldBe expW
+    rect.getHeight shouldBe expH
 
     val origin2:Point = (50,30)
     val ast2 = Model("ölk",
@@ -279,13 +270,12 @@ class ConverterTest {
       val expW2 = 15
       val expH2 = 70+20
 
-      assertEquals(expXY2.map(_*multiplier), rect2.getXY)
-      assertEquals(expW2*multiplier, rect2.getWidth, 0.01)
-      assertEquals(expH2*multiplier, rect2.getHeight, 0.01)
+      rect2.getXY shouldBe expXY2.map(_*multiplier)
+      rect2.getWidth  shouldBe (expW2*multiplier)
+      rect2.getHeight shouldBe (expH2*multiplier)
   }
 
-  @Test
-  def circleWithOrigin:Unit = {
+  it should "convert Ellipses containing a origin" in  {
     val origin:Point = (50,100)
     val ast = Model("ölk",
       Icon(None,
@@ -305,10 +295,10 @@ class ConverterTest {
     val expWRadius = asRadius(10+30)
     val expHRadius = asRadius(50+40)
 
-    assertEquals(expWRadius, circ.getRadiusX, 0.01)
-    assertEquals(expHRadius, circ.getRadiusY, 0.01)
-    assertEquals(40, circ.getBoundsInLocal.getMinX, 1.0)
-    assertEquals(defaultCoordinateSystemSize.y - 150, circ.getBoundsInLocal.getMinY, 1.0)
-    assertEquals(80, circ.getBoundsInLocal.getMaxX, 1.0)
+    circ.getRadiusX shouldBe expWRadius
+    circ.getRadiusY shouldBe expHRadius
+    circ.getBoundsInLocal.getMinX shouldBe (40.0 +- 1)
+    circ.getBoundsInLocal.getMaxX shouldBe (80.0 +- 1)
+    circ.getBoundsInLocal.getMinY shouldBe ((defaultCoordinateSystemSize.y - 150) +- 1)
   }
 }
