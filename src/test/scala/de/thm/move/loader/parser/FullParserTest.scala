@@ -8,10 +8,6 @@
 
 package de.thm.move.loader.parser
 
-
-import org.junit.Assert._
-import org.junit.Test
-
 import de.thm.move.MoveSpec
 import de.thm.move.loader.parser.PropertyParser._
 import de.thm.move.loader.parser.ast._
