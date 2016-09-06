@@ -56,9 +56,6 @@ assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 test in assembly := {} //skip test's during packaging
 
 libraryDependencies ++= Seq(
-    "com.novocode" % "junit-interface" % "0.11" % "test",
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.4",
-    "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test"
-
-    )
+    "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test")
