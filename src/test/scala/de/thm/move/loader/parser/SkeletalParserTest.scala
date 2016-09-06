@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -12,19 +12,16 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import javafx.scene.paint.Color
 
-import org.junit.Assert._
-import org.junit.Test
-
 import scala.util.parsing.input.Position
 import scala.util.parsing.input.NoPosition
 
+import de.thm.move.MoveSpec
 import de.thm.move.loader.parser.PropertyParser._
 import de.thm.move.loader.parser.ast._
 
-class SkeletalParserTest {
+class SkeletalParserTest extends MoveSpec {
 
-  @Test
-  def minimalRect: Unit = {
+  "SkeletalParser" should "parse rectangles" in {
     val rect =
       """
         |model abc
@@ -44,8 +41,7 @@ class SkeletalParserTest {
     val erg = withParseSuccess(rect)
   }
 
-  @Test
-  def baseTest:Unit = {
+  it should "parse basic icons" in {
     val modelTest =
       """
         |model test
@@ -277,8 +273,7 @@ class SkeletalParserTest {
     iconEqual(exp33,erg33)
   }
 
-  @Test
-  def orderDontMatter: Unit = {
+  it should "parse without ordering" in {
     val rect =
       """
         |model abc
@@ -352,8 +347,7 @@ class SkeletalParserTest {
     withException(rect2)
   }
 
-  @Test
-  def ellipseTest:Unit = {
+  it should "parse ellipses" in {
     val str =
       """
       |      Ellipse(
@@ -437,8 +431,7 @@ class SkeletalParserTest {
       iconEqual(minimalExp, withParseSuccess(graphicModel("ellipse2", minimalEllipse)))
   }
 
-  @Test
-  def lineTest: Unit = {
+  it should "parse lines" in {
     val lineStr =
       """
       |      Line(
@@ -495,8 +488,7 @@ class SkeletalParserTest {
 
   }
 
-  @Test
-  def polygonTest: Unit = {
+  it should "parse polygons" in {
     val polyStr =
       """
         |model poly
@@ -566,8 +558,7 @@ class SkeletalParserTest {
 
   }
 
-  @Test
-  def imageUriTest: Unit = {
+  it should "parse bitmaps" in {
     val imgStr =
        """
        |Bitmap(
@@ -636,8 +627,7 @@ class SkeletalParserTest {
     iconEqual(img3Exp, withParseSuccess(graphicModel("img", imgStr4)))
   }
 
-  @Test
-  def modelFailure: Unit = {
+  it should "fail on falsy models" in {
     val model =
       """
         |model test
@@ -687,8 +677,7 @@ class SkeletalParserTest {
     withException(model3)
   }
 
-  @Test
-  def rotationRect: Unit = {
+  it should "parse rotated rectangles" in {
     val rect =
       """
         |model abc
