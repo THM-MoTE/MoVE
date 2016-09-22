@@ -16,6 +16,8 @@ scalacOptions ++= Seq(
     "-feature"
     )
 
+lazy val copyright = "(c) 2016 Nicola Justus"
+
 lazy val copyRscs = taskKey[Unit]("Copies needed resources to resource-directory.")
 
 lazy val rscFiles = settingKey[Seq[File]]("The files that get copied with copyRscs task")
@@ -40,6 +42,15 @@ cleanConfig := IO.delete(moveConfigDir.value)
 
 //append copyRscs-task to compile-task
 compile <<= (compile in Compile) dependsOn copyRscs
+
+sourceGenerators in Compile <+= Def.task {
+  val dir:File = (sourceManaged in Compile).value
+  InfoGenerator.generateProjectInfo(dir, Seq(
+    "name" -> (name in root).value,
+    "version" -> (version in root).value,
+    "organization" -> (organization in root).value,
+    "copyright" -> copyright))
+}
 
 lazy val root = (project in file(".")).
   settings(

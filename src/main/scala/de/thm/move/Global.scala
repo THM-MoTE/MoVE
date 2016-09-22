@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -57,8 +57,8 @@ object Global {
   lazy val historySize = Global.config.getInt("history.cache-size").getOrElse(50)
   lazy val history = new History(historySize)
 
-  lazy val copyright = "(c) 2016 Nicola Justus"
-  lazy val version = "0.6"
+  lazy val copyright = build.ProjectInfo.copyright
+  lazy val version = build.ProjectInfo.version
 
   lazy val licenseFile = "/LICENSE"
 
