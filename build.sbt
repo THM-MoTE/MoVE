@@ -64,6 +64,11 @@ lazy val root = (project in file(".")).
 mainClass in Compile := Some("de.thm.move.MoveApp")
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 test in assembly := {} //skip test's during packaging
+assemblyExcludedJars in assembly := {
+  val cp = (fullClasspath in assembly).value
+  cp filter {_.data.getName == "jfxrt.jar"}
+}
+
 
 libraryDependencies ++= Seq(
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
