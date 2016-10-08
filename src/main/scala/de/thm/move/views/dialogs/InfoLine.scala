@@ -15,8 +15,9 @@ import javafx.scene.layout.FlowPane
 class InfoLine(key:String, msg:String = "") extends FlowPane {
   val keyLbl = new Label(key)
   val msgLbl = new Label(msg)
-  keyLbl.getStyleClass.add("key-label")
-  msgLbl.getStyleClass.add("msg-label")
+  getStyleClass.add("infoline")
+  keyLbl.getStyleClass.addAll("key-label")
+  msgLbl.getStyleClass.addAll("msg-label")
 
   if(msg.isEmpty) getChildren.add(keyLbl)
   else {
