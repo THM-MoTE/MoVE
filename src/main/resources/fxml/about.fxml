@@ -24,7 +24,7 @@
          </content></Tab>
     <Tab text="License">
          <content>
-            <TextArea id="license-area" fx:id="licenseArea" prefHeight="200.0" prefWidth="200.0" styleClass="about-font" text="Dummy text" />
+            <TextArea id="license-area" fx:id="licenseArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="about-font" text="Dummy text" />
          </content></Tab>
   </tabs>
 </TabPane>
