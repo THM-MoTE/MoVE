@@ -63,8 +63,8 @@ object AboutCtrl {
     //=== setup about dialog
     val aboutCtrl = new AboutCtrl()
     val aboutStage = new Stage()
-    val aboutWindowWidth = Global.config.getDouble("window.about.width").getOrElse(200.0)
-    val aboutWindowHeight = Global.config.getDouble("window.about.height").getOrElse(200.0)
+    val aboutWindowWidth = Global.config.getDouble("window.about.width").getOrElse(500.0)
+    val aboutWindowHeight = Global.config.getDouble("window.about.height").getOrElse(500.0)
     val fxmlLoader = new FXMLLoader(getClass.getResource("/fxml/about.fxml"))
     fxmlLoader.setController(aboutCtrl)
     val aboutViewRoot: Parent = fxmlLoader.load()
