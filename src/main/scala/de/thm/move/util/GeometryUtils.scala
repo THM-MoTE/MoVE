@@ -82,8 +82,8 @@ object GeometryUtils {
   def vectorOf(startPoint:Point, endPoint:Point): Vector2D =
     endPoint - startPoint
 
-  /* Calculates the magnitude of the given vector */
-  def vectorMagnitude(v:Vector2D): Double =
+  /* Calculates the length of the given vector */
+  def vectorLength(v:Vector2D): Double =
     sqrt(pow(v.x, 2) + pow(v.y, 2))
 
   /* Calculates the scalar-product from the given 2 vectors */
