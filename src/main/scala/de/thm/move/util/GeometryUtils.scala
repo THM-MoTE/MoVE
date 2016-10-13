@@ -87,6 +87,6 @@ object GeometryUtils {
     sqrt(pow(v.x, 2) + pow(v.y, 2))
 
   /* Calculates the scalar-product from the given 2 vectors */
-  def scalar(v1:Vector2D, v2:Vector2D): Double =
+  def scalarProduct(v1:Vector2D, v2:Vector2D): Double =
     v1.x * v2.x + v1.y * v2.y
 }

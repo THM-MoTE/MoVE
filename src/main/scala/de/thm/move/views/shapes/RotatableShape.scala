@@ -78,7 +78,7 @@ trait RotatableShape {
 
       val vector1 = GeometryUtils.vectorOf(middlePoint, (translatedStart.getX, translatedStart.getY))
       val vector2 = GeometryUtils.vectorOf(middlePoint, (translatedEnd.getX, translatedEnd.getY))
-      val scalar = GeometryUtils.scalar(vector1,vector2) //scalarproduct
+      val scalar = GeometryUtils.scalarProduct(vector1,vector2) //scalarproduct
       val lengthVector1 = GeometryUtils.vectorLength(vector1) //norm/length vector1
       val lengthVector2 = GeometryUtils.vectorLength(vector2) //norm/length vector2
       val cos_angle = scalar / (lengthVector1 * lengthVector2)
