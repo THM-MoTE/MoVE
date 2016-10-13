@@ -1,5 +1,9 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
 package de.thm.move.loader
@@ -7,11 +11,8 @@ package de.thm.move.loader
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 
-import org.junit.Assert._
-import org.junit.Test
-
 import scala.util._
-
+import org.scalatest.Matchers._
 import de.thm.move.loader.parser.ast._
 
 package object parser {
@@ -30,11 +31,11 @@ package object parser {
   }
 
   def iconEqual(icon1:Model, icon2:Model): Unit = {
-    assertEquals(icon1.name, icon2.name)
+    icon2.name shouldBe icon1.name
     (icon1.annot, icon2.annot) match {
       case (Icon(system1, shapes1, _,_),Icon(system2,shapes2,_,_)) =>
-        assertEquals(system1, system2)
-        assertEquals(shapes1,shapes2)
+        system2 shouldBe system1
+        shapes2 shouldBe shapes1
       case _ => throw new AssertionError(s"Given icon1 and icon2 aren't both Icons!")
     }
   }

@@ -67,3 +67,12 @@
 .dash-dotted-dotted-stroke {
   -fx-stroke-dash-array: 15 15 8 15 8 15;
 }
+
+.infoline {
+    -fx-vgap: 2em;
+    -fx-hgap: 1em;
+}
+.about-font {
+  -fx-font-family: "Ubuntu", sans-serif;
+  -fx-font-size: 11pt;
+}

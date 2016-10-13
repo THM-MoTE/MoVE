@@ -1,5 +1,9 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+ * 
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
 package de.thm.move.controllers
@@ -420,7 +424,8 @@ class MoveCtrl extends Initializable {
   @FXML
   def onOpenClicked(e:ActionEvent): Unit = {
     fileCtrl.openFile match {
-      case Success((system, shapes)) =>
+      case Success((file, system, shapes)) =>
+        displayUsedFile(file)
         drawPanel.setSize(system)
         if (drawPanelCtrl.getElements.nonEmpty) {
           drawPanelCtrl.removeAll()
@@ -468,7 +473,7 @@ class MoveCtrl extends Initializable {
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
     fileErrorHandling(
-      fileCtrl.saveNewFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
+      fileCtrl.saveAsFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
         map(displayUsedFile)
     )
   }

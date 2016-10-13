@@ -1,5 +1,9 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
 package de.thm.move.models
@@ -14,9 +18,7 @@ import javafx.scene.paint.{Paint, Color}
 import javafx.scene.shape.{LineTo, MoveTo}
 import javafx.scene.text.TextAlignment
 
-import org.junit.Assert._
-import org.junit.Test
-
+import de.thm.move.MoveSpec
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
@@ -25,7 +27,7 @@ import de.thm.move.util.ResourceUtils
 import de.thm.move.util.GeometryUtils
 import de.thm.move.views.shapes._
 
-class CodeGeneratorTest {
+class CodeGeneratorTest extends MoveSpec {
   val dummyURL = Paths.get(System.getProperty("user.home")).toUri
 
   private def eqTest(toTest:String,expected:String): Unit = {
@@ -34,11 +36,10 @@ class CodeGeneratorTest {
       println("Expected: "+expected)
     }
 
-    assertTrue(toTest.contains(expected))
+    assert(toTest.contains(expected), s"Expected [$toTest] containing [$expected]")
   }
 
-  @Test
-  def rectangleTest: Unit = {
+  "ModelicaCodeGenerator" should "generate Rectangles" in {
     val generator = new ModelicaCodeGenerator(FormatSrc.Pretty, 1, 500,500)
     val rect = new ResizableRectangle((0,0), 100,100)
     rect.colorizeShape(Color.BLACK, Color.BLACK)
@@ -53,8 +54,7 @@ class CodeGeneratorTest {
     eqTest(str2, "extent = {{-12,12}, {12,-12}}")
   }
 
-  @Test
-  def circleTest: Unit = {
+  it should "generate Circles" in {
     val generator = new ModelicaCodeGenerator(FormatSrc.Pretty, 1, 500,500)
     val circle = new ResizableCircle((100,100), 50,50)
     circle.colorizeShape(Color.BLACK, Color.BLACK)

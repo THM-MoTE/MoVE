@@ -1,5 +1,9 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
 package de.thm.move.models
@@ -12,7 +16,8 @@ import scala.collection.JavaConversions._
 
 /** Represents a source-file with corresponding parsed AST. */
 case class SrcFile(file:Path, model:Model) {
-  private lazy val lines = Files.readAllLines(file).toList
+  private val lines = Files.readAllLines(file).toList
+  private val lastModifiedTimestamp = Files.getLastModifiedTime(file)
 
   /** Gets the source before Icon(...) */
   def getBeforeModel: String = {
@@ -58,4 +63,12 @@ case class SrcFile(file:Path, model:Model) {
         ");\n" + afterChars + "\n" + afterLines.mkString("\n")
     }
   }
+
+  def isSame(p:Path): Boolean = {
+    val x = Files.getLastModifiedTime(p)
+    val xx = lastModifiedTimestamp
+    Files.getLastModifiedTime(p) equals lastModifiedTimestamp
+  }
+
+  def noExternalChanges: Boolean = isSame(file)
 }

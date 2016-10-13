@@ -1,22 +1,24 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
 package de.thm.move.loader
 
 import javafx.scene.paint.Color
 
+import de.thm.move.MoveSpec
 import de.thm.move.loader.parser.PropertyParser._
 import de.thm.move.views.shapes._
 import de.thm.move.util.PointUtils._
 import parser._
-import org.junit.Test
-import org.junit.Assert._
 
-class ParserAndConvertTest {
+class ParserAndConvertTest extends MoveSpec {
 
-  @Test
-  def parseRectangle():Unit = {
+  "Parsing and Converting" should "parse & convert Rectangles" in {
     val str =
     """
       |model test3
@@ -39,23 +41,23 @@ class ParserAndConvertTest {
 
     val parsed = withParseSuccess(str)
     val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
-    val convertedRectangle = conv.getShapes(parsed).head.asInstanceOf[ResizableRectangle]
+    val convertedRectangle = conv.getShapes(parsed).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
 
-    assertEquals((0,(500)), convertedRectangle.getXY)
-    assertEquals((50), convertedRectangle.getWidth, 0.01)
-    assertEquals((50), convertedRectangle.getHeight, 0.01)
+    convertedRectangle.getXY shouldBe (0,(500))
+    convertedRectangle.getWidth  shouldBe (50)
+    convertedRectangle.getHeight shouldBe (50)
 
 
     val multiplier = 4
     val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
-    val convertedRectangle2 = conv2.getShapes(parsed).head.asInstanceOf[ResizableRectangle]
+    val convertedRectangle2 = conv2.getShapes(parsed).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
 
-    assertEquals((0,500*multiplier), convertedRectangle2.getXY)
-    assertEquals(50*multiplier, convertedRectangle2.getWidth, 0.01)
-    assertEquals(50*multiplier, convertedRectangle2.getHeight, 0.01)
-    assertEquals(Color.RED, convertedRectangle2.getFillColor)
-    assertEquals(2.0, convertedRectangle2.getStrokeWidth, 0.01)
-    assertEquals(Color.BLACK, convertedRectangle2.getStrokeColor)
+    convertedRectangle2.getXY shouldBe (0,500*multiplier)
+    convertedRectangle2.getWidth  shouldBe 50*multiplier
+    convertedRectangle2.getHeight shouldBe 50*multiplier
+    convertedRectangle2.getStrokeWidth shouldBe 2.0
+    convertedRectangle2.getFillColor   shouldBe Color.RED
+    convertedRectangle2.getStrokeColor shouldBe Color.BLACK
 
     val str2 =
       """
@@ -79,10 +81,10 @@ class ParserAndConvertTest {
 
     val parsed2 = withParseSuccess(str2)
     val conv3 = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
-    val convertedRectangle3 = conv.getShapes(parsed2).head.asInstanceOf[ResizableRectangle]
+    val convertedRectangle3 = conv.getShapes(parsed2).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
 
-    assertEquals((20,500-60), convertedRectangle3.getXY)
-    assertEquals(100-20, convertedRectangle3.getWidth, 0.01)
-    assertEquals(150-60, convertedRectangle3.getHeight, 0.01)
+    convertedRectangle3.getXY shouldBe (20,500-60)
+    convertedRectangle3.getWidth  shouldBe (100-20)
+    convertedRectangle3.getHeight shouldBe (150-60)
   }
 }

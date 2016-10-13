@@ -1,5 +1,9 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+ * 
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
 package de.thm.move.loader.parser
@@ -27,7 +31,7 @@ trait PropertyParser {
 
   // regex from: http://stackoverflow.com/a/5954831
   override val whiteSpace = """(\s|//.*|(?m)/\*(\*(?!/)|[^*])*\*/)+""".r
-  protected val identRegex = "[a-zA-Z_][a-zA-Z0-9_\\.]*".r
+  protected val identRegex = """[a-zA-Z_][a-zA-Z0-9_\\.\(\)\[\]\{\}]*""".r
   protected val numberRegex = "-?[0-9]+".r
   protected val javaLikeStrRegex = "\"(.*)\"".r
 

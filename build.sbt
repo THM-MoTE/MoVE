@@ -1,6 +1,4 @@
 import java.lang.System
-import java.io.File
-import java.nio.file.Paths
 
 //include javafx-jar (from java's home directory) in classpath
 unmanagedJars in Compile += Attributed.blank(
@@ -17,6 +15,8 @@ scalacOptions ++= Seq(
     "-deprecation",
     "-feature"
     )
+
+lazy val copyright = "(c) 2016 Nicola Justus"
 
 lazy val copyRscs = taskKey[Unit]("Copies needed resources to resource-directory.")
 
@@ -41,7 +41,16 @@ copyRscs := rscFiles.value.map { file =>
 cleanConfig := IO.delete(moveConfigDir.value)
 
 //append copyRscs-task to compile-task
-compile <<= (compile in Compile) dependsOn copyRscs
+compile in Compile <<= (compile in Compile) dependsOn copyRscs
+
+sourceGenerators in Compile <+= Def.task {
+  val dir:File = (sourceManaged in Compile).value
+  InfoGenerator.generateProjectInfo(dir, Seq(
+    "name" -> (name in root).value,
+    "version" -> (version in root).value,
+    "organization" -> (organization in root).value,
+    "copyright" -> copyright))
+}
 
 lazy val root = (project in file(".")).
   settings(
@@ -53,12 +62,15 @@ lazy val root = (project in file(".")).
     )
 
 mainClass in Compile := Some("de.thm.move.MoveApp")
-mainClass in assembly := (mainClass in Compile).value
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 test in assembly := {} //skip test's during packaging
+assemblyExcludedJars in assembly := {
+  val cp = (fullClasspath in assembly).value
+  cp filter {_.data.getName == "jfxrt.jar"}
+}
+
 
 libraryDependencies ++= Seq(
-    "com.novocode" % "junit-interface" % "0.11" % "test",
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
-    "org.scala-lang.modules" %% "scala-xml" % "1.0.4"
-    )
+    "org.scala-lang.modules" %% "scala-xml" % "1.0.4",
+    "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test")

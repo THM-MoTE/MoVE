@@ -1,5 +1,9 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
 package de.thm.move.controllers
@@ -21,7 +25,7 @@ import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.{ModelicaCodeGenerator, SrcFile, SvgCodeGenerator, UserInputException}
 import de.thm.move.util.PointUtils._
-import de.thm.move.views.dialogs.{Dialogs, SrcFormatDialog}
+import de.thm.move.views.dialogs.{Dialogs, SrcFormatDialog, ExternalChangesDialog}
 import de.thm.move.views.shapes.ResizableShape
 
 import scala.collection.JavaConverters._
@@ -32,11 +36,12 @@ import scala.util.{Failure, Success, Try}
   * functions.
   */
 class FileCtrl(owner: Window) {
+  case class FormatInfos(pxPerMm:Int, srcFormat:Option[FormatSrc])
 
-  case class SaveInfos(targetUri:URI, pxPerMm:Int, srcFormat:FormatSrc)
-
-  private var usedFile: Option[SrcFile] = None
-  private var saveInfos: Option[SaveInfos] = None
+  /** Informations about the current open file */
+  private var openedFile: Option[SrcFile] = None
+  /** Sourcecode format specified by the user - either Oneline or Pretty */
+  private var formatInfos: Option[FormatInfos] = None
 
   private def showSrcCodeDialog():FormatSrc = {
     val dialog = new SrcFormatDialog
@@ -70,10 +75,24 @@ class FileCtrl(owner: Window) {
     } else xs.head
   }
 
-  /** Let the user chooses a modelica file; parses this file and returns the
-    * coordinate-system bounds & the shapes of the modelica model.
+
+  private def parseFile(path:Path): Try[SrcFile] = {
+    val parser = ModelicaParserLike()
+    for {
+      modelList <- parser.parse(path)
+    } yield {
+      val model = chooseModelDialog(modelList)
+      SrcFile(path, model)
+    }
+  }
+
+  private def parseFileExc(path:Path): SrcFile =
+    parseFile(path).get
+
+  /** Let the user choose a modelica file; parses this file and returns the
+    * path to the file, coordinate-system bounds & the shapes of the modelica model.
     */
-  def openFile:Try[(Point,List[ResizableShape])] = {
+  def openFile:Try[(Path, Point,List[ResizableShape])] = {
     val chooser = Dialogs.newModelicaFileChooser()
     chooser.setTitle("Open..")
 
@@ -84,14 +103,10 @@ class FileCtrl(owner: Window) {
     for {
       file <- fileTry
       path = Paths.get(file.toURI)
+      srcFile <- parseFile(path)
       scaleFactor <- showScaleDialog()
-      parser = ModelicaParserLike()
-      modelList <- parser.parse(path)
     } yield {
-      val model = chooseModelDialog(modelList)
-
-      usedFile = Some(SrcFile(path, model))
-
+      val model = srcFile.model
       val systemSize = ShapeConverter.gettCoordinateSystemSizes(model)
       val converter = new ShapeConverter(scaleFactor,
         systemSize,
@@ -105,24 +120,48 @@ class FileCtrl(owner: Window) {
           "Some properties can't get used.\nThey will be overridden when saving the file!").
           showAndWait()
       }
-      (scaledSystem, shapes)
+      println(s"file opened src  $srcFile")
+      openedFile = Some(srcFile)
+      formatInfos = Some(FormatInfos(scaleFactor, None))
+      (path, scaledSystem, shapes)
     }
   }
 
-  private def save(existingFile:Option[SrcFile], targetUri:URI, srcFormat:FormatSrc,
-    pxPerMm:Int, shapes:List[Node], width:Double,height:Double): Unit = {
-    val generator = new ModelicaCodeGenerator(srcFormat, pxPerMm, width, height)
-    existingFile match {
-      case Some(src@SrcFile(oldpath, Model(modelname, _))) =>
-        val lines = generator.generateExistingFile(modelname, targetUri, shapes)
-        val before = src.getBeforeModel
-        val after = src.getAfterModel
-        generator.writeToFile(before,lines, after)(targetUri)
-      case _ =>
-        val filenamestr = Paths.get(targetUri).getFileName.toString
-        val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
-        val lines = generator.generate(modelName, targetUri, shapes)
-        generator.writeToFile("",lines, "")(targetUri)
+  /** Warns the user that the given SrcFile got changed from another program and let the
+    *  user decide if he wants to reparse the file or cancel the operation.
+    *  - If the user wants to reparse the file, the file is reparsed and the returned SrcFile
+    *    is the reparsed filecontent. (openedFile variable wasn't changed)
+    *  - If the user chooses cancel None is returned
+    */
+  private def warnExternalChanges(src:SrcFile): Option[SrcFile] = {
+    val dialog = new ExternalChangesDialog(src.file.toString)
+    val selectedOption:Option[ButtonType] = dialog.showAndWait()
+    selectedOption.
+      filter { _ == dialog.overwriteAnnotationsBtn }.
+      map { _ =>
+        println("reparsing file")
+        parseFile(src.file)
+      } flatMap {
+        case Success(src) =>
+          Some(src)
+        case Failure(ex) =>
+          Dialogs.newExceptionDialog(ex, "Error while reparsing file").showAndWait()
+          None
+      }
+  }
+
+  /** Check for external file changes and react on it before calling `f`. */
+  private def awareExternalChanges[A](srcOpt:Option[SrcFile])(f: Option[SrcFile] => Try[A]): Try[A]= {
+    srcOpt match {
+      case Some(src) if src.noExternalChanges => f(srcOpt) //no changes; just call f
+      case Some(src) =>
+        //external changes; ask the user for his decision and
+        //call `f` if he likes to save the file.
+        //If not fail with a UserInputException
+        warnExternalChanges(src).
+          map(x => f(Some(x))).
+          getOrElse(Failure(new UserInputException("Didn't save the file")))
+      case None => f(srcOpt) //no opened file; just call f
     }
   }
 
@@ -130,33 +169,71 @@ class FileCtrl(owner: Window) {
     * If there is no existing file the user get asked to save a new file.
     */
   def saveFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
-    saveInfos match {
-      case Some(SaveInfos(target,px,format)) =>
-        save(usedFile, target, format, px, shapes,width,height)
-        Success(Paths.get(target))
-      case _ => saveNewFile(shapes, width, height)
+    awareExternalChanges(openedFile) { newFile =>
+      val codeGen = generateCodeAndWriteToFile(shapes, width, height) _
+      (newFile, formatInfos) match {
+        case (Some(src@SrcFile(filepath, modelAst)), Some(FormatInfos(pxPerMm, Some(format)))) => //file was opened & saved before
+          codeGen(Left(src), pxPerMm, format)
+          val newSrc = parseFileExc(filepath) //reparse for getting new positional values
+          openedFile = Some(newSrc) //update timestamp
+          Success(filepath)
+        case (Some(src@SrcFile(filepath, modelAst)), Some(FormatInfos(pxPerMm, None))) => //file was opened but not saved before; we need a formating
+          val format = showSrcCodeDialog()
+          codeGen(Left(src), pxPerMm, format)
+          val newSrc = parseFileExc(filepath) //reparse for getting new positional values
+          openedFile = Some(newSrc) //update timestamp
+          formatInfos = Some(FormatInfos(pxPerMm, Some(format))) //update info
+          Success(filepath)
+        case (None, None) => //never saved this file; we need all informations
+          saveAsFile(shapes, width, height)
+        case _ =>
+          println(s"Developer WARNING: saveFile() both None: $openedFile $formatInfos")
+          Failure(new IllegalStateException("Internal state crashed! Reopen file and try again."))
+      }
     }
   }
 
-  /** Saves a new file by asking the user for a target file and writing the Icon represented by
-    * the given shapes and width,height as modelica-code into the file.
-    */
-  def saveNewFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
+  def saveAsFile(shapes:List[Node], width:Double,height:Double): Try[Path] = {
+    val codeGen = generateCodeAndWriteToFile(shapes, width, height) _
     val chooser = Dialogs.newModelicaFileChooser()
     chooser.setTitle("Save as..")
     val fileTry = Option(chooser.showSaveDialog(owner)) match {
       case Some(x) => Success(x)
       case _ => Failure(UserInputException("Select a file for saving!"))
     }
-    for (
-      file <- fileTry;
-      uri = file.toURI;
-      srcFormat = showSrcCodeDialog();
+    for {
+      file <- fileTry
       pxPerMm <- showScaleDialog()
-    ) yield {
-      save(usedFile, uri, srcFormat, pxPerMm, shapes, width, height)
-      saveInfos = Some(SaveInfos(uri,pxPerMm, srcFormat))
-      Paths.get(uri)
+      filepath = Paths.get(file.toURI)
+      format = showSrcCodeDialog()
+    } yield {
+      codeGen(Right(filepath), pxPerMm, format)
+      openedFile = Some(parseFileExc(filepath)) //update timestamp; we've written the file -> there can't be an error
+      formatInfos = Some(FormatInfos(pxPerMm, Some(format))) //update info
+      filepath
+    }
+  }
+
+  private def generateCodeAndWriteToFile(shapes:List[Node],
+                                         width:Double,
+                                         height:Double)
+                                        (srcEither:Either[SrcFile, Path],
+                                         pxPerMm:Int,
+                                         format:FormatSrc): Unit = {
+    val generator = new ModelicaCodeGenerator(format, pxPerMm, width, height)
+    srcEither match {
+      case Left(src) =>
+        val targetUri = src.file.toUri
+        val lines = generator.generateExistingFile(src.model.name, targetUri, shapes)
+        val before = src.getBeforeModel
+        val after = src.getAfterModel
+        generator.writeToFile(before,lines, after)(targetUri)
+      case Right(filepath) =>
+        val targetUri = filepath.toUri
+        val filenamestr = Paths.get(targetUri).getFileName.toString
+        val modelName = if(filenamestr.endsWith(".mo")) filenamestr.dropRight(3) else filenamestr
+        val lines = generator.generate(modelName, targetUri, shapes)
+        generator.writeToFile("",lines, "")(targetUri)
     }
   }
 

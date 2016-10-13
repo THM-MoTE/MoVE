@@ -1,5 +1,9 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
 package de.thm.move.loader.parser
@@ -20,12 +24,13 @@ class ModelicaParser extends JavaTokenParsers
   with ModelicaParserLike
   with PropertyParser {
   val decimalNo = floatingPointNumber ^^ { _.toDouble }
+  val nonWhitespaceRegex = """[^\s]+""".r
 
   override val ident:Parser[String] = identRegex
 
   val start = model +
   def model:Parser[Model] = stuffBeforeModel ~> positioned(
-    ("model" ~> identRegex) ~ moSource ~ posString("end") ~ identRegex <~ ";" ^^ {
+    ("model" ~> identRegex) ~ (classComment ~> moSource) ~ posString("end") ~ identRegex <~ ";" ^^ {
       case startIdent ~ icon ~ endPos ~ endIdent =>
         if(startIdent == endIdent) {
           Model(startIdent, icon getOrElse {
@@ -46,12 +51,23 @@ class ModelicaParser extends JavaTokenParsers
     | stuffAfterModel ^^ { _ => None }
   )
 
-  def skipAnnotation = ((not("annotation") ~> ident ~> """([^\n]+)""".r) *)
+
+  /** The skip parsers are working like this:
+    * 1. check that the word isn't the word we are searching (e.g.: annotation)
+    * 2. if it's not, skip it (everythign that's not whiespace as defined by
+    *  noneWhitespaceRegex) and also skip till a linebreak (\n)
+    *  if the word is the searched word, this parser failes/stops
+    */
+
+  def skipAnnotation = ((not("annotation" ~> "(") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
 
   /** This parser skips everything that doesn't start with Icon because we are only intersted in Icon(.. */
-  def skipUninterestingStuff = ((not("Icon") ~> ident ~> """([^\n]+)""".r) *)
-  def stuffBeforeModel = ((not("model") ~> ident ~> """([^\n]+)""".r) *)
-  def stuffAfterModel = ((not("end") ~> ident ~> """([^\n]+)""".r) *)
+  def skipUninterestingStuff = ((not("Icon") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
+  def stuffBeforeModel = ((not("model") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
+  def stuffAfterModel = ((not("end") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
+
+  def classComment:Parser[Option[String]] =
+    "\"" ~> """([^"]*)""".r <~ "\"" ^^ { s => s } ?
 
   def annotation:Parser[List[Annotation]] = "annotation" ~> "(" ~> annotations <~ ")" <~ ";"
   def annotations:Parser[List[Annotation]] =
