@@ -74,11 +74,20 @@ trait RotatableShape {
 
       val vector1 = GeometryUtils.vectorOf(middlePoint, (translatedStart.getX, translatedStart.getY))
       val vector2 = GeometryUtils.vectorOf(middlePoint, (translatedEnd.getX, translatedEnd.getY))
-      val scalar = GeometryUtils.scalar(vector1,vector2)
-      val magnitudeVector1 = GeometryUtils.vectorMagnitude(vector1)
-      val magnitudeVector2 = GeometryUtils.vectorMagnitude(vector2)
+      val scalar = GeometryUtils.scalar(vector1,vector2) //scalarproduct
+      val magnitudeVector1 = GeometryUtils.vectorMagnitude(vector1) //norm/length vector1
+      val magnitudeVector2 = GeometryUtils.vectorMagnitude(vector2) //norm/length vector2
       val cos_angle = scalar / (magnitudeVector1 * magnitudeVector2)
-      val angle = scala.math.acos(cos_angle)
+      val angle =
+        if(translatedEnd.getY > translatedStart.getY && (anchor == topRightAnchor || anchor == bottomRightAnchor))
+          scala.math.acos(cos_angle)
+        else if(translatedEnd.getY > translatedStart.getY && (anchor == topLeftAnchor || anchor == bottomLeftAnchor))
+          scala.math.acos(cos_angle)*(-1)
+        else if(anchor == topLeftAnchor || anchor == bottomLeftAnchor)
+          scala.math.acos(cos_angle)
+        else
+          scala.math.acos(cos_angle)*(-1)
+
       setRotate(getRotate + angle)
     })
     anchor.setOnMouseReleased(withConsumedEvent { _: MouseEvent =>
