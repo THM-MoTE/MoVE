@@ -1,3 +1,26 @@
+======= Version 0.7.0 ==
+==> New major Features
+- warn if DynamicSelect & Conditional-Values are used in loaded files
+- warn if unsaved changes will be lost
+- warn if some external program changed the loaded file
+- create duplicated/copied shapes at a slightly different position as the original shape
+- move selected shapes using keyboard-arrows
+- set default coordinate-system size to (100,100)
+- remove JavaFX-jar from deployment dependencys
+- project licensed under MPL V2.0
+
+==> Bugfixes
+- fix rotating shapes
+- fix resizing a rotated shape
+- fix several bugs in parser
+- make LICENSE-pane non-editable & use `Ubunut` as font-family
+
+==> Code improvements
+- Implementation of SelectedShapeCtrl splitted into several traits
+- update documentation
+- use ScalaTest as test framework
+- let sbt generate a scala-file containing: project-name, -version, -copyright
+
 ======= Version 0.6.0 ==
 ==> New major Features
 - Generate "stand-alone" jar for running move from
