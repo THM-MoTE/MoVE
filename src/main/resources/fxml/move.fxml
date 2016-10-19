@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.MoveCtrl">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.MoveCtrl">
    <left>
       <ToolBar orientation="VERTICAL" BorderPane.alignment="CENTER">
         <items>
@@ -21,18 +34,24 @@
                <tooltip>
                   <Tooltip text="Line" />
                </tooltip></ToggleButton>
-            <ToggleButton fx:id="path_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPathClicked" styleClass="toolbar-button" text="%fa.pencil-square" toggleGroup="$btnGroup">
+            <ToggleButton fx:id="path_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPathClicked" styleClass="toolbar-button" toggleGroup="$btnGroup">
                <tooltip>
                   <Tooltip text="Path" />
-               </tooltip></ToggleButton>
+               </tooltip>
+               <graphic>
+                  <SVGPath content="m58,84l0,7.33334l7.33334,0l0,7.33334" fill="TRANSPARENT" stroke="BLACK" styleClass="svg-icon" />
+               </graphic></ToggleButton>
             <ToggleButton fx:id="rectangle_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onRectangleClicked" styleClass="toolbar-button" text="%fa.square-o" toggleGroup="$btnGroup">
                <tooltip>
                   <Tooltip text="Rectangle" />
                </tooltip></ToggleButton>
-            <ToggleButton fx:id="polygon_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPolygonClicked" styleClass="toolbar-button" text="%fa.pencil-square-o" toggleGroup="$btnGroup">
+            <ToggleButton fx:id="polygon_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPolygonClicked" styleClass="toolbar-button" toggleGroup="$btnGroup">
                <tooltip>
                   <Tooltip text="Polygon" />
-               </tooltip></ToggleButton>
+               </tooltip>
+               <graphic>
+                  <SVGPath content="m219.9651,149.12184l5.23534,-3.80908l5.23557,3.80908l-1.99962,6.16336l-6.47169,0l-1.99959,-6.16336z" stroke="BLACK" styleClass="svg-icon" />
+               </graphic></ToggleButton>
             <ToggleButton fx:id="circle_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onCircleClicked" styleClass="toolbar-button" text="%fa.circle-o" toggleGroup="$btnGroup">
                <tooltip>
                   <Tooltip text="Circle" />
