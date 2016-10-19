@@ -1,6 +1,6 @@
 # Modelica Vector graphics Editor (Move)
 
-Move is a __cross-plattform__ graphical editor for __Modelica's graphical objects__.
+Move is a __cross platform__ graphical editor for __Modelica's graphical objects__.
 With Move you can create your Modelica-Models in a few minutes. Move has a handy, beautiful UI.
 
 Move supports all basic editing you need or miss in similar projects:
@@ -75,7 +75,12 @@ end test;
 ```
 
 # Try it
-If you like to try it follow these steps:
+## Compiled jars
+There are compiled jars in the releases available:
+- [Version 0.7](https://github.com/THM-MoTE/MoVE/releases/download/v0.7.0/Move-0.7.0.jar)
+
+## Install from source
+If you like to install from source follow these steps:
 - Check that you are using JDK version >= __1.8.0_77__ by running ```java -version```
   (Because of a bug in the JavaFX lib that causes strange
   behavior from the JavaFX-FileChooser we need JDK version >= 1.8.0_77)
@@ -84,12 +89,12 @@ If you like to try it follow these steps:
 Graphics Device initialization failed for :  es2, sw
 Error initializing QuantumRenderer: no suitable pipeline found
 ```
-This also seems to be a bug in the implementation of JavaFx in OpenJDK.
+This also seems to be a bug in the implementation of JavaFX in OpenJDK.
 - Make sure you have a ```$JAVA_HOME``` environment variable which holds the path to the
   java-home directory.
 
-  (We need this variable for including JavaFx's css-Files into sbt's resources. sbt
-  doesn't include ```jfxrt.jar``` as resource, therefore the css-Files are missing.)
+  (We need this variable for including JavaFX's style sheets into sbt's resources. sbt
+  doesn't include ```jfxrt.jar``` as resource, therefore the style sheets are missing.)
 - Install __sbt__ (http://www.scala-sbt.org) for building move from source
 - Clone this repository ```git clone https://git.thm.de/njss90/move.git```
 - Get into the target directory ```cd move```
