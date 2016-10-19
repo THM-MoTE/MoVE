@@ -185,6 +185,8 @@ class MoveCtrl extends Initializable {
       val strokeColor = ResourceUtils.asColor("colorChooser.strokeColor").getOrElse(Color.BLACK)
       val width = config.getInt("colorChooser.strokeWidth").getOrElse(1)
 
+      fillColorLabel.textFillProperty.bind(fillColorPicker.valueProperty)
+      strokeColorLabel.textFillProperty.bind(strokeColorPicker.valueProperty)
       fillColorPicker.setValue(fillColor)
       strokeColorPicker.setValue(strokeColor)
       borderThicknessChooser.setValue(width)
@@ -384,16 +386,10 @@ class MoveCtrl extends Initializable {
 
   def colorPickerChanged(ae:ActionEvent): Unit = {
     val src = ae.getSource
-    if(src == strokeColorPicker) {
-      val color = withCheckedColor(strokeColorPicker.getValue)
-      selectionCtrl.setStrokeColor(color)
-      strokeColorLabel.setTextFill(color)
-    }
-    else if(src == fillColorPicker) {
-      val color = withCheckedColor(fillColorPicker.getValue)
-      selectionCtrl.setFillColor(color)
-      fillColorLabel.setTextFill(color)
-    }
+    if(src == strokeColorPicker)
+      selectionCtrl.setStrokeColor(withCheckedColor(strokeColorPicker.getValue))
+    else if(src == fillColorPicker)
+      selectionCtrl.setFillColor(withCheckedColor(fillColorPicker.getValue))
   }
 
   def shapeInputHandler(ev:InputEvent): Unit = {

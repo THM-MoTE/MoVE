@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -51,9 +51,8 @@ class TextToolbarCtrl extends Initializable {
   }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    fontColorChooser.setOnAction { _:ActionEvent =>
-      fontColorLbl.setTextFill(fontColorChooser.getValue)
-    }
+    fontColorLbl.textFillProperty.bind(fontColorChooser.valueProperty)
+
     val fontColor = ResourceUtils.asColor("colorChooser.strokeColor").getOrElse(Color.BLACK)
     fontColorChooser.setValue(fontColor)
 
