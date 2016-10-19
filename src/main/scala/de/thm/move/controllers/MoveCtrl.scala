@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -90,7 +90,11 @@ class MoveCtrl extends Initializable {
   @FXML
   var topToolbarStack: StackPane = _
   @FXML
+  var strokeColorLabel: Label = _
+  @FXML
   var fillColorPicker: ColorPicker = _
+  @FXML
+  var fillColorLabel: Label = _
   @FXML
   var strokeColorPicker: ColorPicker = _
   @FXML
@@ -380,10 +384,16 @@ class MoveCtrl extends Initializable {
 
   def colorPickerChanged(ae:ActionEvent): Unit = {
     val src = ae.getSource
-    if(src == strokeColorPicker)
-      selectionCtrl.setStrokeColor(withCheckedColor(strokeColorPicker.getValue))
-    else if(src == fillColorPicker)
-      selectionCtrl.setFillColor(withCheckedColor(fillColorPicker.getValue))
+    if(src == strokeColorPicker) {
+      val color = withCheckedColor(strokeColorPicker.getValue)
+      selectionCtrl.setStrokeColor(color)
+      strokeColorLabel.setTextFill(color)
+    }
+    else if(src == fillColorPicker) {
+      val color = withCheckedColor(fillColorPicker.getValue)
+      selectionCtrl.setFillColor(color)
+      fillColorLabel.setTextFill(color)
+    }
   }
 
   def shapeInputHandler(ev:InputEvent): Unit = {

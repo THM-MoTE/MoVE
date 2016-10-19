@@ -120,9 +120,9 @@
                      <items>
                         <Label styleClass="toolbar-button" text="%fa.minus" />
                         <ChoiceBox fx:id="borderThicknessChooser" />
-                        <Label styleClass="toolbar-button" text="%fa.square" />
+                        <Label fx:id="fillColorLabel" styleClass="toolbar-button" text="%fa.square" />
                         <ColorPicker fx:id="fillColorPicker" />
-                        <Label styleClass="toolbar-button" text="%fa.square-o" />
+                        <Label fx:id="strokeColorLabel" styleClass="toolbar-button" text="%fa.square-o" />
                         <ColorPicker fx:id="strokeColorPicker" />
                         <Label text="LinePattern" />
                         <ChoiceBox fx:id="linePatternChooser" />
