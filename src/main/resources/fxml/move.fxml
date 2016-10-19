@@ -39,7 +39,7 @@
                   <Tooltip text="Path" />
                </tooltip>
                <graphic>
-                  <SVGPath content="m58,84l0,7.33334l7.33334,0l0,7.33334" fill="TRANSPARENT" stroke="BLACK" />
+                  <SVGPath content="m58,84l0,7.33334l7.33334,0l0,7.33334" fill="TRANSPARENT" stroke="BLACK" styleClass="svg-icon" />
                </graphic></ToggleButton>
             <ToggleButton fx:id="rectangle_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onRectangleClicked" styleClass="toolbar-button" text="%fa.square-o" toggleGroup="$btnGroup">
                <tooltip>
@@ -50,7 +50,7 @@
                   <Tooltip text="Polygon" />
                </tooltip>
                <graphic>
-                  <SVGPath content="m219.9651,149.12184l5.23534,-3.80908l5.23557,3.80908l-1.99962,6.16336l-6.47169,0l-1.99959,-6.16336z" stroke="BLACK" />
+                  <SVGPath content="m219.9651,149.12184l5.23534,-3.80908l5.23557,3.80908l-1.99962,6.16336l-6.47169,0l-1.99959,-6.16336z" stroke="BLACK" styleClass="svg-icon" />
                </graphic></ToggleButton>
             <ToggleButton fx:id="circle_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onCircleClicked" styleClass="toolbar-button" text="%fa.circle-o" toggleGroup="$btnGroup">
                <tooltip>
