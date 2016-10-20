@@ -429,7 +429,18 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onOpenClicked(e:ActionEvent): Unit = {
-    fileCtrl.openFile match {
+    setupOpenedFile(fileCtrl.openFile)
+  }
+
+  def openFile(file:Path): Unit = {
+    val fileInfos = fileCtrl.openFile(file).map {
+      case (point, shapes) => (file, point, shapes)
+    }
+    setupOpenedFile(fileInfos)
+  }
+
+  private def setupOpenedFile(fileInfos: Try[(Path, Point,List[ResizableShape])]): Unit = {
+    fileInfos match {
       case Success((file, system, shapes)) =>
         displayUsedFile(file)
         drawPanel.setSize(system)
