@@ -42,7 +42,6 @@ class MoveApp extends Application {
   override def start(stage: Stage): Unit = {
     checkExistingConfigs()
     val parameters = getParameters.getRaw.asScala
-    val filename = parameters.headOption
 
     val windowWidth = Global.config.getDouble("window.width").getOrElse(600.0)
     val windowHeight = Global.config.getDouble("window.height").getOrElse(600.0)
@@ -60,7 +59,7 @@ class MoveApp extends Application {
     stage.setHeight(windowHeight)
     stage.show()
     val ctrl = fxmlLoader.getController[MoveCtrl]
-    ctrl.setupMove(stage)
+    ctrl.setupMove(stage, parameters.headOption)
 
     stage.setOnCloseRequest(new EventHandler[WindowEvent] {
       override def handle(event: WindowEvent): Unit = {

@@ -9,7 +9,7 @@
 package de.thm.move.controllers
 
 import java.net.URL
-import java.nio.file.Path
+import java.nio.file.{Path, Paths}
 import java.util.ResourceBundle
 import javafx.application.Platform
 import javafx.collections.ListChangeListener.Change
@@ -28,6 +28,7 @@ import de.thm.move.config.ValueConfig
 import de.thm.move.controllers.implicits.ConcurrentImplicits._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.controllers.implicits.MonadImplicits._
+import de.thm.move.models.CommonTypes._
 import de.thm.move.models.FillPattern._
 import de.thm.move.models.LinePattern._
 import de.thm.move.models.SelectedShape.SelectedShape
@@ -297,7 +298,7 @@ class MoveCtrl extends Initializable {
   /** Called after the scene is fully-constructed and displayed.
     * (Used for adding a key-event listener)
     */
-  def setupMove(stage:Stage): Unit = {
+  def setupMove(stage:Stage, fileParameter:Option[String]): Unit = {
     //call it after reflection calls to make sure the window isn't null
     aboutStage.initOwner(getWindow)
     rootStage = stage
@@ -332,6 +333,8 @@ class MoveCtrl extends Initializable {
     drawStub.getScene.getAccelerators.putAll(combinationsToRunnable)
 
     drawStub.requestFocus()
+
+    fileParameter.map(Paths.get(_)).foreach(openFile)
   }
 
   private def setupMoveShapesByShortcuts(scene:Scene) = {
