@@ -71,10 +71,12 @@ class MoveApp extends Application {
 
 object MoveApp {
   def help(): Unit = {
+    val name = build.ProjectInfo.name
+    val version = build.ProjectInfo.version
     val helpMsg =
       s"""Usage:
-      |\tjava -jar Move-VERSION.jar
-      |\tjava -jar Move-VERSION.jar [filename]
+      |\tjava -jar $name-$version.jar
+      |\tjava -jar $name-$version.jar [filename]
     """.stripMargin
     println(helpMsg)
   }
