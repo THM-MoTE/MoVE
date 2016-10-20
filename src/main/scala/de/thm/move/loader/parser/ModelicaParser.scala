@@ -30,7 +30,7 @@ class ModelicaParser extends JavaTokenParsers
 
   val start = model +
   def model:Parser[Model] = stuffBeforeModel ~> positioned(
-    ("model" ~> identRegex) ~ (classComment ~> moSource) ~ posString("end") ~ identRegex <~ ";" ^^ {
+    (classSpecialization ~> identRegex) ~ (classComment ~> moSource) ~ posString("end") ~ identRegex <~ ";" ^^ {
       case startIdent ~ icon ~ endPos ~ endIdent =>
         if(startIdent == endIdent) {
           Model(startIdent, icon getOrElse {
@@ -63,7 +63,7 @@ class ModelicaParser extends JavaTokenParsers
 
   /** This parser skips everything that doesn't start with Icon because we are only intersted in Icon(.. */
   def skipUninterestingStuff = ((not("Icon") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
-  def stuffBeforeModel = ((not("model") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
+  def stuffBeforeModel = ((not(classSpecialization) ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
   def stuffAfterModel = ((not("end") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
 
   def classComment:Parser[Option[String]] =
