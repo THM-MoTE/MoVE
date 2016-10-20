@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -17,6 +17,7 @@ import javafx.scene.{Parent, Scene}
 import javafx.stage.{Stage, WindowEvent}
 
 import de.thm.move.controllers.MoveCtrl
+import scala.collection.JavaConverters._
 
 class MoveApp extends Application {
   def checkExistingConfigs(): Unit = {
@@ -40,6 +41,8 @@ class MoveApp extends Application {
 
   override def start(stage: Stage): Unit = {
     checkExistingConfigs()
+    val parameters = getParameters.getRaw.asScala
+    val filename = parameters.headOption
 
     val windowWidth = Global.config.getDouble("window.width").getOrElse(600.0)
     val windowHeight = Global.config.getDouble("window.height").getOrElse(600.0)
@@ -68,7 +71,19 @@ class MoveApp extends Application {
 }
 
 object MoveApp {
+  def help(): Unit = {
+    val helpMsg =
+      s"""Usage:
+      |\tjava -jar Move-VERSION.jar
+      |\tjava -jar Move-VERSION.jar [filename]
+    """.stripMargin
+    println(helpMsg)
+  }
+
   def main(args: Array[String]): Unit = {
-    Application.launch(classOf[MoveApp], args:_*)
+    if(args.length > 1 || args(0) == "-help")
+      help()
+    else
+      Application.launch(classOf[MoveApp], args:_*)
   }
 }
