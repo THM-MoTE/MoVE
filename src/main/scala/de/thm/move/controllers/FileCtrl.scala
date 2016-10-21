@@ -9,7 +9,7 @@
 package de.thm.move.controllers
 
 import java.net.URI
-import java.nio.file.{Path, Paths}
+import java.nio.file.{Files, Path, Paths}
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.Node
 import javafx.scene.control.{ButtonType, ChoiceDialog}
@@ -25,7 +25,7 @@ import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.{ModelicaCodeGenerator, SrcFile, SvgCodeGenerator, UserInputException}
 import de.thm.move.util.PointUtils._
-import de.thm.move.views.dialogs.{Dialogs, SrcFormatDialog, ExternalChangesDialog}
+import de.thm.move.views.dialogs.{Dialogs, ExternalChangesDialog, SrcFormatDialog}
 import de.thm.move.views.shapes.ResizableShape
 
 import scala.collection.JavaConverters._
@@ -103,6 +103,16 @@ class FileCtrl(owner: Window) {
     for {
       file <- fileTry
       path = Paths.get(file.toURI)
+      (point, shapes) <- openFile(path)
+    } yield (path, point, shapes)
+  }
+
+  def openFile(path:Path):Try[(Point,List[ResizableShape])] = {
+    val existsTry =
+      if (Files.exists(path)) Success(path)
+      else Failure(UserInputException(s"$path doesn't exist!"))
+    for {
+      _ <- existsTry
       srcFile <- parseFile(path)
       scaleFactor <- showScaleDialog()
     } yield {
@@ -122,7 +132,7 @@ class FileCtrl(owner: Window) {
       }
       openedFile = Some(srcFile)
       formatInfos = Some(FormatInfos(scaleFactor, None))
-      (path, scaledSystem, shapes)
+      (scaledSystem, shapes)
     }
   }
 

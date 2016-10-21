@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -8,6 +8,7 @@
 
 package de.thm.move
 
+import java.nio.file.{ Files, Paths }
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.fxml.FXMLLoader
@@ -17,6 +18,7 @@ import javafx.scene.{Parent, Scene}
 import javafx.stage.{Stage, WindowEvent}
 
 import de.thm.move.controllers.MoveCtrl
+import scala.collection.JavaConverters._
 
 class MoveApp extends Application {
   def checkExistingConfigs(): Unit = {
@@ -40,6 +42,7 @@ class MoveApp extends Application {
 
   override def start(stage: Stage): Unit = {
     checkExistingConfigs()
+    val parameters = getParameters.getRaw.asScala
 
     val windowWidth = Global.config.getDouble("window.width").getOrElse(600.0)
     val windowHeight = Global.config.getDouble("window.height").getOrElse(600.0)
@@ -57,7 +60,7 @@ class MoveApp extends Application {
     stage.setHeight(windowHeight)
     stage.show()
     val ctrl = fxmlLoader.getController[MoveCtrl]
-    ctrl.setupMove(stage)
+    ctrl.setupMove(stage, parameters.headOption)
 
     stage.setOnCloseRequest(new EventHandler[WindowEvent] {
       override def handle(event: WindowEvent): Unit = {
@@ -68,7 +71,27 @@ class MoveApp extends Application {
 }
 
 object MoveApp {
+  def help(): Unit = {
+    val name = build.ProjectInfo.name
+    val version = build.ProjectInfo.version
+    val helpMsg =
+      s"""Usage:
+      |\tjava -jar $name-$version.jar
+      |\tjava -jar $name-$version.jar [filename]
+      |
+      |Options:
+      |\t-help\t\tDisplay this help message""".stripMargin
+    println(helpMsg)
+  }
+
   def main(args: Array[String]): Unit = {
-    Application.launch(classOf[MoveApp], args:_*)
+    args.toList match {
+      case "-help" :: _ => help()
+      case path :: _ if !Files.exists(Paths.get(path)) || !Files.isRegularFile(Paths.get(path)) =>
+        println(s"WARNING: The given file [$path] wasn't a file or doesn't exist!")
+        Application.launch(classOf[MoveApp])
+      case path :: _ => Application.launch(classOf[MoveApp],path)
+      case _ => Application.launch(classOf[MoveApp])
+    }
   }
 }
