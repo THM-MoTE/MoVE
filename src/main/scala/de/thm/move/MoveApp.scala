@@ -78,7 +78,9 @@ object MoveApp {
       s"""Usage:
       |\tjava -jar $name-$version.jar
       |\tjava -jar $name-$version.jar [filename]
-    """.stripMargin
+      |
+      |Options:
+      |\t-help\t\tDisplay this help message""".stripMargin
     println(helpMsg)
   }
 
