@@ -92,9 +92,7 @@ trait PropertyParser {
       case ds~lp~v~k~v2~rp => ds+lp+v+k+v2+rp
     }
     | "if" ~ identRegex ~ "then" ~ value ~ "else" ~ value ^^ {
-      case ifs~id~th~vl~el~vl2 => val s = s"$ifs $id $th $vl $el $vl2"
-      println(s)
-      s
+      case ifs~id~th~vl~el~vl2 => s"$ifs $id $th $vl $el $vl2"
     }
     | identRegex
     | javaLikeStrRegex

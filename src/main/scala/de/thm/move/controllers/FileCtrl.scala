@@ -120,7 +120,6 @@ class FileCtrl(owner: Window) {
           "Some properties can't get used.\nThey will be overridden when saving the file!").
           showAndWait()
       }
-      println(s"file opened src  $srcFile")
       openedFile = Some(srcFile)
       formatInfos = Some(FormatInfos(scaleFactor, None))
       (path, scaledSystem, shapes)
@@ -139,7 +138,6 @@ class FileCtrl(owner: Window) {
     selectedOption.
       filter { _ == dialog.overwriteAnnotationsBtn }.
       map { _ =>
-        println("reparsing file")
         parseFile(src.file)
       } flatMap {
         case Success(src) =>
