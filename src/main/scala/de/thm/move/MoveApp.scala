@@ -8,6 +8,7 @@
 
 package de.thm.move
 
+import java.nio.file.{ Files, Paths }
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.fxml.FXMLLoader
@@ -82,9 +83,13 @@ object MoveApp {
   }
 
   def main(args: Array[String]): Unit = {
-    if(args.length > 1 || args(0) == "-help")
-      help()
-    else
-      Application.launch(classOf[MoveApp], args:_*)
+    args.toList match {
+      case "-help" :: _ => help()
+      case path :: _ if !Files.exists(Paths.get(path)) || !Files.isRegularFile(Paths.get(path)) =>
+        println(s"WARNING: The given file [$path] wasn't a file or doesn't exist!")
+        Application.launch(classOf[MoveApp])
+      case path :: _ => Application.launch(classOf[MoveApp],path)
+      case _ => Application.launch(classOf[MoveApp])
+    }
   }
 }
