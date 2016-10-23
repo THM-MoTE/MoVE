@@ -31,6 +31,8 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     menu.inForegroundItem.setOnAction { ae:ActionEvent => onForegroundPressed (ae, underlyingElement) }
     menu.duplicateElementItem.setOnAction { ae:ActionEvent => onDuplicateElementPressed(ae, underlyingElement) }
     menu.resetRotationElementItem.setOnAction { ae:ActionEvent => onResetRotationElementPressed(ae, underlyingElement) }
+    menu.rotate90ClockwiseItem.setOnAction { ae:ActionEvent => onRotateByDegreePressed(ae, underlyingElement, 90) }
+    menu.rotate90CounterClockwiseItem.setOnAction { ae:ActionEvent => onRotateByDegreePressed(ae, underlyingElement, -90) }
 
     underlyingElement match {
       case polygon:QuadCurveTransformable =>
@@ -158,4 +160,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     changeLike.removeShape(txt)
     changeLike.addNode(txtField)
   }
+
+  def onRotateByDegreePressed(ae:ActionEvent, shape:RotatableShape, degree:Double): Unit =
+    shape.rotate(degree)
 }

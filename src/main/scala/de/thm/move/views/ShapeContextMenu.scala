@@ -15,9 +15,14 @@ class ShapeContextMenu extends ContextMenu {
   val inBackgroundItem = new MenuItem("In background")
   val duplicateElementItem = new MenuItem("Duplicate")
   val resetRotationElementItem = new MenuItem("Reset rotation")
+  val rotate90ClockwiseItem = new MenuItem("Rotate 90° clockwise")
+  val rotate90CounterClockwiseItem = new MenuItem("Rotate 90° counter-clockwise")
+
   getItems.addAll(
     inForegroundItem,
     inBackgroundItem,
     duplicateElementItem,
-    resetRotationElementItem)
+    resetRotationElementItem,
+    rotate90ClockwiseItem,
+    rotate90CounterClockwiseItem)
 }
