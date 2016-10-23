@@ -33,6 +33,9 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     menu.resetRotationElementItem.setOnAction { ae:ActionEvent => onResetRotationElementPressed(ae, underlyingElement) }
     menu.rotate90ClockwiseItem.setOnAction { ae:ActionEvent => onRotateByDegreePressed(ae, underlyingElement, 90) }
     menu.rotate90CounterClockwiseItem.setOnAction { ae:ActionEvent => onRotateByDegreePressed(ae, underlyingElement, -90) }
+    menu.rotate45ClockwiseItem.setOnAction { ae:ActionEvent => onRotateByDegreePressed(ae, underlyingElement, 45) }
+    menu.rotate45CounterClockwiseItem.setOnAction { ae:ActionEvent => onRotateByDegreePressed(ae, underlyingElement, -45) }
+
 
     underlyingElement match {
       case polygon:QuadCurveTransformable =>
