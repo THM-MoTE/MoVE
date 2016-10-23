@@ -8,16 +8,32 @@
 
 package de.thm.move.views
 
-import javafx.scene.control.{ContextMenu, MenuItem}
+import javafx.scene.control.{ContextMenu, MenuItem, Label}
 
 class ShapeContextMenu extends ContextMenu {
+  private def withFontIcon(elem:MenuItem, iconIdent:String): MenuItem = {
+    val lbl = new Label(iconIdent)
+    lbl.getStyleClass().add("toolbar-button")
+    elem.setGraphic(lbl)
+    elem
+  }
+
   val inForegroundItem = new MenuItem("In foreground")
   val inBackgroundItem = new MenuItem("In background")
-  val duplicateElementItem = new MenuItem("Duplicate")
+  val duplicateElementItem = withFontIcon(new MenuItem("Duplicate"), "\uf24d")
   val resetRotationElementItem = new MenuItem("Reset rotation")
+  val rotate90ClockwiseItem = withFontIcon(new MenuItem("Rotate 90° clockwise"), "\uf01e")
+  val rotate90CounterClockwiseItem = withFontIcon(new MenuItem("Rotate 90° counter-clockwise"), "\uf0e2")
+  val rotate45ClockwiseItem = withFontIcon(new MenuItem("Rotate 45 clockwise"), "\uf01e")
+  val rotate45CounterClockwiseItem = withFontIcon(new MenuItem("Rotate 45° counter-clockwise"), "\uf0e2")
+
   getItems.addAll(
     inForegroundItem,
     inBackgroundItem,
     duplicateElementItem,
-    resetRotationElementItem)
+    resetRotationElementItem,
+    rotate90ClockwiseItem,
+    rotate90CounterClockwiseItem,
+    rotate45ClockwiseItem,
+    rotate45CounterClockwiseItem)
 }

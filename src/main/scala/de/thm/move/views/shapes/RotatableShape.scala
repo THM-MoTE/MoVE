@@ -55,6 +55,8 @@ trait RotatableShape {
     bottomRightAnchor.setCenterY(newB.getMaxY)
   }
 
+  def rotate(degree:Double) = setRotate(getRotate+degree)
+
   private def setupListener(anchor:Anchor): Unit = {
     var startMouse = (0.0,0.0)
     //undo-/redo command
