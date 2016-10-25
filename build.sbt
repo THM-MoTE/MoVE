@@ -73,4 +73,5 @@ assemblyExcludedJars in assembly := {
 libraryDependencies ++= Seq(
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.4",
-    "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test")
+    "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
+    "io.reactivex" %% "rxscala" % "0.26.3")
