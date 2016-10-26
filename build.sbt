@@ -1,5 +1,7 @@
 import java.lang.System
 
+resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/snapshots"
+
 //include javafx-jar (from java's home directory) in classpath
 unmanagedJars in Compile += Attributed.blank(
   file(System.getenv("JAVA_HOME")) / "jre" / "lib" / "ext" / "jfxrt.jar")
