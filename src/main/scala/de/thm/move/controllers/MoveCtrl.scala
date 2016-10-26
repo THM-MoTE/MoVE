@@ -344,29 +344,38 @@ class MoveCtrl extends Initializable {
       getPoint("shortcut-moving-delta-x", "shortcut-moving-delta-y").
       getOrElse((5.0,5.0))
 
+    val releasedStream = EventStreams.eventsOf(scene, KeyEvent.KEY_RELEASED)
     shortcuts.getKeyCode("move-left") foreach { code =>
-      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe { _:KeyEvent =>
           val directioned = (deltaX*(-1), 0.0)
           selectionCtrl.move(directioned)
-      })
+        }
     }
     shortcuts.getKeyCode("move-right") foreach { code =>
-      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe { _:KeyEvent =>
           val directioned = (deltaX, 0.0)
           selectionCtrl.move(directioned)
-      })
+        }
     }
     shortcuts.getKeyCode("move-up") foreach { code =>
-      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe { _:KeyEvent =>
           val directioned = (0.0, deltaY*(-1))
           selectionCtrl.move(directioned)
-      })
+        }
     }
     shortcuts.getKeyCode("move-down") foreach { code =>
-      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe { _:KeyEvent =>
           val directioned = (0.0, deltaY)
           selectionCtrl.move(directioned)
-      })
+        }
     }
   }
 
