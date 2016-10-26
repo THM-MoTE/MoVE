@@ -59,7 +59,7 @@ lazy val root = (project in file(".")).
     organization := "thm",
     name := "Move",
     version := "0.7.0",
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.11.8",
     javacOptions ++= Seq("-source", "1.8")
     )
 
