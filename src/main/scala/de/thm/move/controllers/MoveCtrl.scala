@@ -28,6 +28,7 @@ import de.thm.move.config.ValueConfig
 import de.thm.move.controllers.implicits.ConcurrentImplicits._
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.controllers.implicits.MonadImplicits._
+import de.thm.move.controllers.implicits.LambdaImplicits._
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.FillPattern._
 import de.thm.move.models.LinePattern._
@@ -44,6 +45,9 @@ import de.thm.move.views.shapes.{ResizableShape, ResizableText}
 import scala.None
 import scala.collection.JavaConversions._
 import scala.util._
+
+import org.reactfx.EventStreams
+import org.reactfx.EventStream
 
 /** Main-Controller for all menus,buttons, etc. */
 class MoveCtrl extends Initializable {
@@ -305,26 +309,27 @@ class MoveCtrl extends Initializable {
       case (combination, btn) => combination -> fnRunnable(btn.fire)
     }
 
-    //shortcuts that aren't mapped to buttons
+    val byKeyCode: KeyCode => KeyEvent => Boolean = code => kv => kv.getCode == code
+    val pressedStream = EventStreams.eventsOf(drawStub.getScene, KeyEvent.KEY_PRESSED)
+    val releasedStream = EventStreams.eventsOf(drawStub.getScene, KeyEvent.KEY_RELEASED)
+
+      //shortcuts that aren't mapped to buttons
     shortcuts.getKeyCode("draw-constraint").foreach { code =>
-      drawStub.getScene.addEventHandler(KeyEvent.KEY_PRESSED,
-        filteredEventHandler[KeyEvent](_.getCode == code) {
-          drawCtrl.drawConstraintProperty.set(true)
-        })
-      drawStub.getScene.addEventHandler(KeyEvent.KEY_RELEASED,
-        filteredEventHandler[KeyEvent](_.getCode == code) {
-          drawCtrl.drawConstraintProperty.set(false)
-        })
+      pressedStream.
+        filter(byKeyCode(code)).
+        subscribe { x:KeyEvent => drawCtrl.drawConstraintProperty.set(true) }
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe { x:KeyEvent => drawCtrl.drawConstraintProperty.set(false) }
     }
+
     shortcuts.getKeyCode("select-constraint").foreach { code =>
-      drawStub.getScene.addEventHandler(KeyEvent.KEY_PRESSED,
-        filteredEventHandler[KeyEvent](_.getCode == code) {
-          selectionCtrl.addSelectedShapeProperty.set(true)
-        })
-      drawStub.getScene.addEventHandler(KeyEvent.KEY_RELEASED,
-        filteredEventHandler[KeyEvent](_.getCode == code) {
-          selectionCtrl.addSelectedShapeProperty.set(false)
-        })
+      pressedStream.
+        filter(byKeyCode(code)).
+        subscribe { x:KeyEvent => selectionCtrl.addSelectedShapeProperty.set(true) }
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe { x:KeyEvent => selectionCtrl.addSelectedShapeProperty.set(false) }
     }
 
     setupMoveShapesByShortcuts(drawStub.getScene)
