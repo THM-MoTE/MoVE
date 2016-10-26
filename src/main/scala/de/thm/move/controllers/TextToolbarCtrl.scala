@@ -51,7 +51,6 @@ class TextToolbarCtrl extends Initializable {
   }
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    fontColorLbl.textFillProperty.bind(fontColorChooser.valueProperty)
 
     val fontColor = ResourceUtils.asColor("colorChooser.strokeColor").getOrElse(Color.BLACK)
     fontColorChooser.setValue(fontColor)

@@ -186,8 +186,6 @@ class MoveCtrl extends Initializable {
       val strokeColor = ResourceUtils.asColor("colorChooser.strokeColor").getOrElse(Color.BLACK)
       val width = config.getInt("colorChooser.strokeWidth").getOrElse(1)
 
-      fillColorLabel.textFillProperty.bind(fillColorPicker.valueProperty)
-      strokeColorLabel.textFillProperty.bind(strokeColorPicker.valueProperty)
       fillColorPicker.setValue(fillColor)
       strokeColorPicker.setValue(strokeColor)
       borderThicknessChooser.setValue(width)
