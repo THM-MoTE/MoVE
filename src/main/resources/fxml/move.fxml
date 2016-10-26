@@ -74,29 +74,77 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
-                        <MenuItem fx:id="newMenuItem" onAction="#onNewClicked" text="New file.." />
-                        <MenuItem fx:id="openMenuItem" onAction="#onOpenClicked" text="Open file.." />
-                        <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#onSaveClicked" text="Save" />
-                        <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#onSaveAsClicked" text="Save as.." />
+                        <MenuItem fx:id="newMenuItem" onAction="#onNewClicked" text="New file..">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.file.new" />
+                           </graphic></MenuItem>
+                        <MenuItem fx:id="openMenuItem" onAction="#onOpenClicked" text="Open file..">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.file.open" />
+                           </graphic></MenuItem>
+                        <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#onSaveClicked" text="Save">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.file.save" />
+                           </graphic></MenuItem>
+                        <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#onSaveAsClicked" text="Save as..">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.file.save" />
+                           </graphic></MenuItem>
                       <MenuItem fx:id="exportSvgMenuItem" mnemonicParsing="false" onAction="#onExportSvgClicked" text="Export as SVG.." />
                       <MenuItem fx:id="exportBitmatpMenuItem" mnemonicParsing="false" onAction="#onExportBitmapClicked" text="Export as Bitmap.." />
-                      <MenuItem fx:id="chPaperSizeMenuItem" mnemonicParsing="false" onAction="#onChPaperSizeClicked" text="Change paper size.." />
-                        <MenuItem fx:id="chGridSizeMenuItem" mnemonicParsing="false" onAction="#onChGridSizeClicked" text="Change gridsize" />
-                    <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#onClosePressed" text="Close" />
+                      <MenuItem fx:id="chPaperSizeMenuItem" mnemonicParsing="false" onAction="#onChPaperSizeClicked" text="Change paper size..">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.file.papersize" />
+                           </graphic></MenuItem>
+                        <MenuItem fx:id="chGridSizeMenuItem" mnemonicParsing="false" onAction="#onChGridSizeClicked" text="Change gridsize">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.file.gridsize" />
+                           </graphic></MenuItem>
+                    <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#onClosePressed" text="Close">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.file.exit" />
+                           </graphic></MenuItem>
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                   <items>
-                        <MenuItem fx:id="undoMenuItem" mnemonicParsing="false" onAction="#onUndoClicked" text="Undo" />
-                        <MenuItem fx:id="redoMenuItem" mnemonicParsing="false" onAction="#onRedoClicked" text="Redo" />
-                        <MenuItem fx:id="copyMenuItem" mnemonicParsing="false" onAction="#onCopyClicked" text="Copy" />
-                        <MenuItem fx:id="pasteMenuItem" mnemonicParsing="false" onAction="#onPasteClicked" text="Paste" />
-                        <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#onDeleteClicked" text="Delete" />
-                        <MenuItem fx:id="duplicateMenuItem" mnemonicParsing="false" onAction="#onDuplicateClicked" text="Duplicate" />
-                        <MenuItem fx:id="groupMenuItem" mnemonicParsing="false" onAction="#onGroupPressed" text="Group Elements" />
-                        <MenuItem fx:id="ungroupMenuItem" mnemonicParsing="false" onAction="#onUngroupPressed" text="Ungroup Elements" />
+                        <MenuItem fx:id="undoMenuItem" mnemonicParsing="false" onAction="#onUndoClicked" text="Undo">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.edit.undo" />
+                           </graphic></MenuItem>
+                        <MenuItem fx:id="redoMenuItem" mnemonicParsing="false" onAction="#onRedoClicked" text="Redo">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.edit.redo" />
+                           </graphic></MenuItem>
+                        <MenuItem fx:id="copyMenuItem" mnemonicParsing="false" onAction="#onCopyClicked" text="Copy">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.edit.copy" />
+                           </graphic></MenuItem>
+                        <MenuItem fx:id="pasteMenuItem" mnemonicParsing="false" onAction="#onPasteClicked" text="Paste">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.edit.paste" />
+                           </graphic></MenuItem>
+                        <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#onDeleteClicked" text="Delete">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.edit.delete" />
+                           </graphic></MenuItem>
+                        <MenuItem fx:id="duplicateMenuItem" mnemonicParsing="false" onAction="#onDuplicateClicked" text="Duplicate">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.edit.duplicate" />
+                           </graphic></MenuItem>
+                        <MenuItem fx:id="groupMenuItem" mnemonicParsing="false" onAction="#onGroupPressed" text="Group Elements">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.edit.group" />
+                           </graphic></MenuItem>
+                        <MenuItem fx:id="ungroupMenuItem" mnemonicParsing="false" onAction="#onUngroupPressed" text="Ungroup Elements">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.edit.ungroup" />
+                           </graphic></MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                      <MenuItem fx:id="loadImgMenuItem" mnemonicParsing="false" onAction="#onLoadBitmap" text="Insert Bitmap" />
+                      <MenuItem fx:id="loadImgMenuItem" mnemonicParsing="false" onAction="#onLoadBitmap" text="Insert Bitmap">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.image" />
+                           </graphic></MenuItem>
                   </items>
                 </Menu>
                   <Menu mnemonicParsing="false" text="View">
@@ -108,7 +156,10 @@
                   </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#onAboutClicked" text="About" />
+                    <MenuItem mnemonicParsing="false" onAction="#onAboutClicked" text="About">
+                           <graphic>
+                              <Label styleClass="toolbar-button" text="%fa.help.about" />
+                           </graphic></MenuItem>
                   </items>
                 </Menu>
               </menus>
@@ -120,9 +171,9 @@
                      <items>
                         <Label styleClass="toolbar-button" text="%fa.minus" />
                         <ChoiceBox fx:id="borderThicknessChooser" />
-                        <Label fx:id="fillColorLabel" styleClass="toolbar-button" text="%fa.square" textFill="${fillColorPicker.value}"/>
+                        <Label fx:id="fillColorLabel" styleClass="toolbar-button" text="%fa.square" textFill="${fillColorPicker.value}" />
                         <ColorPicker fx:id="fillColorPicker" />
-                        <Label fx:id="strokeColorLabel" styleClass="toolbar-button" text="%fa.square-o" textFill="${strokeColorPicker.value}"/>
+                        <Label fx:id="strokeColorLabel" styleClass="toolbar-button" text="%fa.square-o" textFill="${strokeColorPicker.value}" />
                         <ColorPicker fx:id="strokeColorPicker" />
                         <Label text="LinePattern" />
                         <ChoiceBox fx:id="linePatternChooser" />
