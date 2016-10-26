@@ -309,7 +309,6 @@ class MoveCtrl extends Initializable {
       case (combination, btn) => combination -> fnRunnable(btn.fire)
     }
 
-    val byKeyCode: KeyCode => KeyEvent => Boolean = code => kv => kv.getCode == code
     val pressedStream = EventStreams.eventsOf(drawStub.getScene, KeyEvent.KEY_PRESSED)
     val releasedStream = EventStreams.eventsOf(drawStub.getScene, KeyEvent.KEY_RELEASED)
 
