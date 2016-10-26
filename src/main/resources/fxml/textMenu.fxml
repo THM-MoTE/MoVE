@@ -16,7 +16,7 @@
          </toggleGroup></ToggleButton>
       <ToggleButton fx:id="align_center_btn" mnemonicParsing="false" styleClass="toolbar-button" text="%fa.align-center" toggleGroup="$alignmentGroup" />
       <ToggleButton fx:id="align_right_btn" mnemonicParsing="false" styleClass="toolbar-button" text="%fa.align-right" toggleGroup="$alignmentGroup" />
-      <Label fx:id="fontColorLbl" styleClass="toolbar-button" text="%fa.font" />
+      <Label fx:id="fontColorLbl" styleClass="toolbar-button" text="%fa.font" textFill="${fontColorChooser.value}"/>
       <ColorPicker fx:id="fontColorChooser" />
    </items>
 </ToolBar>
