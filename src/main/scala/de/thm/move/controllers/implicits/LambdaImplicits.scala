@@ -23,4 +23,7 @@ object LambdaImplicits {
   implicit def consumer[A](f: A => Unit): Consumer[A] = new Consumer[A] {
     override def accept(a:A): Unit = f(a)
   }
+  implicit def consumer[A](f:  => Unit): Consumer[A] = new Consumer[A] {
+    override def accept(a:A): Unit = f
+  }
 }

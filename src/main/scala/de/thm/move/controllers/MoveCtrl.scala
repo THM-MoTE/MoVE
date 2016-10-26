@@ -316,19 +316,19 @@ class MoveCtrl extends Initializable {
     shortcuts.getKeyCode("draw-constraint").foreach { code =>
       pressedStream.
         filter(byKeyCode(code)).
-        subscribe { x:KeyEvent => drawCtrl.drawConstraintProperty.set(true) }
+        subscribe { drawCtrl.drawConstraintProperty.set(true) }
       releasedStream.
         filter(byKeyCode(code)).
-        subscribe { x:KeyEvent => drawCtrl.drawConstraintProperty.set(false) }
+        subscribe { drawCtrl.drawConstraintProperty.set(false) }
     }
 
     shortcuts.getKeyCode("select-constraint").foreach { code =>
       pressedStream.
         filter(byKeyCode(code)).
-        subscribe { x:KeyEvent => selectionCtrl.addSelectedShapeProperty.set(true) }
+        subscribe { selectionCtrl.addSelectedShapeProperty.set(true) }
       releasedStream.
         filter(byKeyCode(code)).
-        subscribe { x:KeyEvent => selectionCtrl.addSelectedShapeProperty.set(false) }
+        subscribe { selectionCtrl.addSelectedShapeProperty.set(false) }
     }
 
     setupMoveShapesByShortcuts(drawStub.getScene)
@@ -348,7 +348,7 @@ class MoveCtrl extends Initializable {
     shortcuts.getKeyCode("move-left") foreach { code =>
       releasedStream.
         filter(byKeyCode(code)).
-        subscribe { _:KeyEvent =>
+        subscribe {
           val directioned = (deltaX*(-1), 0.0)
           selectionCtrl.move(directioned)
         }
@@ -356,7 +356,7 @@ class MoveCtrl extends Initializable {
     shortcuts.getKeyCode("move-right") foreach { code =>
       releasedStream.
         filter(byKeyCode(code)).
-        subscribe { _:KeyEvent =>
+        subscribe {
           val directioned = (deltaX, 0.0)
           selectionCtrl.move(directioned)
         }
@@ -364,7 +364,7 @@ class MoveCtrl extends Initializable {
     shortcuts.getKeyCode("move-up") foreach { code =>
       releasedStream.
         filter(byKeyCode(code)).
-        subscribe { _:KeyEvent =>
+        subscribe {
           val directioned = (0.0, deltaY*(-1))
           selectionCtrl.move(directioned)
         }
@@ -372,7 +372,7 @@ class MoveCtrl extends Initializable {
     shortcuts.getKeyCode("move-down") foreach { code =>
       releasedStream.
         filter(byKeyCode(code)).
-        subscribe { _:KeyEvent =>
+        subscribe {
           val directioned = (0.0, deltaY)
           selectionCtrl.move(directioned)
         }
