@@ -6,6 +6,7 @@
 .toolbar-button {
     -fx-font-family: 'FontAwesome';
     -fx-font-size: 10pt;
+    -fx-text-fill: black;
 }
 
 .draw-stub {
