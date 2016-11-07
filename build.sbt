@@ -54,7 +54,7 @@ sourceGenerators in Compile <+= Def.task {
 
 lazy val root = (project in file(".")).
   settings(
-    organization := "thm",
+    organization := "de.thm.mote",
     name := "Move",
     version := "0.7.0",
     scalaVersion := "2.11.7",
