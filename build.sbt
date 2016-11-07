@@ -17,6 +17,7 @@ scalacOptions ++= Seq(
     )
 
 lazy val copyright = "(c) 2016 Nicola Justus"
+lazy val licenseName = "MPL V2.0 <http://mozilla.org/MPL/2.0>"
 
 lazy val copyRscs = taskKey[Unit]("Copies needed resources to resource-directory.")
 
@@ -49,7 +50,8 @@ sourceGenerators in Compile <+= Def.task {
     "name" -> (name in root).value,
     "version" -> (version in root).value,
     "organization" -> (organization in root).value,
-    "copyright" -> copyright))
+    "copyright" -> copyright,
+    "licenseName" -> licenseName))
 }
 
 lazy val root = (project in file(".")).
