@@ -718,4 +718,56 @@ class SkeletalParserTest extends MoveSpec {
 
       iconEqual(exp, withParseSuccess(rect))
   }
+
+  it should "parse text" in {
+    val txtStr =
+      s"""Text(
+      |origin = {437,426},
+      |extent = {{-222,23},{222,-23}},
+      |textString = "This is a beatuiful test",
+      |fontSize = 12.0,
+      |fontName = "System",
+      |textStyle = {TextStyle.Italic},
+      |textColor = {0,0,0},
+      |horizontalAlignment = TextAlignment.Left
+      |)""".stripMargin
+
+    val ast1 = Model("txt1",
+    Icon(
+      None,
+      List(Text(
+        GraphicItem(origin=(437,426)),
+        ((-222,23), (222,-23)),
+        "This is a beatuiful test",
+        12,"System", Seq("TextStyle.Italic"),
+        Color.BLACK, "TextAlignment.Left"))
+      ,NoPosition,NoPosition))
+
+    iconEqual(ast1, withParseSuccess(graphicModel("txt1", txtStr)))
+
+    val txtStr2 =
+      s"""Text(
+      |origin = {437,426},
+      |extent = {{-222,23},{222,-23}},
+      |textString = "This is a beatuiful test",
+      |fontSize = 12.0,
+      |fontName = "Courier",
+      |textStyle = {TextStyle.Italic, TextStyle.Bold},
+      |textColor = {255,0,0},
+      |horizontalAlignment = TextAlignment.Left
+      |)""".stripMargin
+
+      val ast2 = Model("txt2",
+      Icon(
+        None,
+        List(Text(
+          GraphicItem(origin=(437,426)),
+          ((-222,23), (222,-23)),
+          "This is a beatuiful test",
+          12,"Courier", Seq("TextStyle.Italic", "TextStyle.Bold"),
+          Color.RED, "TextAlignment.Left"))
+        ,NoPosition,NoPosition))
+
+    iconEqual(ast2, withParseSuccess(graphicModel("txt2", txtStr2)))
+  }
 }
