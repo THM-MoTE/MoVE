@@ -105,6 +105,8 @@ class MoveCtrl extends Initializable {
   @FXML
   var borderThicknessChooser: ChoiceBox[Int] = _
   @FXML
+  var zoomPercentLbl: Label = _
+  @FXML
   var zoomScrollBar: ScrollBar = _
   @FXML
   var shapeTopToolbar: ToolBar = _
@@ -293,13 +295,8 @@ class MoveCtrl extends Initializable {
     drawPanel.setOnMouseClicked(drawHandler)
     drawPanel.setOnMouseReleased(drawHandler)
 
-    // drawStub.setScaleX(0.5)
-    // drawStub.setScaleY(0.5)
-    zoomScrollBar.setOnMouseClicked {ev: MouseEvent =>
-      println("drag done")
-      drawStub.setScaleX(0.8)
-      drawStub.setScaleY(0.8)
-    }
+    zoomPercentLbl.textProperty().bind(
+      drawStub.scaleXProperty().multiply(100).asString("%3.0f%%"))
   }
 
   /** Called after the scene is fully-constructed and displayed.
@@ -671,6 +668,22 @@ class MoveCtrl extends Initializable {
   def onTextClicked(e:ActionEvent): Unit = {
     embeddedTextMenu.toFront()
     drawToolChanged(Cursor.TEXT)
+  }
+  @FXML
+  def zoomIncreasePressed(e:ActionEvent): Unit = {
+    println("increase pressed")
+    val factor = drawStub.getScaleX() + 0.1
+    println("new factor: "+factor)
+    drawStub.setScaleX(factor)
+    drawStub.setScaleY(factor)
+  }
+  @FXML
+  def zoomDecreasePressed(e:ActionEvent): Unit = {
+    println("decrease pressed")
+    val factor = drawStub.getScaleX() - 0.1
+    println("new factor: "+factor)
+    drawStub.setScaleX(factor)
+    drawStub.setScaleY(factor)
   }
 
   private def getStrokeColor: Color = strokeColorPicker.getValue
