@@ -71,6 +71,7 @@ class MoveApp extends Application {
 }
 
 object MoveApp {
+  import javafx.application.Platform
   val name = build.ProjectInfo.name
   val copyright = build.ProjectInfo.copyright
   val version = build.ProjectInfo.version
@@ -95,8 +96,12 @@ object MoveApp {
 
   def main(args: Array[String]): Unit = {
     args.toList match {
-      case "-help" :: _ => help()
-      case "-version" :: _ => printVersion()
+      case "-help" :: _ =>
+        help()
+        Platform.exit()
+      case "-version" :: _ =>
+        printVersion()
+        Platform.exit()
       case path :: _ if !Files.exists(Paths.get(path)) || !Files.isRegularFile(Paths.get(path)) =>
         println(s"WARNING: The given file [$path] wasn't a file or doesn't exist!")
         Application.launch(classOf[MoveApp])
