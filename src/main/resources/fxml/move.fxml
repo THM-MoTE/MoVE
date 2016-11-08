@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ColorPicker?>
@@ -18,7 +22,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.MoveCtrl">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.MoveCtrl">
    <left>
       <ToolBar orientation="VERTICAL" BorderPane.alignment="CENTER">
         <items>
@@ -179,6 +183,7 @@
                         <ChoiceBox fx:id="linePatternChooser" />
                         <Label text="FillPattern" />
                         <ChoiceBox fx:id="fillPatternChooser" />
+                        <ScrollBar fx:id="zoomScrollBar" max="200.0" value="100.0" />
                      </items>
                   </ToolBar>
                </children>

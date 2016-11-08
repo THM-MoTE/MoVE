@@ -104,7 +104,8 @@ class MoveCtrl extends Initializable {
   var fillPatternChooser: ChoiceBox[FillPattern] = _
   @FXML
   var borderThicknessChooser: ChoiceBox[Int] = _
-
+  @FXML
+  var zoomScrollBar: ScrollBar = _
   @FXML
   var shapeTopToolbar: ToolBar = _
   @FXML
@@ -291,6 +292,14 @@ class MoveCtrl extends Initializable {
     drawPanel.setOnMouseDragged(drawHandler)
     drawPanel.setOnMouseClicked(drawHandler)
     drawPanel.setOnMouseReleased(drawHandler)
+
+    // drawStub.setScaleX(0.5)
+    // drawStub.setScaleY(0.5)
+    zoomScrollBar.setOnMouseClicked {ev: MouseEvent =>
+      println("drag done")
+      drawStub.setScaleX(0.8)
+      drawStub.setScaleY(0.8)
+    }
   }
 
   /** Called after the scene is fully-constructed and displayed.
