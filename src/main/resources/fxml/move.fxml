@@ -183,9 +183,9 @@
                         <ChoiceBox fx:id="linePatternChooser" />
                         <Label text="FillPattern" />
                         <ChoiceBox fx:id="fillPatternChooser" />
-                        <Button fx:id="zoomBtnDecrease" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomDecreasePressed" text="zoom -" />
+                        <Button fx:id="zoomBtnDecrease" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomDecreasePressed" styleClass="toolbar-button" text="%fa.zoom.minus" />
                         <Label fx:id="zoomPercentLbl" text="100%" />
-                        <Button fx:id="zoomBtnIncrease" mnemonicParsing="false" onAction="#zoomIncreasePressed" text="zoom +" />
+                        <Button fx:id="zoomBtnIncrease" mnemonicParsing="false" onAction="#zoomIncreasePressed" styleClass="toolbar-button" text="%fa.zoom.plus" />
                      </items>
                   </ToolBar>
                </children>
