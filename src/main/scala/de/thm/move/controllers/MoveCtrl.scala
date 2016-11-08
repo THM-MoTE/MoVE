@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -671,17 +671,13 @@ class MoveCtrl extends Initializable {
   }
   @FXML
   def zoomIncreasePressed(e:ActionEvent): Unit = {
-    println("increase pressed")
     val factor = drawStub.getScaleX() + 0.1
-    println("new factor: "+factor)
     drawStub.setScaleX(factor)
     drawStub.setScaleY(factor)
   }
   @FXML
   def zoomDecreasePressed(e:ActionEvent): Unit = {
-    println("decrease pressed")
     val factor = drawStub.getScaleX() - 0.1
-    println("new factor: "+factor)
     drawStub.setScaleX(factor)
     drawStub.setScaleY(factor)
   }
