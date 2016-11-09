@@ -1,8 +1,10 @@
 import java.lang.System
 
 //include javafx-jar (from java's home directory) in classpath
-unmanagedJars in Compile += Attributed.blank(
-  file(System.getenv("JAVA_HOME")) / "jre" / "lib" / "ext" / "jfxrt.jar")
+unmanagedJars in Compile += {
+  val jhome = Resources.getJavaHome
+  Resources.checkExists(jhome / "lib" / "ext" / "jfxrt.jar")
+}
 
 //fork a process when runnign so that javafx doesn't crash
 fork := true
