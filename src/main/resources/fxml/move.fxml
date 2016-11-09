@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
@@ -184,9 +185,6 @@
                         <ChoiceBox fx:id="linePatternChooser" />
                         <Label text="FillPattern" />
                         <ChoiceBox fx:id="fillPatternChooser" />
-                        <Button fx:id="zoomBtnDecrease" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomDecreasePressed" styleClass="toolbar-button" text="%fa.zoom.minus" />
-                        <Label fx:id="zoomPercentLbl" text="100%" />
-                        <Button fx:id="zoomBtnIncrease" mnemonicParsing="false" onAction="#zoomIncreasePressed" styleClass="toolbar-button" text="%fa.zoom.plus" />
                      </items>
                   </ToolBar>
                </children>
@@ -197,7 +195,7 @@
    <center>
       <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="326.0" prefViewportWidth="445.0">
          <content>
-            <Group>
+            <Group autoSizeChildren="false">
                <children>
                   <StackPane fx:id="drawStub" prefHeight="150.0" prefWidth="200.0" styleClass="draw-stub" BorderPane.alignment="CENTER" />
                </children>
@@ -205,4 +203,13 @@
          </content>
       </ScrollPane>
    </center>
+   <bottom>
+      <ToolBar nodeOrientation="RIGHT_TO_LEFT" BorderPane.alignment="CENTER">
+         <items>
+            <Button fx:id="zoomBtnIncrease" mnemonicParsing="false" onAction="#zoomIncreasePressed" styleClass="toolbar-button" text="%fa.zoom.plus" />
+            <Label fx:id="zoomPercentLbl" text="100%" />
+            <Button fx:id="zoomBtnDecrease" mnemonicParsing="false" onAction="#zoomDecreasePressed" styleClass="toolbar-button" text="%fa.zoom.minus" />
+         </items>
+      </ToolBar>
+   </bottom>
 </BorderPane>
