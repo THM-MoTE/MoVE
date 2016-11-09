@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -196,7 +197,11 @@
    <center>
       <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="326.0" prefViewportWidth="445.0">
          <content>
-            <StackPane fx:id="drawStub" prefHeight="150.0" prefWidth="200.0" styleClass="draw-stub" BorderPane.alignment="CENTER" />
+            <Group>
+               <children>
+                  <StackPane fx:id="drawStub" prefHeight="150.0" prefWidth="200.0" styleClass="draw-stub" BorderPane.alignment="CENTER" />
+               </children>
+            </Group>
          </content>
       </ScrollPane>
    </center>

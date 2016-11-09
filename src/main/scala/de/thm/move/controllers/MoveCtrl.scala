@@ -20,7 +20,7 @@ import javafx.scene.control._
 import javafx.scene.input._
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.scene.{Cursor, Parent, Scene}
+import javafx.scene.{Cursor, Parent, Scene, Group}
 import javafx.stage.Stage
 
 import de.thm.move.Global._
@@ -116,6 +116,8 @@ class MoveCtrl extends Initializable {
   @FXML
   var embeddedTextMenuController: TextToolbarCtrl = _
 
+  @FXML
+  var drawGroup: Group = _
   @FXML
   var drawStub: StackPane = _
   private val drawPanel = new DrawPanel()
@@ -246,6 +248,8 @@ class MoveCtrl extends Initializable {
     enableGridItem.setSelected(snappingFlag)
 
     drawStub.getChildren.addAll(snapGrid, drawPanel)
+    drawPanel.setSize(config.getDouble("drawpane-width").getOrElse(400),
+      config.getDouble("drawpane-height").getOrElse(400))
 
     val sizesList:java.util.List[Int] = (1 until 20).toList
     borderThicknessChooser.setItems(FXCollections.observableArrayList(sizesList))
