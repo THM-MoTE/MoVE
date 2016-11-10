@@ -261,7 +261,6 @@ class MoveCtrl extends Initializable {
     val widths = EventStreams.valuesOf(drawPanel.prefWidthProperty())
     val heights  = EventStreams.valuesOf(drawPanel.prefHeightProperty())
     EventStreams.combine(widths, heights).map[String](FxHandlerImplicits.function { tuple:org.reactfx.util.Tuple2[Number,Number] =>
-      println(s"1: ${tuple._1} 2: ${tuple._2}")
       s"${tuple._1.intValue()} x ${tuple._2.intValue()}"
     }).subscribe { x:String => paperSizeLbl.setText(x) }
 
