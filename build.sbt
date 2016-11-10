@@ -1,5 +1,7 @@
 import java.lang.System
 
+resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/snapshots"
+
 //include javafx-jar (from java's home directory) in classpath
 unmanagedJars in Compile += Attributed.blank(
   file(System.getenv("JAVA_HOME")) / "jre" / "lib" / "ext" / "jfxrt.jar")
@@ -57,7 +59,7 @@ lazy val root = (project in file(".")).
     organization := "thm",
     name := "Move",
     version := "0.7.0",
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.11.8",
     javacOptions ++= Seq("-source", "1.8")
     )
 
@@ -73,4 +75,5 @@ assemblyExcludedJars in assembly := {
 libraryDependencies ++= Seq(
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.4",
-    "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test")
+    "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
+    "org.reactfx" % "reactfx" % "2.0-SNAPSHOT")
