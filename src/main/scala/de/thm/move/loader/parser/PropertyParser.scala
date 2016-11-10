@@ -128,7 +128,7 @@ trait PropertyParser {
     }
 
   def arrow:Parser[(String, String)] =
-    ("{"~> ident <~ ",") ~ ident <~ "}" ^^ { case a1 ~ a2 => (a1,a2) }
+    ("{"~> simpleIdentRegex <~ ",") ~ simpleIdentRegex <~ "}" ^^ { case a1 ~ a2 => (a1,a2) }
 
   def points:Parser[List[Point]] = "{" ~> rep1sep(point, ",") <~ "}"
 
