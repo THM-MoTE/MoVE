@@ -20,12 +20,13 @@ import javafx.scene.control._
 import javafx.scene.input._
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.scene.{Cursor, Parent, Scene, Group}
+import javafx.scene.{Cursor, Group, Parent, Scene}
 import javafx.stage.Stage
 
 import de.thm.move.Global._
 import de.thm.move.config.ValueConfig
 import de.thm.move.controllers.implicits.ConcurrentImplicits._
+import de.thm.move.controllers.implicits.FxHandlerImplicits
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.controllers.implicits.MonadImplicits._
 import de.thm.move.controllers.implicits.LambdaImplicits._
@@ -45,7 +46,6 @@ import de.thm.move.views.shapes.{ResizableShape, ResizableText}
 import scala.None
 import scala.collection.JavaConversions._
 import scala.util._
-
 import org.reactfx.EventStreams
 import org.reactfx.EventStream
 
@@ -54,6 +54,7 @@ class MoveCtrl extends Initializable {
 
   private var rootStage:Stage = _
 
+  //====================== menus
   @FXML
   var newMenuItem: MenuItem = _
   @FXML
@@ -92,6 +93,7 @@ class MoveCtrl extends Initializable {
   var enableGridItem: CheckMenuItem = _
   @FXML
   var btnGroup: ToggleGroup = _
+  //====================== top toolbar's
   @FXML
   var topToolbarStack: StackPane = _
   @FXML
@@ -108,6 +110,9 @@ class MoveCtrl extends Initializable {
   var fillPatternChooser: ChoiceBox[FillPattern] = _
   @FXML
   var borderThicknessChooser: ChoiceBox[Int] = _
+  //====================== bottom toolbar
+  @FXML
+  var paperSizeLbl: Label = _
   @FXML
   var zoomPercentLbl: Label = _
   @FXML
@@ -252,6 +257,14 @@ class MoveCtrl extends Initializable {
     enableGridItem.setSelected(snappingFlag)
 
     drawStub.getChildren.addAll(snapGrid, drawPanel)
+
+    val widths = EventStreams.valuesOf(drawPanel.prefWidthProperty())
+    val heights  = EventStreams.valuesOf(drawPanel.prefHeightProperty())
+    EventStreams.combine(widths, heights).map[String](FxHandlerImplicits.function { tuple:org.reactfx.util.Tuple2[Number,Number] =>
+      println(s"1: ${tuple._1} 2: ${tuple._2}")
+      s"${tuple._1.intValue()} x ${tuple._2.intValue()}"
+    }).subscribe { x:String => paperSizeLbl.setText(x) }
+
     drawPanel.setSize(config.getDouble("drawpane-width").getOrElse(400),
       config.getDouble("drawpane-height").getOrElse(400))
 

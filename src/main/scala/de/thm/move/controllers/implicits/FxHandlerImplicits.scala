@@ -8,7 +8,7 @@
 
 package de.thm.move.controllers.implicits
 
-import java.util.function.Predicate
+import java.util.function.{Predicate, Function => JavaFunction}
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.event.{ActionEvent, EventHandler}
 import javafx.scene.input.{KeyEvent, MouseEvent}
@@ -42,5 +42,9 @@ object FxHandlerImplicits {
 
   implicit def predicate[A](fn: A => Boolean):Predicate[A] = new Predicate[A]() {
     override def test(a:A): Boolean = fn(a)
+  }
+
+  implicit def function[A, B](fn: A => B): JavaFunction[A,B] = new JavaFunction[A,B]() {
+    override def apply(v: A): B = fn(v)
   }
 }
