@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -20,14 +20,16 @@ import javafx.scene.control._
 import javafx.scene.input._
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.scene.{Cursor, Parent, Scene}
+import javafx.scene.{Cursor, Group, Parent, Scene}
 import javafx.stage.Stage
 
 import de.thm.move.Global._
 import de.thm.move.config.ValueConfig
 import de.thm.move.controllers.implicits.ConcurrentImplicits._
+import de.thm.move.controllers.implicits.FxHandlerImplicits
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
 import de.thm.move.controllers.implicits.MonadImplicits._
+import de.thm.move.controllers.implicits.LambdaImplicits._
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.FillPattern._
 import de.thm.move.models.LinePattern._
@@ -44,12 +46,15 @@ import de.thm.move.views.shapes.{ResizableShape, ResizableText}
 import scala.None
 import scala.collection.JavaConversions._
 import scala.util._
+import org.reactfx.EventStreams
+import org.reactfx.EventStream
 
 /** Main-Controller for all menus,buttons, etc. */
 class MoveCtrl extends Initializable {
 
   private var rootStage:Stage = _
 
+  //====================== menus
   @FXML
   var newMenuItem: MenuItem = _
   @FXML
@@ -88,6 +93,7 @@ class MoveCtrl extends Initializable {
   var enableGridItem: CheckMenuItem = _
   @FXML
   var btnGroup: ToggleGroup = _
+  //====================== top toolbar's
   @FXML
   var topToolbarStack: StackPane = _
   @FXML
@@ -104,7 +110,13 @@ class MoveCtrl extends Initializable {
   var fillPatternChooser: ChoiceBox[FillPattern] = _
   @FXML
   var borderThicknessChooser: ChoiceBox[Int] = _
-
+  //====================== bottom toolbar
+  @FXML
+  var paperSizeLbl: Label = _
+  @FXML
+  var zoomPercentLbl: Label = _
+  @FXML
+  var zoomScrollBar: ScrollBar = _
   @FXML
   var shapeTopToolbar: ToolBar = _
   @FXML
@@ -113,6 +125,8 @@ class MoveCtrl extends Initializable {
   @FXML
   var embeddedTextMenuController: TextToolbarCtrl = _
 
+  @FXML
+  var drawGroup: Group = _
   @FXML
   var drawStub: StackPane = _
   private val drawPanel = new DrawPanel()
@@ -244,6 +258,16 @@ class MoveCtrl extends Initializable {
 
     drawStub.getChildren.addAll(snapGrid, drawPanel)
 
+    val widths = EventStreams.valuesOf(drawPanel.prefWidthProperty())
+    val heights  = EventStreams.valuesOf(drawPanel.prefHeightProperty())
+    EventStreams.combine(widths, heights).map[String](FxHandlerImplicits.function { tuple:org.reactfx.util.Tuple2[Number,Number] =>
+      println(s"1: ${tuple._1} 2: ${tuple._2}")
+      s"${tuple._1.intValue()} x ${tuple._2.intValue()}"
+    }).subscribe { x:String => paperSizeLbl.setText(x) }
+
+    drawPanel.setSize(config.getDouble("drawpane-width").getOrElse(400),
+      config.getDouble("drawpane-height").getOrElse(400))
+
     val sizesList:java.util.List[Int] = (1 until 20).toList
     borderThicknessChooser.setItems(FXCollections.observableArrayList(sizesList))
     setupDefaultColors()
@@ -291,6 +315,9 @@ class MoveCtrl extends Initializable {
     drawPanel.setOnMouseDragged(drawHandler)
     drawPanel.setOnMouseClicked(drawHandler)
     drawPanel.setOnMouseReleased(drawHandler)
+
+    zoomPercentLbl.textProperty().bind(
+      drawStub.scaleXProperty().multiply(100).asString("%3.0f%%"))
   }
 
   /** Called after the scene is fully-constructed and displayed.
@@ -305,26 +332,26 @@ class MoveCtrl extends Initializable {
       case (combination, btn) => combination -> fnRunnable(btn.fire)
     }
 
-    //shortcuts that aren't mapped to buttons
+    val pressedStream = EventStreams.eventsOf(drawStub.getScene, KeyEvent.KEY_PRESSED)
+    val releasedStream = EventStreams.eventsOf(drawStub.getScene, KeyEvent.KEY_RELEASED)
+
+      //shortcuts that aren't mapped to buttons
     shortcuts.getKeyCode("draw-constraint").foreach { code =>
-      drawStub.getScene.addEventHandler(KeyEvent.KEY_PRESSED,
-        filteredEventHandler[KeyEvent](_.getCode == code) {
-          drawCtrl.drawConstraintProperty.set(true)
-        })
-      drawStub.getScene.addEventHandler(KeyEvent.KEY_RELEASED,
-        filteredEventHandler[KeyEvent](_.getCode == code) {
-          drawCtrl.drawConstraintProperty.set(false)
-        })
+      pressedStream.
+        filter(byKeyCode(code)).
+        subscribe { drawCtrl.drawConstraintProperty.set(true) }
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe { drawCtrl.drawConstraintProperty.set(false) }
     }
+
     shortcuts.getKeyCode("select-constraint").foreach { code =>
-      drawStub.getScene.addEventHandler(KeyEvent.KEY_PRESSED,
-        filteredEventHandler[KeyEvent](_.getCode == code) {
-          selectionCtrl.addSelectedShapeProperty.set(true)
-        })
-      drawStub.getScene.addEventHandler(KeyEvent.KEY_RELEASED,
-        filteredEventHandler[KeyEvent](_.getCode == code) {
-          selectionCtrl.addSelectedShapeProperty.set(false)
-        })
+      pressedStream.
+        filter(byKeyCode(code)).
+        subscribe { selectionCtrl.addSelectedShapeProperty.set(true) }
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe { selectionCtrl.addSelectedShapeProperty.set(false) }
     }
 
     setupMoveShapesByShortcuts(drawStub.getScene)
@@ -340,29 +367,38 @@ class MoveCtrl extends Initializable {
       getPoint("shortcut-moving-delta-x", "shortcut-moving-delta-y").
       getOrElse((5.0,5.0))
 
+    val releasedStream = EventStreams.eventsOf(scene, KeyEvent.KEY_RELEASED)
     shortcuts.getKeyCode("move-left") foreach { code =>
-      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe {
           val directioned = (deltaX*(-1), 0.0)
           selectionCtrl.move(directioned)
-      })
+        }
     }
     shortcuts.getKeyCode("move-right") foreach { code =>
-      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe {
           val directioned = (deltaX, 0.0)
           selectionCtrl.move(directioned)
-      })
+        }
     }
     shortcuts.getKeyCode("move-up") foreach { code =>
-      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe {
           val directioned = (0.0, deltaY*(-1))
           selectionCtrl.move(directioned)
-      })
+        }
     }
     shortcuts.getKeyCode("move-down") foreach { code =>
-      scene.addEventHandler(KeyEvent.KEY_RELEASED, filteredEventHandler[KeyEvent](_.getCode == code) {
+      releasedStream.
+        filter(byKeyCode(code)).
+        subscribe {
           val directioned = (0.0, deltaY)
           selectionCtrl.move(directioned)
-      })
+        }
     }
   }
 
@@ -662,6 +698,18 @@ class MoveCtrl extends Initializable {
   def onTextClicked(e:ActionEvent): Unit = {
     embeddedTextMenu.toFront()
     drawToolChanged(Cursor.TEXT)
+  }
+  @FXML
+  def zoomIncreasePressed(e:ActionEvent): Unit = {
+    val factor = drawStub.getScaleX() + 0.1
+    drawStub.setScaleX(factor)
+    drawStub.setScaleY(factor)
+  }
+  @FXML
+  def zoomDecreasePressed(e:ActionEvent): Unit = {
+    val factor = drawStub.getScaleX() - 0.1
+    drawStub.setScaleX(factor)
+    drawStub.setScaleY(factor)
   }
 
   private def getStrokeColor: Color = strokeColorPicker.getValue

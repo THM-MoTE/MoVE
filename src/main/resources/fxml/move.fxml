@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ColorPicker?>
@@ -18,7 +24,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.MoveCtrl">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.MoveCtrl">
    <left>
       <ToolBar orientation="VERTICAL" BorderPane.alignment="CENTER">
         <items>
@@ -189,8 +195,22 @@
    <center>
       <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="326.0" prefViewportWidth="445.0">
          <content>
-            <StackPane fx:id="drawStub" prefHeight="150.0" prefWidth="200.0" styleClass="draw-stub" BorderPane.alignment="CENTER" />
+            <Group autoSizeChildren="false">
+               <children>
+                  <StackPane fx:id="drawStub" prefHeight="150.0" prefWidth="200.0" styleClass="draw-stub" BorderPane.alignment="CENTER" />
+               </children>
+            </Group>
          </content>
       </ScrollPane>
    </center>
+   <bottom>
+      <ToolBar nodeOrientation="RIGHT_TO_LEFT" BorderPane.alignment="CENTER">
+         <items>
+            <Button fx:id="zoomBtnIncrease" mnemonicParsing="false" onAction="#zoomIncreasePressed" styleClass="toolbar-button" text="%fa.zoom.plus" />
+            <Label fx:id="zoomPercentLbl" text="100%" />
+            <Button fx:id="zoomBtnDecrease" mnemonicParsing="false" onAction="#zoomDecreasePressed" styleClass="toolbar-button" text="%fa.zoom.minus" />
+            <Label fx:id="paperSizeLbl" text="psize" />
+         </items>
+      </ToolBar>
+   </bottom>
 </BorderPane>
