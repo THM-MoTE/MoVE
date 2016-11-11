@@ -116,8 +116,6 @@ class MoveCtrl extends Initializable {
   @FXML
   var zoomPercentLbl: Label = _
   @FXML
-  var zoomScrollBar: ScrollBar = _
-  @FXML
   var shapeTopToolbar: ToolBar = _
   @FXML
   var embeddedTextMenu: Parent = _
@@ -125,8 +123,6 @@ class MoveCtrl extends Initializable {
   @FXML
   var embeddedTextMenuController: TextToolbarCtrl = _
 
-  @FXML
-  var drawGroup: Group = _
   @FXML
   var drawStub: StackPane = _
   private val drawPanel = new DrawPanel()
@@ -161,8 +157,9 @@ class MoveCtrl extends Initializable {
     * '''! Ensure that this field is initialized AFTER all fields are initiazlized !'''
     */
   private lazy val keyCodeToButtons = {
-    val buttons = btnGroup.getToggles.map(_.asInstanceOf[ToggleButton])
-    def getButtonById(id:String): Option[ToggleButton] = {
+    val buttons =
+      btnGroup.getToggles.map(_.asInstanceOf[ButtonBase])
+    def getButtonById(id:String): Option[ButtonBase] = {
       buttons.find(_.getId == id)
     }
 
