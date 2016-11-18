@@ -96,27 +96,13 @@ class MoveCtrl extends Initializable {
   //====================== top toolbar's
   @FXML
   var topToolbarStack: StackPane = _
-  @FXML
-  var strokeColorLabel: Label = _
-  @FXML
-  var fillColorPicker: ColorPicker = _
-  @FXML
-  var fillColorLabel: Label = _
-  @FXML
-  var strokeColorPicker: ColorPicker = _
-  @FXML
-  var linePatternChooser: ChoiceBox[LinePattern] = _
-  @FXML
-  var fillPatternChooser: ChoiceBox[FillPattern] = _
-  @FXML
-  var borderThicknessChooser: ChoiceBox[Int] = _
   //====================== bottom toolbar
   @FXML
   var paperSizeLbl: Label = _
   @FXML
   var zoomPercentLbl: Label = _
   @FXML
-  var shapeTopToolbar: ToolBar = _
+  var embeddedColorToolbar: ToolBar = _
   @FXML
   var embeddedTextMenu: Parent = _
   @FXML
@@ -124,6 +110,8 @@ class MoveCtrl extends Initializable {
 
   @FXML
   var embeddedTextMenuController: TextToolbarCtrl = _
+  @FXML
+  var embeddedColorToolbarController: ColorToolbarCtrl = _
 
   @FXML
   var drawStub: StackPane = _
@@ -139,9 +127,6 @@ class MoveCtrl extends Initializable {
   private val (aboutStage, _) = AboutCtrl.setupAboutDialog()
   private lazy val fileCtrl = new FileCtrl(getWindow)
   private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
-
-  private val fillColorConfig = new ValueConfig(fillColorConfigURI)
-  private val strokeColorConfig = new ValueConfig(strokeColorConfigURI)
 
   private val moveHandler = selectionCtrl.getMoveHandler
 
@@ -194,35 +179,6 @@ class MoveCtrl extends Initializable {
       }
     }
 
-    /*Setup default colors for fill-,strokeChooser & strokeWidth*/
-    private def setupDefaultColors(): Unit = {
-      val fillColor = ResourceUtils.asColor("colorChooser.fillColor").getOrElse(Color.BLACK)
-      val strokeColor = ResourceUtils.asColor("colorChooser.strokeColor").getOrElse(Color.BLACK)
-      val width = config.getInt("colorChooser.strokeWidth").getOrElse(1)
-
-      fillColorPicker.setValue(fillColor)
-      strokeColorPicker.setValue(strokeColor)
-      borderThicknessChooser.setValue(width)
-
-      //setup custom colors
-      fillColorPicker.getCustomColors.addAll(fillColorConfig.getConvertedValues:_*)
-      strokeColorPicker.getCustomColors.addAll(strokeColorConfig.getConvertedValues:_*)
-
-      val colorChangedHandler: ValueConfig => ListChangeListener[Color] = conf => new ListChangeListener[Color] {
-        override def onChanged(change: Change[_ <: Color]): Unit = {
-          while(change.next) {
-            if(change.wasAdded)
-              change.getAddedSubList.foreach(x => conf.setUniqueValue(x.toString))
-            else if(change.wasRemoved)
-              change.getRemoved.foreach(x => conf.removeValue(x.toString))
-          }
-        }
-      }
-
-      fillColorPicker.getCustomColors.addListener(colorChangedHandler(fillColorConfig))
-      strokeColorPicker.getCustomColors.addListener(colorChangedHandler(strokeColorConfig))
-    }
-
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     setupShortcuts(
       "new" -> newMenuItem,
@@ -245,6 +201,7 @@ class MoveCtrl extends Initializable {
       "enable-snapping" -> enableGridItem)
 
     embeddedTextMenuController.setSelectedShapeCtrl(selectionCtrl)
+    embeddedColorToolbarController.postInitialize(selectionCtrl)
 
     //only show the grid if it's enabled
     val visibleFlag = config.getBoolean("grid-visibility").getOrElse(true)
@@ -267,17 +224,6 @@ class MoveCtrl extends Initializable {
     drawPanel.setSize(config.getDouble("drawpane-width").getOrElse(400),
       config.getDouble("drawpane-height").getOrElse(400))
 
-    val sizesList:java.util.List[Int] = (1 until 20).toList
-    borderThicknessChooser.setItems(FXCollections.observableArrayList(sizesList))
-    setupDefaultColors()
-
-    val linePatterns = LinePattern.values.toList
-    linePatternChooser.setItems(FXCollections.observableList(linePatterns))
-    linePatternChooser.setValue(LinePattern.Solid)
-
-    val fillPatterns = FillPattern.values.toList
-    fillPatternChooser.setItems(FXCollections.observableList(fillPatterns))
-    fillPatternChooser.setValue(FillPattern.Solid)
 
     val handler = drawCtrl.getDrawHandler
     val groupHandler = selectionCtrl.getGroupSelectionHandler
@@ -293,22 +239,14 @@ class MoveCtrl extends Initializable {
           }
         case Some(shape) =>
           selectionCtrl.unselectShapes()
-          handler(shape, mouseEvent)(getFillColor, getStrokeColor, selectedThickness)
+          handler(shape, mouseEvent)(embeddedColorToolbarController.getFillColor,
+                                     embeddedColorToolbarController.getStrokeColor,
+                                     embeddedColorToolbarController.selectedThickness)
         case _ if mouseEvent.getSource == drawPanel =>
           groupHandler(mouseEvent)
         case _ => //ignore
       }
     }
-
-    //add eventhandlers
-    fillColorPicker.setOnAction(colorPickerChanged _)
-    strokeColorPicker.setOnAction(colorPickerChanged _)
-
-    onChoiceboxChanged(borderThicknessChooser)(
-      selectionCtrl.setStrokeWidth)
-    onChoiceboxChanged(linePatternChooser)(
-      selectionCtrl.setStrokePattern)
-    onChoiceboxChanged(fillPatternChooser)(selectionCtrl.setFillPattern)
 
     drawPanel.setOnMousePressed(drawHandler)
     drawPanel.setOnMouseDragged(drawHandler)
@@ -402,30 +340,7 @@ class MoveCtrl extends Initializable {
   }
 
   def shutdownMove(): Unit = {
-    fillColorConfig.saveConfig()
-    strokeColorConfig.saveConfig()
-  }
-
-  /** Checks that the color has a valid opacity and if not warns the user. */
-  private def withCheckedColor(c:Color): Color = {
-    val opacity = c.getOpacity()
-    val opacityPc = opacity*100
-    if(opacity != 1.0 && opacity != 0.0) {
-      Dialogs.newWarnDialog(
-        f"The given color has a opacity of $opacityPc%2.0f which modelica can't display.\n"+
-        "Colors in modelica can have 2 opacitys: either 100% or 0%"
-      ).showAndWait()
-    }
-
-    c
-  }
-
-  def colorPickerChanged(ae:ActionEvent): Unit = {
-    val src = ae.getSource
-    if(src == strokeColorPicker)
-      selectionCtrl.setStrokeColor(withCheckedColor(strokeColorPicker.getValue))
-    else if(src == fillColorPicker)
-      selectionCtrl.setFillColor(withCheckedColor(fillColorPicker.getValue))
+    embeddedColorToolbarController.shutdown()
   }
 
   def shapeInputHandler(ev:InputEvent): Unit = {
@@ -440,7 +355,7 @@ class MoveCtrl extends Initializable {
           mv.getSource() match {
             case s:ResizableShape =>
               if(s.isInstanceOf[ResizableText]) embeddedTextMenu.toFront()
-              else shapeTopToolbar.toFront()
+              else embeddedColorToolbar.toFront()
 
               withResizableElement(s) { resizable =>
                 selectionCtrl.setSelectedShape(resizable)
@@ -675,7 +590,7 @@ class MoveCtrl extends Initializable {
   }
 
   private def onDrawShape: Unit = {
-    shapeTopToolbar.toFront()
+    embeddedColorToolbar.toFront()
     drawToolChanged(Cursor.CROSSHAIR)
   }
 
@@ -711,9 +626,6 @@ class MoveCtrl extends Initializable {
     drawStub.setScaleY(factor)
   }
 
-  private def getStrokeColor: Color = strokeColorPicker.getValue
-  private def getFillColor: Color = fillColorPicker.getValue
-  private def selectedThickness: Int = borderThicknessChooser.getSelectionModel.getSelectedItem
   private def setDrawingCursor(c:Cursor): Unit = drawPanel.setCursor(c)
   private def getWindow = drawPanel.getScene.getWindow
   private def showAnchorsSelected: Boolean = showAnchorsItem.isSelected
