@@ -191,13 +191,6 @@
       </ScrollPane>
    </center>
    <bottom>
-      <ToolBar fx:id="bottomToolbar" nodeOrientation="RIGHT_TO_LEFT" BorderPane.alignment="CENTER">
-         <items>
-            <Button fx:id="zoomBtnIncrease" mnemonicParsing="false" onAction="#zoomIncreasePressed" styleClass="toolbar-button" text="%fa.zoom.plus" />
-            <Label fx:id="zoomPercentLbl" text="100%" />
-            <Button fx:id="zoomBtnDecrease" mnemonicParsing="false" onAction="#zoomDecreasePressed" styleClass="toolbar-button" text="%fa.zoom.minus" />
-            <Label fx:id="paperSizeLbl" text="psize" />
-         </items>
-      </ToolBar>
+       <fx:include fx:id="embeddedBottomToolbar" source="bottomToolbar.fxml" BorderPane.alignment="CENTER"/>
    </bottom>
 </BorderPane>
