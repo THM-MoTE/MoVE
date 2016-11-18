@@ -96,22 +96,19 @@ class MoveCtrl extends Initializable {
   //====================== top toolbar's
   @FXML
   var topToolbarStack: StackPane = _
-  //====================== bottom toolbar
-  @FXML
-  var paperSizeLbl: Label = _
-  @FXML
-  var zoomPercentLbl: Label = _
   @FXML
   var embeddedColorToolbar: ToolBar = _
   @FXML
   var embeddedTextMenu: Parent = _
   @FXML
-  var bottomToolbar: ToolBar = _
-
+  var embeddedBottomToolbar: ToolBar = _
+  //====================== bottom toolbar
   @FXML
   var embeddedTextMenuController: TextToolbarCtrl = _
   @FXML
   var embeddedColorToolbarController: ColorToolbarCtrl = _
+  @FXML
+  var embeddedBottomToolbarController: BottomToolbarCtrl = _
 
   @FXML
   var drawStub: StackPane = _
@@ -145,7 +142,7 @@ class MoveCtrl extends Initializable {
     */
   private lazy val keyCodeToButtons = {
     val buttons =
-      bottomToolbar.getItems.collect { case x:ButtonBase => x } ++
+      embeddedBottomToolbar.getItems.collect { case x:ButtonBase => x } ++
       btnGroup.getToggles.map(_.asInstanceOf[ButtonBase])
     def getButtonById(id:String): Option[ButtonBase] = {
       buttons.find(_.getId == id)
@@ -202,6 +199,9 @@ class MoveCtrl extends Initializable {
 
     embeddedTextMenuController.setSelectedShapeCtrl(selectionCtrl)
     embeddedColorToolbarController.postInitialize(selectionCtrl)
+    embeddedBottomToolbarController.postInitialize(drawStub)
+    embeddedBottomToolbarController.paperWidthProperty.bind(drawPanel.prefWidthProperty())
+    embeddedBottomToolbarController.paperHeightProperty.bind(drawPanel.prefHeightProperty())
 
     //only show the grid if it's enabled
     val visibleFlag = config.getBoolean("grid-visibility").getOrElse(true)
@@ -214,12 +214,6 @@ class MoveCtrl extends Initializable {
     enableGridItem.setSelected(snappingFlag)
 
     drawStub.getChildren.addAll(snapGrid, drawPanel)
-
-    val widths = EventStreams.valuesOf(drawPanel.prefWidthProperty())
-    val heights  = EventStreams.valuesOf(drawPanel.prefHeightProperty())
-    EventStreams.combine(widths, heights).map[String](FxHandlerImplicits.function { tuple:org.reactfx.util.Tuple2[Number,Number] =>
-      s"${tuple._1.intValue()} x ${tuple._2.intValue()}"
-    }).subscribe { x:String => paperSizeLbl.setText(x) }
 
     drawPanel.setSize(config.getDouble("drawpane-width").getOrElse(400),
       config.getDouble("drawpane-height").getOrElse(400))
@@ -252,9 +246,6 @@ class MoveCtrl extends Initializable {
     drawPanel.setOnMouseDragged(drawHandler)
     drawPanel.setOnMouseClicked(drawHandler)
     drawPanel.setOnMouseReleased(drawHandler)
-
-    zoomPercentLbl.textProperty().bind(
-      drawStub.scaleXProperty().multiply(100).asString("%3.0f%%"))
   }
 
   /** Called after the scene is fully-constructed and displayed.
@@ -612,18 +603,6 @@ class MoveCtrl extends Initializable {
   def onTextClicked(e:ActionEvent): Unit = {
     embeddedTextMenu.toFront()
     drawToolChanged(Cursor.TEXT)
-  }
-  @FXML
-  def zoomIncreasePressed(e:ActionEvent): Unit = {
-    val factor = drawStub.getScaleX() + 0.1
-    drawStub.setScaleX(factor)
-    drawStub.setScaleY(factor)
-  }
-  @FXML
-  def zoomDecreasePressed(e:ActionEvent): Unit = {
-    val factor = drawStub.getScaleX() - 0.1
-    drawStub.setScaleX(factor)
-    drawStub.setScaleY(factor)
   }
 
   private def setDrawingCursor(c:Cursor): Unit = drawPanel.setCursor(c)
