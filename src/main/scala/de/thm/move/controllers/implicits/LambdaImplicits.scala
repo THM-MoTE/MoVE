@@ -10,6 +10,7 @@ package de.thm.move.controllers.implicits
 
 import java.util.function._
 import scala.language.implicitConversions
+import javafx.util.Callback
 
 object LambdaImplicits {
   implicit def function[A,B](f: A => B): Function[A,B] = new Function[A,B] {
@@ -25,5 +26,9 @@ object LambdaImplicits {
   }
   implicit def consumer[A](f:  => Unit): Consumer[A] = new Consumer[A] {
     override def accept(a:A): Unit = f
+  }
+  
+  implicit def callback[A, B](f: A => B):Callback[A,B] = new Callback[A,B] {
+    override def call(param: A): B = f(param)
   }
 }
