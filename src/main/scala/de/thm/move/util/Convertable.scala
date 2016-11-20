@@ -16,8 +16,16 @@ trait Convertable[From, To] {
   def convert(f: From):To
 }
 
+/** A marshaller is basically a converter for both directions: encoding and decoding. */
+trait Marshaller[From, To] extends Convertable[From, To] {
+  override final def convert(f:From): To = encode(f)
+  def encode(from:From): To
+  def decode(to:To): From
+}
+
 /** Converter for String-objects */
 trait StringConverter[A] extends Convertable[String,A]
+trait StringMarshaller[A] extends Marshaller[String,A]
 
 object Convertable {
   /** Converts a string into it's color representation */
