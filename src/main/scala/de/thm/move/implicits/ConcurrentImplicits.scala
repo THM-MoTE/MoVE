@@ -6,15 +6,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package de.thm.move.controllers.implicits
-
-import java.util.Optional
+package de.thm.move.implicits
 
 import scala.language.implicitConversions
 
-object MonadImplicits {
-  implicit def asOption[T](opt : Optional[T]): Option[T] = {
-    if(opt.isPresent) Some(opt.get)
-    else None
+object ConcurrentImplicits {
+  implicit def fnRunnable[A](fn:  => A): Runnable = new Runnable() {
+    override def run(): Unit = fn
   }
 }

@@ -17,7 +17,7 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Font
 
 import de.thm.move.controllers.factorys.ShapeFactory
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._

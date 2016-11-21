@@ -9,7 +9,7 @@
 package de.thm.move.views.shapes
 
 import de.thm.move.Global._
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.util.JFxUtils._

@@ -4,7 +4,7 @@ import javafx.scene.control.Dialog
 import de.thm.move.util.converters.StringConverter
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
-import de.thm.move.controllers.implicits.LambdaImplicits._
+import de.thm.move.implicits.LambdaImplicits._
 import de.thm.move.util.converters.StringMarshaller
 import de.thm.move.util.converters.Marshaller._
 import javafx.scene.layout.GridPane

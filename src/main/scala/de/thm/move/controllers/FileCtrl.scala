@@ -17,7 +17,7 @@ import javafx.stage.Window
 import javax.imageio.ImageIO
 
 import de.thm.move.Global._
-import de.thm.move.controllers.implicits.MonadImplicits._
+import de.thm.move.implicits.MonadImplicits._
 import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
 import de.thm.move.loader.parser.ast.Model

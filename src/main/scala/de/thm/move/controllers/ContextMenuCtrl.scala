@@ -17,7 +17,7 @@ import javafx.scene.image.Image
 import javafx.scene.input.{MouseButton, MouseEvent}
 
 import de.thm.move.Global._
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.views.ShapeContextMenu
 import de.thm.move.views.panes.DrawPanel
 import de.thm.move.views.shapes._

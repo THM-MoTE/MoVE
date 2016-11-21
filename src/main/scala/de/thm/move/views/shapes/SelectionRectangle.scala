@@ -12,7 +12,7 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Bounds
 import javafx.scene.shape.Rectangle
 
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 
 /** A rectangle that highlights the underlying shape by drawing a dotted-line around the underlying shape. */
 class SelectionRectangle(selectedShape:ResizableShape) extends Rectangle {

@@ -14,7 +14,7 @@ import javafx.scene.control._
 import javafx.scene.layout.{GridPane, Priority}
 import javafx.stage.FileChooser
 
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.util.converters.StringMarshaller
 
 object Dialogs {

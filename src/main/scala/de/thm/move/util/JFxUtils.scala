@@ -14,7 +14,7 @@ import javafx.scene.Node
 import javafx.scene.control.ChoiceBox
 import javafx.scene.input.{KeyEvent, KeyCode}
 
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.shapes.{MovableShape, ResizableShape}
 

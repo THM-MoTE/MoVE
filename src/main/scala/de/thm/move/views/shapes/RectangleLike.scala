@@ -16,7 +16,7 @@ import javafx.scene.shape.{Circle, Ellipse}
 import javafx.scene.transform.Affine
 
 import de.thm.move.Global._
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.models.CommonTypes._

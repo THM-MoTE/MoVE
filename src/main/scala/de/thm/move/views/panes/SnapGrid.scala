@@ -13,7 +13,7 @@ import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Line
 
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.util.GeometryUtils
 
 /** Creates a new grid with the size of the given topPane.

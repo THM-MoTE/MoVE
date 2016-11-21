@@ -25,11 +25,11 @@ import javafx.stage.Stage
 
 import de.thm.move.Global._
 import de.thm.move.config.ValueConfig
-import de.thm.move.controllers.implicits.ConcurrentImplicits._
-import de.thm.move.controllers.implicits.FxHandlerImplicits
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
-import de.thm.move.controllers.implicits.MonadImplicits._
-import de.thm.move.controllers.implicits.LambdaImplicits._
+import de.thm.move.implicits.ConcurrentImplicits._
+import de.thm.move.implicits.FxHandlerImplicits
+import de.thm.move.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.MonadImplicits._
+import de.thm.move.implicits.LambdaImplicits._
 import de.thm.move.models.CommonTypes._
 import de.thm.move.models.FillPattern._
 import de.thm.move.models.LinePattern._
