@@ -27,6 +27,13 @@ trait Marshaller[From, To] extends Convertable[From, To] {
 trait StringConverter[A] extends Convertable[String,A]
 trait StringMarshaller[A] extends Marshaller[String,A]
 
+object Marshaller {
+  implicit object StringIntMarshaller extends StringMarshaller[Int] {
+    override def encode(from: String): Int = from.toInt
+    override def decode(to: Int): String = to.toString
+  }
+}
+
 object Convertable {
   /** Converts a string into it's color representation */
   implicit object StringToColor extends StringConverter[Color] {
