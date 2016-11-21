@@ -35,7 +35,7 @@ import de.thm.move.models.FillPattern._
 import de.thm.move.models.LinePattern._
 import de.thm.move.models.SelectedShape.SelectedShape
 import de.thm.move.models._
-import de.thm.move.util.Convertable._
+import de.thm.move.util.converters.Convertable._
 import de.thm.move.util.JFxUtils._
 import de.thm.move.util.ResourceUtils
 import de.thm.move.views.anchors.Anchor

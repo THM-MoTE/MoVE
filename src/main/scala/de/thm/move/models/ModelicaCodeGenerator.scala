@@ -20,9 +20,9 @@ import de.thm.move.Global._
 import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
-import de.thm.move.util.Convertable._
+import de.thm.move.util.converters.Convertable
 import de.thm.move.util.PointUtils._
-import de.thm.move.util.{Convertable, GeometryUtils, ResourceUtils}
+import de.thm.move.util.{GeometryUtils, ResourceUtils}
 import de.thm.move.views.shapes._
 
 /** Codegenerator for modelica-source code.

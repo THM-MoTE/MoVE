@@ -13,7 +13,7 @@ import java.nio.charset.Charset
 import java.nio.file.{Files, Paths}
 
 import de.thm.move.Global
-import de.thm.move.util.Convertable
+import de.thm.move.util.converters.Convertable
 
 import scala.collection._
 import scala.io.Source
