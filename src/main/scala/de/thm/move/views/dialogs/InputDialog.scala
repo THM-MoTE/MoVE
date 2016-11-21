@@ -10,10 +10,12 @@ import javafx.scene.layout.GridPane
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonBar.ButtonData
-
 import scala.collection.JavaConverters._
+import de.thm.move.Global
 
 class InputDialog[A: StringMarshaller](names:(String, Option[A])*) extends Dialog[List[A]] {
+  //setup css
+  getDialogPane.getStylesheets.add(Global.styleSheetUrl)
   //get the marshaller & setup labels, textfields
   private val marshaller = implicitly[StringMarshaller[A]]
   private val inputList =
