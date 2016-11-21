@@ -471,13 +471,10 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onChPaperSizeClicked(e:ActionEvent): Unit = {
-    val strOpt:Option[String] = Dialogs.newPaperSizeDialog(drawPanel.getWidth, drawPanel.getHeight).showAndWait()
-    strOpt.flatMap { x =>
+    val strOpt:Option[List[Double]] = Dialogs.newPaperSizeDialog(drawPanel.getWidth, drawPanel.getHeight).showAndWait()
+    strOpt.flatMap { xs =>
       try {
-        val ar = x.split(";")
-        val width = ar(0).toDouble
-        val height = ar(1).toDouble
-        Some((width,height))
+        Some(xs.head, xs(1))
       } catch {
         case _:NumberFormatException => None
         case _:IndexOutOfBoundsException => None

@@ -67,30 +67,10 @@ object Dialogs {
     dialog
   }
 
-  def newPaperSizeDialog(width:Double,height:Double): TextInputDialog = {
-    val dialog = new TextInputDialog()
+  def newPaperSizeDialog(width:Double,height:Double)(implicit marshaller:StringMarshaller[Double]): InputDialog[Double] = {
+    val dialog = new InputDialog("width" -> Some(width), "height" -> Some(height))
     dialog.setTitle("Paper size")
     dialog.setHeaderText("Give a paper size in px")
-
-    val widthLbl = new Label("Width in px:")
-    val heightLbl= new Label("Height in px:")
-
-    val widthTxt = new TextField(width.toString)
-    val heightTxt = new TextField(height.toString)
-
-    val pane = new GridPane()
-    pane.setMaxWidth(Double.MaxValue)
-    pane.setHgap(5)
-    pane.setVgap(5)
-    pane.add(widthLbl, 0,0)
-    pane.add(widthTxt, 1,0)
-    pane.add(heightLbl, 0,1)
-    pane.add(heightTxt, 1,1)
-    dialog.getDialogPane.setContent(pane)
-    dialog.setOnCloseRequest { _:DialogEvent =>
-      val str = widthTxt.getText +";"+ heightTxt.getText
-      dialog.setResult(str)
-    }
     dialog
   }
 
