@@ -491,10 +491,10 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onChGridSizeClicked(e:ActionEvent): Unit = {
-    val strOpt:Option[String] = Dialogs.newGridSizeDialog(snapGrid.cellSize).showAndWait()
+    val strOpt:Option[List[Int]] = Dialogs.newGridSizeDialog(snapGrid.cellSize).showAndWait()
     strOpt.flatMap { x =>
       try {
-        Some(x.toInt)
+        Some(x.head)
       } catch {
         case _:NumberFormatException => None
       }
