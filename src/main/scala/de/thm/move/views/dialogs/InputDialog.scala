@@ -13,6 +13,11 @@ import javafx.scene.control.ButtonBar.ButtonData
 import scala.collection.JavaConverters._
 import de.thm.move.Global
 
+/** A dialog that asks the user for values for the given `names` and converts user's input using
+ *  the implicitly given Marshaller. The marshaller marshals `String => A` and `A => String`.
+ *  
+ *  The result is a dialog which returns a `List[A]`.
+ */
 class InputDialog[A: StringMarshaller](names:(String, Option[A])*) extends Dialog[List[A]] {
   //setup css
   getDialogPane.getStylesheets.add(Global.styleSheetUrl)
