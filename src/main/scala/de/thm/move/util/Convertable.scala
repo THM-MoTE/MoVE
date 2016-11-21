@@ -32,6 +32,10 @@ object Marshaller {
     override def encode(from: String): Int = from.toInt
     override def decode(to: Int): String = to.toString
   }
+  implicit object StringDoubleMarshaller extends StringMarshaller[Double] {
+    override def encode(from: String): Double = from.toDouble
+    override def decode(to: Double): String = to.toString
+  }
 }
 
 object Convertable {
