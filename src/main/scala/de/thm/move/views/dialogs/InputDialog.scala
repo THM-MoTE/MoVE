@@ -8,6 +8,10 @@ import de.thm.move.controllers.implicits.LambdaImplicits._
 import de.thm.move.util.StringMarshaller
 import javafx.scene.layout.GridPane
 import javafx.scene.control.ButtonType
+import javafx.scene.control.Button
+import javafx.scene.control.ButtonBar.ButtonData
+
+import scala.collection.JavaConverters._
 
 class InputDialog[A: StringMarshaller](names:(String, Option[A])*) extends Dialog[List[A]] {
   //get the marshaller & setup labels, textfields
@@ -20,7 +24,10 @@ class InputDialog[A: StringMarshaller](names:(String, Option[A])*) extends Dialo
       txtField.getStyleClass.add("inputdialog-field")
       lbl -> txtField
     }
-  
+
+  private val btns = List(new ButtonType("OK", ButtonData.OK_DONE), new ButtonType("Cancel", ButtonData.CANCEL_CLOSE))
+  getDialogPane.getButtonTypes().addAll(btns.asJava)
+
   //setup pane
   val pane = new GridPane()
   pane.setMaxWidth(Double.MaxValue)

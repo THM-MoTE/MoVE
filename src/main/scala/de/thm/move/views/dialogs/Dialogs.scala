@@ -15,6 +15,7 @@ import javafx.scene.layout.{GridPane, Priority}
 import javafx.stage.FileChooser
 
 import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.util.StringMarshaller
 
 object Dialogs {
 
@@ -58,8 +59,8 @@ object Dialogs {
     alert
   }
 
-  def newScaleDialog(): TextInputDialog = {
-    val dialog = new TextInputDialog("1")
+  def newScaleDialog()(implicit marshaller:StringMarshaller[Int]): InputDialog[Int] = {
+    val dialog = new InputDialog("scale factor" -> Some(1))
     dialog.setTitle("Scale factor")
     dialog.setHeaderText("Give a scale factor in px/mm")
     dialog.setContentText("Please enter a valid scale factor between 1 and 100 (default=1):")

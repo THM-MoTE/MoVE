@@ -25,6 +25,7 @@ import de.thm.move.models.CommonTypes.Point
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.{ModelicaCodeGenerator, SrcFile, SvgCodeGenerator, UserInputException}
 import de.thm.move.util.PointUtils._
+import de.thm.move.util.Marshaller._
 import de.thm.move.views.dialogs.{Dialogs, ExternalChangesDialog, SrcFormatDialog}
 import de.thm.move.views.shapes.ResizableShape
 
@@ -55,8 +56,8 @@ class FileCtrl(owner: Window) {
 
   private def showScaleDialog(): Try[Int] = {
     val dialog = Dialogs.newScaleDialog()
-    val scaleOp:Option[String] = dialog.showAndWait()
-    scaleOp.map(_.toInt).
+    val scaleOp:Option[List[Int]] = dialog.showAndWait()
+    scaleOp.map(_.head).
     filter(x => x>=minScaleFactor && x<=maxScaleFactor) match {
       case Some(x) => Success(x)
       case _ => Failure(UserInputException("Specify a valid scale-factor between 1 and 100!"))
