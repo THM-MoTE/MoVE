@@ -11,11 +11,12 @@ package de.thm.move
 import java.net.URL
 import java.nio.charset.Charset
 import java.nio.file.{Files, Path, Paths}
-import java.util.ResourceBundle
+import java.util.{Locale, ResourceBundle}
 
 import de.thm.move.config.{Config, ConfigLoader}
 import de.thm.move.history.History
 import de.thm.move.shortcuts.ShortCutHandler
+import de.thm.move.util.CustomResourceBundle
 
 object Global {
 
@@ -62,7 +63,7 @@ object Global {
 
   lazy val licenseFile = "/LICENSE"
 
-  lazy val fontBoundle = ResourceBundle.getBundle("fonts/fontawesome")
+  lazy val fontBundle = new CustomResourceBundle(List("fonts/fontawesome", "i18n/messages"), Locale.getDefault)
   lazy val styleSheetUrl = MoveApp.getClass.getResource("/stylesheets/style.css").toExternalForm
 
   lazy val licenseString =

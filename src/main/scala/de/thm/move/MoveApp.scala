@@ -48,8 +48,7 @@ class MoveApp extends Application {
     val windowHeight = Global.config.getDouble("window.height").getOrElse(600.0)
 
     val fxmlLoader = new FXMLLoader(MoveApp.getClass.getResource("/fxml/move.fxml"))
-
-    fxmlLoader.setResources(Global.fontBoundle)
+    fxmlLoader.setResources(Global.fontBundle)
     val mainViewRoot: Parent = fxmlLoader.load()
     val scene = new Scene(mainViewRoot)
     scene.getStylesheets.add(Global.styleSheetUrl)
