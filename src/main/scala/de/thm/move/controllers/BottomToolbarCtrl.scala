@@ -9,8 +9,8 @@ import javafx.scene.{Node, Parent}
 import javafx.scene.control.{Label, ToolBar}
 import javafx.scene.layout.Pane
 
-import de.thm.move.controllers.implicits.LambdaImplicits._
-import de.thm.move.controllers.implicits.FxHandlerImplicits
+import de.thm.move.implicits.LambdaImplicits._
+import de.thm.move.implicits.FxHandlerImplicits
 import org.reactfx.EventStreams
 
 class BottomToolbarCtrl extends Initializable {
