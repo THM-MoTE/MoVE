@@ -39,19 +39,19 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
 
     underlyingElement match {
       case polygon:QuadCurveTransformable =>
-        val becierItem = new MenuItem("Smooth")
+        val becierItem = new MenuItem(fontBundle.getString("context.smooth"))
         becierItem.setOnAction(onBecierPressed(polygon) _)
         menu.getItems.addAll(new SeparatorMenuItem(), becierItem)
       case curved:AbstractQuadCurveShape =>
-        val polygonItem = new MenuItem("Unsmooth")
+        val polygonItem = new MenuItem(fontBundle.getString("context.unsmooth"))
         polygonItem.setOnAction(onUnsmoothPressed(curved) _)
         menu.getItems.addAll(new SeparatorMenuItem(), polygonItem)
       case img:ResizableImage if img.srcEither.isLeft =>
-        val encodeBase64Item = new MenuItem("Encode as Base64")
+        val encodeBase64Item = new MenuItem(fontBundle.getString("context.encode-base64"))
         encodeBase64Item.setOnAction(onEncodePressed(img) _)
         menu.getItems.add(encodeBase64Item)
       case txt:ResizableText =>
-        val editItem = new MenuItem("Edit text")
+        val editItem = new MenuItem(fontBundle.getString("context.edit-text"))
         editItem.setOnAction(onEditText(txt) _)
         menu.getItems.add(editItem)
       case _ => //ignore
