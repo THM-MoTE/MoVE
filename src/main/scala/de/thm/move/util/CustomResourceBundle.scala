@@ -4,8 +4,8 @@ import java.util
 import java.util.{Locale, ResourceBundle}
 import scala.collection.JavaConverters._
 
-class CustomResourceBundle(files:List[String], local:Locale) extends ResourceBundle {
-  val bundles = for(file <- files) yield ResourceBundle.getBundle(file)
+class CustomResourceBundle(files:List[String], locale:Locale) extends ResourceBundle {
+  val bundles = for(file <- files) yield ResourceBundle.getBundle(file, locale)
 
   override def getKeys: util.Enumeration[String] = {
     val keyList = bundles.flatMap { x => x.keySet().asScala }
