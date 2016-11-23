@@ -33,42 +33,42 @@
                   <ToggleGroup fx:id="btnGroup" />
                </toggleGroup>
                <tooltip>
-                  <Tooltip text="Select Element" />
+                  <Tooltip text="%tools.arrow" />
                </tooltip>
             </ToggleButton>
             <ToggleButton fx:id="line_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onLineClicked" styleClass="toolbar-button" text="%fa.minus" toggleGroup="$btnGroup">
                <tooltip>
-                  <Tooltip text="Line" />
+                  <Tooltip text="%tools.line" />
                </tooltip></ToggleButton>
             <ToggleButton fx:id="path_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPathClicked" styleClass="toolbar-button" toggleGroup="$btnGroup">
                <tooltip>
-                  <Tooltip text="Path" />
+                  <Tooltip text="%tools.path" />
                </tooltip>
                <graphic>
                   <SVGPath content="m58,84l0,7.33334l7.33334,0l0,7.33334" fill="TRANSPARENT" stroke="BLACK" styleClass="svg-icon" />
                </graphic></ToggleButton>
             <ToggleButton fx:id="rectangle_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onRectangleClicked" styleClass="toolbar-button" text="%fa.square-o" toggleGroup="$btnGroup">
                <tooltip>
-                  <Tooltip text="Rectangle" />
+                  <Tooltip text="%tools.rectangle" />
                </tooltip></ToggleButton>
             <ToggleButton fx:id="polygon_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPolygonClicked" styleClass="toolbar-button" toggleGroup="$btnGroup">
                <tooltip>
-                  <Tooltip text="Polygon" />
+                  <Tooltip text="%tools.polygon" />
                </tooltip>
                <graphic>
                   <SVGPath content="m219.9651,149.12184l5.23534,-3.80908l5.23557,3.80908l-1.99962,6.16336l-6.47169,0l-1.99959,-6.16336z" stroke="BLACK" styleClass="svg-icon" />
                </graphic></ToggleButton>
             <ToggleButton fx:id="circle_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onCircleClicked" styleClass="toolbar-button" text="%fa.circle-o" toggleGroup="$btnGroup">
                <tooltip>
-                  <Tooltip text="Circle" />
+                  <Tooltip text="%tools.circle" />
                </tooltip></ToggleButton>
             <ToggleButton fx:id="image_btn" layoutX="10.0" layoutY="165.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onLoadBitmap" styleClass="toolbar-button" text="%fa.image" toggleGroup="$btnGroup">
                <tooltip>
-                  <Tooltip text="Bitmap" />
+                  <Tooltip text="%tools.image" />
                </tooltip></ToggleButton>
              <ToggleButton fx:id="text_btn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onTextClicked" styleClass="toolbar-button" text="%fa.font" toggleGroup="$btnGroup">
                 <tooltip>
-                   <Tooltip text="Text" />
+                   <Tooltip text="%tools.text" />
                 </tooltip></ToggleButton>
         </items>
       </ToolBar>
@@ -78,91 +78,91 @@
          <children>
             <MenuBar>
               <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="%file">
                   <items>
-                        <MenuItem fx:id="newMenuItem" onAction="#onNewClicked" text="New file..">
+                        <MenuItem fx:id="newMenuItem" onAction="#onNewClicked" text="%file.new">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.file.new" />
                            </graphic></MenuItem>
-                        <MenuItem fx:id="openMenuItem" onAction="#onOpenClicked" text="Open file..">
+                        <MenuItem fx:id="openMenuItem" onAction="#onOpenClicked" text="%file.open">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.file.open" />
                            </graphic></MenuItem>
-                        <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#onSaveClicked" text="Save">
+                        <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#onSaveClicked" text="%file.save">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.file.save" />
                            </graphic></MenuItem>
-                        <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#onSaveAsClicked" text="Save as..">
+                        <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#onSaveAsClicked" text="%file.save-as">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.file.save" />
                            </graphic></MenuItem>
-                      <MenuItem fx:id="exportSvgMenuItem" mnemonicParsing="false" onAction="#onExportSvgClicked" text="Export as SVG.." />
-                      <MenuItem fx:id="exportBitmatpMenuItem" mnemonicParsing="false" onAction="#onExportBitmapClicked" text="Export as Bitmap.." />
-                      <MenuItem fx:id="chPaperSizeMenuItem" mnemonicParsing="false" onAction="#onChPaperSizeClicked" text="Change paper size..">
+                      <MenuItem fx:id="exportSvgMenuItem" mnemonicParsing="false" onAction="#onExportSvgClicked" text="%file.export-svg" />
+                      <MenuItem fx:id="exportBitmatpMenuItem" mnemonicParsing="false" onAction="#onExportBitmapClicked" text="%file.export-bitmap" />
+                      <MenuItem fx:id="chPaperSizeMenuItem" mnemonicParsing="false" onAction="#onChPaperSizeClicked" text="%file.paper-size">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.file.papersize" />
                            </graphic></MenuItem>
-                        <MenuItem fx:id="chGridSizeMenuItem" mnemonicParsing="false" onAction="#onChGridSizeClicked" text="Change gridsize">
+                        <MenuItem fx:id="chGridSizeMenuItem" mnemonicParsing="false" onAction="#onChGridSizeClicked" text="%file.grid-size">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.file.gridsize" />
                            </graphic></MenuItem>
-                    <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#onClosePressed" text="Close">
+                    <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#onClosePressed" text="%file.exit">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.file.exit" />
                            </graphic></MenuItem>
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
+                <Menu mnemonicParsing="false" text="%edit">
                   <items>
-                        <MenuItem fx:id="undoMenuItem" mnemonicParsing="false" onAction="#onUndoClicked" text="Undo">
+                        <MenuItem fx:id="undoMenuItem" mnemonicParsing="false" onAction="#onUndoClicked" text="%edit.undo">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.edit.undo" />
                            </graphic></MenuItem>
-                        <MenuItem fx:id="redoMenuItem" mnemonicParsing="false" onAction="#onRedoClicked" text="Redo">
+                        <MenuItem fx:id="redoMenuItem" mnemonicParsing="false" onAction="#onRedoClicked" text="%edit.redo">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.edit.redo" />
                            </graphic></MenuItem>
-                        <MenuItem fx:id="copyMenuItem" mnemonicParsing="false" onAction="#onCopyClicked" text="Copy">
+                        <MenuItem fx:id="copyMenuItem" mnemonicParsing="false" onAction="#onCopyClicked" text="%edit.copy">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.edit.copy" />
                            </graphic></MenuItem>
-                        <MenuItem fx:id="pasteMenuItem" mnemonicParsing="false" onAction="#onPasteClicked" text="Paste">
+                        <MenuItem fx:id="pasteMenuItem" mnemonicParsing="false" onAction="#onPasteClicked" text="%edit.paste">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.edit.paste" />
                            </graphic></MenuItem>
-                        <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#onDeleteClicked" text="Delete">
+                        <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#onDeleteClicked" text="%edit.delete">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.edit.delete" />
                            </graphic></MenuItem>
-                        <MenuItem fx:id="duplicateMenuItem" mnemonicParsing="false" onAction="#onDuplicateClicked" text="Duplicate">
+                        <MenuItem fx:id="duplicateMenuItem" mnemonicParsing="false" onAction="#onDuplicateClicked" text="%edit.duplicate">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.edit.duplicate" />
                            </graphic></MenuItem>
-                        <MenuItem fx:id="groupMenuItem" mnemonicParsing="false" onAction="#onGroupPressed" text="Group Elements">
+                        <MenuItem fx:id="groupMenuItem" mnemonicParsing="false" onAction="#onGroupPressed" text="%edit.group">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.edit.group" />
                            </graphic></MenuItem>
-                        <MenuItem fx:id="ungroupMenuItem" mnemonicParsing="false" onAction="#onUngroupPressed" text="Ungroup Elements">
+                        <MenuItem fx:id="ungroupMenuItem" mnemonicParsing="false" onAction="#onUngroupPressed" text="%edit.ungroup">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.edit.ungroup" />
                            </graphic></MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                      <MenuItem fx:id="loadImgMenuItem" mnemonicParsing="false" onAction="#onLoadBitmap" text="Insert Bitmap">
+                      <MenuItem fx:id="loadImgMenuItem" mnemonicParsing="false" onAction="#onLoadBitmap" text="%edit.insert-bitmap">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.image" />
                            </graphic></MenuItem>
                   </items>
                 </Menu>
-                  <Menu mnemonicParsing="false" text="View">
+                  <Menu mnemonicParsing="false" text="%view">
                      <items>
-                        <CheckMenuItem fx:id="showAnchorsItem" mnemonicParsing="false" onAction="#onShowAnchorsClicked" selected="true" text="Show Anchors" />
-                        <CheckMenuItem fx:id="showGridItem" mnemonicParsing="false" onAction="#onShowGridClicked" text="Show Grid" />
-                        <CheckMenuItem fx:id="enableGridItem" mnemonicParsing="false" onAction="#onEnableGridClicked" text="Enable snapping" />
+                        <CheckMenuItem fx:id="showAnchorsItem" mnemonicParsing="false" onAction="#onShowAnchorsClicked" selected="true" text="%view.show-anchors" />
+                        <CheckMenuItem fx:id="showGridItem" mnemonicParsing="false" onAction="#onShowGridClicked" text="%view.show-grid" />
+                        <CheckMenuItem fx:id="enableGridItem" mnemonicParsing="false" onAction="#onEnableGridClicked" text="%view.enable-snapping" />
                      </items>
                   </Menu>
-                <Menu mnemonicParsing="false" text="Help">
+                <Menu mnemonicParsing="false" text="%help">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#onAboutClicked" text="About">
+                    <MenuItem mnemonicParsing="false" onAction="#onAboutClicked" text="%help.about">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.help.about" />
                            </graphic></MenuItem>
