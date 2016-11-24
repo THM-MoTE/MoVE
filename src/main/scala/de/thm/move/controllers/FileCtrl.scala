@@ -251,7 +251,7 @@ class FileCtrl(owner: Window) {
     */
   def exportAsSvg(shapes:List[Node], width:Double,height:Double): Try[Unit] = {
     val chooser = Dialogs.newSvgFileChooser()
-    chooser.setTitle("Export as svg..")
+    chooser.setTitle(fontBundle.getString("export.svg"))
     val fileTry = Option(chooser.showSaveDialog(owner)) match {
       case Some(x) => Success(x)
       case _ => Failure(UserInputException("Select a file for export!"))
@@ -271,7 +271,7 @@ class FileCtrl(owner: Window) {
     */
   def exportAsBitmap(root:Node): Try[Unit] = {
    val chooser = Dialogs.newPngFileChooser()
-    chooser.setTitle("Export as jpeg..")
+    chooser.setTitle(fontBundle.getString("export.jpg"))
     val fileTry = Option(chooser.showSaveDialog(owner)) match {
       case Some(x) => Success(x)
       case _ => Failure(UserInputException("Select a file for export!"))
@@ -288,7 +288,7 @@ class FileCtrl(owner: Window) {
   /** Lets the user pick an image and returns the URI of the selected file */
   def openImage: Option[URI] = {
     val chooser = Dialogs.newBitmapFileChooser()
-    chooser.setTitle("Open bitmap")
+    chooser.setTitle(fontBundle.getString("open.image"))
     val fileOp = Option(chooser.showOpenDialog(owner))
     fileOp map { file =>
       file.toURI
