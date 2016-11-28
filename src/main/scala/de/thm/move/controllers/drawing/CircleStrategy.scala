@@ -9,51 +9,33 @@ import de.thm.move.types._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.views.shapes.{ResizableCircle, ResizableRectangle}
 
-class CircleStrategy(changeLike:ChangeDrawPanelLike) extends DrawStrategy {
-  private var tmpFigure = new ResizableCircle((0,0), 0,0)
+class CircleStrategy(changeLike:ChangeDrawPanelLike) extends RectangularStrategy(changeLike, new ResizableCircle((0,0), 0,0)) {
   private var startPoint:Point = (0,0)
-  tmpFigure.setId(tmpShapeId)
 
-  protected def setBounds(point:Point): Unit = {
-    val (width,height) = point - startPoint
+  override protected def setStartXY(p:Point): Unit = {
+    startPoint = p
+    tmpFigure.setXY(startPoint)
+  }
+
+  override protected def setBounds(point:Point): Unit = {
+    super.setBounds(point)
     val (middleX, middleY) = GeometryUtils.middleOfLine(startPoint, point)
     tmpFigure.setX(middleX)
     tmpFigure.setY(middleY)
-    if(drawConstraintProperty.get) {
-      val tmpDelta = width min height
-      tmpFigure.setWidth(tmpDelta)
-      tmpFigure.setHeight(tmpDelta)
-    } else {
-      tmpFigure.setWidth(width)
-      tmpFigure.setHeight(height)
-    }
   }
 
-  def reset(): Unit = {
-    tmpFigure.setXY((0,0))
-    tmpFigure.setWidth(0)
-    tmpFigure.setHeight(0)
-    changeLike.remove(tmpFigure)
+  override def reset(): Unit = {
+    super.reset()
     startPoint = (0,0)
   }
 
-  override def dispatchEvent(mouseEvent: MouseEvent): Unit = mouseEvent.getEventType match {
-    case MouseEvent.MOUSE_PRESSED =>
-      changeLike.addNode(tmpFigure)
-      startPoint = (mouseEvent.getX, mouseEvent.getY)
-      tmpFigure.setXY(startPoint)
-    case MouseEvent.MOUSE_DRAGGED =>
-      setBounds(mouseEvent.getX, mouseEvent.getY)
-    case MouseEvent.MOUSE_RELEASED =>
-      setBounds(mouseEvent.getX, mouseEvent.getY)
-      changeLike.addShapeWithAnchors(tmpFigure.copy)
-      reset()
-    case _ => //ignore
-  }
-
-  override def setColor(fill:Paint, stroke:Paint, strokeThickness:Int):Unit = {
-    tmpFigure.setFillColor(fill)
-    tmpFigure.setStrokeColor(stroke)
-    tmpFigure.setStrokeWidth(strokeThickness)
+  override protected def calculateBounds(point: Point):Point = {
+    val (width,height) = point - startPoint
+    if(drawConstraintProperty.get) {
+      val tmpDelta = width min height
+      (tmpDelta, tmpDelta)
+    } else {
+      (width, height)
+    }
   }
 }
