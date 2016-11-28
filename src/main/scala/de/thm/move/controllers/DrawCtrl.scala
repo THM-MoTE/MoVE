@@ -16,9 +16,9 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 
+import de.thm.move.controllers.drawing.RectangleStrategy
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.implicits.FxHandlerImplicits._
-
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
 import de.thm.move.util.GeometryUtils
@@ -30,6 +30,8 @@ import de.thm.move.views.shapes._
 /** Controller for drawing new shapes or adding existing shapes to the drawPanel. */
 class DrawCtrl(changeLike:ChangeDrawPanelLike) {
 
+  private val drawStrategy = new RectangleStrategy(changeLike)
+
   private val tmpShapeId = DrawPanel.tmpShapeId + "drawctrl"
 
   /** The constraint that indicates if the drawing-element should hold their
@@ -37,13 +39,15 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
     */
   val drawConstraintProperty = new SimpleBooleanProperty()
 
+  drawStrategy.drawConstraintProperty.bind(drawConstraintProperty)
+
   /** Signals that the running drawing-process should get aborted. */
   val abortDrawing = new SimpleBooleanProperty(false)
 
   def getDrawHandler: (SelectedShape, MouseEvent) => (Color, Color, Int) => Unit = {
     var points = List[Point]()
     var drawingShape: ResizableShape = null
-
+/*
     def drawHandler(shape:SelectedShape, mouseEvent:MouseEvent)(fillColor:Color, strokeColor:Color, selectedThickness:Int): Unit = {
       //reset draw-infos if process should be aborted
       if(abortDrawing.get) {
@@ -116,6 +120,11 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
           points = List()
         case _ => //ignore all other
       }
+    }*/
+
+    def drawHandler(shape:SelectedShape, mouseEvent:MouseEvent)(fillColor:Color, strokeColor:Color, selectedThickness:Int): Unit = {
+      drawStrategy.setColor(fillColor, strokeColor, selectedThickness)
+      drawStrategy.dispatchEvent(mouseEvent)
     }
 
     drawHandler
