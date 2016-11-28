@@ -8,10 +8,10 @@
 
 package de.thm.move.views.shapes
 
-import de.thm.move.models.CommonTypes.Point
+
 
 import scala.collection.JavaConverters._
-
+import de.thm.move.types._
 /**
  * A polygon with quadratic Bezier curves as edge points.
  */

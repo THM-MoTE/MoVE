@@ -9,8 +9,8 @@
 package de.thm.move.views.shapes
 
 import javafx.scene.shape.Rectangle
+import de.thm.move.types._
 
-import de.thm.move.models.CommonTypes.Point
 
 class ResizableRectangle(
             startPoint:Point,

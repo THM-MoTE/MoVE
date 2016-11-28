@@ -23,6 +23,7 @@ import javafx.scene.paint.Color
 import javafx.scene.{Cursor, Group, Parent, Scene}
 import javafx.stage.Stage
 
+import de.thm.move.types._
 import de.thm.move.Global._
 import de.thm.move.config.ValueConfig
 import de.thm.move.implicits.ConcurrentImplicits._
@@ -30,7 +31,7 @@ import de.thm.move.implicits.FxHandlerImplicits
 import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.implicits.MonadImplicits._
 import de.thm.move.implicits.LambdaImplicits._
-import de.thm.move.models.CommonTypes._
+
 import de.thm.move.models.FillPattern._
 import de.thm.move.models.LinePattern._
 import de.thm.move.models.SelectedShape.SelectedShape

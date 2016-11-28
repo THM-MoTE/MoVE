@@ -18,11 +18,11 @@ import javafx.scene.text.Font
 
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.implicits.FxHandlerImplicits._
-import de.thm.move.models.CommonTypes._
+
 import de.thm.move.models.SelectedShape
 import de.thm.move.models.SelectedShape._
 import de.thm.move.util.GeometryUtils
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.panes.DrawPanel
 import de.thm.move.views.shapes._

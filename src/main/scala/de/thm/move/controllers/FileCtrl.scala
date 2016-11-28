@@ -21,10 +21,10 @@ import de.thm.move.implicits.MonadImplicits._
 import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
 import de.thm.move.loader.parser.ast.Model
-import de.thm.move.models.CommonTypes.Point
+
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.{ModelicaCodeGenerator, SrcFile, SvgCodeGenerator, UserInputException}
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
 import de.thm.move.util.converters.Marshaller._
 import de.thm.move.views.dialogs.{Dialogs, ExternalChangesDialog, SrcFormatDialog}
 import de.thm.move.views.shapes.ResizableShape

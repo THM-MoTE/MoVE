@@ -14,8 +14,8 @@ import javafx.scene.paint.Color
 
 import de.thm.move.Global._
 import de.thm.move.controllers.factorys.ShapeFactory
-import de.thm.move.models.CommonTypes._
-import de.thm.move.util.PointUtils._
+
+import de.thm.move.types._
 import de.thm.move.views._
 import de.thm.move.views.panes.{DrawPanel, SnapLike}
 import de.thm.move.views.shapes._

@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -10,9 +10,9 @@ package de.thm.move.views.shapes
 
 import javafx.scene.shape._
 
-import de.thm.move.models.CommonTypes.Point
+
 import de.thm.move.util.GeometryUtils
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
 
 /** A shape with quadratic-bezier-curved edge-points.
   *

@@ -11,10 +11,11 @@ package de.thm.move.views.anchors
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Ellipse
 
+import de.thm.move.types._
 import de.thm.move.Global._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
-import de.thm.move.models.CommonTypes._
+
 import de.thm.move.util.JFxUtils._
 
 /** Makes an anchor/ellipse movable when dragging the anchor

@@ -11,7 +11,7 @@ package de.thm.move.views.shapes
 import javafx.scene.paint.Paint
 import javafx.scene.text.{Font, FontPosture, FontWeight, Text}
 
-import de.thm.move.models.CommonTypes._
+import de.thm.move.types._
 import de.thm.move.views.anchors.Anchor
 
 class ResizableText(

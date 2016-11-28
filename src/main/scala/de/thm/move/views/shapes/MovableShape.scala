@@ -8,7 +8,7 @@
 
 package de.thm.move.views.shapes
 
-import de.thm.move.models.CommonTypes._
+import de.thm.move.types._
 
 /** A shape that is movable.
   *

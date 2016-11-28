@@ -11,7 +11,8 @@ package de.thm.move.loader.parser
 import javafx.scene.paint.Color
 
 import de.thm.move.loader.parser.ModelicaParserLike.ParsingError
-import de.thm.move.models.CommonTypes._
+
+import de.thm.move.types._
 import de.thm.move.util.{Validation, ValidationSuccess, ValidationWarning}
 
 import scala.util.parsing.combinator.RegexParsers

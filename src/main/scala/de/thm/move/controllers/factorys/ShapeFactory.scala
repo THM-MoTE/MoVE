@@ -13,7 +13,8 @@ import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import javafx.scene.shape.{LineTo, MoveTo}
 
-import de.thm.move.models.CommonTypes._
+
+import de.thm.move.types._
 import de.thm.move.models.SelectedShape
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.shapes._

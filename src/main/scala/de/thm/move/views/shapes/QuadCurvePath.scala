@@ -9,8 +9,8 @@
 package de.thm.move.views.shapes
 
 import javafx.scene.paint.Paint
+import de.thm.move.types._
 
-import de.thm.move.models.CommonTypes.Point
 
 class QuadCurvePath(points:List[Point])
   extends AbstractQuadCurveShape(points, false) {

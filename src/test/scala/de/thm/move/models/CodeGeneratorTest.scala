@@ -19,10 +19,10 @@ import javafx.scene.shape.{LineTo, MoveTo}
 import javafx.scene.text.TextAlignment
 
 import de.thm.move.MoveSpec
-import de.thm.move.models.CommonTypes.Point
+
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc.FormatSrc
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
 import de.thm.move.util.ResourceUtils
 import de.thm.move.util.GeometryUtils
 import de.thm.move.views.shapes._

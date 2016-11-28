@@ -8,10 +8,10 @@
 
 package de.thm.move.util
 
-import de.thm.move.models.CommonTypes.Point
+
 import javafx.geometry.Point2D
 import javafx.scene.transform.{Affine, Rotate, Transform}
-import PointUtils._
+import de.thm.move.types._
 import   scala.math._
 
 object GeometryUtils {

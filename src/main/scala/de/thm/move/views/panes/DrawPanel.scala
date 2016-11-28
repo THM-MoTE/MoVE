@@ -11,7 +11,7 @@ package de.thm.move.views.panes
 import javafx.scene.Node
 import javafx.scene.layout.Pane
 
-import de.thm.move.models.CommonTypes._
+import de.thm.move.types._
 import de.thm.move.views.SelectionGroup
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.shapes._

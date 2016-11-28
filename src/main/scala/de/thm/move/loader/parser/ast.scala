@@ -9,8 +9,8 @@
 package de.thm.move.loader.parser
 
 import javafx.scene.paint.Color
+import de.thm.move.types._
 
-import de.thm.move.models.CommonTypes._
 
 import scala.util.parsing.input.{Position, Positional}
 

@@ -13,7 +13,7 @@ import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
 import de.thm.move.util.JFxUtils._
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.views.anchors.{Anchor, RotateAnchor}
 import javafx.geometry.Bounds
