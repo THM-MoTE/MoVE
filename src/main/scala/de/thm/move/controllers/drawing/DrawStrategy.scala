@@ -1,6 +1,6 @@
 package de.thm.move.controllers.drawing
 
-import javafx.beans.property.BooleanProperty
+import javafx.beans.property.{BooleanProperty, SimpleBooleanProperty}
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Paint
 
@@ -11,7 +11,7 @@ trait DrawStrategy {
 
   val tmpShapeId = DrawPanel.tmpShapeId + "drawctrl"
 
-  def drawConstraintProperty: BooleanProperty
+  lazy val drawConstraintProperty: BooleanProperty = new SimpleBooleanProperty(false)
 //  def drawStart(point:Point): Unit
 //  def drawIntermediate(point:Point): Unit
 //  def drawEnd(point:Point): Unit

@@ -37,8 +37,6 @@ class CircleStrategy(changeLike:ChangeDrawPanelLike) extends DrawStrategy {
     startPoint = (0,0)
   }
 
-  override lazy val drawConstraintProperty = new SimpleBooleanProperty(false)
-
   override def dispatchEvent(mouseEvent: MouseEvent): Unit = mouseEvent.getEventType match {
     case MouseEvent.MOUSE_PRESSED =>
       changeLike.addNode(tmpFigure)

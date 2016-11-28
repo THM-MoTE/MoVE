@@ -12,8 +12,6 @@ class RectangleStrategy(changeLike:ChangeDrawPanelLike) extends DrawStrategy {
   private var tmpFigure = new ResizableRectangle((0,0), 0,0)
   tmpFigure.setId(tmpShapeId)
 
-  override lazy val drawConstraintProperty = new SimpleBooleanProperty(false)
-
   protected def setBounds(point:Point): Unit = {
     val (width,height) = point - tmpFigure.getXY
     if(drawConstraintProperty.get) {
