@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 
-import de.thm.move.controllers.drawing.RectangleStrategy
+import de.thm.move.controllers.drawing.{CircleStrategy, RectangleStrategy}
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.models.SelectedShape
@@ -30,7 +30,10 @@ import de.thm.move.views.shapes._
 /** Controller for drawing new shapes or adding existing shapes to the drawPanel. */
 class DrawCtrl(changeLike:ChangeDrawPanelLike) {
 
-  private val drawStrategy = new RectangleStrategy(changeLike)
+  private val drawStrategies =
+      Map(SelectedShape.Rectangle -> new RectangleStrategy(changeLike),
+        SelectedShape.Circle -> new CircleStrategy(changeLike)
+      )
 
   private val tmpShapeId = DrawPanel.tmpShapeId + "drawctrl"
 
@@ -39,7 +42,9 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
     */
   val drawConstraintProperty = new SimpleBooleanProperty()
 
-  drawStrategy.drawConstraintProperty.bind(drawConstraintProperty)
+  for((_, strategy) <- drawStrategies) {
+    strategy.drawConstraintProperty.bind(drawConstraintProperty)
+  }
 
   /** Signals that the running drawing-process should get aborted. */
   val abortDrawing = new SimpleBooleanProperty(false)
@@ -123,8 +128,10 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
     }*/
 
     def drawHandler(shape:SelectedShape, mouseEvent:MouseEvent)(fillColor:Color, strokeColor:Color, selectedThickness:Int): Unit = {
-      drawStrategy.setColor(fillColor, strokeColor, selectedThickness)
-      drawStrategy.dispatchEvent(mouseEvent)
+      drawStrategies.get(shape).foreach { strategy =>
+        strategy.setColor(fillColor, strokeColor, selectedThickness)
+        strategy.dispatchEvent(mouseEvent)
+      }
     }
 
     drawHandler
