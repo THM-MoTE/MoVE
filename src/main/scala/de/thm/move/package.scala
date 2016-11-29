@@ -10,12 +10,13 @@ package de.thm
 
 import javafx.geometry.Point2D
 
-import de.thm.move.views.shapes.{ColorizableShape, RectangleLike, ResizableShape}
+import de.thm.move.views.shapes.{ColorizableShape, PathLike, RectangleLike, ResizableShape}
 
 package object move {
   object types {
     type Point = (Double, Double)
     type RectangularNode = ResizableShape with RectangleLike with ColorizableShape
+    type PathNode = ResizableShape with PathLike with ColorizableShape
 
     /** A valueclass for extending the type Point.
       * This class makes it possible to write:
