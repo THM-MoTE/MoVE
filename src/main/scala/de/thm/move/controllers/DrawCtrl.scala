@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 
-import de.thm.move.controllers.drawing.{CircleStrategy, RectangleStrategy}
+import de.thm.move.controllers.drawing.{CircleStrategy, LineStrategy, RectangleStrategy}
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.models.SelectedShape
@@ -32,7 +32,8 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
 
   private val drawStrategies =
       Map(SelectedShape.Rectangle -> new RectangleStrategy(changeLike),
-        SelectedShape.Circle -> new CircleStrategy(changeLike)
+        SelectedShape.Circle -> new CircleStrategy(changeLike),
+        SelectedShape.Line -> new LineStrategy(changeLike)
       )
 
   private val tmpShapeId = DrawPanel.tmpShapeId + "drawctrl"
