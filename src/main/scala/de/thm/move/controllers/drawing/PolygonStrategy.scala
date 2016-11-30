@@ -1,7 +1,7 @@
 package de.thm.move.controllers.drawing
 
 import javafx.scene.input.MouseEvent
-import javafx.scene.paint.{Paint, Color}
+import javafx.scene.paint.{Color, Paint}
 
 import de.thm.move.controllers.ChangeDrawPanelLike
 import de.thm.move.types._

@@ -1,11 +1,9 @@
 package de.thm.move.controllers.drawing
 
-import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Paint
 
 import de.thm.move.controllers.ChangeDrawPanelLike
 import de.thm.move.types.{PathNode, Point}
-import de.thm.move.util.Resettable
 
 import scala.collection.mutable
 

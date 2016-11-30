@@ -1,13 +1,9 @@
 package de.thm.move.controllers.drawing
 
-import javafx.beans.property.{BooleanProperty, SimpleBooleanProperty}
-import javafx.scene.input.MouseEvent
-import javafx.scene.paint.Paint
-
 import de.thm.move.controllers.ChangeDrawPanelLike
 import de.thm.move.types._
 import de.thm.move.util.GeometryUtils
-import de.thm.move.views.shapes.{ResizableCircle, ResizableRectangle}
+import de.thm.move.views.shapes.ResizableCircle
 
 class CircleStrategy(changeLike:ChangeDrawPanelLike) extends RectangularStrategy(changeLike, new ResizableCircle((0,0), 0,0)) {
   private var startPoint:Point = (0,0)

@@ -5,7 +5,6 @@ import javafx.scene.paint.Paint
 
 import de.thm.move.controllers.ChangeDrawPanelLike
 import de.thm.move.types._
-import de.thm.move.views.shapes.{ColorizableShape, RectangleLike, ResizableShape}
 
 abstract class RectangularStrategy(changeLike:ChangeDrawPanelLike, protected val tmpFigure:RectangularNode) extends DrawStrategy {
   override type FigureType = RectangularNode
