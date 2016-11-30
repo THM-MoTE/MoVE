@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 
-import de.thm.move.controllers.drawing.{CircleStrategy, LineStrategy, RectangleStrategy}
+import de.thm.move.controllers.drawing._
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.models.SelectedShape
@@ -33,7 +33,8 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
   private val drawStrategies =
       Map(SelectedShape.Rectangle -> new RectangleStrategy(changeLike),
         SelectedShape.Circle -> new CircleStrategy(changeLike),
-        SelectedShape.Line -> new LineStrategy(changeLike)
+        SelectedShape.Line -> new LineStrategy(changeLike),
+        SelectedShape.Path -> new PathStrategy(changeLike)
       )
 
   private val tmpShapeId = DrawPanel.tmpShapeId + "drawctrl"

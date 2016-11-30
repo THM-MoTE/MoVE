@@ -12,7 +12,6 @@ import scala.collection.mutable
 abstract class PathLikeStrategy(changeLike:ChangeDrawPanelLike) extends DrawStrategy {
     //tmpFigure is anything that is a PathNode
   type FigureType <: PathNode
-  protected val tmpFigure:FigureType
   protected val pointBuffer = mutable.ListBuffer[Point]()
 
   def setColor(fill:Paint, stroke:Paint, strokeThickness:Int): Unit = {
