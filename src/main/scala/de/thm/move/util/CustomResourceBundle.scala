@@ -2,6 +2,9 @@ package de.thm.move.util
 
 import java.util
 import java.util.{Locale, ResourceBundle}
+
+import de.thm.move.Global
+
 import scala.collection.JavaConverters._
 
 class CustomResourceBundle(files:List[String], locale:Locale) extends ResourceBundle {
@@ -19,7 +22,12 @@ class CustomResourceBundle(files:List[String], locale:Locale) extends ResourceBu
 
   override def handleGetObject(key: String): AnyRef = {
     bundles.find(_.containsKey(key)).
-      map(_.getObject(key)).
-      orNull
+      map { bundle =>
+          //load localization as UTF-8 encoding
+        if(bundle.getBaseBundleName.contains("i18n"))
+          new String(bundle.getString(key).getBytes("ISO-8859-1"), Global.encoding)
+        else //all other as ISO-8859-1 encoding
+          bundle.getString(key)
+      }.orNull
   }
 }
