@@ -201,6 +201,7 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
   /** Aborts a running drawing-process */
   def abortDrawingProcess(): Unit = {
     removeTmpShapes(tmpShapeId)
+    drawStrategies.map(_._2).foreach(_.reset())
     abortDrawing.set(true)
   }
 
