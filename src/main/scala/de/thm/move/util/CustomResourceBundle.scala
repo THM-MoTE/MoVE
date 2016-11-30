@@ -7,6 +7,10 @@ import de.thm.move.Global
 
 import scala.collection.JavaConverters._
 
+/**
+ * A ResourceBundle that handles multiple files as well as UTF-8 encoded property files.
+ * UTF-8 encoded properties should be placed in the i18n directory.
+ */
 class CustomResourceBundle(files:List[String], locale:Locale) extends ResourceBundle {
   val bundles = for(file <- files) yield ResourceBundle.getBundle(file, locale)
 
