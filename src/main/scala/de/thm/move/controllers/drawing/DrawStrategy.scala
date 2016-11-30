@@ -12,11 +12,10 @@ trait DrawStrategy extends Resettable {
 
   val tmpShapeId = DrawPanel.tmpShapeId + "drawctrl"
 
+  type FigureType
+  protected val tmpFigure:FigureType
+
   lazy val drawConstraintProperty: BooleanProperty = new SimpleBooleanProperty(false)
-//  def drawStart(point:Point): Unit
-//  def drawIntermediate(point:Point): Unit
-//  def drawEnd(point:Point): Unit
-//  def reset(): Unit
   def dispatchEvent(mouseEvent:MouseEvent): Unit
   def setColor(fill:Paint, stroke:Paint, strokeThickness:Int): Unit
 }

@@ -5,6 +5,7 @@ import javafx.scene.paint.Paint
 
 import de.thm.move.controllers.ChangeDrawPanelLike
 import de.thm.move.types.{PathNode, Point}
+import de.thm.move.util.Resettable
 
 import scala.collection.mutable
 
@@ -19,5 +20,4 @@ abstract class PathLikeStrategy(changeLike:ChangeDrawPanelLike) extends DrawStra
     tmpFigure.setStrokeColor(stroke)
     tmpFigure.setStrokeWidth(strokeThickness)
   }
-  def reset(): Unit
 }

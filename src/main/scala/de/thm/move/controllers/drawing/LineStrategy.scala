@@ -9,6 +9,7 @@ import de.thm.move.views.shapes.ResizableLine
 class LineStrategy(changeLike:ChangeDrawPanelLike) extends PathLikeStrategy(changeLike) {
   override type FigureType = ResizableLine
   override protected val tmpFigure = new ResizableLine((0,0), (0,0), 0)
+  tmpFigure.setId(tmpShapeId)
 
   def setBounds(newX:Double, newY:Double): Unit = {
     val (deltaX, deltaY) = (newX -> newY) - pointBuffer.head
