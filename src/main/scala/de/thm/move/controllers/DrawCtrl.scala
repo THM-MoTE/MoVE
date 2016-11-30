@@ -34,7 +34,8 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
       Map(SelectedShape.Rectangle -> new RectangleStrategy(changeLike),
         SelectedShape.Circle -> new CircleStrategy(changeLike),
         SelectedShape.Line -> new LineStrategy(changeLike),
-        SelectedShape.Path -> new PathStrategy(changeLike)
+        SelectedShape.Path -> new PathStrategy(changeLike),
+        SelectedShape.Polygon -> new PolygonStrategy(changeLike)
       )
 
   private val tmpShapeId = DrawPanel.tmpShapeId + "drawctrl"

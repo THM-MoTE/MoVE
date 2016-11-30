@@ -13,7 +13,7 @@ class PathStrategy(changeLike:ChangeDrawPanelLike) extends PathLikeStrategy(chan
   override protected def tmpFigure = figure
   figure.setId(tmpShapeId)
 
-  private def updatePath(points:List[Point]): Unit = {
+  protected def updatePath(points:List[Point]): Unit = {
     println(points)
     val oldShape = figure
     figure = ResizablePath(points)
