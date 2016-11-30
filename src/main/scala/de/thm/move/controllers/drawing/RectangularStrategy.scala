@@ -10,7 +10,7 @@ import de.thm.move.views.shapes.{ColorizableShape, RectangleLike, ResizableShape
 abstract class RectangularStrategy(changeLike:ChangeDrawPanelLike, protected val tmpFigure:RectangularNode) extends DrawStrategy {
   tmpFigure.setId(tmpShapeId)
 
-  def reset(): Unit = {
+  override def reset(): Unit = {
     tmpFigure.setXY((0,0))
     tmpFigure.setWidth(0)
     tmpFigure.setHeight(0)

@@ -5,9 +5,10 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Paint
 
 import de.thm.move.types._
+import de.thm.move.util.Resettable
 import de.thm.move.views.panes.DrawPanel
 
-trait DrawStrategy {
+trait DrawStrategy extends Resettable {
 
   val tmpShapeId = DrawPanel.tmpShapeId + "drawctrl"
 
