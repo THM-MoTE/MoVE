@@ -33,7 +33,7 @@ class SnapGrid(topPane:Pane, val cellSize:Int, snapDistance:Int) extends Pane wi
 
     //make this pane the same size as topPane
   prefHeightProperty.bind(topPane.prefHeightProperty)
-  prefWidthProperty.bind(topPane.widthProperty)
+  prefWidthProperty.bind(topPane.prefWidthProperty)
   minHeightProperty.bind(topPane.minHeightProperty)
   minWidthProperty.bind(topPane.minWidthProperty)
   maxHeightProperty.bind(topPane.maxHeightProperty)
