@@ -79,5 +79,6 @@ assemblyExcludedJars in assembly := {
 libraryDependencies ++= Seq(
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.4",
+    "org.reactfx" % "reactfx" % "2.0-SNAPSHOT",
     "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
-    "org.reactfx" % "reactfx" % "2.0-SNAPSHOT")
+    "com.athaydes.automaton" % "Automaton" % "1.3.2" % "test")
