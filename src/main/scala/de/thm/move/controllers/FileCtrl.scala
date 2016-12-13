@@ -128,7 +128,7 @@ class FileCtrl(owner: Window) {
       val scaledSystem = systemSize.map(_*scaleFactor)
       if(warnings.nonEmpty) {
         Dialogs.newListDialog(warnings,
-          "Some properties can't get used.\nThey will be overridden when saving the file!").
+          "Some properties aren't used.\nThey will be overriden when saving the file!").
           showAndWait()
       }
       openedFile = Some(srcFile)
