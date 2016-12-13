@@ -80,5 +80,44 @@ class DrawingTest extends UISpec {
 		startP.getY === mousePoint.y
 		line.getEndX === mousePoint.x + 100
 		line.getEndY === mousePoint.y + 150
+
+		FXApp.doInFXThreadBlocking (user.getAll(classOf[DrawPanel]).get(0).remove(line))
+	}
+
+	it should "draw polygons from mouse coordinates" in {
+		val user = FXer.getUserWith()
+		user clickOn "polygon_btn"
+		val drawPanel = user.getAll(classOf[DrawPanel]).get(0)
+		user moveTo drawPanel
+		val mousePoint = mousePosition
+		user click()
+		user moveBy (0,100)
+		user click()
+		user moveBy (20,-30)
+		user click()
+		user moveBy (0,-30)
+		user click()
+		user moveTo (mousePoint.x, mousePoint.y)
+		user click()
+
+		val polys = user.getAll(classOf[ResizablePolygon])
+		polys.size shouldBe 1
+		val poly = polys.get(0)
+		poly.getFillColor shouldBe Color.RED
+		poly.getStrokeColor shouldBe Color.BLACK
+
+		val lines = List(mousePoint,
+			mousePoint + (0,100),
+			mousePoint + (0,100) + (20,-30),
+			mousePoint + (0,100) + (20,-30) + (0,-30)
+		)
+		val edges = for(i <- 0 until poly.edgeCount) yield poly.getEdgePoint(i)
+		for {
+			(p1,p2) <- edges zip lines
+		} {
+			val scrP = poly.localToScreen(p1.x,p2.y)
+			scrP.getX === p2.x
+			scrP.getY === p2.y
+		}
 	}
 }
