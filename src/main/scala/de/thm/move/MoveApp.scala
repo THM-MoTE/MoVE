@@ -42,7 +42,8 @@ class MoveApp extends Application {
 
   override def start(stage: Stage): Unit = {
     checkExistingConfigs()
-    val parameters = getParameters.getRaw.asScala
+
+    val parameters = Option(getParameters).map(_.getRaw).map(_.asScala).getOrElse(List())
 
     val windowWidth = Global.config.getDouble("window.width").getOrElse(600.0)
     val windowHeight = Global.config.getDouble("window.height").getOrElse(600.0)
