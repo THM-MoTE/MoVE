@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -13,7 +13,7 @@ import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Line
 
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.util.GeometryUtils
 
 /** Creates a new grid with the size of the given topPane.
@@ -33,7 +33,7 @@ class SnapGrid(topPane:Pane, val cellSize:Int, snapDistance:Int) extends Pane wi
 
     //make this pane the same size as topPane
   prefHeightProperty.bind(topPane.prefHeightProperty)
-  prefWidthProperty.bind(topPane.widthProperty)
+  prefWidthProperty.bind(topPane.prefWidthProperty)
   minHeightProperty.bind(topPane.minHeightProperty)
   minWidthProperty.bind(topPane.minWidthProperty)
   maxHeightProperty.bind(topPane.maxHeightProperty)
@@ -47,7 +47,6 @@ class SnapGrid(topPane:Pane, val cellSize:Int, snapDistance:Int) extends Pane wi
       getChildren.addAll(horizontalLines:_*)
       getChildren.addAll(verticalLines:_*)
     }
-    ()
   }
 
   heightProperty().addListener { (_:Number, newH:Number) =>
@@ -56,7 +55,6 @@ class SnapGrid(topPane:Pane, val cellSize:Int, snapDistance:Int) extends Pane wi
       getChildren.removeIf { node:Node => node.getId == horizontalLineId }
       getChildren.addAll(newLines: _*)
     }
-    ()
   }
   widthProperty().addListener { (_:Number, newW:Number) =>
     if(gridVisibleProperty.get) {
@@ -64,7 +62,6 @@ class SnapGrid(topPane:Pane, val cellSize:Int, snapDistance:Int) extends Pane wi
       getChildren.removeIf { node:Node => node.getId == verticalLineId }
       getChildren.addAll(newLines:_*)
     }
-    ()
   }
 
   def recalculateHorizontalLines(height:Double): Seq[Line] =

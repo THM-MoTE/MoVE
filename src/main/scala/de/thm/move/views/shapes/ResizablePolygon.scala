@@ -10,8 +10,8 @@ package de.thm.move.views.shapes
 
 import javafx.scene.shape.Polygon
 
-import de.thm.move.models.CommonTypes.Point
-import de.thm.move.util.PointUtils._
+
+import de.thm.move.types._
 
 import scala.collection.JavaConversions._
 

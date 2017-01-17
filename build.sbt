@@ -1,8 +1,12 @@
 import java.lang.System
 
+resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/snapshots"
+
 //include javafx-jar (from java's home directory) in classpath
-unmanagedJars in Compile += Attributed.blank(
-  file(System.getenv("JAVA_HOME")) / "jre" / "lib" / "ext" / "jfxrt.jar")
+unmanagedJars in Compile += {
+  val jhome = Resources.getJavaHome
+  Resources.checkExists(jhome / "lib" / "ext" / "jfxrt.jar")
+}
 
 //fork a process when runnign so that javafx doesn't crash
 fork := true
@@ -17,6 +21,7 @@ scalacOptions ++= Seq(
     )
 
 lazy val copyright = "(c) 2016 Nicola Justus"
+lazy val licenseName = "MPL V2.0 <http://mozilla.org/MPL/2.0>"
 
 lazy val copyRscs = taskKey[Unit]("Copies needed resources to resource-directory.")
 
@@ -49,7 +54,8 @@ sourceGenerators in Compile <+= Def.task {
     "name" -> (name in root).value,
     "version" -> (version in root).value,
     "organization" -> (organization in root).value,
-    "copyright" -> copyright))
+    "copyright" -> copyright,
+    "licenseName" -> licenseName))
 }
 
 lazy val root = (project in file(".")).
@@ -57,7 +63,7 @@ lazy val root = (project in file(".")).
     organization := "de.thm.mote",
     name := "Move",
     version := "0.7.0",
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.11.8",
     javacOptions ++= Seq("-source", "1.8")
     )
 
@@ -73,4 +79,5 @@ assemblyExcludedJars in assembly := {
 libraryDependencies ++= Seq(
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.4",
-    "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test")
+    "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
+    "org.reactfx" % "reactfx" % "2.0-SNAPSHOT")

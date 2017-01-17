@@ -13,9 +13,9 @@ import javafx.scene.input.MouseEvent
 
 import de.thm.move.Global
 import de.thm.move.history.History
-import de.thm.move.models.CommonTypes._
+
 import de.thm.move.util.JFxUtils._
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
 import de.thm.move.views.panes.SnapLike
 import de.thm.move.views.shapes.MovableShape
 

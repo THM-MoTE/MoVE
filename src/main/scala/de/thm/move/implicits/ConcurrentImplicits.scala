@@ -6,9 +6,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package de.thm.move.models
+package de.thm.move.implicits
 
-object CommonTypes {
+import scala.language.implicitConversions
 
-  type Point = (Double,Double)
+object ConcurrentImplicits {
+  implicit def fnRunnable[A](fn:  => A): Runnable = new Runnable() {
+    override def run(): Unit = fn
+  }
 }

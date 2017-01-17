@@ -12,11 +12,11 @@ import javafx.geometry.Bounds
 import javafx.scene.input.MouseEvent
 
 import de.thm.move.Global
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
-import de.thm.move.models.CommonTypes.Point
+
 import de.thm.move.util.JFxUtils._
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
 import de.thm.move.views.anchors.Anchor
 
 /** An element that is represented by a path.

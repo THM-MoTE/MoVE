@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package de.thm.move.controllers.implicits
+package de.thm.move.implicits
 
 import java.util.Optional
 

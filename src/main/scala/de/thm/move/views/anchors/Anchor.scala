@@ -10,8 +10,9 @@ package de.thm.move.views.anchors
 
 import javafx.scene.shape.Ellipse
 
+import de.thm.move.types._
 import de.thm.move.Global
-import de.thm.move.models.CommonTypes.Point
+
 
 class Anchor(x:Double, y:Double)
   extends Ellipse(x,y,Anchor.anchorWidth,Anchor.anchorHeight) {

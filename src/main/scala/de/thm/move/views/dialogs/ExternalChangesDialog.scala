@@ -8,16 +8,17 @@
 
 package de.thm.move.views.dialogs
 
+import de.thm.move.Global
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control._
 import javafx.scene.control.ButtonBar.ButtonData
 
 class ExternalChangesDialog(filename:String) extends Alert(AlertType.CONFIRMATION) {
-  val overwriteAnnotationsBtn = new ButtonType("Reparse file and overwrite annotations")
-  val cancelBtn = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE)
+  val overwriteAnnotationsBtn = new ButtonType(Global.fontBundle.getString("filechanges.overwrite-btn"))
+  val cancelBtn = new ButtonType(Global.fontBundle.getString("cancel-btn"), ButtonData.CANCEL_CLOSE)
 
-  setTitle("External file changes!")
-  setHeaderText(s"Another program changed the file ${filename}!")
-  setContentText("What do you want to do?")
+  setTitle(Global.fontBundle.getString("filechanges.title"))
+  setHeaderText(Global.fontBundle.getString("filechanges.header").replace("{x}", filename))
+  setContentText(Global.fontBundle.getString("filechanges.content"))
   getButtonTypes().setAll(overwriteAnnotationsBtn, cancelBtn)
  }

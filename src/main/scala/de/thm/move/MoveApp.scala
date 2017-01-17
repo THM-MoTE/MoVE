@@ -42,14 +42,14 @@ class MoveApp extends Application {
 
   override def start(stage: Stage): Unit = {
     checkExistingConfigs()
-    val parameters = getParameters.getRaw.asScala
+
+    val parameters = Option(getParameters).map(_.getRaw).map(_.asScala).getOrElse(List())
 
     val windowWidth = Global.config.getDouble("window.width").getOrElse(600.0)
     val windowHeight = Global.config.getDouble("window.height").getOrElse(600.0)
 
     val fxmlLoader = new FXMLLoader(MoveApp.getClass.getResource("/fxml/move.fxml"))
-
-    fxmlLoader.setResources(Global.fontBoundle)
+    fxmlLoader.setResources(Global.fontBundle)
     val mainViewRoot: Parent = fxmlLoader.load()
     val scene = new Scene(mainViewRoot)
     scene.getStylesheets.add(Global.styleSheetUrl)
@@ -71,22 +71,37 @@ class MoveApp extends Application {
 }
 
 object MoveApp {
+  import javafx.application.Platform
+  val name = build.ProjectInfo.name
+  val copyright = build.ProjectInfo.copyright
+  val version = build.ProjectInfo.version
+  val licenseName = build.ProjectInfo.licenseName
+
+  def printVersion(): Unit = {
+    val versionInfo = s"""$name - V$version - $copyright - $licenseName"""
+    println(versionInfo)
+  }
+
   def help(): Unit = {
-    val name = build.ProjectInfo.name
-    val version = build.ProjectInfo.version
     val helpMsg =
       s"""Usage:
       |\tjava -jar $name-$version.jar
       |\tjava -jar $name-$version.jar [filename]
       |
       |Options:
-      |\t-help\t\tDisplay this help message""".stripMargin
+      |\t-help\t\tDisplay this help message
+      |\t-version\tPrint version & exit""".stripMargin
     println(helpMsg)
   }
 
   def main(args: Array[String]): Unit = {
     args.toList match {
-      case "-help" :: _ => help()
+      case "-help" :: _ =>
+        help()
+        Platform.exit()
+      case "-version" :: _ =>
+        printVersion()
+        Platform.exit()
       case path :: _ if !Files.exists(Paths.get(path)) || !Files.isRegularFile(Paths.get(path)) =>
         println(s"WARNING: The given file [$path] wasn't a file or doesn't exist!")
         Application.launch(classOf[MoveApp])

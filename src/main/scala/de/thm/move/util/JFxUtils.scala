@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -12,8 +12,9 @@ import javafx.beans.property.ObjectProperty
 import javafx.event.{Event, EventHandler}
 import javafx.scene.Node
 import javafx.scene.control.ChoiceBox
+import javafx.scene.input.{KeyEvent, KeyCode}
 
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.shapes.{MovableShape, ResizableShape}
 
@@ -69,4 +70,7 @@ object JFxUtils {
     new EventHandler[A]() {
       override def handle(a:A):Unit = if(predicate(a)) fn
     }
+
+    /** A predicate for filtering a KeyEvent-Stream by the pressed KeyCode. */
+    val byKeyCode: KeyCode => KeyEvent => Boolean = code => kv => kv.getCode == code
 }

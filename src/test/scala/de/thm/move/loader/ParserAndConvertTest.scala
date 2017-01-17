@@ -13,7 +13,7 @@ import javafx.scene.paint.Color
 import de.thm.move.MoveSpec
 import de.thm.move.loader.parser.PropertyParser._
 import de.thm.move.views.shapes._
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
 import parser._
 
 class ParserAndConvertTest extends MoveSpec {

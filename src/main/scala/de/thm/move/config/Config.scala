@@ -8,7 +8,7 @@
 
 package de.thm.move.config
 
-import de.thm.move.models.CommonTypes._
+import de.thm.move.types._
 
 trait Config {
   def getAll: List[(String,String)]

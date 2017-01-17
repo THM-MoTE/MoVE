@@ -16,10 +16,10 @@ import de.thm.move.views.shapes._
 import de.thm.move.MoveSpec
 import de.thm.move.loader.parser.PropertyParser._
 import de.thm.move.loader.parser.ast._
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.GeometryUtils._
-import de.thm.move.models.CommonTypes._
+
 
 import scala.util.parsing.input.Position
 import scala.util.parsing.input.NoPosition

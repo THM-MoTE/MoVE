@@ -10,7 +10,7 @@ package de.thm.move.views
 
 import javafx.scene.Group
 
-import de.thm.move.models.CommonTypes._
+import de.thm.move.types._
 import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.shapes._
 

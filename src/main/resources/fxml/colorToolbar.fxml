@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToolBar?>
+
+<ToolBar xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.ColorToolbarCtrl">
+	 <items>
+			<Label styleClass="toolbar-button" text="%fa.minus" />
+			<ChoiceBox fx:id="borderThicknessChooser" />
+			<Label fx:id="fillColorLabel" styleClass="toolbar-button" text="%fa.square" textFill="${fillColorPicker.value}" />
+			<ColorPicker fx:id="fillColorPicker" onAction="#colorPickerChanged"/>
+			<Label fx:id="strokeColorLabel" styleClass="toolbar-button" text="%fa.square-o" textFill="${strokeColorPicker.value}" />
+			<ColorPicker fx:id="strokeColorPicker" onAction="#colorPickerChanged"/>
+			<Label text="LinePattern" />
+			<ChoiceBox fx:id="linePatternChooser" />
+			<Label text="FillPattern" />
+			<ChoiceBox fx:id="fillPatternChooser" />
+	 </items>
+</ToolBar>

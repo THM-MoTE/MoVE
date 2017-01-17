@@ -11,7 +11,8 @@ package de.thm.move.loader.parser
 import javafx.scene.paint.Color
 
 import de.thm.move.loader.parser.ModelicaParserLike.ParsingError
-import de.thm.move.models.CommonTypes._
+
+import de.thm.move.types._
 import de.thm.move.util.{Validation, ValidationSuccess, ValidationWarning}
 
 import scala.util.parsing.combinator.RegexParsers
@@ -34,6 +35,7 @@ trait PropertyParser {
   protected val identRegex = """[a-zA-Z_][a-zA-Z0-9_\\.\(\)\[\]\{\}]*""".r
   protected val numberRegex = "-?[0-9]+".r
   protected val javaLikeStrRegex = "\"(.*)\"".r
+  protected val simpleIdentRegex = """[a-zA-Z_][\w\.]*""".r
 
   /** Wraps the given value in a StringValidation */
   def validValue[A](v:A): StringValidation[A] = Validation[A, String](v)
@@ -94,7 +96,7 @@ trait PropertyParser {
     | "if" ~ identRegex ~ "then" ~ value ~ "else" ~ value ^^ {
       case ifs~id~th~vl~el~vl2 => s"$ifs $id $th $vl $el $vl2"
     }
-    | identRegex
+    | simpleIdentRegex
     | javaLikeStrRegex
     | numberRegex ~ "." ~ numberRegex ^^ { case n1~comma~n2 => n1+comma+n2 }
     | numberRegex
@@ -127,7 +129,7 @@ trait PropertyParser {
     }
 
   def arrow:Parser[(String, String)] =
-    ("{"~> ident <~ ",") ~ ident <~ "}" ^^ { case a1 ~ a2 => (a1,a2) }
+    ("{"~> simpleIdentRegex <~ ",") ~ simpleIdentRegex <~ "}" ^^ { case a1 ~ a2 => (a1,a2) }
 
   def points:Parser[List[Point]] = "{" ~> rep1sep(point, ",") <~ "}"
 
@@ -138,7 +140,7 @@ trait PropertyParser {
 
   def base64OrRsc:Parser[String] = "fileName" | "imageSource"
 
-  def emptySeqString:Parser[Seq[String]] = "{" ~> repsep(ident, ",") <~ "}"
+  def emptySeqString:Parser[Seq[String]] = "{" ~> repsep(simpleIdentRegex, ",") <~ "}"
 
   def numberParser:Parser[Double] = numberRegex ^^ { _.toDouble }
   val decimalNo:Parser[Double]

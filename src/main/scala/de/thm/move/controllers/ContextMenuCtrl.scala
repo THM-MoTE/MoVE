@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -17,7 +17,7 @@ import javafx.scene.image.Image
 import javafx.scene.input.{MouseButton, MouseEvent}
 
 import de.thm.move.Global._
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.views.ShapeContextMenu
 import de.thm.move.views.panes.DrawPanel
 import de.thm.move.views.shapes._
@@ -27,32 +27,32 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
 
   private def newContextMenu(underlyingElement:ResizableShape):ShapeContextMenu = {
     val menu = new ShapeContextMenu
-    menu.inBackgroundItem.setOnAction { ae:ActionEvent => onBackgroundPressed(ae, underlyingElement) }
-    menu.inForegroundItem.setOnAction { ae:ActionEvent => onForegroundPressed (ae, underlyingElement) }
-    menu.duplicateElementItem.setOnAction { ae:ActionEvent => onDuplicateElementPressed(ae, underlyingElement) }
-    menu.resetRotationElementItem.setOnAction { ae:ActionEvent => onResetRotationElementPressed(ae, underlyingElement) }
-    menu.rotate90ClockwiseItem.setOnAction { ae:ActionEvent => onRotateByDegreePressed(ae, underlyingElement, 90) }
-    menu.rotate90CounterClockwiseItem.setOnAction { ae:ActionEvent => onRotateByDegreePressed(ae, underlyingElement, -90) }
-    menu.rotate45ClockwiseItem.setOnAction { ae:ActionEvent => onRotateByDegreePressed(ae, underlyingElement, 45) }
-    menu.rotate45CounterClockwiseItem.setOnAction { ae:ActionEvent => onRotateByDegreePressed(ae, underlyingElement, -45) }
+    menu.inBackgroundItem.setOnAction(onBackgroundPressed(underlyingElement) _)
+    menu.inForegroundItem.setOnAction(onForegroundPressed(underlyingElement) _)
+    menu.duplicateElementItem.setOnAction(onDuplicateElementPressed(underlyingElement) _)
+    menu.resetRotationElementItem.setOnAction(onResetRotationElementPressed(underlyingElement) _)
+    menu.rotate90ClockwiseItem.setOnAction(onRotateByDegreePressed(underlyingElement, 90) _)
+    menu.rotate90CounterClockwiseItem.setOnAction(onRotateByDegreePressed(underlyingElement, -90) _)
+    menu.rotate45ClockwiseItem.setOnAction(onRotateByDegreePressed(underlyingElement, 45) _)
+    menu.rotate45CounterClockwiseItem.setOnAction(onRotateByDegreePressed(underlyingElement, -45) _)
 
 
     underlyingElement match {
       case polygon:QuadCurveTransformable =>
-        val becierItem = new MenuItem("Smooth")
-        becierItem.setOnAction{ ae:ActionEvent => onBecierPressed(ae, polygon) }
+        val becierItem = new MenuItem(fontBundle.getString("context.smooth"))
+        becierItem.setOnAction(onBecierPressed(polygon) _)
         menu.getItems.addAll(new SeparatorMenuItem(), becierItem)
       case curved:AbstractQuadCurveShape =>
-        val polygonItem = new MenuItem("Unsmooth")
-        polygonItem.setOnAction { ae:ActionEvent => onUnsmoothPressed(ae, curved) }
+        val polygonItem = new MenuItem(fontBundle.getString("context.unsmooth"))
+        polygonItem.setOnAction(onUnsmoothPressed(curved) _)
         menu.getItems.addAll(new SeparatorMenuItem(), polygonItem)
       case img:ResizableImage if img.srcEither.isLeft =>
-        val encodeBase64Item = new MenuItem("Encode as Base64")
-        encodeBase64Item.setOnAction { ae:ActionEvent => onEncodePressed(ae, img)}
+        val encodeBase64Item = new MenuItem(fontBundle.getString("context.encode-base64"))
+        encodeBase64Item.setOnAction(onEncodePressed(img) _)
         menu.getItems.add(encodeBase64Item)
       case txt:ResizableText =>
-        val editItem = new MenuItem("Edit text")
-        editItem.setOnAction { ae: ActionEvent => onEditText(ae, txt) }
+        val editItem = new MenuItem(fontBundle.getString("context.edit-text"))
+        editItem.setOnAction(onEditText(txt) _)
         menu.getItems.add(editItem)
       case _ => //ignore
     }
@@ -70,7 +70,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     }
   }
 
-  private def onForegroundPressed(ae:ActionEvent, underlyingElement:Node): Unit = {
+  private def onForegroundPressed(underlyingElement:Node)(ae:ActionEvent): Unit = {
     val oldIdx = drawPanel.getChildren.indexOf(underlyingElement)
     history.execute {
       drawPanel.getChildren.remove(underlyingElement)
@@ -82,7 +82,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     }
   }
 
-  private def onBackgroundPressed(ae:ActionEvent, underlyingElement:Node): Unit = {
+  private def onBackgroundPressed(underlyingElement:Node)(ae:ActionEvent): Unit = {
     val oldIdx = drawPanel.getChildren.indexOf(underlyingElement)
     history.execute {
       drawPanel.getChildren.remove(underlyingElement)
@@ -94,7 +94,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     }
   }
 
-  private def onBecierPressed(ae:ActionEvent, polygon:QuadCurveTransformable): Unit = {
+  private def onBecierPressed(polygon:QuadCurveTransformable)(ae:ActionEvent): Unit = {
     val curvedShape = polygon.toCurvedShape
     history.execute {
       changeLike.removeShape(polygon)
@@ -107,7 +107,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     }
   }
 
-  private def onUnsmoothPressed(ae:ActionEvent, curved:AbstractQuadCurveShape): Unit = {
+  private def onUnsmoothPressed(curved:AbstractQuadCurveShape)(ae:ActionEvent): Unit = {
     val uncurvedShape = curved.toUncurvedShape
     history.execute {
       changeLike.removeShape(curved)
@@ -120,7 +120,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     }
   }
 
-  def onDuplicateElementPressed(ae:ActionEvent, shape:ResizableShape): Unit = {
+  def onDuplicateElementPressed(shape:ResizableShape)(ae:ActionEvent): Unit = {
     val duplicate = shape.copy
     history.execute {
       changeLike.addShape(duplicate)
@@ -130,7 +130,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     }
   }
 
-  def onResetRotationElementPressed(ae:ActionEvent, shape:ResizableShape): Unit = {
+  def onResetRotationElementPressed(shape:ResizableShape)(ae:ActionEvent): Unit = {
     val oldRotate = shape.getRotate
     history.execute {
       shape.setRotate(0)
@@ -139,7 +139,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     }
   }
 
-  def onEncodePressed(ae:ActionEvent, resImg:ResizableImage): Unit = resImg.srcEither match {
+  def onEncodePressed(resImg:ResizableImage)(ae:ActionEvent): Unit = resImg.srcEither match {
       case Left(uri) =>
         val bytes = Files.readAllBytes(Paths.get(uri))
         val img = new Image(new ByteArrayInputStream(bytes))
@@ -150,7 +150,7 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
       case _ => //ignore
   }
 
-  def onEditText(ae:ActionEvent, txt:ResizableText): Unit = {
+  def onEditText(txt:ResizableText)(ae:ActionEvent): Unit = {
     val txtField = new TextField(txt.getText)
     txtField.setLayoutX(txt.getX)
     txtField.setLayoutY(txt.getY)
@@ -164,6 +164,6 @@ class ContextMenuCtrl(drawPanel:DrawPanel, changeLike:ChangeDrawPanelLike) {
     changeLike.addNode(txtField)
   }
 
-  def onRotateByDegreePressed(ae:ActionEvent, shape:RotatableShape, degree:Double): Unit =
+  def onRotateByDegreePressed(shape:RotatableShape, degree:Double)(ae:ActionEvent): Unit =
     shape.rotate(degree)
 }

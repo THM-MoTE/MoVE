@@ -10,7 +10,7 @@ package de.thm.move.views.panes
 
 import javafx.scene.Node
 
-import de.thm.move.models.CommonTypes._
+import de.thm.move.types._
 import de.thm.move.views.shapes.MovableShape
 
 /** Represents elements that can calculate a distance for a snapping-mechanism to a specific element.

@@ -17,14 +17,15 @@ import javafx.stage.Window
 import javax.imageio.ImageIO
 
 import de.thm.move.Global._
-import de.thm.move.controllers.implicits.MonadImplicits._
+import de.thm.move.implicits.MonadImplicits._
 import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
 import de.thm.move.loader.parser.ast.Model
-import de.thm.move.models.CommonTypes.Point
+
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.{ModelicaCodeGenerator, SrcFile, SvgCodeGenerator, UserInputException}
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
+import de.thm.move.util.converters.Marshaller._
 import de.thm.move.views.dialogs.{Dialogs, ExternalChangesDialog, SrcFormatDialog}
 import de.thm.move.views.shapes.ResizableShape
 
@@ -55,8 +56,8 @@ class FileCtrl(owner: Window) {
 
   private def showScaleDialog(): Try[Int] = {
     val dialog = Dialogs.newScaleDialog()
-    val scaleOp:Option[String] = dialog.showAndWait()
-    scaleOp.map(_.toInt).
+    val scaleOp:Option[List[Int]] = dialog.showAndWait()
+    scaleOp.map(_.head).
     filter(x => x>=minScaleFactor && x<=maxScaleFactor) match {
       case Some(x) => Success(x)
       case _ => Failure(UserInputException("Specify a valid scale-factor between 1 and 100!"))
@@ -127,7 +128,7 @@ class FileCtrl(owner: Window) {
       val scaledSystem = systemSize.map(_*scaleFactor)
       if(warnings.nonEmpty) {
         Dialogs.newListDialog(warnings,
-          "Some properties can't get used.\nThey will be overridden when saving the file!").
+          "Some properties aren't used.\nThey will be overriden when saving the file!").
           showAndWait()
       }
       openedFile = Some(srcFile)
@@ -250,7 +251,7 @@ class FileCtrl(owner: Window) {
     */
   def exportAsSvg(shapes:List[Node], width:Double,height:Double): Try[Unit] = {
     val chooser = Dialogs.newSvgFileChooser()
-    chooser.setTitle("Export as svg..")
+    chooser.setTitle(fontBundle.getString("export.svg"))
     val fileTry = Option(chooser.showSaveDialog(owner)) match {
       case Some(x) => Success(x)
       case _ => Failure(UserInputException("Select a file for export!"))
@@ -270,7 +271,7 @@ class FileCtrl(owner: Window) {
     */
   def exportAsBitmap(root:Node): Try[Unit] = {
    val chooser = Dialogs.newPngFileChooser()
-    chooser.setTitle("Export as jpeg..")
+    chooser.setTitle(fontBundle.getString("export.jpg"))
     val fileTry = Option(chooser.showSaveDialog(owner)) match {
       case Some(x) => Success(x)
       case _ => Failure(UserInputException("Select a file for export!"))
@@ -287,7 +288,7 @@ class FileCtrl(owner: Window) {
   /** Lets the user pick an image and returns the URI of the selected file */
   def openImage: Option[URI] = {
     val chooser = Dialogs.newBitmapFileChooser()
-    chooser.setTitle("Open bitmap")
+    chooser.setTitle(fontBundle.getString("open.image"))
     val fileOp = Option(chooser.showOpenDialog(owner))
     fileOp map { file =>
       file.toURI

@@ -77,3 +77,13 @@
   -fx-font-family: "Ubuntu", sans-serif;
   -fx-font-size: 11pt;
 }
+
+/* ====== Dialogs ====== */
+.inputdialog-gridpane {
+  -fx-hgap: 10px;
+  -fx-vgap: 10px;
+}
+
+.inputdialog-label {
+  -fx-font-weight: bold;
+}

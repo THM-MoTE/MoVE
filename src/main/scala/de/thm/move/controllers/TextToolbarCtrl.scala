@@ -17,7 +17,7 @@ import javafx.scene.control._
 import javafx.scene.paint.Color
 import javafx.scene.text.{Font, TextAlignment}
 
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.util.JFxUtils._
 import de.thm.move.util.ResourceUtils
 

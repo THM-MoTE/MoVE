@@ -16,13 +16,13 @@ import javafx.scene.shape.{Circle, Ellipse}
 import javafx.scene.transform.Affine
 
 import de.thm.move.Global._
-import de.thm.move.controllers.implicits.FxHandlerImplicits._
+import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.history.History
 import de.thm.move.history.History.Command
-import de.thm.move.models.CommonTypes._
+
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.JFxUtils._
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
 import de.thm.move.views.anchors.Anchor
 
 /** Represents shapes with rectangular boundings.

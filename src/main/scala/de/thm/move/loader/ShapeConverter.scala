@@ -18,11 +18,11 @@ import javafx.scene.text.{Font, TextAlignment}
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.loader.parser.PropertyParser
 import de.thm.move.loader.parser.ast._
-import de.thm.move.models.CommonTypes._
+
 import de.thm.move.models.{FillPattern, LinePattern}
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.GeometryUtils._
-import de.thm.move.util.PointUtils._
+import de.thm.move.types._
 import de.thm.move.views.shapes._
 
 /** Converts the parsed AST into "real" ResizableShapes.
