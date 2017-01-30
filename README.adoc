@@ -91,7 +91,7 @@ For installing from source follow this steps:
 == License
 (C) 2016 Nicola Justus.
 
-MoVE is is distributed under the terms of the
+MoVE is distributed under the terms of the
 https://www.mozilla.org/en-US/MPL/2.0/[Mozilla Public License Version 2.0].
 See
 https://github.com/THM-MoTE/MoVE/blob/master/LICENSE[LICENSE]
