@@ -64,6 +64,9 @@ end test;
 ----
 
 == Installation
+=== Dependencies
+- OpenJFX on systems which uses the http://openjdk.java.net/[OpenJDK]
+
 === Using compiled releases
 In order to install MoVE using our precompiled releases,
 first check that you have a valid
