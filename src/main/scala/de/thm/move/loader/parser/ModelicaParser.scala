@@ -217,7 +217,7 @@ class ModelicaParser extends JavaTokenParsers
   def stringLiteral(str:String):String = {
     val regex = "\"(.*)\"".r
     str match {
-      case regex(inner) => inner
+      case regex(inner) => transformEscapeChars(inner)
       case _ =>  throw new ParsingError(s"$str doesn't match $regex")
     }
   }
