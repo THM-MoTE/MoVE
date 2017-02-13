@@ -65,6 +65,8 @@ class MoveCtrl extends Initializable {
   @FXML
   var openMenuItem: MenuItem = _
   @FXML
+  var recentFilesMenu: Menu =_
+  @FXML
   var chPaperSizeMenuItem: MenuItem = _
   @FXML
   var closeMenuItem: MenuItem = _
@@ -197,6 +199,10 @@ class MoveCtrl extends Initializable {
       "show-anchors" -> showAnchorsItem,
       "show-grid" -> showGridItem,
       "enable-snapping" -> enableGridItem)
+
+    //TODO recently used files
+    val recentFiles = List("file 1", "file 2", "file 3").map(s => new MenuItem(s))
+    recentFilesMenu.getItems.addAll(recentFiles:_*)
 
     embeddedTextMenuController.setSelectedShapeCtrl(selectionCtrl)
     embeddedColorToolbarController.postInitialize(selectionCtrl)
