@@ -21,8 +21,7 @@ import de.thm.move.util.CustomResourceBundle
 object Global {
 
   private val configDirectoryName = ".move"
-  private val homeDirPath = Paths.get(System.getProperty("user.home"))
-  private val configDirPath = homeDirPath.resolve(configDirectoryName)
+  private val configDirPath = Paths.get(System.getProperty("user.home"), configDirectoryName)
 
   /** Check if path exist; if not create it */
   private def withCheckConfigDirectory[A](fn: Path => A): A = {
