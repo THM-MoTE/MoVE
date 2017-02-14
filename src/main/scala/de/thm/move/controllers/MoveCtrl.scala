@@ -132,6 +132,13 @@ class MoveCtrl extends Initializable {
 
   private val moveHandler = selectionCtrl.getMoveHandler
 
+  private val recentHandler = {
+    val recent =
+      if(Files.exists(recentFilesPath)) MRecent(Recent.fromInputStream[Path](Files.newInputStream(recentFilesPath)))
+      else MRecent(Recent.fromList(Seq[Path]()))
+    new RecentlyFilesHandler(recent, openFile)
+  }
+
   private val shapeBtnsToSelectedShapes = Map(
       "rectangle_btn" -> SelectedShape.Rectangle,
       "circle_btn" -> SelectedShape.Circle,
@@ -202,15 +209,6 @@ class MoveCtrl extends Initializable {
       "show-grid" -> showGridItem,
       "enable-snapping" -> enableGridItem)
 
-
-    //TODO implement action
-    def recentClickedHandler(path:Path): Unit = openFile(path)
-
-    val recent =
-      if(Files.exists(recentFilesPath)) MRecent(Recent.fromInputStream[Path](Files.newInputStream(recentFilesPath)))
-      else MRecent(Recent.fromList(Seq[Path]()))
-
-    val recentHandler = new RecentlyFilesHandler(recent, recentClickedHandler)
     recentFilesMenu.getItems.addAll(recentHandler.getMenuItems:_*)
 
     embeddedTextMenuController.setSelectedShapeCtrl(selectionCtrl)
@@ -401,6 +399,7 @@ class MoveCtrl extends Initializable {
     fileInfos match {
       case Success((file, system, shapes)) =>
         displayUsedFile(file)
+        recentHandler.incrementPriorityOf(file)
         drawPanel.setSize(system)
         if (drawPanelCtrl.getElements.nonEmpty) {
           drawPanelCtrl.removeAll()
