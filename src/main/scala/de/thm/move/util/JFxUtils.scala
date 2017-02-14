@@ -11,8 +11,8 @@ package de.thm.move.util
 import javafx.beans.property.ObjectProperty
 import javafx.event.{Event, EventHandler}
 import javafx.scene.Node
-import javafx.scene.control.ChoiceBox
-import javafx.scene.input.{KeyEvent, KeyCode}
+import javafx.scene.control.{ChoiceBox, Label, MenuItem}
+import javafx.scene.input.{KeyCode, KeyEvent}
 
 import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.views.anchors.Anchor
@@ -73,4 +73,11 @@ object JFxUtils {
 
     /** A predicate for filtering a KeyEvent-Stream by the pressed KeyCode. */
     val byKeyCode: KeyCode => KeyEvent => Boolean = code => kv => kv.getCode == code
+
+  def addFontIcon(elem:MenuItem, iconIdent:String): MenuItem = {
+    val lbl = new Label(iconIdent)
+    lbl.getStyleClass().add("toolbar-button")
+    elem.setGraphic(lbl)
+    elem
+  }
 }
