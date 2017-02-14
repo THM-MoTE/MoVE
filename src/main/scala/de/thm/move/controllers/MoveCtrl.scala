@@ -8,8 +8,9 @@
 
 package de.thm.move.controllers
 
+import java.io.InputStream
 import java.net.URL
-import java.nio.file.{Path, Paths}
+import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 import java.util.ResourceBundle
 import javafx.application.Platform
 import javafx.collections.ListChangeListener.Change
@@ -31,7 +32,6 @@ import de.thm.move.implicits.FxHandlerImplicits
 import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.implicits.MonadImplicits._
 import de.thm.move.implicits.LambdaImplicits._
-
 import de.thm.move.models.FillPattern._
 import de.thm.move.models.LinePattern._
 import de.thm.move.models.SelectedShape.SelectedShape
@@ -43,6 +43,8 @@ import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.dialogs.Dialogs
 import de.thm.move.views.panes.{DrawPanel, SnapGrid}
 import de.thm.move.views.shapes.{ResizableShape, ResizableText}
+import de.thm.recent.{MRecent, Recent}
+import de.thm.recent.JsProtocol._
 
 import scala.None
 import scala.collection.JavaConversions._
@@ -200,9 +202,16 @@ class MoveCtrl extends Initializable {
       "show-grid" -> showGridItem,
       "enable-snapping" -> enableGridItem)
 
-    //TODO recently used files
-    val recentFiles = List("file 1", "file 2", "file 3").map(s => new MenuItem(s))
-    recentFilesMenu.getItems.addAll(recentFiles:_*)
+
+    //TODO implement action
+    def recentClickedHandler(path:Path): Unit = println(s"user clicked on $path")
+
+    val recent =
+      if(Files.exists(recentFilesPath)) MRecent(Recent.fromInputStream[Path](Files.newInputStream(recentFilesPath)))
+      else MRecent(Recent.fromList(Seq[Path]()))
+
+    val recentHandler = new RecentlyFilesHandler(recent, recentClickedHandler)
+    recentFilesMenu.getItems.addAll(recentHandler.getMenuItems:_*)
 
     embeddedTextMenuController.setSelectedShapeCtrl(selectionCtrl)
     embeddedColorToolbarController.postInitialize(selectionCtrl)
