@@ -1,11 +1,13 @@
 package de.thm.move.controllers
 
-import java.nio.file.Path
+import java.nio.file.{Files, Path, StandardOpenOption}
 import javafx.event.ActionEvent
 import javafx.scene.control.MenuItem
 
+import de.thm.move.Global
 import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.recent._
+import spray.json.JsonFormat
 
 class RecentlyFilesHandler(recent:Recent[Path], pathClicked: Path => Unit) {
 
@@ -24,4 +26,9 @@ class RecentlyFilesHandler(recent:Recent[Path], pathClicked: Path => Unit) {
 
   def getMenuItems:Seq[MenuItem] =
     recent.recentElementsByPriority.map(menuItem)
+
+  def writeTo(outputFile:Path)(implicit pathFormat:JsonFormat[Path]): Unit = {
+    val jsonString = recent.toJson
+    Files.write(outputFile, jsonString.getBytes(Global.encoding))
+  }
 }

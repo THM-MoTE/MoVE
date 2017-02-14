@@ -346,6 +346,7 @@ class MoveCtrl extends Initializable {
 
   def shutdownMove(): Unit = {
     embeddedColorToolbarController.shutdown()
+    recentHandler.writeTo(recentFilesPath)
   }
 
   def shapeInputHandler(ev:InputEvent): Unit = {
