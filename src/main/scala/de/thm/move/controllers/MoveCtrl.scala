@@ -204,7 +204,7 @@ class MoveCtrl extends Initializable {
 
 
     //TODO implement action
-    def recentClickedHandler(path:Path): Unit = println(s"user clicked on $path")
+    def recentClickedHandler(path:Path): Unit = openFile(path)
 
     val recent =
       if(Files.exists(recentFilesPath)) MRecent(Recent.fromInputStream[Path](Files.newInputStream(recentFilesPath)))
