@@ -53,6 +53,7 @@ object Global {
 
   lazy val shortcuts = new ShortCutHandler(getConfigFile("shortcuts.conf"))
   lazy val config: Config = new ConfigLoader(getConfigFile("move.conf"))
+  lazy val recentFilesPath = configDirPath.resolve("recent-files.json")
 
   lazy val historySize = Global.config.getInt("history.cache-size").getOrElse(50)
   lazy val history = new History(historySize)
