@@ -24,7 +24,7 @@ class RecentlyFilesHandler(recent:Recent[Path], pathClicked: Path => Unit) {
   }
 
   def incrementPriorityOf(path:Path): Unit =
-    recent.updatePriority(path, 1) { oldVal => oldVal.priority+1 }
+    recent.incrementPriority(path)
 
   def getMenuItems:Seq[MenuItem] =
     recent.recentElementsByPriority.map(menuItem)
