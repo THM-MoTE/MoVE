@@ -1,5 +1,6 @@
 ======= Version 0.7.1 ==
 ==> Features
+- adds menu for recent files (currently for opened files only)
 - adds innternationalization for english & german
 - adds zoom/scale functions and bottom toolbar
 - CLI Interface for opening MoVE through command line
