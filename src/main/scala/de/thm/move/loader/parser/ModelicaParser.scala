@@ -173,8 +173,8 @@ class ModelicaParser extends JavaTokenParsers
       toAst(for {
         gi <- getGraphicItem(map)
         ext <- getPropertyValue(map, extent)(extension)
-        base64Opt = map.get(base64).map(identWithoutHyphens)
-        imgUriOpt = map.get(imgUri).map(identWithoutHyphens)
+        base64Opt = map.get(base64).map(stringLiteral)
+        imgUriOpt = map.get(imgUri).map(stringLiteral)
       } yield {
         base64Opt.map(ImageBase64(gi, ext, _)).orElse(
           imgUriOpt.map(ImageURI(gi, ext, _))).getOrElse(
@@ -188,9 +188,9 @@ class ModelicaParser extends JavaTokenParsers
         toAst( for {
           gi <- getGraphicItem(map)
           ext <- getPropertyValue(map, extent)(extension)
-          text = map.get(textString).map(identWithoutHyphens).getOrElse(missingKeyError(textString))
+          text = map.get(textString).map(stringLiteral).getOrElse(missingKeyError(textString))
           fs <- getPropertyValue(map, fontSize, validValue(defaultFontSize))(withVariableValues(decimalNo, fontSize))
-          font = map.get(fontName).map(identWithoutHyphens).getOrElse(defaultFont)
+          font = map.get(fontName).map(stringLiteral).getOrElse(defaultFont)
           fontStyle <- getPropertyValue(map, textStyle, validValue(defaultFontStyle))(withVariableValues(emptySeqString, textStyle))
           cl <- getPropertyValue(map, textColor, validValue(defaultCol))(withVariableValues(color, textColor))
           halignment <- getPropertyValue(map, hAlignment, validValue(defaultHAlignment))(withVariableValues(ident, hAlignment))
@@ -214,10 +214,10 @@ class ModelicaParser extends JavaTokenParsers
       lp <- getPropertyValue(map, linePatt, validValue(defaultLinePatt))(withVariableValues(ident, linePatt))
     } yield FilledShape(cl,fp,lc,thick,lp)
 
-  def identWithoutHyphens(str:String):String = {
+  def stringLiteral(str:String):String = {
     val regex = "\"(.*)\"".r
     str match {
-      case regex(inner) => inner
+      case regex(inner) => transformEscapeChars(inner)
       case _ =>  throw new ParsingError(s"$str doesn't match $regex")
     }
   }

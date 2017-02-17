@@ -8,8 +8,9 @@
 
 package de.thm.move.controllers
 
+import java.io.InputStream
 import java.net.URL
-import java.nio.file.{Path, Paths}
+import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 import java.util.ResourceBundle
 import javafx.application.Platform
 import javafx.collections.ListChangeListener.Change
@@ -31,7 +32,6 @@ import de.thm.move.implicits.FxHandlerImplicits
 import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.implicits.MonadImplicits._
 import de.thm.move.implicits.LambdaImplicits._
-
 import de.thm.move.models.FillPattern._
 import de.thm.move.models.LinePattern._
 import de.thm.move.models.SelectedShape.SelectedShape
@@ -43,6 +43,8 @@ import de.thm.move.views.anchors.Anchor
 import de.thm.move.views.dialogs.Dialogs
 import de.thm.move.views.panes.{DrawPanel, SnapGrid}
 import de.thm.move.views.shapes.{ResizableShape, ResizableText}
+import de.thm.recent.{MRecent, Recent}
+import de.thm.recent.JsProtocol._
 
 import scala.None
 import scala.collection.JavaConversions._
@@ -64,6 +66,8 @@ class MoveCtrl extends Initializable {
   var saveAsMenuItem: MenuItem = _
   @FXML
   var openMenuItem: MenuItem = _
+  @FXML
+  var recentFilesMenu: Menu =_
   @FXML
   var chPaperSizeMenuItem: MenuItem = _
   @FXML
@@ -127,6 +131,13 @@ class MoveCtrl extends Initializable {
   private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
 
   private val moveHandler = selectionCtrl.getMoveHandler
+
+  private val recentHandler = {
+    val recent =
+      if(Files.exists(recentFilesPath)) MRecent(Recent.fromInputStream[Path](Files.newInputStream(recentFilesPath)))
+      else MRecent(Recent.fromList(Seq[Path]()))
+    new RecentlyFilesHandler(recent, openFile)
+  }
 
   private val shapeBtnsToSelectedShapes = Map(
       "rectangle_btn" -> SelectedShape.Rectangle,
@@ -197,6 +208,8 @@ class MoveCtrl extends Initializable {
       "show-anchors" -> showAnchorsItem,
       "show-grid" -> showGridItem,
       "enable-snapping" -> enableGridItem)
+
+    recentFilesMenu.getItems.addAll(recentHandler.getMenuItems:_*)
 
     embeddedTextMenuController.setSelectedShapeCtrl(selectionCtrl)
     embeddedColorToolbarController.postInitialize(selectionCtrl)
@@ -333,6 +346,7 @@ class MoveCtrl extends Initializable {
 
   def shutdownMove(): Unit = {
     embeddedColorToolbarController.shutdown()
+    recentHandler.writeTo(recentFilesPath)
   }
 
   def shapeInputHandler(ev:InputEvent): Unit = {
@@ -386,6 +400,7 @@ class MoveCtrl extends Initializable {
     fileInfos match {
       case Success((file, system, shapes)) =>
         displayUsedFile(file)
+        recentHandler.incrementPriorityOf(file)
         drawPanel.setSize(system)
         if (drawPanelCtrl.getElements.nonEmpty) {
           drawPanelCtrl.removeAll()

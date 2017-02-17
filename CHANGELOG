@@ -1,3 +1,22 @@
+======= Version 0.7.1 ==
+==> Features
+- adds menu for recent files (currently for opened files only)
+- adds innternationalization for english & german
+- adds zoom/scale functions and bottom toolbar
+- CLI Interface for opening MoVE through command line
+- new unified input dialogs
+- adds icons in (context-) menus
+- new icons for Polygon & Path tools
+
+==> Bufixes
+- parse class specializations (packages, classes, partials,..)
+
+==> Code improvements
+- update to scala 2.11.8
+- use ReactFX and streams for event processing
+- move package `move.controller.implicits` to `move.implicits`
+- create drawing strategies in `controllers.drawing`
+
 ======= Version 0.7.0 ==
 ==> New major Features
 - warn if DynamicSelect & Conditional-Values are used in loaded files

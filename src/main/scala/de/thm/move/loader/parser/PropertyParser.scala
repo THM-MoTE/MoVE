@@ -153,6 +153,27 @@ trait PropertyParser {
   val classSpecialization:Parser[String] = (
     "class" | "model" | "record" | "type" | "block" | "function" | "connector" | "package"
   )
+
+  def transformEscapeChars(str:String): String = {
+    @annotation.tailrec
+    def run(str:String, newS:String): String = {
+      if(str.isEmpty()) newS
+      else {
+        str.charAt(0) match {
+          case '\\' => str.charAt(1) match {
+            case 'n' => run(str.substring(2), newS+"\n")
+            case 't' => run(str.substring(2), newS+"\t")
+            case 'r' => run(str.substring(2), newS+"\r")
+            case 'b' => run(str.substring(2), newS+"\b")
+            case c:Char => run(str.substring(1), newS+'\\'+c)
+          }
+          case c:Char => run(str.substring(1), newS+c)
+        }
+      }
+    }
+
+    run(str, "")
+  }
 }
 
 object PropertyParser {

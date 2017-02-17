@@ -88,6 +88,14 @@
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.file.open" />
                            </graphic></MenuItem>
+
+
+                      <Menu fx:id="recentFilesMenu" text="%file.recent-files">
+                          <items>
+                          </items>
+                      </Menu>
+
+
                         <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#onSaveClicked" text="%file.save">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.file.save" />

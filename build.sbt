@@ -65,7 +65,8 @@ lazy val root = (project in file(".")).
     version := "0.7.0",
     scalaVersion := "2.11.8",
     javacOptions ++= Seq("-source", "1.8")
-    )
+    ).
+  dependsOn(RootProject(file("../recently")))
 
 mainClass in Compile := Some("de.thm.move.MoveApp")
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"

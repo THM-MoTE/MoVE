@@ -21,8 +21,7 @@ import de.thm.move.util.CustomResourceBundle
 object Global {
 
   private val configDirectoryName = ".move"
-  private val homeDirPath = Paths.get(System.getProperty("user.home"))
-  private val configDirPath = homeDirPath.resolve(configDirectoryName)
+  private val configDirPath = Paths.get(System.getProperty("user.home"), configDirectoryName)
 
   /** Check if path exist; if not create it */
   private def withCheckConfigDirectory[A](fn: Path => A): A = {
@@ -54,6 +53,7 @@ object Global {
 
   lazy val shortcuts = new ShortCutHandler(getConfigFile("shortcuts.conf"))
   lazy val config: Config = new ConfigLoader(getConfigFile("move.conf"))
+  lazy val recentFilesPath = configDirPath.resolve("recent-files.json")
 
   lazy val historySize = Global.config.getInt("history.cache-size").getOrElse(50)
   lazy val history = new History(historySize)
