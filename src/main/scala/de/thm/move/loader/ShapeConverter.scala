@@ -14,11 +14,11 @@ import java.util.Base64
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import javafx.scene.text.{Font, TextAlignment}
+import javafx.scene.transform.Transform
 
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.loader.parser.PropertyParser
 import de.thm.move.loader.parser.ast._
-
 import de.thm.move.models.{FillPattern, LinePattern}
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.GeometryUtils._
@@ -29,14 +29,17 @@ import de.thm.move.views.shapes._
   *
   * @param pxPerMm describes how many px are 1 unit from modelica
   *                Example: pxPerMm = 2 => every unit gets doubled
-  * @param system (width,height) from the coordinate system in which the shapes get loaded/displayed
+  * @param system (low,high) the coordinate system from the source file
   * @param srcFilePath the path to the parsed modelica-file
   */
-class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
+class ShapeConverter(pxPerMm:Int, system:Extent, srcFilePath:Path) {
 
   type ErrorMsg = String
 
   lazy val parentPath = srcFilePath.getParent
+  private val (low, high) = system
+  private val xDistance = (0 - low.x).abs
+  val translation = Transform.translate(xDistance, high.y*(-1))
 
   /** Converst the rotation-value.
     * Modelica rotates counter-clockwise; JavafX rotates clockwise
@@ -70,8 +73,8 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
   }
 
   private def convertPoint(p:Point):Point = {
-    val (_,h) = system
-    (pxPerMm * p.x, pxPerMm*(h-p.y))
+    val point2D = translation.transform(p.x,p.y)
+    (point2D.getX, point2D.getY)
   }
 
   private def rectangleLikeDimensions(origin:Point, ext:Extent):(Point,Double,Double) = {
@@ -186,7 +189,8 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
 }
 
 object ShapeConverter {
-
+/*
+  @deprecated("Will be removed; Use 'gettCoordinateSystem' instead", "0.7.2.X")
   def getSystemSize(iconOpt:Annotation):Option[Point] =
     iconOpt match {
       case Icon(Some(system),_,_,_) =>
@@ -195,9 +199,23 @@ object ShapeConverter {
       case _ => None
     }
 
+  @deprecated("Will be removed; Use 'gettCoordinateSystem' instead", "0.7.2.X")
   def gettCoordinateSystemSizes(ast:ModelicaAst):Point = ast match {
     case Model(name, iconOpt) =>
       getSystemSize(iconOpt).getOrElse(PropertyParser.defaultCoordinateSystemSize)
+    case _ => throw new IllegalArgumentException("ast != Model")
+  }
+*/
+  def getCoordinateSystem(iconOpt:Annotation):Option[Extent] =
+    iconOpt match {
+      case Icon(Some(system),_,_,_) =>
+        Some(system.extension)
+      case _ => None
+    }
+
+  def getCoordinateSystem(ast:ModelicaAst): Extent = ast match {
+    case Model(name, iconOpt) =>
+      getCoordinateSystem(iconOpt).getOrElse(PropertyParser.defaultCoordinateSystem)
     case _ => throw new IllegalArgumentException("ast != Model")
   }
 }
