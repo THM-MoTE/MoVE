@@ -304,6 +304,7 @@ class ConverterTest extends MoveSpec {
   }
 
   it should "convert icons with negative coordinate systems" in {
+
     val origin:Point = (-75, 30)
     val ast = Model("abc",
       Icon(Some(CoordinateSystem( ((-100,0), (200,200)) )),
@@ -321,5 +322,23 @@ class ConverterTest extends MoveSpec {
     rec.getXY shouldBe ( 100.0-75-10, 200.0-(30+20) )
     rec.getWidth shouldBe (10.0+10 +- 1)
     rec.getHeight shouldBe (20.0+10 +-1)
+
+    val origin2:Point = (-50, -50)
+    val ast2 = Model("abc",
+      Icon(Some(CoordinateSystem( ((-100,-50), (200,200)) )),
+        List(
+          RectangleElement(GraphicItem(origin = origin2),
+            FilledShape(),
+            extent = ( (-10,20),(10,-10) )
+          )
+        ),NoPosition, NoPosition
+      )
+    )
+    val conv2 = new ShapeConverter(1, ShapeConverter.getCoordinateSystem(ast2), null)
+    val rec2 = conv2.getShapes(ast2).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
+
+    rec2.getXY shouldBe ( 100.0-50-10, 280)
+    rec2.getWidth shouldBe (10.0+10 +- 1)
+    rec2.getHeight shouldBe (20.0+10 +-1)
   }
 }
