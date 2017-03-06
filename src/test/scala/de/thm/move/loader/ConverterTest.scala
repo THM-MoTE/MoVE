@@ -48,6 +48,11 @@ class ConverterTest extends MoveSpec {
     ShapeConverter.getCoordinateSystem(ast3) shouldBe extent2
   }
 
+  "ShapeConverter.`scaledSystemSize" should "return the size of the coordinate system that is multiplied by the given factor" in {
+    val conv = new ShapeConverter(2, ( (-100,-100), (50,50) ), null)
+    conv.scaledSystemSize shouldBe (150*2,150*2)
+  }
+
   "ShapeConverter" should "convert Lines" in {
     //without origin
     val extent = ( ((0.0),(0.0)),((100.0),(200.0)) )

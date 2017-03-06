@@ -118,14 +118,13 @@ class FileCtrl(owner: Window) {
       scaleFactor <- showScaleDialog()
     } yield {
       val model = srcFile.model
-      val systemSize = ShapeConverter.gettCoordinateSystemSizes(model)
+      val system = ShapeConverter.getCoordinateSystem(model)
       val converter = new ShapeConverter(scaleFactor,
-        systemSize,
+        system,
         path)
       val shapesWithWarnings = converter.getShapes(model)
       val shapes = shapesWithWarnings.map(_._1)
       val warnings = shapesWithWarnings.flatMap(_._2)
-      val scaledSystem = systemSize.map(_*scaleFactor)
       if(warnings.nonEmpty) {
         Dialogs.newListDialog(warnings,
           "Some properties aren't used.\nThey will be overriden when saving the file!").
@@ -133,7 +132,7 @@ class FileCtrl(owner: Window) {
       }
       openedFile = Some(srcFile)
       formatInfos = Some(FormatInfos(scaleFactor, None))
-      (scaledSystem, shapes)
+      (converter.scaledSystemSize, shapes)
     }
   }
 

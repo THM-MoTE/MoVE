@@ -186,6 +186,9 @@ class ShapeConverter(pxPerMm:Int, system:Extent, srcFilePath:Path) {
       case (None, msg) => Some(
         s"""$shapename: \n  $msg""")
     }
+
+  def scaledSystemSize:Point =
+    (high - low).abs * pxPerMm
 }
 
 object ShapeConverter {
