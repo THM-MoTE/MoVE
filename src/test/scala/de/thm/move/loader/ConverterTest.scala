@@ -24,6 +24,8 @@ import scala.util.parsing.input.NoPosition
 
 class ConverterTest extends MoveSpec {
 
+  val positiveCoordinateSystem = Some(CoordinateSystem(((0.0,0.0), (100.0,100.0))))
+
   "ShapeConverter.`getCoordinateSystem`" should "return coordinate systems" in {
 
     val extent = ( ((-100.0),(-50.0)),((100.0),(50.0)) )
@@ -115,7 +117,7 @@ class ConverterTest extends MoveSpec {
 
   it should "convert Rectangels" in {
     val ast = Model("ölk",
-      Icon(None,
+      Icon(positiveCoordinateSystem,
         List(
           RectangleElement(GraphicItem(),
             FilledShape(),
@@ -141,7 +143,7 @@ class ConverterTest extends MoveSpec {
 
   it should "convert Ellipses" in {
     val ast = Model("ölk",
-      Icon(None,
+      Icon(positiveCoordinateSystem,
         List(
           Ellipse(GraphicItem(),
             FilledShape(),
@@ -177,7 +179,7 @@ class ConverterTest extends MoveSpec {
   it should "convert Polygons" in {
     val points = List( (205.0,179.0),(348.0,36.0),(420.0,50.0) )
     val ast = Model("ölk",
-      Icon(None,
+      Icon(positiveCoordinateSystem,
         List(
           Polygon(GraphicItem(),
             FilledShape(),
@@ -213,7 +215,7 @@ class ConverterTest extends MoveSpec {
     val extent = ( (10.0,10.0),(200.0,100.0) )
     val ast =
       Model("bitmap",
-        Icon(None,
+        Icon(positiveCoordinateSystem,
           List(
             ImageURI(GraphicItem(),
               extent,
@@ -230,7 +232,7 @@ class ConverterTest extends MoveSpec {
   it should "convert Rectangles containing a origin" in {
     val origin:Point = (10,10)
     val ast = Model("ölk",
-      Icon(None,
+      Icon(positiveCoordinateSystem,
         List(
           RectangleElement(GraphicItem(origin = origin),
             FilledShape(),
@@ -253,7 +255,7 @@ class ConverterTest extends MoveSpec {
 
     val origin2:Point = (50,30)
     val ast2 = Model("ölk",
-      Icon(None,
+      Icon(positiveCoordinateSystem,
         List(
           RectangleElement(GraphicItem(origin = origin2),
             FilledShape(),
@@ -279,7 +281,7 @@ class ConverterTest extends MoveSpec {
   it should "convert Ellipses containing a origin" in  {
     val origin:Point = (50,100)
     val ast = Model("ölk",
-      Icon(None,
+      Icon(positiveCoordinateSystem,
         List(
           Ellipse(GraphicItem(origin = origin),
             FilledShape(),
