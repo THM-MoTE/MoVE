@@ -39,7 +39,7 @@ class ShapeConverter(pxPerMm:Int, system:Extent, srcFilePath:Path) {
   lazy val parentPath = srcFilePath.getParent
   private val (low, high) = system
   private val xDistance = (0 - low.x).abs
-  val translation = Transform.translate(xDistance, high.y*(-1))
+  val translation = Transform.translate(xDistance, 0)
 
   /** Converst the rotation-value.
     * Modelica rotates counter-clockwise; JavafX rotates clockwise
@@ -72,9 +72,9 @@ class ShapeConverter(pxPerMm:Int, system:Extent, srcFilePath:Path) {
     applyLineColor(shape, fs.strokeColor, fs.strokePattern, fs.strokeSize)
   }
 
-  private def convertPoint(p:Point):Point = {
+  def convertPoint(p:Point):Point = { //TODO create explicit test for conversion of points
     val point2D = translation.transform(p.x,p.y)
-    (point2D.getX, point2D.getY)
+    (pxPerMm * point2D.getX, pxPerMm * (high.y - p.y))
   }
 
   private def rectangleLikeDimensions(origin:Point, ext:Extent):(Point,Double,Double) = {
