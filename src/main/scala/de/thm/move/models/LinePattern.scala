@@ -24,13 +24,4 @@ object LinePattern extends Enumeration {
       LinePattern.DashDot -> "dash-dotted-stroke",
       LinePattern.DashDotDot -> "dash-dotted-dotted-stroke"
     )
-
-  val cssRegex = ".*-stroke"
-
-  //remove old stroke style
-  val removeOldCss: (Node) => Unit = { shape =>
-    shape.getStyleClass().removeIf(new Predicate[String]() {
-      override def test(str:String): Boolean = str.`matches`(cssRegex)
-    })
-  }
 }

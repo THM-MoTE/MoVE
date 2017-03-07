@@ -11,7 +11,8 @@ package de.thm.move.controllers
 import javafx.scene.paint.Color
 
 import de.thm.move.Global._
-import de.thm.move.models.{FillPattern, LinePattern}
+import de.thm.move.models.pattern.LinePattern
+import de.thm.move.models.{FillPattern}
 import de.thm.move.views.GroupLike
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 
@@ -55,31 +56,13 @@ trait ColorizeSelectionCtrl {
     )
   }
 
-  def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
-    LinePattern.linePatternToCssClass.get(linePattern) foreach { cssClass =>
-      val cssOpt = coloredSelectedShape.
-        map(_.getStyleClass().find(_.`matches`(LinePattern.cssRegex)))
-      val linePatterns = coloredSelectedShape.map(_.linePattern.get)
-      val shapeAndCss = coloredSelectedShape zip (cssOpt zip linePatterns)
-
-      history.execute {
-        for(shape <- coloredSelectedShape) {
-          LinePattern.removeOldCss(shape)
-          shape.getStyleClass().add(cssClass)
-          shape.linePattern.set(linePattern)
-        }
-      } {
-        for {
-          (shape, (oldCssOpt, oldLinePattern)) <- shapeAndCss
-          if oldCssOpt.isDefined
-          css = oldCssOpt.get
-        } {
-            LinePattern.removeOldCss(shape)
-            shape.getStyleClass().add(css)
-            shape.linePattern.set(oldLinePattern)
-          }
-      }
-    }
+  def setStrokePattern(linePattern:LinePattern): Unit = {
+    zippedUndo(coloredSelectedShape)(_.linePattern.get)(
+      _.linePattern.set(linePattern),
+      _.linePattern.set _
+    )
+//    coloredSelectedShape.foreach(x => x.linePattern.set(linePattern))
+  }
 
   def setFillPattern(fillPattern:FillPattern.FillPattern): Unit = {
     val coloredShapes = coloredSelectedShape map { shape =>
