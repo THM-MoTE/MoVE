@@ -9,12 +9,14 @@
 package de.thm
 
 import javafx.geometry.Point2D
+import javafx.scene.Node
 
 import de.thm.move.views.shapes.{ColorizableShape, PathLike, RectangleLike, ResizableShape}
 
 package object move {
   object types {
     type Point = (Double, Double)
+    type ColorizableNode = Node with ColorizableShape
     type RectangularNode = ResizableShape with RectangleLike with ColorizableShape
     type PathNode = ResizableShape with PathLike with ColorizableShape
 
