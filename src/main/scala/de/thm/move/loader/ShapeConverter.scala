@@ -18,8 +18,8 @@ import javafx.scene.text.{Font, TextAlignment}
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.loader.parser.PropertyParser
 import de.thm.move.loader.parser.ast._
-
-import de.thm.move.models.{FillPattern, LinePattern}
+import de.thm.move.models.FillPattern
+import de.thm.move.models.pattern.LinePattern
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.GeometryUtils._
 import de.thm.move.types._
@@ -48,11 +48,8 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
     color:Color,
     linePattern:String,
     strWidth:Double): Unit = {
-    val lp = linePattern.split("\\.")(1)
-    val linePatt = LinePattern.withName(lp)
-    val cssClass = LinePattern.linePatternToCssClass(linePatt)
-    shape.linePattern.setValue(linePatt)
-    shape.getStyleClass().add(cssClass)
+    val linePat = LinePattern.getObject(linePattern)
+    shape.linePattern.set(linePat)
     shape.setStrokeColor(color)
     shape.setStrokeWidth(strWidth)
   }

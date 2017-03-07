@@ -7,7 +7,7 @@ import de.thm.move.types.ColorizableNode
 
 sealed trait LinePattern {
   def cssClass:String
-  def patternName:String = this.getClass.getSimpleName
+  def patternName:String = toString
   def modelicaRepresentation: String = s"LinePattern.${patternName}"
   def generateModelicaCode: String =
     s"pattern = ${modelicaRepresentation}"
@@ -50,4 +50,9 @@ object LinePattern {
   }
   val patternObjects:List[LinePattern] =
     List(None, Solid, Dash, Dot, DashDot, DashDotDot)
+
+  def getObject(modelicaRepresentation:String):LinePattern =
+    patternObjects
+      .find(_.modelicaRepresentation == modelicaRepresentation)
+      .getOrElse(throw new IllegalArgumentException(s"Couldn't find a LinePattern-instance for $modelicaRepresentation"))
 }
