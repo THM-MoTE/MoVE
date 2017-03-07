@@ -5,14 +5,11 @@ import javafx.scene.Node
 
 import de.thm.move.types.ColorizableNode
 
-sealed trait LinePattern {
+sealed trait LinePattern extends ModelicaPattern {
   def cssClass:String
-  def patternName:String = toString
-  def modelicaRepresentation: String = s"LinePattern.${patternName}"
-  def generateModelicaCode: String =
-    s"pattern = ${modelicaRepresentation}"
+  override def modelicaRepresentation: String = s"LinePattern.${patternName}"
 
-  def applyToShape(shape:ColorizableNode): Unit = {
+  override def applyToShape(shape:ColorizableNode): Unit = {
     LinePattern.removeOldCss(shape)
     shape.getStyleClass.add(cssClass)
   }
