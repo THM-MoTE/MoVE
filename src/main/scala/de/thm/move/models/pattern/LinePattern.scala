@@ -15,12 +15,14 @@ sealed trait LinePattern extends ModelicaPattern {
   }
 }
 
-case object None extends LinePattern {
+case object SNone extends LinePattern {
   override val cssClass: String = "none-stroke"
+  override def patternName:String = "None"
 }
 
-case object Solid extends LinePattern {
+case object SSolid extends LinePattern {
   override val cssClass: String = "solid-stroke"
+  override def patternName:String = "Solid"
 }
 
 case object Dash extends LinePattern {
@@ -46,7 +48,7 @@ object LinePattern {
     })
   }
   val patternObjects:List[LinePattern] =
-    List(None, Solid, Dash, Dot, DashDot, DashDotDot)
+    List(SNone, SSolid, Dash, Dot, DashDot, DashDotDot)
 
   def getObject(modelicaRepresentation:String):LinePattern =
     patternObjects
