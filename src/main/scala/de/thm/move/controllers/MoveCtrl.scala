@@ -465,6 +465,7 @@ class MoveCtrl extends Initializable {
         //this pane doesn't hold anchors or selection-rectangles
       val shapePanel = new DrawPanel()
       val shapes = drawPanel.getShapes
+      shapePanel.setSize(drawPanel.getWidth, drawPanel.getHeight)
       //create a copy of all shapes and add them to the new temporary pane
       shapes flatMap {
         case rs:ResizableShape => List(rs.copy)
