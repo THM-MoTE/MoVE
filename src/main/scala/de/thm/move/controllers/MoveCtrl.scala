@@ -275,16 +275,6 @@ class MoveCtrl extends Initializable {
     val pressedStream = EventStreams.eventsOf(drawStub.getScene, KeyEvent.KEY_PRESSED)
     val releasedStream = EventStreams.eventsOf(drawStub.getScene, KeyEvent.KEY_RELEASED)
 
-      //shortcuts that aren't mapped to buttons
-    shortcuts.getKeyCode("draw-constraint").foreach { code =>
-      pressedStream.
-        filter(byKeyCode(code)).
-        subscribe { drawCtrl.drawConstraintProperty.set(true) }
-      releasedStream.
-        filter(byKeyCode(code)).
-        subscribe { drawCtrl.drawConstraintProperty.set(false) }
-    }
-
     shortcuts.getKeyCode("select-constraint").foreach { code =>
       pressedStream.
         filter(byKeyCode(code)).

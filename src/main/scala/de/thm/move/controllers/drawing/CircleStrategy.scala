@@ -13,8 +13,8 @@ class CircleStrategy(changeLike:ChangeDrawPanelLike) extends RectangularStrategy
     tmpFigure.setXY(startPoint)
   }
 
-  override protected def setBounds(point:Point): Unit = {
-    super.setBounds(point)
+  override protected def setBounds(point:Point, squared:Boolean): Unit = {
+    super.setBounds(point, squared)
     val (middleX, middleY) = GeometryUtils.middleOfLine(startPoint, point)
     tmpFigure.setX(middleX)
     tmpFigure.setY(middleY)
@@ -25,9 +25,9 @@ class CircleStrategy(changeLike:ChangeDrawPanelLike) extends RectangularStrategy
     startPoint = (0,0)
   }
 
-  override protected def calculateBounds(point: Point):Point = {
+  override protected def calculateBounds(point: Point, squared:Boolean):Point = {
     val (width,height) = point - startPoint
-    if(drawConstraintProperty.get) {
+    if(squared) {
       val tmpDelta = width min height
       (tmpDelta, tmpDelta)
     } else {
