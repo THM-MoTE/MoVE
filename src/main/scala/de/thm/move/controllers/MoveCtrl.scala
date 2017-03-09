@@ -32,8 +32,6 @@ import de.thm.move.implicits.FxHandlerImplicits
 import de.thm.move.implicits.FxHandlerImplicits._
 import de.thm.move.implicits.MonadImplicits._
 import de.thm.move.implicits.LambdaImplicits._
-import de.thm.move.models.FillPattern._
-import de.thm.move.models.LinePattern._
 import de.thm.move.models.SelectedShape.SelectedShape
 import de.thm.move.models._
 import de.thm.move.util.converters.Convertable._

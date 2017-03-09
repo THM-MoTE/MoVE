@@ -10,7 +10,7 @@ package de.thm.move.loader
 
 import javafx.scene.paint.Color
 
-import de.thm.move.models.LinePattern
+import de.thm.move.models.pattern._
 import de.thm.move.views.shapes._
 
 import de.thm.move.MoveSpec
@@ -80,7 +80,7 @@ class ConverterTest extends MoveSpec {
     endAnchor.getCenterY shouldBe (200.0-30.0)
     convertedLine.getStrokeColor shouldBe Color.BLACK
     convertedLine.getStrokeWidth shouldBe 1.0
-    convertedLine.linePattern.get shouldBe LinePattern.Dash
+    convertedLine.linePattern.get shouldBe Dash
 
 
     val points2 = List( (10.0,10.0),(50.0,30.0), (60.0,80.0),(30.0,30.0) )
@@ -179,7 +179,7 @@ class ConverterTest extends MoveSpec {
       Icon(None,
         List(
           Polygon(GraphicItem(),
-            FilledShape(),
+            FilledShape(fillPattern = "FillPattern.Horizontal"),
             points
           )
         ),NoPosition, NoPosition
@@ -197,6 +197,7 @@ class ConverterTest extends MoveSpec {
       val p1 = (anchor.getCenterX,anchor.getCenterY)
       p2 shouldBe p1
     }
+    convPolygon.fillPatternProperty.get shouldBe Horizontal
 
     val multiplier = 4
     val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(ast), null)
