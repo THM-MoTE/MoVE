@@ -18,11 +18,13 @@ sealed trait LinePattern extends ModelicaPattern {
 case object SNone extends LinePattern {
   override val cssClass: String = "none-stroke"
   override def patternName:String = "None"
+  override def toString:String = patternName
 }
 
 case object SSolid extends LinePattern {
   override val cssClass: String = "solid-stroke"
   override def patternName:String = "Solid"
+  override def toString:String = patternName
 }
 
 case object Dash extends LinePattern {

@@ -27,10 +27,12 @@ trait FillPattern extends ModelicaPattern {
 case object FNone extends FillPattern {
   override protected def getPaint(fillC: Color, strokeC: Color, width: Double, height: Double): Paint = null //= transparent color
   override def patternName:String = "None"
+  override def toString:String = patternName
 }
 case object FSolid extends FillPattern {
   override protected def getPaint(fillC: Color, strokeC: Color, width: Double, height: Double): Paint = fillC
   override def patternName:String = "Solid"
+  override def toString:String = patternName
 }
 
 private[pattern] trait CylinderPattern {
