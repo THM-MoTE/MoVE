@@ -39,8 +39,9 @@ class ShapeConverter(pxPerMm:Int, system:Extent, srcFilePath:Path) {
   lazy val parentPath = srcFilePath.getParent
   private val (low, high) = system
   /* translate coordinates by offset to x=0 and y=largest Y */
-  private val distance = ((0.0, high.y) - low).abs
-  val translation = Transform.translate(distance.x, distance.y)
+  private val distanceZero = (0.0, 0.0) - low
+  private val systemDistance = (high - low).abs
+  val translation = Transform.translate(distanceZero.x, distanceZero.y)
 
   /** Converst the rotation-value.
     * Modelica rotates counter-clockwise; JavafX rotates clockwise
@@ -75,7 +76,7 @@ class ShapeConverter(pxPerMm:Int, system:Extent, srcFilePath:Path) {
 
   def convertPoint(p:Point):Point = { //TODO create explicit test for conversion of points
     val point2D = translation.transform(p.x,p.y)
-    (pxPerMm * point2D.getX, pxPerMm * (distance.y - p.y))
+    (pxPerMm * point2D.getX, pxPerMm * (systemDistance.y - point2D.getY))
   }
 
   private def rectangleLikeDimensions(origin:Point, ext:Extent):(Point,Double,Double) = {

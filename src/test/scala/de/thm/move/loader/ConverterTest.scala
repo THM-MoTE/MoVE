@@ -55,6 +55,19 @@ class ConverterTest extends MoveSpec {
     conv.scaledSystemSize shouldBe (150*2,150*2)
   }
 
+  "ShapeConverter.`convertPoint`" should "convert negative x coordinates" in {
+    val converter = new ShapeConverter(1, ((-100,0), (100,100)), null)
+    converter.convertPoint(-50, 50) shouldBe (50, 50)
+    converter.convertPoint(-80, 0) shouldBe (20, 100)
+    converter.convertPoint(-100, 100) shouldBe (0, 0)
+  }
+  it should "convert negative y coordinates" in {
+    val converter = new ShapeConverter(1, ((0,-100), (100,100)), null)
+    converter.convertPoint(0, -50) shouldBe (0, 150)
+    converter.convertPoint(0, -100) shouldBe (0, 200)
+    converter.convertPoint(0, 100) shouldBe (0, 0)
+  }
+
   "ShapeConverter" should "convert Lines" in {
     //without origin
     val extent = ( ((0.0),(0.0)),((100.0),(200.0)) )
@@ -306,7 +319,6 @@ class ConverterTest extends MoveSpec {
   }
 
   it should "convert icons with negative coordinate systems" in {
-
     val origin:Point = (-75, 30)
     val ast = Model("abc",
       Icon(Some(CoordinateSystem( ((-100,0), (200,200)) )),
@@ -336,11 +348,26 @@ class ConverterTest extends MoveSpec {
         ),NoPosition, NoPosition
       )
     )
-    val conv2 = new ShapeConverter(1, ShapeConverter.getCoordinateSystem(ast2), null)
+    val conv2 = new ShapeConverter(2, ShapeConverter.getCoordinateSystem(ast2), null)
     val rec2 = conv2.getShapes(ast2).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
 
-    rec2.getXY shouldBe ( 100.0-50-10, 280)
-    rec2.getWidth shouldBe (10.0+10 +- 1)
-    rec2.getHeight shouldBe (20.0+10 +-1)
+    rec2.getXY shouldBe ( (100.0-50-10)*2, (250.0-20)*2)
+    rec2.getWidth shouldBe ((10.0+10)*2 +- 1)
+    rec2.getHeight shouldBe ((20.0+10)*2 +-1)
+
+//    val origin3:Point = (-30, -30)
+//    val ast3 = Model("abc",
+//      Icon(Some(CoordinateSystem( ((-100,-100), (200,200)) )),
+//        List(
+//          Ellipse(GraphicItem(origin = origin3),
+//            FilledShape(),
+//            extent = ( (-10,20),(10,-10) )
+//          )
+//        ),NoPosition, NoPosition
+//      )
+//    )
+//    val conv3 = new ShapeConverter(1, ShapeConverter.getCoordinateSystem(ast3), null)
+//    val circ = conv3.getShapes(ast3).head.asInstanceOf[(ResizableCircle, Option[String])]._1
+//    circ.getXY shouldBe (100.0-30, 300.0-70)
   }
 }
