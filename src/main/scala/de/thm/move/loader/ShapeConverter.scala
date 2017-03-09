@@ -55,7 +55,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
   }
 
   private def applyColor(shape:ResizableShape with ColorizableShape, fs:FilledShape): Unit = {
-    shape.setFillColor(fs.fillColor)
+/*    shape.setFillColor(fs.fillColor)
 
     val fillPatt = FillPattern.withName(fs.fillPattern.split("\\.")(1))
     shape.fillPatternProperty.setValue(fillPatt)
@@ -64,6 +64,7 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
     val height = shape.getBoundsInLocal.getHeight()
     shape.setFillColor(FillPattern.getFillColor(fillPatt, fs.fillColor, fs.strokeColor, width, height))
     applyLineColor(shape, fs.strokeColor, fs.strokePattern, fs.strokeSize)
+*/
   }
 
   private def convertPoint(p:Point):Point = {

@@ -13,7 +13,6 @@ import javafx.scene.paint.{Color, Paint}
 import javafx.scene.shape.Shape
 
 import de.thm.move.models.pattern._
-import de.thm.move.models.{FillPattern}
 import de.thm.move.util.JFxUtils._
 import de.thm.move.implicits.FxHandlerImplicits._
 
@@ -23,7 +22,7 @@ trait ColorizableShape {
 
   /** Pattern of the stroke */
   val linePattern:ObjectProperty[LinePattern] =
-    new SimpleObjectProperty(Solid)
+    new SimpleObjectProperty(SSolid)
 
 
   linePattern.addListener { (_:LinePattern, newlp:LinePattern) =>
@@ -31,8 +30,13 @@ trait ColorizableShape {
   }
 
   /** Pattern of the fill */
-  val fillPatternProperty:ObjectProperty[FillPattern.Value] =
-    new SimpleObjectProperty(FillPattern.Solid)
+  val fillPatternProperty:ObjectProperty[FillPattern] =
+    new SimpleObjectProperty(FSolid)
+
+  fillPatternProperty.addListener { (_:FillPattern, newfp:FillPattern) =>
+    newfp.applyToShape(this)
+  }
+
   /** The old/actual Color fill.
     *
     * @note

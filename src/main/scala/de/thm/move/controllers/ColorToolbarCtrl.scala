@@ -18,12 +18,10 @@ import javafx.collections.{FXCollections, ListChangeListener}
 import javafx.event.ActionEvent
 import javafx.scene.paint.Color
 
-import de.thm.move.models.FillPattern.FillPattern
 import de.thm.move.util.ResourceUtils
 import de.thm.move.config.ValueConfig
 import de.thm.move.Global
-import de.thm.move.models.FillPattern
-import de.thm.move.models.pattern.{LinePattern, Solid}
+import de.thm.move.models.pattern._
 import de.thm.move.util.JFxUtils._
 import de.thm.move.views.dialogs.Dialogs
 
@@ -100,11 +98,11 @@ class ColorToolbarCtrl extends Initializable {
   private def setupPattern(): Unit = {
     val linePatterns = LinePattern.patternObjects
     linePatternChooser.setItems(FXCollections.observableList(linePatterns.asJava))
-    linePatternChooser.setValue(Solid)
+    linePatternChooser.setValue(SSolid)
 
-    val fillPatterns = FillPattern.values.toList.asJava
-    fillPatternChooser.setItems(FXCollections.observableList(fillPatterns))
-    fillPatternChooser.setValue(FillPattern.Solid)
+    val fillPatterns = FillPattern.patternObjects
+    fillPatternChooser.setItems(FXCollections.observableList(fillPatterns.asJava))
+    fillPatternChooser.setValue(FSolid)
   }
 
   /*Setup default colors for fill-,strokeChooser & strokeWidth*/
