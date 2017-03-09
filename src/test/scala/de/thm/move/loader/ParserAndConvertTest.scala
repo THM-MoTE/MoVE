@@ -40,7 +40,7 @@ class ParserAndConvertTest extends MoveSpec {
     """.stripMargin
 
     val parsed = withParseSuccess(str)
-    val conv = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
+    val conv = new ShapeConverter(1, ShapeConverter.getCoordinateSystem(parsed), null)
     val convertedRectangle = conv.getShapes(parsed).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
 
     convertedRectangle.getXY shouldBe (0,(500))
@@ -49,7 +49,7 @@ class ParserAndConvertTest extends MoveSpec {
 
 
     val multiplier = 4
-    val conv2 = new ShapeConverter(multiplier, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
+    val conv2 = new ShapeConverter(multiplier, ShapeConverter.getCoordinateSystem(parsed), null)
     val convertedRectangle2 = conv2.getShapes(parsed).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
 
     convertedRectangle2.getXY shouldBe (0,500*multiplier)
@@ -80,7 +80,7 @@ class ParserAndConvertTest extends MoveSpec {
       """.stripMargin
 
     val parsed2 = withParseSuccess(str2)
-    val conv3 = new ShapeConverter(1, ShapeConverter.gettCoordinateSystemSizes(parsed), null)
+    val conv3 = new ShapeConverter(1, ShapeConverter.getCoordinateSystem(parsed), null)
     val convertedRectangle3 = conv.getShapes(parsed2).head.asInstanceOf[(ResizableRectangle, Option[String])]._1
 
     convertedRectangle3.getXY shouldBe (20,500-60)
