@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -18,8 +18,7 @@ import javafx.scene.text.{Font, TextAlignment}
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.loader.parser.PropertyParser
 import de.thm.move.loader.parser.ast._
-import de.thm.move.models.FillPattern
-import de.thm.move.models.pattern.LinePattern
+import de.thm.move.models.pattern._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.GeometryUtils._
 import de.thm.move.types._
@@ -48,23 +47,16 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
     color:Color,
     linePattern:String,
     strWidth:Double): Unit = {
-    val linePat = LinePattern.getObject(linePattern)
+    val linePat = LinePattern.get(linePattern)
     shape.linePattern.set(linePat)
     shape.setStrokeColor(color)
     shape.setStrokeWidth(strWidth)
   }
 
   private def applyColor(shape:ResizableShape with ColorizableShape, fs:FilledShape): Unit = {
-/*    shape.setFillColor(fs.fillColor)
-
-    val fillPatt = FillPattern.withName(fs.fillPattern.split("\\.")(1))
-    shape.fillPatternProperty.setValue(fillPatt)
-
-    val width = shape.getBoundsInLocal.getWidth()
-    val height = shape.getBoundsInLocal.getHeight()
-    shape.setFillColor(FillPattern.getFillColor(fillPatt, fs.fillColor, fs.strokeColor, width, height))
+    shape.setFillColor(fs.fillColor)
     applyLineColor(shape, fs.strokeColor, fs.strokePattern, fs.strokeSize)
-*/
+    shape.fillPatternProperty.set(FillPattern.get(fs.fillPattern))
   }
 
   private def convertPoint(p:Point):Point = {

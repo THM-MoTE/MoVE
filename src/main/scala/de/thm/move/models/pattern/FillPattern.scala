@@ -106,6 +106,9 @@ object FillPattern {
     List(FNone, FSolid, HorizontalCylinder, VerticalCylinder, Sphere, Horizontal,
           Vertical, Cross, Forward, Backward, CrossDiag)
 
+  val get:String => FillPattern = ModelicaPattern.getRepresentation(patternObjects)
+
+
   private[pattern] def withCanvas(width:Double,height:Double,fillC:Color)(fn: CustomCanvas => Unit): Paint = {
     val drawing = new CustomCanvas(width,height, fillC)
     fn(drawing)

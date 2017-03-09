@@ -50,8 +50,5 @@ object LinePattern {
   val patternObjects:List[LinePattern] =
     List(SNone, SSolid, Dash, Dot, DashDot, DashDotDot)
 
-  def getObject(modelicaRepresentation:String):LinePattern =
-    patternObjects
-      .find(_.modelicaRepresentation == modelicaRepresentation)
-      .getOrElse(throw new IllegalArgumentException(s"Couldn't find a LinePattern-instance for $modelicaRepresentation"))
+  val get:String => LinePattern = ModelicaPattern.getRepresentation(patternObjects)
 }

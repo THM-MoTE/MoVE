@@ -10,3 +10,10 @@ trait ModelicaPattern {
 
   def applyToShape(shape:ColorizableNode): Unit
 }
+
+private[pattern] object ModelicaPattern {
+  def getRepresentation[A <:ModelicaPattern](possibleObjects:List[A])(modelicaRepresentation:String):A =
+      possibleObjects
+        .find(_.modelicaRepresentation == modelicaRepresentation)
+        .getOrElse(throw new IllegalArgumentException(s"Couldn't find a Pattern-instance for $modelicaRepresentation"))
+}
