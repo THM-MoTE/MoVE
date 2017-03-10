@@ -2,16 +2,16 @@
 
 The Modelica Vector graphics Editor (MoVE) is a cross platform graphical editor for
 Modelica's **icon** annotation. MoVE opens the opportunity to create the graphical
-representation of a model in a view minutes using a comfortable user interface.
+representation of a model in a few minutes using a comfortable user interface.
 
 == Unique features
 MoVE contains some features that are unique and missing in similar projects:
 
 - [x] generate pretty printed or one line annotation code
-- [x] create **straight lines**, **circles** and **squares** by holding down the shift key
+- [x] create **straight lines**, **circles** and **squares** by pressing the shift key
 - [x] rotate the shapes
 - [x] import existing models
-- [x] import images and embed them either base64 encoded or
+- [x] include images by url or embed them as base64 encoded string
 - [x] export your icons as **svg** or **png**
 - [x] group and ungroup shapes
 
