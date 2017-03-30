@@ -1,4 +1,4 @@
-= Modelica Vector graphics Editor (MoVE)
+image::https://rawgit.com/THM-MoTE/Logos/master/svgs/MoVE.svg[link="https://rawgit.com/THM-MoTE/Logos/master/svgs/MoVE.svg", align="center"]
 
 The Modelica Vector graphics Editor (MoVE) is a cross platform graphical editor for
 Modelica's **icon** annotation. MoVE opens the opportunity to create the graphical
