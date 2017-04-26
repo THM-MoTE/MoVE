@@ -45,8 +45,8 @@ class ModelicaParser extends JavaTokenParsers
   /** Icon is optional; there are models without a icon */
   def moSource:Parser[Option[Annotation]] = (
     skipAnnotation ~> "annotation" ~> "(" ~> icon <~ ")" <~";" ^^ { Some(_) }
-    | skipAnnotation ~> "annotation" ~> "(" ~> skipUninterestingStuff ~> posString(")") <~ ";" ^^ {
-      paren => Some(WithoutIcon(paren.pos))
+    | skipAnnotation ~> "annotation" ~> "(" ~> (skipUninterestingStuff ~> icon) ~ posString(")") <~ ";" ^^ {
+      case iconOpt ~ paren => Some(iconOpt) //Some(iconOpt.getOrElse(WithoutIcon(paren.pos)))
     }
     | stuffAfterModel ^^ { _ => None }
   )
@@ -62,7 +62,7 @@ class ModelicaParser extends JavaTokenParsers
   def skipAnnotation = ((not("annotation" ~> "(") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
 
   /** This parser skips everything that doesn't start with Icon because we are only intersted in Icon(.. */
-  def skipUninterestingStuff = ((not("Icon") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
+  def skipUninterestingStuff = ((not("Icon") ~> nonWhitespaceRegex) *)
   def stuffBeforeModel = ((not(classSpecialization) ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
   def stuffAfterModel = ((not("end") ~> nonWhitespaceRegex ~> """([^\n]+)""".r) *)
 
