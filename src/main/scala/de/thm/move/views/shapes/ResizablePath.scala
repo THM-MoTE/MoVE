@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -14,10 +14,10 @@ import javafx.scene.shape.{LineTo, MoveTo, Path}
 
 import de.thm.move.types._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
-  extends Path(startPoint :: elements)
+  extends Path((startPoint :: elements).asJava)
   with ResizableShape
   with ColorizableShape
   with QuadCurveTransformable
@@ -25,7 +25,6 @@ class ResizablePath(startPoint: MoveTo, elements:List[LineTo])
 
   val allElements = startPoint :: elements
   override lazy val edgeCount: Int = allElements.size
-
 
   def getPoints:List[Point] = allElements.flatMap {
     case move:MoveTo => List((move.getX, move.getY))

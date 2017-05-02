@@ -13,7 +13,7 @@ import javafx.scene.shape.Polygon
 
 import de.thm.move.types._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class ResizablePolygon(val points:List[Double])
   extends Polygon(points:_*)
@@ -25,7 +25,7 @@ class ResizablePolygon(val points:List[Double])
   override lazy val edgeCount: Int = points.size / 2
   override def toCurvedShape = QuadCurvePolygon(this)
   override def copy: ResizablePolygon = {
-    val duplicate = new ResizablePolygon(getPoints.map(_.doubleValue).toList)
+    val duplicate = new ResizablePolygon(getPoints.asScala.map(_.doubleValue).toList)
     duplicate.copyColors(this)
     duplicate.setRotate(getRotate)
     duplicate

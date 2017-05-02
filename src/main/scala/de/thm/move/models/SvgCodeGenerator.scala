@@ -20,7 +20,7 @@ import de.thm.move.util.{GeometryUtils, ResourceUtils}
 import de.thm.move.util.GeometryUtils._
 import de.thm.move.views.shapes._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.xml.{Elem, Null, PrettyPrinter, UnprefixedAttribute}
 
 /** Codegenerator for SVG-Images
@@ -103,7 +103,7 @@ class SvgCodeGenerator {
       width={rectangle.getWidth.toString}
       height={rectangle.getHeight.toString}
       style={genColorStyle(rectangle)}
-      stroke-dasharray = {rectangle.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {rectangle.getStrokeDashArray.asScala.mkString(",")}
       /> %
       fillAttribute(rectangle, id) %
       fillOpacityAttribute(rectangle, id)  %
@@ -117,7 +117,7 @@ class SvgCodeGenerator {
       rx={asRadius(ellipse.getWidth).toString}
       ry={asRadius(ellipse.getHeight).toString}
       style={genColorStyle(ellipse)}
-      stroke-dasharray = {ellipse.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {ellipse.getStrokeDashArray.asScala.mkString(",")}
       /> %
       fillAttribute(ellipse, id) %
       fillOpacityAttribute(ellipse, id)  %
@@ -131,7 +131,7 @@ class SvgCodeGenerator {
       x2={line.getEndX.toString}
       y2={line.getEndY.toString}
       style={genColorStyle(line)}
-      stroke-dasharray = {line.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {line.getStrokeDashArray.asScala.mkString(",")}
       /> %
       transformationAttribute(line)
   }
@@ -139,10 +139,10 @@ class SvgCodeGenerator {
   private def genPolygon(polygon:ResizablePolygon, id:String): Elem = {
     <polygon
       points={
-        polygon.getPoints.map(_.toInt).mkString(",")
+        polygon.getPoints.asScala.map(_.toInt).mkString(",")
       }
       style={genColorStyle(polygon)}
-      stroke-dasharray = {polygon.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {polygon.getStrokeDashArray.asScala.mkString(",")}
       /> %
       fillAttribute(polygon, id) %
       fillOpacityAttribute(polygon, id)
@@ -156,7 +156,7 @@ class SvgCodeGenerator {
         }.mkString(",")
       }
       style={genColorStyle(path)}
-      stroke-dasharray = {path.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {path.getStrokeDashArray.asScala.mkString(",")}
       fill = "none"
       /> %
       transformationAttribute(path)
@@ -172,7 +172,7 @@ class SvgCodeGenerator {
   private def genCurveLike(pathlike:AbstractQuadCurveShape): Elem = {
     <path
       d={
-        pathlike.getElements.map {
+        pathlike.getElements.asScala.map {
           case move:MoveTo => s"M ${move.getX} ${move.getY}"
           case line:LineTo => s"L ${line.getX} ${line.getY}"
           case curved:QuadCurveTo =>
@@ -180,7 +180,7 @@ class SvgCodeGenerator {
         }.mkString(" ")
       }
       style={genColorStyle(pathlike)}
-      stroke-dasharray = {pathlike.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {pathlike.getStrokeDashArray.asScala.mkString(",")}
       /> %
       transformationAttribute(pathlike)
   }

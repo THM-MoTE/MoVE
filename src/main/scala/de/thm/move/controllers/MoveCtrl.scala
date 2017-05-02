@@ -45,7 +45,7 @@ import de.thm.recent.{MRecent, Recent}
 import de.thm.recent.JsProtocol._
 
 import scala.None
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.util._
 import org.reactfx.EventStreams
 import org.reactfx.EventStream
@@ -152,8 +152,8 @@ class MoveCtrl extends Initializable {
     */
   private lazy val keyCodeToButtons = {
     val buttons =
-      embeddedBottomToolbar.getItems.collect { case x:ButtonBase => x } ++
-      btnGroup.getToggles.map(_.asInstanceOf[ButtonBase])
+      embeddedBottomToolbar.getItems.asScala.collect { case x:ButtonBase => x } ++
+      btnGroup.getToggles.asScala.map(_.asInstanceOf[ButtonBase])
     def getButtonById(id:String): Option[ButtonBase] = {
       buttons.find(_.getId == id)
     }
@@ -285,7 +285,7 @@ class MoveCtrl extends Initializable {
     }
 
     setupMoveShapesByShortcuts(drawStub.getScene)
-    drawStub.getScene.getAccelerators.putAll(combinationsToRunnable)
+    drawStub.getScene.getAccelerators.putAll(combinationsToRunnable.asJava)
 
     drawStub.requestFocus()
 
