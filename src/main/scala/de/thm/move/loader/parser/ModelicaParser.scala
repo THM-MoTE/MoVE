@@ -94,7 +94,7 @@ class ModelicaParser extends JavaTokenParsers
     positioned("coordinateSystem" ~>"(" ~> coordinateSysFields <~ ")")
 
   def coordinateSysFields:Parser[CoordinateSystem] =
-    positioned(propertyKeys(extent, preserveRatio, initScale) ^^ { map =>
+    positioned(propertyKeys(extent, preserveRatio, initScale, "grid") ^^ { map =>
     val ext = getPropertyValue(map, extent)(extension)
     val aspectRatio = getPropertyValue(map, preserveRatio, defaultPreserveRatio)(bool)
     val scale = getPropertyValue(map, initScale, defaultinitScale)(decimalNo)
