@@ -71,10 +71,10 @@ end test;
 		Int y = 5;
 		String derb = "test";
 		Modelica.Electrical.Basic.Analog REsistor res = Resostr();
-annotation(
-	Documentation(<html></html>)
-	Diagram({asöldkfjasdf}),
-		annotation( Icon (  coordinateSystem(  extent = {{0,0},{800,500}}  ), graphics = { Rectangle(  origin = {209,372},  lineColor = {0,0,0},  fillColor = {255,0,0},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Solid,  extent = {{-69,69}, {69,-69}}  ), Rectangle(  origin = {596,392},  lineColor = {0,0,0},  fillColor = {102,128,230},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Horizontal,  extent = {{-123,58}, {123,-58}}  ), Line(  origin = {255,199},  points = {{-137,47},{137,-47}},  color = {255,102,102},  pattern = LinePattern.DashDot,  thickness = 4.0  ), Line(  origin = {543,210},  points = {{13,68},{-33,-1},{73,35},{13,-39},{120,-52},{-4,-78},{-109,-2},{-52,51}},  color = {230,230,77},  pattern = LinePattern.Dash,  thickness = 4.0,  smooth = Smooth.Bezier  ), Ellipse(  origin = {179,128},  lineColor = {230,230,77},  fillColor = {102,128,230},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Forward,  extent = {{-113,53}, {113,-53}},  endAngle = 360  )}) );
+		annotation(
+			Documentation(<html></html>)
+			Diagram({asöldkfjasdf}),
+			Icon (  coordinateSystem(  extent = {{0,0},{800,500}}  ), graphics = { Rectangle(  origin = {209,372},  lineColor = {0,0,0},  fillColor = {255,0,0},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Solid,  extent = {{-69,69}, {69,-69}}  ), Rectangle(  origin = {596,392},  lineColor = {0,0,0},  fillColor = {102,128,230},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Horizontal,  extent = {{-123,58}, {123,-58}}  ), Line(  origin = {255,199},  points = {{-137,47},{137,-47}},  color = {255,102,102},  pattern = LinePattern.DashDot,  thickness = 4.0  ), Line(  origin = {543,210},  points = {{13,68},{-33,-1},{73,35},{13,-39},{120,-52},{-4,-78},{-109,-2},{-52,51}},  color = {230,230,77},  pattern = LinePattern.Dash,  thickness = 4.0,  smooth = Smooth.Bezier  ), Ellipse(  origin = {179,128},  lineColor = {230,230,77},  fillColor = {102,128,230},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Forward,  extent = {{-113,53}, {113,-53}},  endAngle = 360  )}) );
 		end test;
 		"""
 		withParseSuccess(str)
@@ -101,6 +101,20 @@ annotation(
 	Diagram({asöldkfjasdf}),
 		annotation( Icon (  coordinateSystem(  extent = {{0,0},{800,500}}  ), graphics = { Rectangle(  origin = {209,372},  lineColor = {0,0,0},  fillColor = {255,0,0},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Solid,  extent = {{-69,69}, {69,-69}}  ), Rectangle(  origin = {596,392},  lineColor = {0,0,0},  fillColor = {102,128,230},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Horizontal,  extent = {{-123,58}, {123,-58}}  ), Line(  origin = {255,199},  points = {{-137,47},{137,-47}},  color = {255,102,102},  pattern = LinePattern.DashDot,  thickness = 4.0  ), Line(  origin = {543,210},  points = {{13,68},{-33,-1},{73,35},{13,-39},{120,-52},{-4,-78},{-109,-2},{-52,51}},  color = {230,230,77},  pattern = LinePattern.Dash,  thickness = 4.0,  smooth = Smooth.Bezier  ), Ellipse(  origin = {179,128},  lineColor = {230,230,77},  fillColor = {102,128,230},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Forward,  extent = {{-113,53}, {113,-53}},  endAngle = 360  )}) );
 		end test2;
+		"""
+		withParseSuccess(str)
+	}
+
+	it should "parse multiple annotations on the same line" in {
+		val str = """
+		model test
+		Real x = 0.5;
+		Int y = 5;
+		String derb = "test";
+		Modelica.Electrical.Basic.Analog REsistor res = Resostr();
+		annotation(
+			Documentation(<html></html>), Diagram({asöldkfjasdf}), Icon (  coordinateSystem(  extent = {{0,0},{800,500}}  ), graphics = { Rectangle(  origin = {209,372},  lineColor = {0,0,0},  fillColor = {255,0,0},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Solid,  extent = {{-69,69}, {69,-69}}  ), Rectangle(  origin = {596,392},  lineColor = {0,0,0},  fillColor = {102,128,230},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Horizontal,  extent = {{-123,58}, {123,-58}}  ), Line(  origin = {255,199},  points = {{-137,47},{137,-47}},  color = {255,102,102},  pattern = LinePattern.DashDot,  thickness = 4.0  ), Line(  origin = {543,210},  points = {{13,68},{-33,-1},{73,35},{13,-39},{120,-52},{-4,-78},{-109,-2},{-52,51}},  color = {230,230,77},  pattern = LinePattern.Dash,  thickness = 4.0,  smooth = Smooth.Bezier  ), Ellipse(  origin = {179,128},  lineColor = {230,230,77},  fillColor = {102,128,230},  lineThickness = 4.0,  pattern = LinePattern.Solid,  fillPattern = FillPattern.Forward,  extent = {{-113,53}, {113,-53}},  endAngle = 360  )}) );
+		end test;
 		"""
 		withParseSuccess(str)
 	}
