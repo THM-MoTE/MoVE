@@ -50,7 +50,7 @@ object CodePreviewCtrl {
 			Windows.initWindow(
 				Global.config.getDouble("window.preview.width").getOrElse(500.0),
 				Global.config.getDouble("window.preview.height").getOrElse(500.0),
-				Global.config.getDouble("window.title").map(_+" - Code Preview").getOrElse(""),
+				Global.config.getString("window.title").map(_+" - Code Preview").getOrElse(""),
 				getClass.getResource("/fxml/code-preview.fxml"),
 				new CodePreviewCtrl())
 }
