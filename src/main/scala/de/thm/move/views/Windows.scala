@@ -26,6 +26,7 @@ object Windows {
 	    fxmlLoader.setController(ctrl)
 	    val root:Parent = fxmlLoader.load()
 			val scene = new Scene(root)
+			scene.getStylesheets.add(Global.styleSheetUrl)
 			stage.setTitle(title)
 			stage.setScene(scene)
 			stage.setWidth(width)
