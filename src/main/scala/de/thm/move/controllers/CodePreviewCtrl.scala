@@ -15,6 +15,7 @@ import javafx.event.ActionEvent
 import javafx.scene.Node
 import javafx.scene.control.TextArea
 import javafx.stage.Stage
+import javafx.scene.input.{Clipboard, ClipboardContent}
 
 import de.thm.move.models.ModelicaCodeGenerator
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
@@ -31,7 +32,10 @@ class CodePreviewCtrl extends Initializable {
 
 	@FXML
 	def onCopy(ev:ActionEvent):Unit = {
-		println("copy clicked")
+		val clipboard = Clipboard.getSystemClipboard()
+		val content = new ClipboardContent()
+		content.putString(txtCode.getText())
+		clipboard.setContent(content)
 	}
 
 	def updateCodePreview(width:Double, height:Double, shapes:List[Node]): Unit = {
