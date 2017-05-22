@@ -125,6 +125,7 @@ class MoveCtrl extends Initializable {
   private val contextMenuCtrl = new ContextMenuCtrl(drawPanel, drawPanelCtrl)
   private val selectionCtrl = new SelectedShapeCtrl(drawPanelCtrl,  snapGrid)
   private val (aboutStage, _) = AboutCtrl.setupAboutDialog()
+  private val (previewStage, previewCtrl) = CodePreviewCtrl.setupCodePreviewDialog()
   private lazy val fileCtrl = new FileCtrl(getWindow)
   private val clipboardCtrl = new ClipboardCtrl[List[ResizableShape]]
 
@@ -517,6 +518,8 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onAboutClicked(e:ActionEvent): Unit = aboutStage.show()
+  @FXML
+  def onPreviewClicked(e:ActionEvent): Unit = previewStage.show()
 
   @FXML
   def onShowAnchorsClicked(e:ActionEvent): Unit = drawPanelCtrl.setVisibilityOfAnchors(showAnchorsSelected)
