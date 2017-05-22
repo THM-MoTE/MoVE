@@ -518,8 +518,12 @@ class MoveCtrl extends Initializable {
 
   @FXML
   def onAboutClicked(e:ActionEvent): Unit = aboutStage.show()
+
   @FXML
-  def onPreviewClicked(e:ActionEvent): Unit = previewStage.show()
+  def onPreviewClicked(e:ActionEvent): Unit = {
+    previewCtrl.updateCodePreview(drawPanel.getWidth, drawPanel.getHeight, drawPanel.getShapes)
+    previewStage.show()
+  }
 
   @FXML
   def onShowAnchorsClicked(e:ActionEvent): Unit = drawPanelCtrl.setVisibilityOfAnchors(showAnchorsSelected)

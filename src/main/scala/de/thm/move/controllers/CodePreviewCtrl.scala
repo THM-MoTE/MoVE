@@ -12,9 +12,12 @@ import java.net.URL
 import java.util.ResourceBundle
 import javafx.fxml.{FXML, FXMLLoader, Initializable}
 import javafx.event.ActionEvent
+import javafx.scene.Node
 import javafx.scene.control.TextArea
 import javafx.stage.Stage
 
+import de.thm.move.models.ModelicaCodeGenerator
+import de.thm.move.models.ModelicaCodeGenerator.FormatSrc
 import de.thm.move.Global
 import de.thm.move.views.Windows
 
@@ -29,6 +32,12 @@ class CodePreviewCtrl extends Initializable {
 	@FXML
 	def onCopy(ev:ActionEvent):Unit = {
 		println("copy clicked")
+	}
+
+	def updateCodePreview(width:Double, height:Double, shapes:List[Node]): Unit = {
+		val generator = new ModelicaCodeGenerator(FormatSrc.Pretty, 1, width, height)
+		val code = generator.generate("example", null, shapes)
+		txtCode.setText(code.mkString("\n"))
 	}
 }
 
