@@ -40,15 +40,6 @@ class DrawCtrl(changeLike:ChangeDrawPanelLike) {
 
   private val tmpShapeId = DrawPanel.tmpShapeId
 
-  /** The constraint that indicates if the drawing-element should hold their
-    * proportions. E.g. a ellipse becomes a circle, a rectangle becomes a square
-    */
-  val drawConstraintProperty = new SimpleBooleanProperty()
-
-  for((_, strategy) <- drawStrategies) {
-    strategy.drawConstraintProperty.bind(drawConstraintProperty)
-  }
-
   def getDrawHandler: (SelectedShape, MouseEvent) => (Color, Color, Int) => Unit = {
     def drawHandler(shape:SelectedShape, mouseEvent:MouseEvent)(fillColor:Color, strokeColor:Color, selectedThickness:Int): Unit = {
       drawStrategies.get(shape).foreach { strategy =>

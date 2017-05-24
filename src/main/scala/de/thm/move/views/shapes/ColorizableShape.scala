@@ -12,20 +12,31 @@ import javafx.beans.property.{ObjectProperty, SimpleObjectProperty}
 import javafx.scene.paint.{Color, Paint}
 import javafx.scene.shape.Shape
 
-import de.thm.move.models.{FillPattern, LinePattern}
+import de.thm.move.models.pattern._
 import de.thm.move.util.JFxUtils._
+import de.thm.move.implicits.FxHandlerImplicits._
 
 /** A colorizable shape. */
 trait ColorizableShape {
   self: Shape =>
 
   /** Pattern of the stroke */
-  val linePattern:ObjectProperty[LinePattern.Value] =
-    new SimpleObjectProperty(LinePattern.Solid)
+  val linePattern:ObjectProperty[LinePattern] =
+    new SimpleObjectProperty(SSolid)
+
+
+  linePattern.addListener { (_:LinePattern, newlp:LinePattern) =>
+    newlp.applyToShape(this)
+  }
 
   /** Pattern of the fill */
-  val fillPatternProperty:ObjectProperty[FillPattern.Value] =
-    new SimpleObjectProperty(FillPattern.Solid)
+  val fillPatternProperty:ObjectProperty[FillPattern] =
+    new SimpleObjectProperty(FSolid)
+
+  fillPatternProperty.addListener { (_:FillPattern, newfp:FillPattern) =>
+    newfp.applyToShape(this)
+  }
+
   /** The old/actual Color fill.
     *
     * @note
@@ -43,7 +54,6 @@ trait ColorizableShape {
     copyProperty(fillPatternProperty, other.fillPatternProperty)
     copyProperty(oldFillColorProperty, other.oldFillColorProperty)
     copyProperty(linePattern, other.linePattern)
-    LinePattern.linePatternToCssClass.get(linePattern.get) foreach getStyleClass.add
   }
 
   /** Sets the fill and stroke color of this shape */

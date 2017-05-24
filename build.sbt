@@ -62,10 +62,11 @@ lazy val root = (project in file(".")).
   settings(
     organization := "de.thm.mote",
     name := "Move",
-    version := "0.7.0",
-    scalaVersion := "2.11.8",
+    version := "0.7.1",
+    scalaVersion := "2.12.2",
     javacOptions ++= Seq("-source", "1.8")
-    )
+    ).
+  dependsOn(RootProject(file("../recently")))
 
 mainClass in Compile := Some("de.thm.move.MoveApp")
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
@@ -77,8 +78,8 @@ assemblyExcludedJars in assembly := {
 
 
 libraryDependencies ++= Seq(
-    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
-    "org.scala-lang.modules" %% "scala-xml" % "1.0.4",
-    "org.reactfx" % "reactfx" % "2.0-SNAPSHOT",
-    "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
-    "com.athaydes.automaton" % "Automaton" % "1.3.2" % "test")
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.5",
+    "org.scala-lang.modules" %% "scala-xml" % "1.0.6",
+    "org.scalatest" %% "scalatest" % "3.0.3" % "test",
+    "com.athaydes.automaton" % "Automaton" % "1.3.2" % "test",
+    "org.reactfx" % "reactfx" % "2.0-M5")

@@ -9,12 +9,14 @@
 package de.thm
 
 import javafx.geometry.Point2D
+import javafx.scene.Node
 
 import de.thm.move.views.shapes.{ColorizableShape, PathLike, RectangleLike, ResizableShape}
 
 package object move {
   object types {
     type Point = (Double, Double)
+    type ColorizableNode = Node with ColorizableShape
     type RectangularNode = ResizableShape with RectangleLike with ColorizableShape
     type PathNode = ResizableShape with PathLike with ColorizableShape
 
@@ -37,6 +39,9 @@ package object move {
 
       @inline
       final def +(that: Point): Point = (p._1 + that._1, p._2 + that._2)
+
+      @inline
+      final def *(factor:Double): Point = map(_*factor)
 
       @inline
       final def map[A](fn: Double => A): (A, A) = (fn(p._1), fn(p._2))

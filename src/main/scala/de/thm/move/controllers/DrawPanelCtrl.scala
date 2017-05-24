@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -15,7 +15,7 @@ import javafx.scene.input.InputEvent
 import de.thm.move.views.panes.DrawPanel
 import de.thm.move.views.shapes.ResizableShape
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class DrawPanelCtrl(
     val drawPanel: DrawPanel,
@@ -42,6 +42,6 @@ class DrawPanelCtrl(
       shape.getAnchors.foreach(drawPanel.remove)
     }
 
-    override def getElements: List[Node] = drawPanel.getChildren.toList
+    override def getElements: List[Node] = drawPanel.getChildren.asScala.toList
     override def remove(n:Node): Unit = drawPanel.remove(n)
 }

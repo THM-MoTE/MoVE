@@ -19,5 +19,9 @@ Used libraries:
     Homepage: https://github.com/scala/scala-xml
 
     == ScalaTest ==
-    Homepage: http://www.scalatest.org/
     License: Apache License v2 (http://www.apache.org/licenses/LICENSE-2.0.html)
+    Homepage: http://www.scalatest.org/
+
+    == ReactFX ==
+    License: BSD 2-Clause (https://github.com/TomasMikula/ReactFX/blob/master/LICENSE)
+    Homepage: https://github.com/TomasMikula/ReactFX

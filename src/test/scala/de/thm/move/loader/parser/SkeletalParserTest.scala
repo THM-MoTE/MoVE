@@ -659,7 +659,7 @@ class SkeletalParserTest extends MoveSpec {
          | annotation(
          |   Icon(
          |    coordinateSystem (
-         |      extent = {{0,0},{756,504}}
+         |      extent = {{0,0},{756,504}
          |    )
          |   graphics = {
          |     Rectangle(

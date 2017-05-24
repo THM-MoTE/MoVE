@@ -87,13 +87,11 @@ class ModelicaCodeGenerator(
   }
 
   private def genLinePattern(shape:ColorizableShape):String = {
-    val linePattern = LinePattern.toString + "." + shape.linePattern.get.toString
-    s"pattern = ${linePattern}"
+    s"pattern = ${shape.linePattern.get.modelicaRepresentation}"
   }
 
   private def genFillPattern(shape:ColorizableShape):String = {
-    val fillPattern = FillPattern.toString + "." + shape.fillPatternProperty.get
-    s"fillPattern = ${fillPattern}"
+    s"fillPattern = ${shape.fillPatternProperty.get.modelicaRepresentation}"
   }
 
   private def convertY(p:Point):Point = (p.x, paneHeight - p.y)

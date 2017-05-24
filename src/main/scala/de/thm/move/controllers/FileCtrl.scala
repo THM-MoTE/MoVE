@@ -11,8 +11,10 @@ package de.thm.move.controllers
 import java.net.URI
 import java.nio.file.{Files, Path, Paths}
 import javafx.embed.swing.SwingFXUtils
-import javafx.scene.Node
+import javafx.geometry.Rectangle2D
+import javafx.scene.{Node, SnapshotParameters}
 import javafx.scene.control.{ButtonType, ChoiceDialog}
+import javafx.scene.layout.Pane
 import javafx.stage.Window
 import javax.imageio.ImageIO
 
@@ -21,7 +23,6 @@ import de.thm.move.implicits.MonadImplicits._
 import de.thm.move.loader.ShapeConverter
 import de.thm.move.loader.parser.ModelicaParserLike
 import de.thm.move.loader.parser.ast.Model
-
 import de.thm.move.models.ModelicaCodeGenerator.FormatSrc._
 import de.thm.move.models.{ModelicaCodeGenerator, SrcFile, SvgCodeGenerator, UserInputException}
 import de.thm.move.types._
@@ -118,22 +119,21 @@ class FileCtrl(owner: Window) {
       scaleFactor <- showScaleDialog()
     } yield {
       val model = srcFile.model
-      val systemSize = ShapeConverter.gettCoordinateSystemSizes(model)
+      val system = ShapeConverter.getCoordinateSystem(model)
       val converter = new ShapeConverter(scaleFactor,
-        systemSize,
+        system,
         path)
       val shapesWithWarnings = converter.getShapes(model)
       val shapes = shapesWithWarnings.map(_._1)
       val warnings = shapesWithWarnings.flatMap(_._2)
-      val scaledSystem = systemSize.map(_*scaleFactor)
       if(warnings.nonEmpty) {
         Dialogs.newListDialog(warnings,
-          "Some properties can't get used.\nThey will be overridden when saving the file!").
+          "Some properties aren't used.\nThey will be overriden when saving the file!").
           showAndWait()
       }
       openedFile = Some(srcFile)
       formatInfos = Some(FormatInfos(scaleFactor, None))
-      (scaledSystem, shapes)
+      (converter.scaledSystemSize, shapes)
     }
   }
 
@@ -269,16 +269,21 @@ class FileCtrl(owner: Window) {
   /** Exports the given Icon represented by
     * the given shapes and width,height into an user-selected png-file
     */
-  def exportAsBitmap(root:Node): Try[Unit] = {
+  def exportAsBitmap(root:Pane): Try[Unit] = {
    val chooser = Dialogs.newPngFileChooser()
     chooser.setTitle(fontBundle.getString("export.jpg"))
     val fileTry = Option(chooser.showSaveDialog(owner)) match {
       case Some(x) => Success(x)
       case _ => Failure(UserInputException("Select a file for export!"))
     }
+
+    //define explicit size for png
+    val shotParameters = new SnapshotParameters()
+    shotParameters.setViewport(new Rectangle2D(0,0,root.getPrefWidth, root.getPrefHeight))
+
     for {
       file <- fileTry
-      image = root.snapshot(null, null)
+      image = root.snapshot(shotParameters, null)
       filename = file.getName
       suffix = filename.substring(filename.lastIndexOf(".")+1)
       _ <- Try (ImageIO.write(SwingFXUtils.fromFXImage(image, null), suffix, file))

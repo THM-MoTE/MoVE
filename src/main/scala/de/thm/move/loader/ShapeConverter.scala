@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -14,12 +14,12 @@ import java.util.Base64
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import javafx.scene.text.{Font, TextAlignment}
+import javafx.scene.transform.Transform
 
 import de.thm.move.controllers.factorys.ShapeFactory
 import de.thm.move.loader.parser.PropertyParser
 import de.thm.move.loader.parser.ast._
-
-import de.thm.move.models.{FillPattern, LinePattern}
+import de.thm.move.models.pattern._
 import de.thm.move.util.GeometryUtils
 import de.thm.move.util.GeometryUtils._
 import de.thm.move.types._
@@ -29,14 +29,19 @@ import de.thm.move.views.shapes._
   *
   * @param pxPerMm describes how many px are 1 unit from modelica
   *                Example: pxPerMm = 2 => every unit gets doubled
-  * @param system (width,height) from the coordinate system in which the shapes get loaded/displayed
+  * @param system (low,high) the coordinate system from the source file
   * @param srcFilePath the path to the parsed modelica-file
   */
-class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
+class ShapeConverter(pxPerMm:Int, system:Extent, srcFilePath:Path) {
 
   type ErrorMsg = String
 
   lazy val parentPath = srcFilePath.getParent
+  private val (low, high) = system
+  /* translate coordinates by offset to x=0 and y=largest Y */
+  private val distanceZero = (0.0, 0.0) - low
+  private val systemDistance = (high - low).abs
+  val translation = Transform.translate(distanceZero.x, distanceZero.y)
 
   /** Converst the rotation-value.
     * Modelica rotates counter-clockwise; JavafX rotates clockwise
@@ -48,30 +53,21 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
     color:Color,
     linePattern:String,
     strWidth:Double): Unit = {
-    val lp = linePattern.split("\\.")(1)
-    val linePatt = LinePattern.withName(lp)
-    val cssClass = LinePattern.linePatternToCssClass(linePatt)
-    shape.linePattern.setValue(linePatt)
-    shape.getStyleClass().add(cssClass)
+    val linePat = LinePattern.get(linePattern)
+    shape.linePattern.set(linePat)
     shape.setStrokeColor(color)
     shape.setStrokeWidth(strWidth)
   }
 
   private def applyColor(shape:ResizableShape with ColorizableShape, fs:FilledShape): Unit = {
     shape.setFillColor(fs.fillColor)
-
-    val fillPatt = FillPattern.withName(fs.fillPattern.split("\\.")(1))
-    shape.fillPatternProperty.setValue(fillPatt)
-
-    val width = shape.getBoundsInLocal.getWidth()
-    val height = shape.getBoundsInLocal.getHeight()
-    shape.setFillColor(FillPattern.getFillColor(fillPatt, fs.fillColor, fs.strokeColor, width, height))
     applyLineColor(shape, fs.strokeColor, fs.strokePattern, fs.strokeSize)
+    shape.fillPatternProperty.set(FillPattern.get(fs.fillPattern))
   }
 
-  private def convertPoint(p:Point):Point = {
-    val (_,h) = system
-    (pxPerMm * p.x, pxPerMm*(h-p.y))
+  def convertPoint(p:Point):Point = { //TODO create explicit test for conversion of points
+    val point2D = translation.transform(p.x,p.y)
+    (pxPerMm * point2D.getX, pxPerMm * (systemDistance.y - point2D.getY))
   }
 
   private def rectangleLikeDimensions(origin:Point, ext:Extent):(Point,Double,Double) = {
@@ -183,10 +179,14 @@ class ShapeConverter(pxPerMm:Int, system:Point, srcFilePath:Path) {
       case (None, msg) => Some(
         s"""$shapename: \n  $msg""")
     }
+
+  def scaledSystemSize:Point =
+    (high - low).abs * pxPerMm
 }
 
 object ShapeConverter {
-
+/*
+  @deprecated("Will be removed; Use 'gettCoordinateSystem' instead", "0.7.2.X")
   def getSystemSize(iconOpt:Annotation):Option[Point] =
     iconOpt match {
       case Icon(Some(system),_,_,_) =>
@@ -195,9 +195,23 @@ object ShapeConverter {
       case _ => None
     }
 
+  @deprecated("Will be removed; Use 'gettCoordinateSystem' instead", "0.7.2.X")
   def gettCoordinateSystemSizes(ast:ModelicaAst):Point = ast match {
     case Model(name, iconOpt) =>
       getSystemSize(iconOpt).getOrElse(PropertyParser.defaultCoordinateSystemSize)
+    case _ => throw new IllegalArgumentException("ast != Model")
+  }
+*/
+  def getCoordinateSystem(iconOpt:Annotation):Option[Extent] =
+    iconOpt match {
+      case Icon(Some(system),_,_,_) =>
+        Some(system.extension)
+      case _ => None
+    }
+
+  def getCoordinateSystem(ast:ModelicaAst): Extent = ast match {
+    case Model(name, iconOpt) =>
+      getCoordinateSystem(iconOpt).getOrElse(PropertyParser.defaultCoordinateSystem)
     case _ => throw new IllegalArgumentException("ast != Model")
   }
 }

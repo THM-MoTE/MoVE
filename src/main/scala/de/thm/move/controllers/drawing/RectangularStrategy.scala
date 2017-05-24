@@ -21,9 +21,9 @@ abstract class RectangularStrategy(changeLike:ChangeDrawPanelLike, protected val
     tmpFigure.setXY(p)
   }
 
-  protected def calculateBounds(point: Point):Point = {
+  protected def calculateBounds(point: Point, squared:Boolean):Point = {
     val (width,height) = point - tmpFigure.getXY
-    if(drawConstraintProperty.get) {
+    if(squared) {
       val tmpDelta = width min height
       (tmpDelta, tmpDelta)
     } else {
@@ -31,8 +31,8 @@ abstract class RectangularStrategy(changeLike:ChangeDrawPanelLike, protected val
     }
   }
 
-  protected def setBounds(point:Point): Unit = {
-    val (width, height) = calculateBounds(point)
+  protected def setBounds(point:Point, squared:Boolean): Unit = {
+    val (width, height) = calculateBounds(point, squared)
     tmpFigure.setWidth(width)
     tmpFigure.setHeight(height)
   }
@@ -43,9 +43,9 @@ abstract class RectangularStrategy(changeLike:ChangeDrawPanelLike, protected val
         changeLike.addNode(tmpFigure)
         setStartXY(mouseEvent.getX, mouseEvent.getY)
       case MouseEvent.MOUSE_DRAGGED =>
-        setBounds(mouseEvent.getX, mouseEvent.getY)
+        setBounds(mouseEvent.getX -> mouseEvent.getY, mouseEvent.isShiftDown)
       case MouseEvent.MOUSE_RELEASED =>
-        setBounds(mouseEvent.getX, mouseEvent.getY)
+        setBounds(mouseEvent.getX -> mouseEvent.getY, mouseEvent.isShiftDown)
         changeLike.addShapeWithAnchors(tmpFigure.copy)
         reset()
       case _ => //ignore

@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -15,11 +15,12 @@ import javafx.scene.paint._
 import javafx.scene.shape.{LineTo, MoveTo, QuadCurveTo}
 
 import de.thm.move.Global._
+import de.thm.move.models.pattern._
 import de.thm.move.util.{GeometryUtils, ResourceUtils}
 import de.thm.move.util.GeometryUtils._
 import de.thm.move.views.shapes._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.xml.{Elem, Null, PrettyPrinter, UnprefixedAttribute}
 
 /** Codegenerator for SVG-Images
@@ -102,7 +103,7 @@ class SvgCodeGenerator {
       width={rectangle.getWidth.toString}
       height={rectangle.getHeight.toString}
       style={genColorStyle(rectangle)}
-      stroke-dasharray = {rectangle.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {rectangle.getStrokeDashArray.asScala.mkString(",")}
       /> %
       fillAttribute(rectangle, id) %
       fillOpacityAttribute(rectangle, id)  %
@@ -116,7 +117,7 @@ class SvgCodeGenerator {
       rx={asRadius(ellipse.getWidth).toString}
       ry={asRadius(ellipse.getHeight).toString}
       style={genColorStyle(ellipse)}
-      stroke-dasharray = {ellipse.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {ellipse.getStrokeDashArray.asScala.mkString(",")}
       /> %
       fillAttribute(ellipse, id) %
       fillOpacityAttribute(ellipse, id)  %
@@ -130,7 +131,7 @@ class SvgCodeGenerator {
       x2={line.getEndX.toString}
       y2={line.getEndY.toString}
       style={genColorStyle(line)}
-      stroke-dasharray = {line.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {line.getStrokeDashArray.asScala.mkString(",")}
       /> %
       transformationAttribute(line)
   }
@@ -138,10 +139,10 @@ class SvgCodeGenerator {
   private def genPolygon(polygon:ResizablePolygon, id:String): Elem = {
     <polygon
       points={
-        polygon.getPoints.map(_.toInt).mkString(",")
+        polygon.getPoints.asScala.map(_.toInt).mkString(",")
       }
       style={genColorStyle(polygon)}
-      stroke-dasharray = {polygon.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {polygon.getStrokeDashArray.asScala.mkString(",")}
       /> %
       fillAttribute(polygon, id) %
       fillOpacityAttribute(polygon, id)
@@ -155,7 +156,7 @@ class SvgCodeGenerator {
         }.mkString(",")
       }
       style={genColorStyle(path)}
-      stroke-dasharray = {path.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {path.getStrokeDashArray.asScala.mkString(",")}
       fill = "none"
       /> %
       transformationAttribute(path)
@@ -171,7 +172,7 @@ class SvgCodeGenerator {
   private def genCurveLike(pathlike:AbstractQuadCurveShape): Elem = {
     <path
       d={
-        pathlike.getElements.map {
+        pathlike.getElements.asScala.map {
           case move:MoveTo => s"M ${move.getX} ${move.getY}"
           case line:LineTo => s"L ${line.getX} ${line.getY}"
           case curved:QuadCurveTo =>
@@ -179,7 +180,7 @@ class SvgCodeGenerator {
         }.mkString(" ")
       }
       style={genColorStyle(pathlike)}
-      stroke-dasharray = {pathlike.getStrokeDashArray.mkString(",")}
+      stroke-dasharray = {pathlike.getStrokeDashArray.asScala.mkString(",")}
       /> %
       transformationAttribute(pathlike)
   }
@@ -235,8 +236,8 @@ class SvgCodeGenerator {
 
   private def fillAttribute(shape:ColorizableShape, id:String) = {
     val fill = shape.fillPatternProperty.get match {
-      case FillPattern.None => "white"
-      case FillPattern.Solid => colorToCssColor(shape.oldFillColorProperty.get)
+      case FNone => "white"
+      case FSolid => colorToCssColor(shape.oldFillColorProperty.get)
       case _ => s"url(#$id)"
     }
     new UnprefixedAttribute("fill",fill,Null)
@@ -244,7 +245,7 @@ class SvgCodeGenerator {
 
   private def fillOpacityAttribute(shape:ColorizableShape, id:String) = {
     val opacity = shape.fillPatternProperty.get match {
-      case FillPattern.None => "0.0"
+      case FNone => "0.0"
       case _ => "%.2f".formatLocal(Locale.US, shape.oldFillColorProperty.get.getOpacity)
     }
     new UnprefixedAttribute("fill-opacity",opacity,Null)
@@ -360,44 +361,44 @@ class SvgCodeGenerator {
     val height = bounds.getHeight
 
     shape.fillPatternProperty.get match {
-      case FillPattern.VerticalCylinder =>
+      case VerticalCylinder =>
         Some(<linearGradient id={id.toString} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" style={s"stop-color:${colorToCssColor(shape.getStrokeColor)};stop-opacity:1"}/>
           <stop offset="45%" style={s"stop-color:${colorToCssColor(shape.oldFillColorProperty.get)};stop-opacity:1"}/>
           <stop offset="55%" style={s"stop-color:${colorToCssColor(shape.oldFillColorProperty.get)};stop-opacity:1"}/>
           <stop offset="100%" style={s"stop-color:${colorToCssColor(shape.getStrokeColor)};stop-opacity:1"}/>
         </linearGradient>)
-      case FillPattern.HorizontalCylinder =>
+      case HorizontalCylinder =>
         Some(<linearGradient id={id.toString} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" style={s"stop-color:${colorToCssColor(shape.getStrokeColor)};stop-opacity:1"}/>
           <stop offset="45%" style={s"stop-color:${colorToCssColor(shape.oldFillColorProperty.get)};stop-opacity:1"}/>
           <stop offset="55%" style={s"stop-color:${colorToCssColor(shape.oldFillColorProperty.get)};stop-opacity:1"}/>
           <stop offset="100%" style={s"stop-color:${colorToCssColor(shape.getStrokeColor)};stop-opacity:1"}/>
         </linearGradient>)
-      case FillPattern.Sphere =>
+      case Sphere =>
        Some(<radialGradient id={id.toString} cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
           <stop offset="0%" style={s"stop-color:${colorToCssColor(shape.oldFillColorProperty.get)}; stop-opacity:1"} />
           <stop offset="20%" style={s"stop-color:${colorToCssColor(shape.oldFillColorProperty.get)}; stop-opacity:1"} />
           <stop offset="100%" style={s"stop-color:${colorToCssColor(shape.getStrokeColor)};stop-opacity:1"} />
         </radialGradient>)
-      case FillPattern.Horizontal =>
+      case Horizontal =>
         val lines = horizontalLines(width, height, shape.getStrokeColor)
         Some(generateStructurePattern(lines, width, height))
-      case FillPattern.Vertical =>
+      case Vertical =>
         val lines = verticalLines(width,height,shape.getStrokeColor)
         Some(generateStructurePattern(lines, width, height))
-      case FillPattern.Cross =>
+      case Cross =>
         val verticals = verticalLines(width, height, shape.getStrokeColor)
         val horizontals = horizontalLines(width, height, shape.getStrokeColor)
         val lines = verticals ++ horizontals
         Some(generateStructurePattern(lines, width, height))
-      case FillPattern.Backward =>
+      case Backward =>
         val lines = backwardLines(width, height, shape.getStrokeColor)
         Some(generateStructurePattern(lines, width, height))
-      case FillPattern.Forward =>
+      case Forward =>
         val lines = forwardLines(width, height, shape.getStrokeColor)
         Some(generateStructurePattern(lines, width, height))
-      case FillPattern.CrossDiag =>
+      case CrossDiag =>
         val backward = backwardLines(width, height, shape.getStrokeColor)
         val forward = forwardLines(width, height, shape.getStrokeColor)
         val lines = backward ++ forward

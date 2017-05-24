@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.CheckMenuItem?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -24,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.MoveCtrl">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.move.controllers.MoveCtrl">
    <left>
       <ToolBar orientation="VERTICAL" BorderPane.alignment="CENTER">
         <items>
@@ -88,6 +81,14 @@
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.file.open" />
                            </graphic></MenuItem>
+
+
+                      <Menu fx:id="recentFilesMenu" text="%file.recent-files">
+                          <items>
+                          </items>
+                      </Menu>
+
+
                         <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#onSaveClicked" text="%file.save">
                            <graphic>
                               <Label styleClass="toolbar-button" text="%fa.file.save" />
@@ -158,6 +159,7 @@
                         <CheckMenuItem fx:id="showAnchorsItem" mnemonicParsing="false" onAction="#onShowAnchorsClicked" selected="true" text="%view.show-anchors" />
                         <CheckMenuItem fx:id="showGridItem" mnemonicParsing="false" onAction="#onShowGridClicked" text="%view.show-grid" />
                         <CheckMenuItem fx:id="enableGridItem" mnemonicParsing="false" onAction="#onEnableGridClicked" text="%view.enable-snapping" />
+                        <MenuItem mnemonicParsing="false" onAction="#onPreviewClicked" text="%view.preview" />
                      </items>
                   </Menu>
                 <Menu mnemonicParsing="false" text="%help">
@@ -191,6 +193,6 @@
       </ScrollPane>
    </center>
    <bottom>
-       <fx:include fx:id="embeddedBottomToolbar" source="bottomToolbar.fxml" BorderPane.alignment="CENTER"/>
+       <fx:include fx:id="embeddedBottomToolbar" source="bottomToolbar.fxml" BorderPane.alignment="CENTER" />
    </bottom>
 </BorderPane>

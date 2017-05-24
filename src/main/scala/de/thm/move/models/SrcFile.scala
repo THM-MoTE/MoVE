@@ -12,11 +12,11 @@ import java.nio.file.{Files, Path}
 
 import de.thm.move.loader.parser.ast._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /** Represents a source-file with corresponding parsed AST. */
 case class SrcFile(file:Path, model:Model) {
-  private val lines = Files.readAllLines(file).toList
+  private val lines = Files.readAllLines(file).asScala.toList
   private val lastModifiedTimestamp = Files.getLastModifiedTime(file)
 
   /** Gets the source before Icon(...) */

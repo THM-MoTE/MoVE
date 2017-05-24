@@ -14,7 +14,6 @@ trait DrawStrategy extends Resettable {
   type FigureType
   protected def tmpFigure:FigureType
 
-  lazy val drawConstraintProperty: BooleanProperty = new SimpleBooleanProperty(false)
   def dispatchEvent(mouseEvent:MouseEvent): Unit
   def setColor(fill:Paint, stroke:Paint, strokeThickness:Int): Unit
 }

@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2016 Nicola Justus <nicola.justus@mni.thm.de>
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -17,6 +17,7 @@ import javafx.scene.{Parent, Scene}
 import javafx.stage.Stage
 
 import de.thm.move.Global
+import de.thm.move.views.Windows
 import de.thm.move.views.dialogs.InfoLine
 
 class AboutCtrl extends Initializable {
@@ -59,22 +60,11 @@ class AboutCtrl extends Initializable {
 }
 
 object AboutCtrl {
-  def setupAboutDialog(): (Stage, AboutCtrl) = {
-    //=== setup about dialog
-    val aboutCtrl = new AboutCtrl()
-    val aboutStage = new Stage()
-    val aboutWindowWidth = Global.config.getDouble("window.about.width").getOrElse(500.0)
-    val aboutWindowHeight = Global.config.getDouble("window.about.height").getOrElse(500.0)
-    val fxmlLoader = new FXMLLoader(getClass.getResource("/fxml/about.fxml"))
-    fxmlLoader.setController(aboutCtrl)
-    val aboutViewRoot: Parent = fxmlLoader.load()
-    val scene = new Scene(aboutViewRoot)
-    scene.getStylesheets.add(Global.styleSheetUrl)
-
-    aboutStage.setTitle(Global.config.getString("window.title").map(_+" - About").getOrElse(""))
-    aboutStage.setScene(scene)
-    aboutStage.setWidth(aboutWindowWidth)
-    aboutStage.setHeight(aboutWindowHeight)
-    (aboutStage, aboutCtrl)
-  }
+  def setupAboutDialog(): (Stage, AboutCtrl) =
+    Windows.initWindow(
+      Global.config.getDouble("window.about.width").getOrElse(500.0),
+      Global.config.getDouble("window.about.height").getOrElse(500.0),
+      Global.config.getString("window.title").map(_+" - About").getOrElse(""),
+      getClass.getResource("/fxml/about.fxml"),
+      new AboutCtrl())
 }

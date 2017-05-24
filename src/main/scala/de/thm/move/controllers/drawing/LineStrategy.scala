@@ -11,9 +11,9 @@ class LineStrategy(changeLike:ChangeDrawPanelLike) extends PathLikeStrategy(chan
   override protected val tmpFigure = new ResizableLine((0,0), (0,0), 0)
   tmpFigure.setId(tmpShapeId)
 
-  def setBounds(newX:Double, newY:Double): Unit = {
+  def setBounds(newX:Double, newY:Double, straight:Boolean): Unit = {
     val (deltaX, deltaY) = (newX -> newY) - pointBuffer.head
-    if(drawConstraintProperty.get) {
+    if(straight) {
       val (startX,startY) = pointBuffer.head
       val (x,y) = if(deltaX > deltaY) (newX,startY) else (startX,newY)
       tmpFigure.setEndX(x)
@@ -43,7 +43,7 @@ class LineStrategy(changeLike:ChangeDrawPanelLike) extends PathLikeStrategy(chan
       resetLine(mouseEvent.getX, mouseEvent.getY)
       changeLike.addNode(tmpFigure)
     case MouseEvent.MOUSE_DRAGGED =>
-      setBounds(mouseEvent.getX, mouseEvent.getY)
+      setBounds(mouseEvent.getX, mouseEvent.getY, mouseEvent.isShiftDown)
     case MouseEvent.MOUSE_RELEASED =>
       changeLike.addShapeWithAnchors(tmpFigure.copy)
       reset()

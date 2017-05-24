@@ -11,7 +11,7 @@ package de.thm.move.controllers
 import javafx.scene.paint.Color
 
 import de.thm.move.Global._
-import de.thm.move.models.{FillPattern, LinePattern}
+import de.thm.move.models.pattern.{LinePattern, FillPattern}
 import de.thm.move.views.GroupLike
 import de.thm.move.views.shapes.{ColorizableShape, ResizableShape}
 
@@ -55,56 +55,18 @@ trait ColorizeSelectionCtrl {
     )
   }
 
-  def setStrokePattern(linePattern:LinePattern.LinePattern): Unit =
-    LinePattern.linePatternToCssClass.get(linePattern) foreach { cssClass =>
-      val cssOpt = coloredSelectedShape.
-        map(_.getStyleClass().find(_.`matches`(LinePattern.cssRegex)))
-      val linePatterns = coloredSelectedShape.map(_.linePattern.get)
-      val shapeAndCss = coloredSelectedShape zip (cssOpt zip linePatterns)
+  def setStrokePattern(linePattern:LinePattern): Unit = {
+    zippedUndo(coloredSelectedShape)(_.linePattern.get)(
+      _.linePattern.set(linePattern),
+      _.linePattern.set _
+    )
+//    coloredSelectedShape.foreach(x => x.linePattern.set(linePattern))
+  }
 
-      history.execute {
-        for(shape <- coloredSelectedShape) {
-          LinePattern.removeOldCss(shape)
-          shape.getStyleClass().add(cssClass)
-          shape.linePattern.set(linePattern)
-        }
-      } {
-        for {
-          (shape, (oldCssOpt, oldLinePattern)) <- shapeAndCss
-          if oldCssOpt.isDefined
-          css = oldCssOpt.get
-        } {
-            LinePattern.removeOldCss(shape)
-            shape.getStyleClass().add(css)
-            shape.linePattern.set(oldLinePattern)
-          }
-      }
-    }
-
-  def setFillPattern(fillPattern:FillPattern.FillPattern): Unit = {
-    val coloredShapes = coloredSelectedShape map { shape =>
-      (shape, shape.oldFillColorProperty.get, shape.getStrokeColor)
-    } flatMap {
-      case (shape, c1,c2:Color) => List((shape,c1,c2))
-      case _ => Nil
-    }
-
-    val shapeAndFillPattern = coloredSelectedShape zip (coloredSelectedShape.
-      map(_.fillPatternProperty.get) zip coloredSelectedShape.map(_.getFillColor))
-
-    history.execute {
-      for( (shape, fillColor, strokeColor) <- coloredShapes ) {
-        val width = shape.getBoundsInLocal.getWidth()
-        val height = shape.getBoundsInLocal.getHeight()
-        val newFillColor = FillPattern.getFillColor(fillPattern, fillColor, strokeColor,width, height)
-        shape.setFillColor(newFillColor)
-        shape.fillPatternProperty.set(fillPattern)
-      }
-    } {
-      for( (shape,(oldFillProperty, oldFillGradient)) <- shapeAndFillPattern) {
-        shape.setFillColor(oldFillGradient)
-        shape.fillPatternProperty.set(oldFillProperty)
-      }
-    }
+  def setFillPattern(fillPattern:FillPattern): Unit = {
+    zippedUndo(coloredSelectedShape)(_.fillPatternProperty.get)(
+      _.fillPatternProperty.set(fillPattern),
+      _.fillPatternProperty.set _
+    )
   }
 }

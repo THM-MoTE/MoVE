@@ -69,7 +69,7 @@ object Dialogs {
   }
 
   def newPaperSizeDialog(width:Double,height:Double)(implicit marshaller:StringMarshaller[Double]): InputDialog[Double] = {
-    val dialog = new InputDialog(fontBundle.getString("inputfield-width") -> Some(width), fontBundle.getString("papersizedialog.inputfield-height") -> Some(height))
+    val dialog = new InputDialog(fontBundle.getString("papersizedialog.inputfield-width") -> Some(width), fontBundle.getString("papersizedialog.inputfield-height") -> Some(height))
     dialog.setTitle(fontBundle.getString("papersizedialog.title"))
     dialog.setHeaderText(fontBundle.getString("papersizedialog.header"))
     dialog
