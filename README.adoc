@@ -88,6 +88,16 @@ For installing from source follow this steps:
 - clone the repository `git clone https://git.thm.de/njss90/move.git`
 - get into the directory and run  `sbt ";compile;run"`
 
+==== Notes
+If the javafx style manager says that he couldn't load a font (see example below) make sure the full project path
+doesn't contain a space. (The font loader can't handle urls containing a space.)
+_This error only occurs when running from sbt and doesn't effect assembled jar files._
+
+----
+[error] May 24, 2017 12:46:01 PM com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
+[error] INFO: Could not load @font-face font [file:/my files/move/target/scala-2.12/classes/fonts/fontawesome-webfont.ttf]
+----
+
 == License
 (C) 2016 Nicola Justus.
 
