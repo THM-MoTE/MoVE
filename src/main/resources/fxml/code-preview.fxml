@@ -13,7 +13,7 @@
    <bottom>
       <Button mnemonicParsing="false" onAction="#onCopy" text="%preview.clipboard" BorderPane.alignment="CENTER">
          <graphic>
-            <Label text="%fa.preview.clipboard" />
+            <Label styleClass="toolbar-button" text="%fa.preview.clipboard" />
          </graphic>
       </Button>
    </bottom>
