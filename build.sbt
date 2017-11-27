@@ -46,9 +46,9 @@ copyRscs := rscFiles.value.map { file =>
 cleanConfig := IO.delete(moveConfigDir.value)
 
 //append copyRscs-task to compile-task
-compile in Compile <<= (compile in Compile) dependsOn copyRscs
+compile in Compile := ((compile in Compile) dependsOn copyRscs).value
 
-sourceGenerators in Compile <+= Def.task {
+sourceGenerators in Compile += Def.task {
   val dir:File = (sourceManaged in Compile).value
   InfoGenerator.generateProjectInfo(dir, Seq(
     "name" -> (name in root).value,
