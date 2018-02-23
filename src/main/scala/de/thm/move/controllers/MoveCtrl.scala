@@ -170,9 +170,8 @@ class MoveCtrl extends Initializable {
       shortcuts.getShortcut("zoom-plus") -> getButtonById("zoomBtnIncrease"),
       shortcuts.getShortcut("zoom-minus") -> getButtonById("zoomBtnDecrease"))
 
-    val codes = keyCodeOpts flatMap {
-      case (Some(code),Some(btn)) => List( (code, btn) )
-      case _ => Nil
+    val codes = keyCodeOpts collect {
+      case (Some(code),Some(btn)) => code -> btn
     }
     codes.toMap
   }
