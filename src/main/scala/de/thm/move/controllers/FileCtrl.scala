@@ -299,4 +299,10 @@ class FileCtrl(owner: Window) {
       file.toURI
     }
   }
+
+  /** Resets the opened file. Used to create a new file. */
+  def resetFile():Unit = {
+    openedFile = None
+    formatInfos = None
+  }
 }

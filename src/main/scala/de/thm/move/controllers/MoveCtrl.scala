@@ -367,7 +367,10 @@ class MoveCtrl extends Initializable {
   def onNewClicked(e:ActionEvent): Unit = {
     val selectOpt:Option[ButtonType] = Dialogs.newConfirmationDialog("Unsaved changes will be lost!").showAndWait()
     selectOpt.foreach {
-      case ButtonType.OK => drawPanelCtrl.removeAll()
+      case ButtonType.OK =>
+        drawPanelCtrl.removeAll()
+        fileCtrl.resetFile()
+        displayUsedFile(None)
       case _ => //do nothing; abort
     }
   }
@@ -387,7 +390,7 @@ class MoveCtrl extends Initializable {
   private def setupOpenedFile(fileInfos: Try[(Path, Point,List[ResizableShape])]): Unit = {
     fileInfos match {
       case Success((file, system, shapes)) =>
-        displayUsedFile(file)
+        displayUsedFile(Some(file))
         recentHandler.incrementPriorityOf(file)
         drawPanel.setSize(system)
         if (drawPanelCtrl.getElements.nonEmpty) {
@@ -402,13 +405,14 @@ class MoveCtrl extends Initializable {
   }
 
   /** Displays the file behind p in the title of move's main window */
-  private def displayUsedFile(p:Path): Unit = {
+  private def displayUsedFile(pOpt:Option[Path]): Unit = {
     val oldTitle = rootStage.getTitle
+    val fileTitle =  pOpt.map(ResourceUtils.getFilename).getOrElse("Untitled")
     val newTitle = if(oldTitle.contains("-")) {
       val titleStub = oldTitle.take(oldTitle.lastIndexOf("-"))
-      titleStub.trim + " - " + ResourceUtils.getFilename(p)
+      titleStub.trim + " - " + fileTitle
     } else {
-      oldTitle.trim + " - " + ResourceUtils.getFilename(p)
+      oldTitle.trim + " - " + fileTitle
     }
 
     rootStage.setTitle(newTitle)
@@ -428,16 +432,16 @@ class MoveCtrl extends Initializable {
   @FXML
   def onSaveClicked(e:ActionEvent): Unit = {
     fileErrorHandling(
-      fileCtrl.saveFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
-      map(displayUsedFile)
+      fileCtrl.saveFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight)
+        .map(p => displayUsedFile(Some(p)))
     )
   }
 
   @FXML
   def onSaveAsClicked(e:ActionEvent): Unit = {
     fileErrorHandling(
-      fileCtrl.saveAsFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight).
-        map(displayUsedFile)
+      fileCtrl.saveAsFile(drawPanel.getShapes, drawPanel.getWidth, drawPanel.getHeight)
+        .map(p => displayUsedFile(Some(p)))
     )
   }
 
