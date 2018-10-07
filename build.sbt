@@ -66,7 +66,7 @@ lazy val root = (project in file(".")).
     scalaVersion := "2.12.3",
     javacOptions ++= Seq("-source", "1.8")
     ).
-  dependsOn(RootProject(file("../recently")))
+  dependsOn(RootProject(uri("git://github.com/THM-MoTE/recently.git")))
 
 mainClass in Compile := Some("de.thm.move.MoveApp")
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
