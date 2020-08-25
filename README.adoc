@@ -1,3 +1,5 @@
+WARNING: This project is discontinued. It has been superseded by https://github.com/THM-MoTE/MoNK[MoNK].
+
 image::https://rawgit.com/THM-MoTE/Logos/master/svgs/MoVE.svg[link="https://rawgit.com/THM-MoTE/Logos/master/svgs/MoVE.svg", align="center"]
 
 The Modelica Vector graphics Editor (MoVE) is a cross platform graphical editor for
